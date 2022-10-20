@@ -9,3 +9,6 @@
 # .net C# folders
 bin/ 
 obj/
+
+# Visual Studio generated files
+.vs
