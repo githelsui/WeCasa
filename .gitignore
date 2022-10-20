@@ -1,0 +1,11 @@
+# OS generated files #
+.DS_Store
+.DS_Store?
+
+# Compiled source #
+*.dll
+*.exe
+
+# .net C# folders
+bin/ 
+obj/
