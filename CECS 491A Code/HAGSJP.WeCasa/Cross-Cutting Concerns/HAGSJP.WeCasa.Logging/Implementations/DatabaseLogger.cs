@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualBasic;
 using Microsoft.Data.SqlClient;
 
-namespace Company.Product.Logging.Implementations
+namespace HAGSJP.WeCasa.Logging.Implementations
 {
 
     public enum ResultStatus
@@ -69,16 +69,16 @@ namespace Company.Product.Logging.Implementations
             // SQL Server -> T-SQL
             // connection strings sql Server: standard security
             // IN DEV
-            var connectionString = @"Server=.\;Database=Company.Product.Logs;Integrated Security=True;";
+            var connectionString = @"Server=.\;Database=HAGSJP.WeCasa.Logs;Integrated Security=True;";
             // IN PROD
-            //var connectionString = @"Server=.\;Database=Company.Product.Logs;User Id=myUsername;Password=myPassword;Encrypt=True;";
+            //var connectionString = @"Server=.\;Database=HAGSJP.WeCasa.Logs;User Id=myUsername;Password=myPassword;Encrypt=True;";
             using (var connection = new SqlConnection(connectionString)) // ADO.NET, all relational DB accept ANSI SQL
             {
                 connection.open();
 
                 // Insert SQL statement
-                //var insertSql = "INSERT INTO Company.Product.Logs (Message) values(" + message +")";
-                var insertSql = "INSERT INTO Company.Product.Logs (Message) values(%message)";
+                //var insertSql = "INSERT INTO HAGSJP.WeCasa.Logs (Message) values(" + message +")";
+                var insertSql = "INSERT INTO HAGSJP.WeCasa.Logs (Message) values(%message)";
                 var command = new SqlCommand(insertSql, connection);
                 var parameter = new SqlParameter("message", message);
                 command.Parameters.Add(parameter);

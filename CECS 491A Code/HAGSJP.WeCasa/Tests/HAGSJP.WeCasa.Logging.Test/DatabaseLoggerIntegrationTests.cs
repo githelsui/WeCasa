@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
-using Company.Product.Logging.Implementations;
+using HAGSJP.WeCasa.Logging.Implementations;
 
-namespace Company.Product.Logging.Test
+namespace HAGSJP.WeCasa.Logging.Test
 {
 
     [TestClass]

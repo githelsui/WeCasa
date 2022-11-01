@@ -1,8 +1,8 @@
-﻿namespace Company.Product.Logging.Test;
+﻿namespace HAGSJP.WeCasa.Logging.Test;
 
-using Company.Product.Logging.Implementations;
+using HAGSJP.WeCasa.Logging.Implementations;
 
-//using Company.Product.Logging.Implementations;
+//using HAGSJP.WeCasa.Logging.Implementations;
 
 
 [TestClass]
