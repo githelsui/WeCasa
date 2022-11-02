@@ -46,15 +46,15 @@ namespace HAGSJP.WeCasa.Logging.Implementations
                 result.IsSuccessful = true;
                 return true;
             }
-
-            if (message.Length > 200)
+           
+            if(message.Length > 200)
             {
                 result.IsSuccessful = false;
                 result.ErrorMessage = "Message log too long";
                 return false;
             }
             // invalid characters
-            if (message.Contains("<"))
+            if(message.Contains("<"))
             {
                 result.IsSuccessful = false;
                 result.ErrorMessage = "Mesage contians < which is invalid";
@@ -69,16 +69,16 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             // SQL Server -> T-SQL
             // connection strings sql Server: standard security
             // IN DEV
-            var connectionString = @"Server=.\;Database=Company.Product.Logs;Integrated Security=True;";
+            var connectionString = @"Server=.\;Database=HAGSJP.WeCasa.Logs;Integrated Security=True;";
             // IN PROD
-            //var connectionString = @"Server=.\;Database=Company.Product.Logs;User Id=myUsername;Password=myPassword;Encrypt=True;";
+            //var connectionString = @"Server=.\;Database=HAGSJP.WeCasa.Logs;User Id=myUsername;Password=myPassword;Encrypt=True;";
             using (var connection = new SqlConnection(connectionString)) // ADO.NET, all relational DB accept ANSI SQL
             {
                 connection.open();
 
                 // Insert SQL statement
-                //var insertSql = "INSERT INTO Company.Product.Logs (Message) values(" + message +")";
-                var insertSql = "INSERT INTO Company.Product.Logs (Message) values(%message)";
+                //var insertSql = "INSERT INTO HAGSJP.WeCasa.Logs (Message) values(" + message +")";
+                var insertSql = "INSERT INTO HAGSJP.WeCasa.Logs (Message) values(%message)";
                 var command = new SqlCommand(insertSql, connection);
                 var parameter = new SqlParameter("message", message);
                 command.Parameters.Add(parameter);
@@ -95,7 +95,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
                 result.ErrorMessage = $"Rows affected were not 1. It was {rows}";
                 return false;
             }
-
+            
         }
     }
 }
