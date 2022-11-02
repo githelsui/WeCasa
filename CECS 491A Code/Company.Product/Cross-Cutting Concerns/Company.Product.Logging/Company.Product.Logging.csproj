@@ -6,12 +6,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
+  <!-- <ItemGroup>
     <Compile Remove="Implementations\DatabaseLogger.cs" />
-  </ItemGroup>
-  <ItemGroup>
+  </ItemGroup> -->
+  <!-- <ItemGroup>
     <EmbeddedResource Include="Implementations\DatabaseLogger.cs" Condition=" '$(EnableDefaultCompileItems)' == 'true' " />
-  </ItemGroup>
+  </ItemGroup> -->
   <ItemGroup>
     <None Remove="Microsoft.Data.SqlClient" />
   </ItemGroup>

@@ -1,9 +1,5 @@
 ﻿namespace Company.Product.Logging.Test;
-
 using Company.Product.Logging.Implementations;
-
-//using Company.Product.Logging.Implementations;
-
 
 [TestClass]
 public class UnitTest1
@@ -37,12 +33,9 @@ public class UnitTest1
         Assert.IsNotNull(actual);
         Assert.IsTrue(actual.GetType() == expected);
     }
-
     // Naming Convention 2
     //public void Constructor_CreateNewInstance_Pass()
     //{
     //}
-
-
 }
 

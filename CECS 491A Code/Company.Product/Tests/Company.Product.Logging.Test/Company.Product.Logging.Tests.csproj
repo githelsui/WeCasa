@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Company.Product.Logging\Company.Product.Logging.csproj" />
+    <ProjectReference Include="../../Cross-Cutting Concerns/Company.Product.Logging/Company.Product.Logging.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Microsoft.Data.SqlClient" />
