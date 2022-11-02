@@ -1,9 +1,6 @@
-﻿namespace HAGSJP.WeCasa.Logging.Test;
+namespace HAGSJP.WeCasa.Logging.Test;
 
 using HAGSJP.WeCasa.Logging.Implementations;
-
-//using HAGSJP.WeCasa.Logging.Implementations;
-
 
 [TestClass]
 public class UnitTest1
@@ -45,4 +42,3 @@ public class UnitTest1
 
 
 }
-
