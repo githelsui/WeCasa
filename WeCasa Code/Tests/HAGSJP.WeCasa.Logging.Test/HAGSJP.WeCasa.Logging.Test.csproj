@@ -16,12 +16,11 @@
     <PackageReference Include="coverlet.collector" Version="3.1.2" />
 	  <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
   </ItemGroup>
-
-	<ItemGroup>
-        <ProjectReference Include="..\HAGSJP.WeCasa.Logging\HAGSJP.WeCasa.Logging.csproj" />
-	</ItemGroup>
 	<ItemGroup>
 		<None Remove="Microsoft.Data.SqlClient" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\HAGSJP.WeCasa.Logging.csproj" />
 	</ItemGroup>
 
 </Project>

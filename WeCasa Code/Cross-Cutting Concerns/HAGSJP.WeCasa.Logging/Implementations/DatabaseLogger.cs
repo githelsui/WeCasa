@@ -6,7 +6,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
 
     public enum ResultStatus
     {
-        Unknown = 0
+        Unknown = 0,
         Success = 1,
         Faulty = 2,
     }
@@ -43,22 +43,22 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             #region Step 1: Input validation
             if (message == null)
             {
-                result.IsSuccessful = true;
-                return true;
+                result.IsSuccessful = ResultStatus.Success;
+                return result;
             }
 
             if (message.Length > 200)
             {
-                result.IsSuccessful = false;
+                result.IsSuccessful = ResultStatus.Faulty;
                 result.ErrorMessage = "Message log too long";
-                return false;
+                return result;
             }
             // invalid characters
             if (message.Contains("<"))
             {
-                result.IsSuccessful = false;
+                result.IsSuccessful = ResultStatus.Faulty;
                 result.ErrorMessage = "Mesage contians < which is invalid";
-                return false;
+                return result;
             }
             #endregion
 
@@ -69,16 +69,16 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             // SQL Server -> T-SQL
             // connection strings sql Server: standard security
             // IN DEV
-            var connectionString = @"Server=.\;Database=Company.Product.Logs;Integrated Security=True;";
+            var connectionString = @"Server=.\;Database=HAGSJP.WeCasa.Logs;Integrated Security=True;";
             // IN PROD
             //var connectionString = @"Server=.\;Database=Company.Product.Logs;User Id=myUsername;Password=myPassword;Encrypt=True;";
             using (var connection = new SqlConnection(connectionString)) // ADO.NET, all relational DB accept ANSI SQL
             {
-                connection.open();
+                connection.Open();
 
                 // Insert SQL statement
-                //var insertSql = "INSERT INTO Company.Product.Logs (Message) values(" + message +")";
-                var insertSql = "INSERT INTO Company.Product.Logs (Message) values(%message)";
+                //var insertSql = "INSERT INTO HAGSJP.WeCasa.Logs (Message) values(" + message +")";
+                var insertSql = "INSERT INTO HAGSJP.WeCasa.Logs (Message) values(%message)";
                 var command = new SqlCommand(insertSql, connection);
                 var parameter = new SqlParameter("message", message);
                 command.Parameters.Add(parameter);
@@ -87,13 +87,13 @@ namespace HAGSJP.WeCasa.Logging.Implementations
 
                 if (rows == 1)
                 {
-                    result.IsSuccessful = true;
+                    result.IsSuccessful = ResultStatus.Success;
                     result.ErrorMessage = string.Empty;
-                    return true;
+                    return result;
                 }
-                result.IsSuccessful = false;
+                result.IsSuccessful = ResultStatus.Faulty;
                 result.ErrorMessage = $"Rows affected were not 1. It was {rows}";
-                return false;
+                return result;
             }
 
         }
