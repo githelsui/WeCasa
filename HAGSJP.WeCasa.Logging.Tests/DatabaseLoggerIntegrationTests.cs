@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using HAGSJP.WeCasa.Logging.Implementations;
 
 namespace HAGSJP.WeCasa.Logging.Test
@@ -38,7 +38,7 @@ namespace HAGSJP.WeCasa.Logging.Test
         //    var stopwatch = new Stopwatch();
         //    var expected = 5;
         //    var systemUnderTest = new DatabaseLogger();
-           
+
 
         //    //Act
         //    try
@@ -60,4 +60,3 @@ namespace HAGSJP.WeCasa.Logging.Test
         //}
     }
 }
-
