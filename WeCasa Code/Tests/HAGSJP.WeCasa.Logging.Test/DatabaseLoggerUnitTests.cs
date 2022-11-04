@@ -10,7 +10,7 @@ public class UnitTest1
     public void ShouldCreateInstanceWithDefaultCtor()
     {
         //Arrange
-        var expected = typeof(DatabaseLogger);
+        var expected = typeof(Logger);
 
         //Act
         var actual = new DatabaseLogger();
@@ -24,7 +24,7 @@ public class UnitTest1
     public void ShouldCreateInstanceWithParameterCtor()
     {
         //Arrange
-        var expected = typeof(DatabaseLogger);
+        var expected = typeof(Logger);
         var expectedTableName = "someTable";
 
         //Act
