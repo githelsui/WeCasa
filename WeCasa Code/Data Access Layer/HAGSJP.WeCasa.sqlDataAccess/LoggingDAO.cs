@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using HAGSJP.WeCasa.Models;
+using System.Data;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
@@ -11,6 +12,11 @@ namespace HAGSJP.WeCasa.sqlDataAccess
     {
         private string _connectionString; // backing field
 
+        public LoggingDAO() // default constructor
+        {
+            _connectionString = @"Server=.\;Database=HAGSJP.WeCasa;Integrated Security=True;TrustServerCertificate=True";
+        }
+
         public LoggingDAO(string connectionString)
         {
             // storing in private string is not 100% secure, use SecureString()
@@ -21,20 +27,20 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public Result LogData(string message)
         {
             var result = new Result();
-            // connection strings sql Server: standard security
-      
-            var connectionString = @"Server=.\;Database=HAGSJPWeCasa.Logs;Integrated Security=True;";
- 
-            using (var connection = new SqlConnection(connectionString)) // ADO.NET, all relational DB accept ANSI SQL
+             
+            using (var connection = new SqlConnection(_connectionString)) // ADO.NET, all relational DB accept ANSI SQL
             {
                 connection.Open();
 
                 // Insert SQL statement
-                var insertSql = "INSERT INTO HAGSJPWeCasa.Logs (Message) values(%message)";
+                var insertSql = "INSERT INTO WeCasaLogs (Message) values(@message)";
                 var command = new SqlCommand(insertSql, connection);
+                command.Parameters.Add("@message", SqlDbType.VarChar).Value = message;
 
                 // Execution of SQL
                 var rows = command.ExecuteNonQuery();
+
+                connection.Close();
 
                 if (rows == 1)
                 {

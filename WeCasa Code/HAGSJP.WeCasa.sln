@@ -13,13 +13,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HAGSJP.WeCasa.Logging", "Cr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data Access Layer", "Data Access Layer", "{542D2567-60BF-41C5-81B9-D8E3A3557CEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HAGSJP.WeCasa.sqlDataAccess", "Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\HAGSJP.WeCasa.sqlDataAccess.csproj", "{E0BD7C64-BB4D-4B91-B38B-5892A71715DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HAGSJP.WeCasa.sqlDataAccess", "Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\HAGSJP.WeCasa.sqlDataAccess.csproj", "{E0BD7C64-BB4D-4B91-B38B-5892A71715DA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{FA68C185-B42C-4FA9-8838-62444C65BA73}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HAGSJP.WeCasa.Logging.Test", "Tests\HAGSJP.WeCasa.Logging.Test\HAGSJP.WeCasa.Logging.Test.csproj", "{ECF5BFBD-51DD-4EC9-ADD0-19AF381D6C29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HAGSJP.WeCasa.Models", "HAGSJP.WeCasa.Models\HAGSJP.WeCasa.Models.csproj", "{8F53CA96-25B1-4387-B170-532B6D1B1B10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HAGSJP.WeCasa.Models", "Models\HAGSJP.WeCasa.Models\HAGSJP.WeCasa.Models.csproj", "{8F53CA96-25B1-4387-B170-532B6D1B1B10}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Models", "Models", "{EC72378E-30B5-481A-818C-43CE2B0F520C}"
 EndProject

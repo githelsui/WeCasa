@@ -28,20 +28,20 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             #region Step 1: Input validation
             if (message == null)
             {
-                result.IsSuccessful = ResultStatus.Success;
+                result.IsSuccessful = false;
                 return result;
             }
 
             if (message.Length > 200)
             {
-                result.IsSuccessful = ResultStatus.Faulty;
+                result.IsSuccessful = false;
                 result.ErrorMessage = "Message log too long";
                 return result;
             }
             // invalid characters
             if (message.Contains("<"))
             {
-                result.IsSuccessful = ResultStatus.Faulty;
+                result.IsSuccessful = false;
                 result.ErrorMessage = "Mesage contians < which is invalid";
                 return result;
             }

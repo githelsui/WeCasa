@@ -1,4 +1,16 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using HAGSJP.WeCasa.Logging.Implementations;
+using HAGSJP.WeCasa.sqlDataAccess;
 
-Console.ReadLine();
+namespace HAGSJP.WeCasa.Client
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            LoggingDAO l = new LoggingDAO();
+            Console.WriteLine("Hello, World!");
+            string input = Console.ReadLine();
+            l.LogData(input);
+        }
+    }
+}

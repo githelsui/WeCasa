@@ -13,7 +13,7 @@
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\..\HAGSJP.WeCasa.Models\HAGSJP.WeCasa.Models.csproj" />
+	  <ProjectReference Include="..\..\Models\HAGSJP.WeCasa.Models\HAGSJP.WeCasa.Models.csproj" />
 	</ItemGroup>
 
 </Project>

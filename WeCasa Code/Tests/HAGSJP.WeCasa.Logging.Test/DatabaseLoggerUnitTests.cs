@@ -1,9 +1,10 @@
 namespace HAGSJP.WeCasa.Logging.Test;
 
 using HAGSJP.WeCasa.Logging.Implementations;
+using HAGSJP.WeCasa.sqlDataAccess;
 
 [TestClass]
-public class UnitTest1
+public class DatabaseLoggerUnitTest
 {
 
     [TestMethod]
@@ -13,7 +14,7 @@ public class UnitTest1
         var expected = typeof(Logger);
 
         //Act
-        var actual = new DatabaseLogger();
+        var actual = new LoggingDAO();
 
         //Assert (2 options)
         Assert.IsNotNull(actual);
@@ -25,20 +26,13 @@ public class UnitTest1
     {
         //Arrange
         var expected = typeof(Logger);
-        var expectedTableName = "someTable";
+        var expectedTableName = "Logs";
 
         //Act
-        var actual = new DatabaseLogger(expectedTableName);
+        var actual = new LoggingDAO(expectedTableName);
 
         //Assert (2 options)
         Assert.IsNotNull(actual);
         Assert.IsTrue(actual.GetType() == expected);
     }
-
-    // Naming Convention 2
-    //public void Constructor_CreateNewInstance_Pass()
-    //{
-    //}
-
-
 }
