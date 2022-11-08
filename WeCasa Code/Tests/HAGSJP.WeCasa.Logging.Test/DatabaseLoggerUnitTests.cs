@@ -14,7 +14,7 @@ public class DatabaseLoggerUnitTest
         var expected = typeof(Logger);
 
         //Act
-        var actual = new LoggingDAO();
+        var actual = new MariaDBLoggingDAO();
 
         //Assert (2 options)
         Assert.IsNotNull(actual);
@@ -29,7 +29,7 @@ public class DatabaseLoggerUnitTest
         var expectedTableName = "Logs";
 
         //Act
-        var actual = new LoggingDAO(expectedTableName);
+        var actual = new MariaDBLoggingDAO(expectedTableName);
 
         //Assert (2 options)
         Assert.IsNotNull(actual);

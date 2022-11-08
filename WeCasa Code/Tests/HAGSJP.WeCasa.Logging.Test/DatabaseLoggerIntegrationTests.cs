@@ -15,7 +15,7 @@ namespace HAGSJP.WeCasa.Logging.Test
             //Arrange
             var stopwatch = new Stopwatch();
             var expected = 5;
-            var systemUnderTest = new LoggingDAO("test");
+            var systemUnderTest = new MariaDBLoggingDAO("test");
 
             //Act
             stopwatch.Start();
