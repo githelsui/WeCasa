@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HAGSJP.WeCasa.Registration
+namespace HAGSJP.WeCasa.Client
 {
     class Login
     {

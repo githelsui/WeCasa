@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HAGSJP.WeCasa.Registration
+namespace HAGSJP.WeCasa.Client
 {
     class Menu
     {
-        static void Main(string[] args)
+        public static void displayMenu(string[] args)
         {
             bool menu = true;
             while (menu != false)
@@ -34,8 +34,6 @@ namespace HAGSJP.WeCasa.Registration
                         break;
                 }
             }
-            
-
         }
     }
 }

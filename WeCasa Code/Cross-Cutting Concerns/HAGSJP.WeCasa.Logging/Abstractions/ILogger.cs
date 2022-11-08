@@ -3,16 +3,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace HAGSJP.WeCasa.Logging.Abstractions
 {
     public interface ILogger
     {
-        Result Log(string message);
+        Task<Result> Log(string message);
     }
 
-    // interface segregation principle
+    // Interface segregation principle
     public interface IDataAccessObject
     {
         Result ReadData();

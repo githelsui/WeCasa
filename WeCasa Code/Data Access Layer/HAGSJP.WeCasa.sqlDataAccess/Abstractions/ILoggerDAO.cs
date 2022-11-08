@@ -9,9 +9,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess.Abstractions
 {
     public interface ILoggerDAO
     {
-        public Result LogData(string message)
-        {
-            return new Result(); // returns Noop (No operation)
-        }
+        public Task<Result> LogData(string message);
     }
 }

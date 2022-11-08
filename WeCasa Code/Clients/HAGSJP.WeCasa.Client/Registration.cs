@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HAGSJP.WeCasa.Registration
+namespace HAGSJP.WeCasa.Client
 {
     class Registration
     {
@@ -12,15 +12,15 @@ namespace HAGSJP.WeCasa.Registration
         {
             Console.WriteLine("Enter Email Address: ");
             string email = Console.ReadLine();
-            //if email does not exist in database, return email
-            //else loop until valid email is entered
+            // If email does not exist in database, return email
+            // Else loop until valid email is entered
             bool validE = false;
             while (validE == false)
             {
                 Console.WriteLine("Invalid email provided. Retry again or contact system administrator: ");
                 email = Console.ReadLine();
-                //CONNECT TO DATABASE
-                //CHECK FOR EMAIL
+                // CONNECT TO DATABASE
+                // CHECK FOR EMAIL
                 validE = true;
             }
             return email;
@@ -30,7 +30,7 @@ namespace HAGSJP.WeCasa.Registration
         {
             Console.WriteLine("Enter Password: ");
             string password = Console.ReadLine();
-            if (password)
+            /*if (password)
             {
                 return password;
             }
@@ -43,7 +43,7 @@ namespace HAGSJP.WeCasa.Registration
                     password = Console.ReadLine();
                     validP = true;
                 }
-            }
+            }*/
             return password;
         }
 

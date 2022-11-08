@@ -12,23 +12,27 @@ namespace HAGSJP.WeCasa.Logging.Implementations
     {
         private readonly ILoggerDAO _dao;
 
-        // dependency inversion principle
-        // our logger is extensible
-        public Logger(ILoggerDAO dao) // inversion of control
+        // Dependency inversion principle
+        // Our logger is extensible
+        public Logger(ILoggerDAO dao) // Inversion of control
         {
             _dao = dao;
         }
 
-        public Result Log(String message)
-        {
-            // TODO: Log to database
+        public async Task<Result> Log(String message)
+        {             
             var result = new Result();
+
+            // Task Parallelism Library TPL
+            // Getting number of processors
+            //var numOfProcessors = Environment.ProcessorCount > 1 ? Environment.ProcessorCount - 1 : 1;
 
             // Step 1: Input Validation (include bool AND feedback for what went wrong)
             #region Step 1: Input validation
             if (message == null)
             {
                 result.IsSuccessful = false;
+
                 return result;
             }
 
@@ -36,20 +40,22 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             {
                 result.IsSuccessful = false;
                 result.ErrorMessage = "Message log too long";
+
                 return result;
             }
-            // invalid characters
+            // Invalid characters
             if (message.Contains("<"))
             {
                 result.IsSuccessful = false;
                 result.ErrorMessage = "Mesage contians < which is invalid";
+
                 return result;
             }
             #endregion
 
             // Step 2: Perform the logging
-            // database server(IP address w/ port), database, table, coloumn
-            var daoResult = _dao.LogData(message);
+            // Database server(IP address w/ port), database, table, coloumn
+            var daoResult = await _dao.LogData(message).ConfigureAwait(false);
 
             if(daoResult.IsSuccessful)
             {
@@ -58,7 +64,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
                 return result;
             }
 
-            // translate the error to something that is more user friendly or layer friendly
+            // Translate the error to something that is more user friendly or layer friendly
 
             result.IsSuccessful = false;
             result.ErrorMessage = daoResult.ErrorMessage;
