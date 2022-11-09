@@ -26,6 +26,7 @@ namespace HAGSJP.WeCasa.ManagerLayer.Implementations
         }
         public string ValidatePassword()
         {
+            var checkValidChar = new Regex(@"^[a-zA-Z0-9.,@!\- ]*$");
             var checkNumber = new Regex(@"[0-9]+");
             var checkUppercase = new Regex(@"[A-Z]+");
             var checkLowercase = new Regex(@"[a-z]+");
@@ -34,7 +35,7 @@ namespace HAGSJP.WeCasa.ManagerLayer.Implementations
 
             Console.WriteLine("Enter Password: ");
             string password = Console.ReadLine();
-            if (checkLength.IsMatch(password) && checkNumber.IsMatch(password) && checkUppercase.IsMatch(password) && checkLowercase.IsMatch(password) && checkSpecialChar.IsMatch(password))
+            if (checkValidChar.IsMatch(password) && checkLength.IsMatch(password) && checkNumber.IsMatch(password) && checkUppercase.IsMatch(password) && checkLowercase.IsMatch(password) && checkSpecialChar.IsMatch(password))
             {
                 return password;
             }
@@ -49,6 +50,10 @@ namespace HAGSJP.WeCasa.ManagerLayer.Implementations
                     if (!checkLength.IsMatch(password))
                     {
                         Console.WriteLine("Invalid Password: Password is not within the character range (8-80)");
+                    }
+                    else if (!checkValidChar.IsMatch(password))
+                    {
+                        Console.WriteLine("Invalid Password: Password contains invalid characters");
                     }
                     else if (!checkUppercase.IsMatch(password))
                     {
