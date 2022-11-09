@@ -39,10 +39,12 @@ public class DatabaseLoggerUnitTest
     public void ShouldCreateInstanceWithValidLength()
     {
         //Arrange
-        var expected = typeof(Logger);
+        var expected = false;
 
         //Act
-        var actual = new MariaDbDAO();
+        Log testLog = new Log("AofQks6zVX7vylbYjfJ4Iu9u5Zd1vr014cZrIyRHSdGTzhF9aAbkGDNOpohAA0zqw3XxJqxO0wxSmJ140A3BXtpLoxvnwv2iscx7Yexy6OlKAru1mXo3tDE9OO23aIJ91k9sowYDRf9TDKPugo3qifVzOA63M5TTCGx2e89kfdNIefCRbiLjNWT1iZbh3TZz3vjwSEwP", "Info", "Business", DateTime.Now, "test_user");
+        var logResult = await systemUnderTest.LogData(testLog);
+        var actual = logResult.IsSuccessful;
 
         //Assert (2 options)
         Assert.IsNotNull(actual);
