@@ -19,7 +19,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             _dao = dao;
         }
 
-        public async Task<Result> Log(string message, string logLevel, string category, DateTime dateTime, int userId)
+        public async Task<Result> Log(string message, string logLevel, string category, string username)
         {             
             var result = new Result();
 
@@ -53,9 +53,11 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             }
             #endregion
 
-            // Step 2: Perform the logging
+            // Step 2: Create a Log, Perform the logging
             // Database server(IP address w/ port), database, table, coloumn
-            var daoResult = await _dao.LogData(message, logLevel, category, dateTime, userId).ConfigureAwait(false);
+            Log log = new Log(message, logLevel, category, username);
+
+            var daoResult = await _dao.LogData(log).ConfigureAwait(false);
 
             if(daoResult.IsSuccessful)
             {

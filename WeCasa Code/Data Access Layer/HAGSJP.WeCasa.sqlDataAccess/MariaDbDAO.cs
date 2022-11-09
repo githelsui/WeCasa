@@ -2,6 +2,7 @@
 using HAGSJP.WeCasa.Models;
 using System.Data;
 using MySqlConnector;
+using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
@@ -10,7 +11,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
     /// Connecting to MariaDB Server to perform database operations
     /// https://www.nuget.org/packages/MySqlConnector/
     /// </summary>
-    public class MariaDbDAO
+    public class MariaDbDAO : ILoggerDAO
     {
         private string _connectionString;
 
@@ -61,7 +62,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         /// <param name="username"></param>
         /// <param name="otp_phrase"></param>
         /// <returns></returns>
-        public Result AddUser(string email, string username, string password)
+        public Result AddUser(User user, string password)
         {
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
@@ -73,14 +74,14 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 var command = connection.CreateCommand();
                 command.CommandText = insertSql;
-                command.Parameters.AddWithValue("@username", username);
-                command.Parameters.AddWithValue("@email", email);
+                command.Parameters.AddWithValue("@username", user.Username);
+                command.Parameters.AddWithValue("@email", user.Email);
                 command.Parameters.AddWithValue("@password", password);
 
                 // Execution of SQL
                 var rows = command.ExecuteNonQuery();
 
-                connection.Close();
+                //connection.Close();
 
                 var result = ValidateSqlStatement(rows);
                 return result;
@@ -93,32 +94,30 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         /// </summary>
         /// <param name="message"></param>
         /// <returns>bool Result</returns>
-        public async Task<Result> LogData(string message, string category, string logLevel, DateTime dateTime, int userId)
+        public async Task<Result> LogData(Log log)
         {
-            long timestamp = ((DateTimeOffset)dateTime).ToUnixTimeSeconds();
-
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
 
                 // Insert SQL statement
-                var insertSql = @"INSERT INTO `Logs` (`Message`, `Log_Level`, `Category` `Timestamp`, `User_Id`) values (@message, @logLevel, @category, @timestamp, @userId);";
+                var insertSql = @"INSERT INTO `Logs` (`Message`, `Log_Level`, `Category`, `Username`) values (@message, @logLevel, @category, @username);";
 
                 var command = connection.CreateCommand();
                 command.CommandText = insertSql;
-                command.Parameters.AddWithValue("@message", message);
-                command.Parameters.AddWithValue("@logLevel", logLevel);
-                command.Parameters.AddWithValue("@category", category);
-                command.Parameters.AddWithValue("@timestamp", timestamp);
-                command.Parameters.AddWithValue("@userId", userId);
+                command.Parameters.AddWithValue("@message", log.Message);
+                command.Parameters.AddWithValue("@logLevel", log.LogLevel);
+                command.Parameters.AddWithValue("@category", log.Category);
+                command.Parameters.AddWithValue("@username", log.Username);
 
                 // Execution of SQL
-                var rows = command.ExecuteNonQuery();
+                int rows = await command.ExecuteNonQueryAsync();
 
                 connection.Close();
 
                 var result = ValidateSqlStatement(rows);
+
                 return result;
             }
         }

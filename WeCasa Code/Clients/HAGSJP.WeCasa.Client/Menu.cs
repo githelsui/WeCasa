@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HAGSJP.WeCasa.ManagerLayer.Implementations;
 
 namespace HAGSJP.WeCasa.Client
 {
@@ -20,12 +21,19 @@ namespace HAGSJP.WeCasa.Client
                 switch (Console.ReadLine())
                 {
                     case "1":
-                        Registration r = new Registration();
-                        string email = r.ValidateEmail();
-                        string password = r.ValidatePassword();
-                        string confirmPassword = r.ConfirmPassword(password);
-                        string username = r.GetUniqueUsername();
-                        r.RegisterUser(email, username, password);
+                        UserManager um = new UserManager();
+                        string email = um.ValidateEmail();
+                        string password = um.ValidatePassword();
+                        string confirmPassword = um.ConfirmPassword(password);
+                        string username = um.GetUniqueUsername();
+                        var result = um.RegisterUser(email, username, password);
+                        if (result.IsSuccessful)
+                        {
+                            Console.WriteLine("Account Created!");
+                        } else
+                        {
+                            Console.WriteLine("An error occurred. Please try again later.");
+                        }
                         break;
                     /*case "2":
                         Login l = new Login();

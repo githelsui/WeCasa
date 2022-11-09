@@ -20,7 +20,8 @@ namespace HAGSJP.WeCasa.Logging.Test
 
             //Act
             stopwatch.Start();
-            var logResult = await systemUnderTest.LogData("Testing", "Info", "Business", DateTime.Now, 0);
+            Log testLog = new Log("Testing", "Info", "Business", DateTime.Now, "test_user");
+            var logResult = await systemUnderTest.LogData(testLog);
             stopwatch.Stop();
 
             // turn ms to seconds

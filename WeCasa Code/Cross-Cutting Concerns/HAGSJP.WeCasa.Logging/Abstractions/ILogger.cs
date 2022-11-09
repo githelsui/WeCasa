@@ -1,4 +1,5 @@
-﻿using HAGSJP.WeCasa.Models;
+﻿using HAGSJP.WeCasa.Logging.Implementations;
+using HAGSJP.WeCasa.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace HAGSJP.WeCasa.Logging.Abstractions
 {
     public interface ILogger
     {
-        Task<Result> Log(string message, string logLevel, string category, DateTime dateTime, int userId);
+        Task<Result> Log(string message, string logLevel, string category, string username);
     }
 
     // Interface segregation principle

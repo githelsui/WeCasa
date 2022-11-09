@@ -6,14 +6,6 @@
 
         public string? ErrorMessage { get; set; }
 
-        // public LayerPayload = Payload;
         public object Payload;
     }
-
-    /*
-    public class LayerPayload
-    {
-
-    }
-    */
 }
