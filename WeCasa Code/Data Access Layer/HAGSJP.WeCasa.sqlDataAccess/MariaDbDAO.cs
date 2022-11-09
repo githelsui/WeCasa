@@ -70,11 +70,10 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 connection.Open();
 
                 // Insert SQL statement
-                var insertSql = @"INSERT INTO `Users` (`username`, `email`, `password`, `is_enabled`, `is_admin`) values (@username, @email, @password, 0, 0);";
+                var insertSql = @"INSERT INTO `Users` (`email`, `password`, `is_enabled`, `is_admin`) values (@email, @password, 0, 0);";
 
                 var command = connection.CreateCommand();
                 command.CommandText = insertSql;
-                command.Parameters.AddWithValue("@username", user.Username);
                 command.Parameters.AddWithValue("@email", user.Email);
                 command.Parameters.AddWithValue("@password", password);
 

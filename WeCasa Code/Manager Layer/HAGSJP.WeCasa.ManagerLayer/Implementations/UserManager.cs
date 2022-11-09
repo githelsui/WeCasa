@@ -29,7 +29,7 @@ namespace HAGSJP.WeCasa.ManagerLayer.Implementations
             var checkNumber = new Regex(@"[0-9]+");
             var checkUppercase = new Regex(@"[A-Z]+");
             var checkLowercase = new Regex(@"[a-z]+");
-            var checkLength = new Regex(@".{8,}");
+            var checkLength = new Regex(@".{8,80}");
             var checkSpecialChar = new Regex(@"[!@.,-]");
 
             Console.WriteLine("Enter Password: ");
@@ -48,7 +48,7 @@ namespace HAGSJP.WeCasa.ManagerLayer.Implementations
                     password = Console.ReadLine();
                     if (!checkLength.IsMatch(password))
                     {
-                        Console.WriteLine("Invalid Password: Password is shorter than 8 Characters");
+                        Console.WriteLine("Invalid Password: Password is not within the character range (8-80)");
                     }
                     else if (!checkUppercase.IsMatch(password))
                     {
@@ -98,16 +98,12 @@ namespace HAGSJP.WeCasa.ManagerLayer.Implementations
             }
             return confirmPassword;
         }
-        public string GetUniqueUsername()
-        {
-            return "unique_username";
-        }
 
-        public Result RegisterUser(string email, string username, string password)
+        public Result RegisterUser(string email, string password)
         {
             Result userPersistResult = new Result();
 
-            User user = new User(username, email);
+            User user = new User(email);
             MariaDbDAO dao = new MariaDbDAO();
 
             userPersistResult = dao.AddUser(user, password);
@@ -116,13 +112,13 @@ namespace HAGSJP.WeCasa.ManagerLayer.Implementations
             {
                 // Logging the registration
                 Logger successfulLogger = new Logger(dao);
-                successfulLogger.Log("Account created successfully", "Info", "Data Store", user.Username);
+                successfulLogger.Log("Account created successfully", "Info", "Data Store", user.Email);
             }
             else
             {
                 // Logging the error
                 Logger errorLogger = new Logger(dao);
-                errorLogger.Log("Error creating an account", "Error", "Data Store", user.Username);
+                errorLogger.Log("Error creating an account", "Error", "Data Store", user.Email);
 
             }
             return userPersistResult;

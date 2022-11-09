@@ -2,15 +2,12 @@
 {
     public class User
     {
-        public int Id;
-        public User(string username, string email)
+        public User(string email)
         {
-            Username = username;
             Email = email;
         }
-        public string Username { get; set; }
 
         public string Email { get; set; }
-
+        public string Username { get; set; }
     }
 }

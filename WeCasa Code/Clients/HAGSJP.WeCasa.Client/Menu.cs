@@ -25,8 +25,7 @@ namespace HAGSJP.WeCasa.Client
                         string email = um.ValidateEmail();
                         string password = um.ValidatePassword();
                         string confirmPassword = um.ConfirmPassword(password);
-                        string username = um.GetUniqueUsername();
-                        var result = um.RegisterUser(email, username, password);
+                        var result = um.RegisterUser(email, password);
                         if (result.IsSuccessful)
                         {
                             Console.WriteLine("Account Created!");
