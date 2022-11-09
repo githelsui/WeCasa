@@ -8,7 +8,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess
     /// <summary>
     /// SQL Server Data Access Object aka an object for 
     /// Connecting to MS SQL Server to perform database operations
-    /// https://www.nuget.org/packages/MySqlConnector/
     /// </summary>
     public class SQLServerLoggingDAO
     {
@@ -26,13 +25,15 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             _connectionString = connectionString;
         }
 
-        public async Task<Result> LogData(string message)
+        public Result LogData(string message)
+        //public async Task<Result> LogData(string message)
         {
             var result = new Result();
 
             using (var connection = new SqlConnection(_connectionString)) // ADO.NET, all relational DB accept ANSI SQL
             {
-                await connection.OpenAsync();
+                connection.Open();
+                //await connection.OpenAsync();
 
                 // Insert SQL statement
                 var insertSql = "INSERT INTO Logs (Message) values(@message)";
@@ -43,9 +44,11 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 // Execution of SQL
                 var rows = command.ExecuteNonQuery();
+                //var rows = await command.ExecuteNonQueryAsync();
 
                 connection.Close();
 
+                // Validating results
                 if (rows == 1)
                 {
                     result.IsSuccessful = true;
