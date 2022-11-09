@@ -22,7 +22,7 @@ namespace HAGSJP.WeCasa.Registration.Test
             stopwatch.Stop();
 
             // turn ms to seconds
-            var actual = stopwatch.ElapsedMilliseconds * 60_000;
+            var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds,60_000);
 
             // Assert
             Assert.IsNotNull(actual);

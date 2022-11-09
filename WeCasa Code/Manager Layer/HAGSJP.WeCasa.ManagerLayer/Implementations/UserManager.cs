@@ -15,7 +15,25 @@ namespace HAGSJP.WeCasa.ManagerLayer.Implementations
     {
         public bool ValidateEmail(string email)
         {
-            return MailAddress.TryCreate(email, out var mailAddress);
+            bool validEmail;
+            var checkValidChar = new Regex(@"^[a-zA-Z0-9.,@!\- ]*$");
+            if (!MailAddress.TryCreate(email, out var mailAddress))
+            {
+                validEmail = false;
+            } 
+            else if(email.Length > 255)
+            {
+                validEmail = false;
+            } 
+            else if(!checkValidChar.IsMatch(email))
+            {
+                validEmail = false;
+            }
+            else
+            {
+                validEmail = true;
+            }
+            return validEmail;
         }
         public Result ValidatePassword(string password)
         {
