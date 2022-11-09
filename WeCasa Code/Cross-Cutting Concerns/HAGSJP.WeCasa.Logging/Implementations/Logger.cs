@@ -11,6 +11,8 @@ namespace HAGSJP.WeCasa.Logging.Implementations
     public class Logger : ILogger
     {
         private readonly ILoggerDAO _dao;
+        public static string LogLevels = ['Info', 'Debug', 'Warning', 'Error'];
+        public static string Categories = ['View', 'Business', 'Server', 'Data', 'Data Store'];
 
         // Dependency inversion principle
         // Our logger is extensible
@@ -35,7 +37,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
 
                 return result;
             }
-
+            // Invalid length
             if (message.Length > 200)
             {
                 result.IsSuccessful = false;
@@ -47,10 +49,27 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             if (message.Contains("$"))
             {
                 result.IsSuccessful = false;
-                result.ErrorMessage = "Mesage contians < which is invalid";
+                result.ErrorMessage = "Message contains invalid character: $";
 
                 return result;
             }
+            // Invalid Log Level
+            if (!LogLevels.Contains(logLevel))
+            {
+                result.IsSuccessful = false;
+                result.ErrorMessage = "Invalid log level";
+
+                return result;
+            }
+            // Invalid Category
+            if (!Categories.Contains(category))
+            {
+                result.IsSuccessful = false;
+                result.ErrorMessage = "Invalid category";
+
+                return result;
+            }
+
             #endregion
 
             // Step 2: Create a Log, Perform the logging
