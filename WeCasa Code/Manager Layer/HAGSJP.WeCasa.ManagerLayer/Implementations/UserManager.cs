@@ -20,13 +20,14 @@ namespace HAGSJP.WeCasa.ManagerLayer.Implementations
         public Result ValidatePassword(string password)
         {
             var result = new Result();
+            var checkValidChar = new Regex(@"^[a-zA-Z0-9.,@!\- ]*$");
             var checkNumber = new Regex(@"[0-9]+");
             var checkUppercase = new Regex(@"[A-Z]+");
             var checkLowercase = new Regex(@"[a-z]+");
             var checkLength = new Regex(@".{8,80}");
             var checkSpecialChar = new Regex(@"[!@.,-]");
 
-            if (checkLength.IsMatch(password) && checkNumber.IsMatch(password) && checkUppercase.IsMatch(password) && checkLowercase.IsMatch(password) && checkSpecialChar.IsMatch(password))
+            if (checkValidChar.IsMatch(password) && checkLength.IsMatch(password) && checkNumber.IsMatch(password) && checkUppercase.IsMatch(password) && checkLowercase.IsMatch(password) && checkSpecialChar.IsMatch(password))
             {
                 result.IsSuccessful = true;
                 return result;
@@ -34,7 +35,6 @@ namespace HAGSJP.WeCasa.ManagerLayer.Implementations
 
             else
             {
-                bool validP;
                 if (!checkLength.IsMatch(password))
                 {
                     result.IsSuccessful = false;
@@ -59,6 +59,11 @@ namespace HAGSJP.WeCasa.ManagerLayer.Implementations
                 {
                     result.IsSuccessful = false;
                     result.ErrorMessage = "Invalid Password: Password does not contain a special case character";
+                }
+                else if (!checkValidChar.IsMatch(password))
+                {
+                    result.IsSuccessful = false;
+                    result.ErrorMessage = "Invalid Password: Password contains invalid characters";
                 }
                 else
                 {
