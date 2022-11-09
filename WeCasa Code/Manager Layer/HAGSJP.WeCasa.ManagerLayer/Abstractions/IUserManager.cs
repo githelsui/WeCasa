@@ -12,8 +12,8 @@ namespace HAGSJP.WeCasa.ManagerLayer.Implementations
 {
     public interface IUserManager
     {
-        public string ValidateEmail();
-        public string ValidatePassword();
+        public bool ValidateEmail(string email);
+        public Result ValidatePassword(string Password);
         public string ConfirmPassword(string password);
         public Result RegisterUser(string email, string password);
     }

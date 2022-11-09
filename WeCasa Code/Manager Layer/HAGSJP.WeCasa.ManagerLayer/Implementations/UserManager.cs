@@ -13,70 +13,59 @@ namespace HAGSJP.WeCasa.ManagerLayer.Implementations
 {
     public class UserManager : IUserManager
     {
-        public string ValidateEmail()
+        public bool ValidateEmail(string email)
         {
-            Console.WriteLine("Enter Email Address: ");
-            string email = Console.ReadLine();
-            while (!MailAddress.TryCreate(email, out var mailAddress))
-            {
-                Console.WriteLine("Invalid email provided. Retry again or contact system administrator: ");
-                email = Console.ReadLine();
-            }
-            return email;
+            return MailAddress.TryCreate(email, out var mailAddress);
         }
-        public string ValidatePassword()
+        public Result ValidatePassword(string password)
         {
-            var checkValidChar = new Regex(@"^[a-zA-Z0-9.,@!\- ]*$");
+            var result = new Result();
             var checkNumber = new Regex(@"[0-9]+");
             var checkUppercase = new Regex(@"[A-Z]+");
             var checkLowercase = new Regex(@"[a-z]+");
             var checkLength = new Regex(@".{8,80}");
             var checkSpecialChar = new Regex(@"[!@.,-]");
 
-            Console.WriteLine("Enter Password: ");
-            string password = Console.ReadLine();
-            if (checkValidChar.IsMatch(password) && checkLength.IsMatch(password) && checkNumber.IsMatch(password) && checkUppercase.IsMatch(password) && checkLowercase.IsMatch(password) && checkSpecialChar.IsMatch(password))
+            if (checkLength.IsMatch(password) && checkNumber.IsMatch(password) && checkUppercase.IsMatch(password) && checkLowercase.IsMatch(password) && checkSpecialChar.IsMatch(password))
             {
-                return password;
+                result.IsSuccessful = true;
+                return result;
             }
 
             else
             {
-                bool validP = false;
-                while (validP == false)
+                bool validP;
+                if (!checkLength.IsMatch(password))
                 {
-                    Console.WriteLine("Invalid passphrase provided. Retry again or contact system administrator: ");
-                    password = Console.ReadLine();
-                    if (!checkLength.IsMatch(password))
-                    {
-                        Console.WriteLine("Invalid Password: Password is not within the character range (8-80)");
-                    }
-                    else if (!checkValidChar.IsMatch(password))
-                    {
-                        Console.WriteLine("Invalid Password: Password contains invalid characters");
-                    }
-                    else if (!checkUppercase.IsMatch(password))
-                    {
-                        Console.WriteLine("Invalid Password: Password does not contain upper case letter");
-                    }
-                    else if (!checkLowercase.IsMatch(password))
-                    {
-                        Console.WriteLine("Invalid Password: Password does not contain lower case letter");
-                    }
-                    else if (!checkNumber.IsMatch(password))
-                    {
-                        Console.WriteLine("Invalid Password: Password does not contain a numeric value");
-                    }
-                    else if (!checkSpecialChar.IsMatch(password))
-                    {
-                        Console.WriteLine("Invalid Password: Password does not contain a special case character");
-                    }
-                    else
-                    {
-                        validP = true;
-                    }
+                    result.IsSuccessful = false;
+                    result.ErrorMessage = "Invalid Password: Password is not within the character range (8-80)";
                 }
-                return password;
+                else if (!checkUppercase.IsMatch(password))
+                {
+                    result.IsSuccessful = false;
+                    result.ErrorMessage = "Invalid Password: Password does not contain upper case letter";
+                }
+                else if (!checkLowercase.IsMatch(password))
+                {
+                    result.IsSuccessful = false;
+                    result.ErrorMessage = "Invalid Password: Password does not contain lower case letter";
+                }
+                else if (!checkNumber.IsMatch(password))
+                {
+                    result.IsSuccessful = false;
+                    result.ErrorMessage = "Invalid Password: Password does not contain a numeric value";
+                }
+                else if (!checkSpecialChar.IsMatch(password))
+                {
+                    result.IsSuccessful = false;
+                    result.ErrorMessage = "Invalid Password: Password does not contain a special case character";
+                }
+                else
+                {
+                    result.IsSuccessful = true;
+                    result.ErrorMessage = "";
+                }
+                return result;
             }
         }
 

@@ -7,8 +7,7 @@ using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
 
 namespace HAGSJP.WeCasa.Logging.Implementations
 {
-    public 
-
+    
     public class Logger : ILogger
     {
         private readonly ILoggerDAO _dao;
