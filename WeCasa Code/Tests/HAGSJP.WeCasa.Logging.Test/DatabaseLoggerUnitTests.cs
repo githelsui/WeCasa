@@ -14,22 +14,7 @@ public class DatabaseLoggerUnitTest
         var expected = typeof(Logger);
 
         //Act
-        var actual = new MariaDBLoggingDAO();
-
-        //Assert (2 options)
-        Assert.IsNotNull(actual);
-        Assert.IsTrue(actual.GetType() == expected);
-    }
-
-    [TestMethod]
-    public void ShouldCreateInstanceWithParameterCtor()
-    {
-        //Arrange
-        var expected = typeof(Logger);
-        var expectedTableName = "Logs";
-
-        //Act
-        var actual = new MariaDBLoggingDAO(expectedTableName);
+        var actual = new MariaDbDAO();
 
         //Assert (2 options)
         Assert.IsNotNull(actual);

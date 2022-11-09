@@ -1,40 +1,40 @@
-﻿//using HAGSJP.WeCasa.Registration;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-//namespace HAGSJP.WeCasa.Client
-//{
-class Menu
+namespace HAGSJP.WeCasa.Client
 {
-    static void Main(string[] args)
-    {
-        bool menu = true;
-        while (menu != false)
+    class Menu
+    { 
+        public void OpenMenu()
         {
-            Console.WriteLine("(1) Register New Account");
-            Console.WriteLine("(2) Login to Existing Account");
-            Console.WriteLine("(3) Exit");
-            switch (Console.ReadLine())
+            bool menu = true;
+            while (menu != false)
             {
-                case "1":
-                    Registration r = new Registration();
-                    string email = r.ValidateEmail();
-                    string password = r.ValidatePassword();
-                    string confirmPassword = r.ConfirmPassword(password);
-                    Console.WriteLine("Account Created!");
-                    break;
-                case "2":
-                    Login l = new Login();
-                    break;
-                case "3":
-                    menu = false;
-                    break;
+                Console.WriteLine("(1) Register New Account");
+                //Console.WriteLine("(2) Login to Existing Account");
+                Console.WriteLine("(2) Exit");
+                switch (Console.ReadLine())
+                {
+                    case "1":
+                        Registration r = new Registration();
+                        string email = r.ValidateEmail();
+                        string password = r.ValidatePassword();
+                        string confirmPassword = r.ConfirmPassword(password);
+                        string username = r.GetUniqueUsername();
+                        r.RegisterUser(email, username, password);
+                        break;
+                    /*case "2":
+                        Login l = new Login();
+                        break;*/
+                    case "2":
+                        menu = false;
+                        break;
+                }
             }
         }
     }
 }
-//}

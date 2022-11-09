@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using HAGSJP.WeCasa.Logging.Implementations;
+using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.sqlDataAccess;
 
 namespace HAGSJP.WeCasa.Logging.Test
@@ -10,16 +11,16 @@ namespace HAGSJP.WeCasa.Logging.Test
     {
 
         [TestMethod]
-        public void ShouldLogWithin5Seconds()
+        public async void ShouldLogWithin5Seconds()
         {
             //Arrange
             var stopwatch = new Stopwatch();
             var expected = 5;
-            var systemUnderTest = new MariaDBLoggingDAO("test");
+            var systemUnderTest = new MariaDbDAO();
 
             //Act
             stopwatch.Start();
-            var logResult = systemUnderTest.LogData("Testing");
+            var logResult = await systemUnderTest.LogData("Testing", "Info", "Business", DateTime.Now, 0);
             stopwatch.Stop();
 
             // turn ms to seconds

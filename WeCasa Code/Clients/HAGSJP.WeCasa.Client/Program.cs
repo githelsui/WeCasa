@@ -7,10 +7,9 @@ namespace HAGSJP.WeCasa.Client
     {
         public static void Main(string[] args)
         {
-            MariaDBLoggingDAO l = new MariaDBLoggingDAO();
-            Console.WriteLine("Hello, World!");
-            string input = Console.ReadLine();
-            var result = l.LogData(input);
+            // Console menu
+            Menu menu = new Menu();
+            menu.OpenMenu();
         }
     }
 }
