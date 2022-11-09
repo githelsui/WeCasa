@@ -1,12 +1,12 @@
 namespace HAGSJP.WeCasa.Logging.Test;
-
+using System.Threading.Tasks;
 using HAGSJP.WeCasa.Logging.Implementations;
+using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.sqlDataAccess;
 
 [TestClass]
 public class DatabaseLoggerUnitTest
 {
-
     [TestMethod]
     public void ShouldCreateInstanceWithDefaultCtor()
     {
@@ -22,17 +22,19 @@ public class DatabaseLoggerUnitTest
     }
 
     [TestMethod]
-    public void ShouldCreateInstanceWithValidCharacters()
+    public async Task ShouldCreateInstanceWithValidCharactersAsync()
     {
-        //Arrange
-        var expected = typeof(Logger);
+        var expected = new Result();
+        expected.IsSuccessful = false;
+        expected.ErrorMessage = "Message contains invalid character: $";
+        
+        MariaDbDAO testMariaDao = new MariaDbDAO();
+        Logger testLogger = new Logger(testMariaDao);
+        var actual =  await testLogger.Log("$", "Info", "Business", "test_user");
 
-        //Act
-        var actual = new MariaDbDAO();
-
-        //Assert (2 options)
         Assert.IsNotNull(actual);
-        Assert.IsTrue(actual.GetType() == expected);
+        Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
+        Assert.IsTrue(actual.ErrorMessage == expected.ErrorMessage);
     }
 
     [TestMethod]

@@ -6,6 +6,6 @@
 
         public string? ErrorMessage { get; set; }
 
-        public object Payload;
+        public object? Payload;
     }
 }

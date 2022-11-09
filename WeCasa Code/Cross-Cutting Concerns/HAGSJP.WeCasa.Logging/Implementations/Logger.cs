@@ -44,7 +44,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
                 return result;
             }
             // Invalid characters
-            if (message.Contains("<"))
+            if (message.Contains("$"))
             {
                 result.IsSuccessful = false;
                 result.ErrorMessage = "Mesage contians < which is invalid";
