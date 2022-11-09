@@ -1,17 +1,14 @@
 using System.Diagnostics;
-using HAGSJP.WeCasa.Logging.Implementations;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.sqlDataAccess;
 
-namespace HAGSJP.WeCasa.Logging.Test
+namespace HAGSJP.WeCasa.Registration.Test
 {
-
     [TestClass]
-    public class DatabaseLoggerIntegrationTest
+    public class UserCreationIntegrationTests
     {
-
         [TestMethod]
-        public async void ShouldLogWithin5Seconds()
+        public void ShouldCreateWithin5Seconds()
         {
             // Arrange
             var stopwatch = new Stopwatch();
@@ -20,8 +17,8 @@ namespace HAGSJP.WeCasa.Logging.Test
 
             // Act
             stopwatch.Start();
-            Log testLog = new Log("Testing", "Info", "Business", DateTime.Now, "test_user");
-            var logResult = await systemUnderTest.LogData(testLog);
+            User testUser = new User("5secondintegration@gmail.com");
+            var testResult = systemUnderTest.AddUser(testUser, "P@ssw0rd");
             stopwatch.Stop();
 
             // turn ms to seconds
@@ -31,7 +28,7 @@ namespace HAGSJP.WeCasa.Logging.Test
             Assert.IsNotNull(actual);
             Assert.IsTrue(actual > 0);
             Assert.IsTrue(actual <= expected);
-            Assert.IsTrue(logResult.IsSuccessful);
+            Assert.IsTrue(testResult.IsSuccessful);
         }
     }
 }
