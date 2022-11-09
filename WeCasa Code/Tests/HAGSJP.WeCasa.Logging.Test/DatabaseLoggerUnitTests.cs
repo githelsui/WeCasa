@@ -50,13 +50,15 @@ public class DatabaseLoggerUnitTest
     }
 
     [TestMethod]
-    public void ShouldCreateInstanceWithValidLogLevels()
+    public void ShouldCreateInstanceWithValidLogLevelOnly()
     {
         //Arrange
-        var expected = typeof(Logger);
+        var expected = false;
 
         //Act
-        var actual = new MariaDbDAO();
+        Log testLog = new Log("Testing", "Invalid Log Level", "Business", DateTime.Now, "test_user");
+        var logResult = await systemUnderTest.LogData(testLog);
+        var actual = logResult.IsSuccessful;
 
         //Assert (2 options)
         Assert.IsNotNull(actual);
@@ -64,13 +66,15 @@ public class DatabaseLoggerUnitTest
     }
 
     [TestMethod]
-    public void ShouldCreateInstanceWithValidCategories()
+    public void ShouldCreateInstanceWithValidCategoryOnly()
     {
         //Arrange
-        var expected = typeof(Logger);
+        var expected = false;
 
         //Act
-        var actual = new MariaDbDAO();
+        Log testLog = new Log("Testing", "Info", "Invalid Category", DateTime.Now, "test_user");
+        var logResult = await systemUnderTest.LogData(testLog);
+        var actual = logResult.IsSuccessful;
 
         //Assert (2 options)
         Assert.IsNotNull(actual);

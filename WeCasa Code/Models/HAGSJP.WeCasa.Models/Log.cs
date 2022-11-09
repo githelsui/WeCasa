@@ -2,6 +2,7 @@
 {
     public class Log
     {
+
         // Constructor without DateTime (defaulted to current_timestamp in Logs database)
         public Log(string message, string logLevel, string category, string user)
         {
