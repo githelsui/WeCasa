@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HAGSJP.WeCasa.Client
+//namespace HAGSJP.WeCasa.Client
+//{
+class Login
 {
-    class Login
+    public bool ValidateEmail(string email)
     {
-        public bool ValidateEmail(string email)
-        {
-            return false;
-        }
-        public bool ValidatePassword(string password)
-        {
-            return false;
-        }
+        return false;
+    }
+    public bool ValidatePassword(string password)
+    {
+        return false;
     }
 }
+//}
