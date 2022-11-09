@@ -5,11 +5,41 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HAGSJP.WeCasa.ManagerLayer.Implementations;
+using HAGSJP.WeCasa.Models;
 
 namespace HAGSJP.WeCasa.Client
 {
     class Menu
     { 
+        public string GetEmail(UserManager um)
+        {
+            Console.WriteLine("Enter Email Address: ");
+            string email = Console.ReadLine();
+            bool validEmail = um.ValidateEmail(email);
+            while (!validEmail)
+            {
+                Console.WriteLine("Invalid email provided. Retry again or contact system administrator: ");
+                email = Console.ReadLine();
+                validEmail = um.ValidateEmail(email);
+            }
+            return email;
+        }
+
+        public string GetPassword(UserManager um)
+        {
+            Console.WriteLine("Enter Password: ");
+            string password = Console.ReadLine();
+            var validP = new Result();
+            validP = um.ValidatePassword(password);
+            while (validP.IsSuccessful == false)
+            {
+                Console.WriteLine(validP.ErrorMessage);
+                password = Console.ReadLine();
+                validP = um.ValidatePassword(password);
+            }
+            return password;
+        }
+
         public void OpenMenu()
         {
             bool menu = true;
@@ -22,8 +52,8 @@ namespace HAGSJP.WeCasa.Client
                 {
                     case "1":
                         UserManager um = new UserManager();
-                        string email = um.ValidateEmail();
-                        string password = um.ValidatePassword();
+                        string email = GetEmail(um);
+                        string password = GetPassword(um);
                         string confirmPassword = um.ConfirmPassword(password);
                         var result = um.RegisterUser(email, password);
                         if (result.IsSuccessful)

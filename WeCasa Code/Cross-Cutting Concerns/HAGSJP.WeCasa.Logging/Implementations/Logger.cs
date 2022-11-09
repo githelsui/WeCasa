@@ -11,8 +11,6 @@ namespace HAGSJP.WeCasa.Logging.Implementations
     public class Logger : ILogger
     {
         private readonly ILoggerDAO _dao;
-        public static string LogLevels = ['Info', 'Debug', 'Warning', 'Error'];
-        public static string Categories = ['View', 'Business', 'Server', 'Data', 'Data Store'];
 
         // Dependency inversion principle
         // Our logger is extensible
@@ -49,23 +47,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             if (message.Contains("<"))
             {
                 result.IsSuccessful = false;
-                result.ErrorMessage = "Mesage contains < which is invalid";
-
-                return result;
-            }
-            // Invalid Log Level
-            if (!LogLevels.Contains(logLevel))
-            {
-                result.IsSuccessful = false;
-                result.ErrorMessage = "Invalid log level";
-
-                return result;
-            }
-            // Invalid Category
-            if (!Categories.Contains(category))
-            {
-                result.IsSuccessful = false;
-                result.ErrorMessage = "Invalid category";
+                result.ErrorMessage = "Mesage contians < which is invalid";
 
                 return result;
             }
@@ -83,8 +65,6 @@ namespace HAGSJP.WeCasa.Logging.Implementations
 
                 return result;
             }
-
-
 
             // Translate the error to something that is more user friendly or layer friendly
 
