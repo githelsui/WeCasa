@@ -13,6 +13,8 @@ namespace HAGSJP.WeCasa.Logging.Implementations
         private readonly ILoggerDAO _dao;
         public static string[] LogLevels = {"Info", "Debug", "Warning", "Error"};
         public static string[] Categories = {"View", "Business", "Server", "Data", "Data Store"};
+        public static char[] specialCharacters = {',', '&', '?', '{', '}', '\\', '(', ')', '[', ']', '-', ';', '~', '|', '$', '!', '>', '*', '%', '_'};
+
 
         // Dependency inversion principle
         // Our logger is extensible
@@ -46,10 +48,11 @@ namespace HAGSJP.WeCasa.Logging.Implementations
                 return result;
             }
             // Invalid characters
-            if (message.Contains("$"))
+            var matchedIndex = message.IndexOfAny(specialCharacters);
+            if (matchedIndex != -1)
             {
                 result.IsSuccessful = false;
-                result.ErrorMessage = "Message contains invalid character: $";
+                result.ErrorMessage = "Message contains invalid character: " + message[matchedIndex];
 
                 return result;
             }
