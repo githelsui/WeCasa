@@ -24,7 +24,11 @@ namespace HAGSJP.WeCasa.Logging.Implementations
         }
 
         public async Task<Result> Log(string message, string logLevel, string category, string username)
-        {             
+        {     
+            // System.Timers.Timer aTimer = new System.Timers.Timer();
+            // aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            // aTimer.Close = 5000;
+            // aTimer.Enabled = true; 
             var result = new Result();
 
             // Task Parallelism Library TPL
@@ -80,6 +84,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             Log log = new Log(message, logLevel, category, username);
 
             var daoResult = await _dao.LogData(log).ConfigureAwait(false);
+            Console.Write("DAOOO" + daoResult);
 
             if(daoResult.IsSuccessful)
             {

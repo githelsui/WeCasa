@@ -28,8 +28,8 @@ namespace HAGSJP.WeCasa.Logging.Test
 
             MariaDbDAO testMariaDao = new MariaDbDAO();
             Logger testLogger = new Logger(testMariaDao);
-            var actual = await testLogger.Log("test_log_message", "Info", "Business", "testUser");
-
+            var actual = await testLogger.Log("test Log Message", "Info", "Business", "testUser");
+            Console.Write("DAOOO" + actual.ErrorMessage);
             Assert.IsNotNull(actual);
             Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
         }
