@@ -11,8 +11,8 @@ namespace HAGSJP.WeCasa.Logging.Implementations
     public class Logger : ILogger
     {
         private readonly ILoggerDAO _dao;
-        public static string LogLevels = ['Info', 'Debug', 'Warning', 'Error'];
-        public static string Categories = ['View', 'Business', 'Server', 'Data', 'Data Store'];
+        public static string[] LogLevels = {"Info", "Debug", "Warning", "Error"};
+        public static string[] Categories = {"View", "Business", "Server", "Data", "Data Store"};
 
         // Dependency inversion principle
         // Our logger is extensible

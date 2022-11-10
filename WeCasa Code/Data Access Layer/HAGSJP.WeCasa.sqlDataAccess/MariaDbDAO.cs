@@ -101,7 +101,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 await connection.OpenAsync();
 
                 // Insert SQL statement
-                var insertSql = @"INSERT INTO `Logs` (`Message`, `Log_Level`, `Category`, `Username`) values (@message, @logLevel, @category, @username);";
+                var insertSql = @"INSERT INTO `Logs` (`Message`, `Log_Level`, `Category`, `User_Id`) values (@message, @logLevel, @category, @username);";
 
                 var command = connection.CreateCommand();
                 command.CommandText = insertSql;

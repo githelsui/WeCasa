@@ -1,96 +1,115 @@
-namespace HAGSJP.WeCasa.Logging.Test;
+
 using System.Threading.Tasks;
 using HAGSJP.WeCasa.Logging.Implementations;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.sqlDataAccess;
 
-[TestClass]
-public class DatabaseLoggerUnitTest
+namespace HAGSJP.WeCasa.Logging.Test
 {
-    [TestMethod]
-    public void ShouldCreateInstanceWithDefaultCtor()
+    [TestClass]
+    public class DatabaseLoggerUnitTest
     {
-        //Arrange
-        var expected = typeof(Logger);
+        // [TestMethod]
+        // public Task ShouldCreateInstanceWithDefaultCtor()
+        // {
+        //    //Arrange
+        //    var expected = typeof(Logger);
 
-        //Act
-        var actual = new MariaDbDAO();
+        //    //Act
+        //    var actual = new MariaDbDAO();
 
-        //Assert (2 options)
-        Assert.IsNotNull(actual);
-        Assert.IsTrue(actual.GetType() == expected);
-    }
+        //    //Assert (2 options)
+        //    Assert.IsNotNull(actual);
+        //    Assert.IsTrue(actual.GetType() == expected);
+        // }
 
-    [TestMethod]
-    public async Task ShouldCreateInstanceWithValidCharactersAsync()
-    {
-        var expected = new Result();
-        expected.IsSuccessful = false;
-        expected.ErrorMessage = "Message contains invalid character: $";
-        
-        MariaDbDAO testMariaDao = new MariaDbDAO();
-        Logger testLogger = new Logger(testMariaDao);
-        var actual =  await testLogger.Log("$", "Info", "Business", "test_user");
+        [TestMethod]
+        public async Task ShouldLogSuccessfully()
+        {
+            var expected = new Result();
+            expected.IsSuccessful = false;
+            expected.ErrorMessage = "Message contains invalid character: $";
 
-        Assert.IsNotNull(actual);
-        Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
-        Assert.IsTrue(actual.ErrorMessage == expected.ErrorMessage);
-    }
+            MariaDbDAO testMariaDao = new MariaDbDAO();
+            Logger testLogger = new Logger(testMariaDao);
+            var actual = await testLogger.Log("test_log_message", "Info", "Business", "1234");
 
-    [TestMethod]
-    public async Task ShouldCreateInstanceWithValidLength()
-    {
-        //Arrange
-        var expected = new Result();
-        expected.IsSuccessful = false;
-        expected.ErrorMessage = "Message log too long";
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
+            Assert.IsTrue(actual.ErrorMessage == expected.ErrorMessage);
+        }
 
-        //Act
-        MariaDbDAO testMariaDao = new MariaDbDAO();
-        Logger testLogger = new Logger(testMariaDao);
-        var actual = await testLogger.Log("AofQks6zVX7vylbYjfJ4Iu9u5Zd1vr014cZrIyRHSdGTzhF9aAbkGDNOpohAA0zqw3XxJqxO0wxSmJ140A3BXtpLoxvnwv2iscx7Yexy6OlKAru1mXo3tDE9OO23aIJ91k9sowYDRf9TDKPugo3qifVzOA63M5TTCGx2e89kfdNIefCRbiLjNWT1iZbh3TZz3vjwSEwP", "Info", "Business", DateTime.Now, "test_user");
+        [TestMethod]
+        public async Task ShouldValidateCorrectCharacters()
+        {
+            var expected = new Result();
+            expected.IsSuccessful = false;
+            expected.ErrorMessage = "Message contains invalid character: $";
 
-        //Assert (2 options)
-        Assert.IsNotNull(actual);
-        Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
-        Assert.IsTrue(actual.ErrorMessage == expected.ErrorMessage);
-    }
+            MariaDbDAO testMariaDao = new MariaDbDAO();
+            Logger testLogger = new Logger(testMariaDao);
+            var actual = await testLogger.Log("$", "Info", "Business", "1234");
 
-    [TestMethod]
-    public async Task ShouldCreateInstanceWithValidLogLevelOnly()
-    {
-        //Arrange
-        var expected = new Result();
-        expected.IsSuccessful = false;
-        expected.ErrorMessage = "Invalid log level";
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
+            Assert.IsTrue(actual.ErrorMessage == expected.ErrorMessage);
+        }
 
-        //Act
-        MariaDbDAO testMariaDao = new MariaDbDAO();
-        Logger testLogger = new Logger(testMariaDao);
-        var actual = await testLogger.Log("Testing", "Invalid Log Level", "Business", DateTime.Now, "test_user");
+        [TestMethod]
+        public async Task ShouldCreateInstanceWithValidLength()
+        {
+            //Arrange
+            var expected = new Result();
+            expected.IsSuccessful = false;
+            expected.ErrorMessage = "Message log too long";
 
-        //Assert (2 options)
-        Assert.IsNotNull(actual);
-        Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
-        Assert.IsTrue(actual.ErrorMessage == expected.ErrorMessage);
-    }
+            //Act
+            MariaDbDAO testMariaDao = new MariaDbDAO();
+            Logger testLogger = new Logger(testMariaDao);
+            var actual = await testLogger.Log("AofQks6zVX7vylbYjfJ4Iu9u5Zd1vr014cZrIyRHSdGTzhF9aAbkGDNOpohAA0zqw3XxJqxO0wxSmJ140A3BXtpLoxvnwv2iscx7Yexy6OlKAru1mXo3tDE9OO23aIJ91k9sowYDRf9TDKPugo3qifVzOA63M5TTCGx2e89kfdNIefCRbiLjNWT1iZbh3TZz3vjwSEwP", "Info", "Business", "1234");
 
-    [TestMethod]
-    public async Task ShouldCreateInstanceWithValidCategoryOnly()
-    {
-        //Arrange
-        var expected = new Result();
-        expected.IsSuccessful = false;
-        expected.ErrorMessage = "Invalid category";
+            //Assert (2 options)
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
+            Assert.IsTrue(actual.ErrorMessage == expected.ErrorMessage);
+        }
 
-        //Act
-        MariaDbDAO testMariaDao = new MariaDbDAO();
-        Logger testLogger = new Logger(testMariaDao);
-        var actual = await testLogger.Log("Testing", "Info", "Invalid Category", DateTime.Now, "test_user");
+        [TestMethod]
+        public async Task ShouldCreateInstanceWithValidLogLevelOnly()
+        {
+            //Arrange
+            var expected = new Result();
+            expected.IsSuccessful = false;
+            expected.ErrorMessage = "Invalid log level";
 
-        //Assert (2 options)
-        Assert.IsNotNull(actual);
-        Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
-        Assert.IsTrue(actual.ErrorMessage == expected.ErrorMessage);
+            //Act
+            MariaDbDAO testMariaDao = new MariaDbDAO();
+            Logger testLogger = new Logger(testMariaDao);
+            var actual = await testLogger.Log("Testing", "Invalid Log Level", "Business", "1234");
+
+            //Assert (2 options)
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
+            Assert.IsTrue(actual.ErrorMessage == expected.ErrorMessage);
+        }
+
+        [TestMethod]
+        public async Task ShouldCreateInstanceWithValidCategoryOnly()
+        {
+            //Arrange
+            var expected = new Result();
+            expected.IsSuccessful = false;
+            expected.ErrorMessage = "Invalid category";
+
+            //Act
+            MariaDbDAO testMariaDao = new MariaDbDAO();
+            Logger testLogger = new Logger(testMariaDao);
+            var actual = await testLogger.Log("Testing", "Info", "Invalid Category", "1234");
+
+            //Assert (2 options)
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
+            Assert.IsTrue(actual.ErrorMessage == expected.ErrorMessage);
+        }
     }
 }
