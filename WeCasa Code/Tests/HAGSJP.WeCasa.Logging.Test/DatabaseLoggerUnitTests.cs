@@ -20,19 +20,19 @@ namespace HAGSJP.WeCasa.Logging.Test
            Assert.IsTrue(actual.GetType() == expected);
         }
 
-        [TestMethod]
-        public async Task ShouldLogSuccessfully()
-        {
-            var expected = new Result();
-            expected.IsSuccessful = true;
+        // [TestMethod]
+        // public async Task ShouldLogSuccessfully()
+        // {
+        //     var expected = new Result();
+        //     expected.IsSuccessful = true;
 
-            MariaDbDAO testMariaDao = new MariaDbDAO();
-            Logger testLogger = new Logger(testMariaDao);
-            var actual = await testLogger.Log("test_log_message", "Info", "Business", "testUser");
+        //     MariaDbDAO testMariaDao = new MariaDbDAO();
+        //     Logger testLogger = new Logger(testMariaDao);
+        //     var actual = await testLogger.Log("test log message", LogLevels.Debug, "Business", "testUser");
 
-            Assert.IsNotNull(actual);
-            Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
-        }
+        //     Assert.IsNotNull(actual);
+        //     Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
+        // }
 
         [TestMethod]
         public async Task ShouldValidateCorrectCharacters()
@@ -43,7 +43,7 @@ namespace HAGSJP.WeCasa.Logging.Test
 
             MariaDbDAO testMariaDao = new MariaDbDAO();
             Logger testLogger = new Logger(testMariaDao);
-            var actual = await testLogger.Log("test$", "Info", "Business", "testUser");
+            var actual = await testLogger.Log("test$", LogLevels.Info, "Business", "testUser");
             Console.Write("ERROR"+ actual.ErrorMessage);
 
             Assert.IsNotNull(actual);
@@ -62,7 +62,7 @@ namespace HAGSJP.WeCasa.Logging.Test
             //Act
             MariaDbDAO testMariaDao = new MariaDbDAO();
             Logger testLogger = new Logger(testMariaDao);
-            var actual = await testLogger.Log("Ao0fQks6zVX7vylbYjfJ4Iu9u5Zd1vr014cZrIyRHSdGTzhF9aAbkGDNOpohAA0zqw3XxJqxO0wxSmJ140A3BXtpLoxvnwv2iscx7Yexy6OlKAru1mXo3tDE9OO23aIJ91k9sowYDRf9TDKPugo3qifVzOA63M5TTCGx2e89kfdNIefCRbiLjNWT1iZbh3TZz3vjwSEwP", "Info", "Business", "testUser");
+            var actual = await testLogger.Log("Ao0fQks6zVX7vylbYjfJ4Iu9u5Zd1vr014cZrIyRHSdGTzhF9aAbkGDNOpohAA0zqw3XxJqxO0wxSmJ140A3BXtpLoxvnwv2iscx7Yexy6OlKAru1mXo3tDE9OO23aIJ91k9sowYDRf9TDKPugo3qifVzOA63M5TTCGx2e89kfdNIefCRbiLjNWT1iZbh3TZz3vjwSEwP", LogLevels.Info, "Business", "testUser");
 
             //Assert (2 options)
             Assert.IsNotNull(actual);
@@ -70,24 +70,24 @@ namespace HAGSJP.WeCasa.Logging.Test
             Assert.IsTrue(actual.ErrorMessage == expected.ErrorMessage);
         }
 
-        [TestMethod]
-        public async Task ShouldCreateInstanceWithValidLogLevelOnly()
-        {
-            //Arrange
-            var expected = new Result();
-            expected.IsSuccessful = false;
-            expected.ErrorMessage = "Invalid log level";
+        // [TestMethod]
+        // public async Task ShouldCreateInstanceWithValidLogLevelOnly()
+        // {
+        //     //Arrange
+        //     var expected = new Result();
+        //     expected.IsSuccessful = false;
+        //     expected.ErrorMessage = "Invalid log level";
 
-            //Act
-            MariaDbDAO testMariaDao = new MariaDbDAO();
-            Logger testLogger = new Logger(testMariaDao);
-            var actual = await testLogger.Log("Testing", "Invalid Log Level", "Business", "testUser");
+        //     //Act
+        //     MariaDbDAO testMariaDao = new MariaDbDAO();
+        //     Logger testLogger = new Logger(testMariaDao);
+        //     var actual = await testLogger.Log("Testing", "Invalid Log Level", "Business", "testUser");
 
-            //Assert (2 options)
-            Assert.IsNotNull(actual);
-            Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
-            Assert.IsTrue(actual.ErrorMessage == expected.ErrorMessage);
-        }
+        //     //Assert (2 options)
+        //     Assert.IsNotNull(actual);
+        //     Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
+        //     Assert.IsTrue(actual.ErrorMessage == expected.ErrorMessage);
+        // }
 
         [TestMethod]
         public async Task ShouldCreateInstanceWithValidCategoryOnly()
@@ -100,7 +100,7 @@ namespace HAGSJP.WeCasa.Logging.Test
             //Act
             MariaDbDAO testMariaDao = new MariaDbDAO();
             Logger testLogger = new Logger(testMariaDao);
-            var actual = await testLogger.Log("Testing", "Info", "Invalid Category", "testUser");
+            var actual = await testLogger.Log("Testing", LogLevels.Info, "Invalid Category", "testUser");
 
             //Assert (2 options)
             Assert.IsNotNull(actual);

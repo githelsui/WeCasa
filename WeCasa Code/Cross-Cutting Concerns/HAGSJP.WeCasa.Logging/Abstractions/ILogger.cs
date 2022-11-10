@@ -9,7 +9,7 @@ namespace HAGSJP.WeCasa.Logging.Abstractions
 {
     public interface ILogger
     {
-        Task<Result> Log(string message, string logLevel, string category, string username);
+        Task<Result> Log(string message, LogLevels logLevel, string category, string username);
     }
 
     // Interface segregation principle
