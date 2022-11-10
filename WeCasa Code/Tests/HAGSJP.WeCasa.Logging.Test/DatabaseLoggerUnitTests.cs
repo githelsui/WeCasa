@@ -10,7 +10,7 @@ namespace HAGSJP.WeCasa.Logging.Test
     public class DatabaseLoggerUnitTest
     {
         [TestMethod]
-        public void ShouldCreateInstanceWithDefaultCtor()
+        public void ShouldCreateInstanceWithParameterCtor()
         {
            var expected = typeof(Logger);
 
@@ -28,7 +28,7 @@ namespace HAGSJP.WeCasa.Logging.Test
 
             MariaDbDAO testMariaDao = new MariaDbDAO();
             Logger testLogger = new Logger(testMariaDao);
-            var actual = await testLogger.Log("test_log_message", "Info", "Business", "1234");
+            var actual = await testLogger.Log("test_log_message", "Info", "Business", "testUser");
 
             Assert.IsNotNull(actual);
             Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
@@ -43,7 +43,7 @@ namespace HAGSJP.WeCasa.Logging.Test
 
             MariaDbDAO testMariaDao = new MariaDbDAO();
             Logger testLogger = new Logger(testMariaDao);
-            var actual = await testLogger.Log("$", "Info", "Business", "1234");
+            var actual = await testLogger.Log("$", "Info", "Business", "testUser");
 
             Assert.IsNotNull(actual);
             Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
@@ -61,7 +61,7 @@ namespace HAGSJP.WeCasa.Logging.Test
             //Act
             MariaDbDAO testMariaDao = new MariaDbDAO();
             Logger testLogger = new Logger(testMariaDao);
-            var actual = await testLogger.Log("Ao0fQks6zVX7vylbYjfJ4Iu9u5Zd1vr014cZrIyRHSdGTzhF9aAbkGDNOpohAA0zqw3XxJqxO0wxSmJ140A3BXtpLoxvnwv2iscx7Yexy6OlKAru1mXo3tDE9OO23aIJ91k9sowYDRf9TDKPugo3qifVzOA63M5TTCGx2e89kfdNIefCRbiLjNWT1iZbh3TZz3vjwSEwP", "Info", "Business", "1234");
+            var actual = await testLogger.Log("Ao0fQks6zVX7vylbYjfJ4Iu9u5Zd1vr014cZrIyRHSdGTzhF9aAbkGDNOpohAA0zqw3XxJqxO0wxSmJ140A3BXtpLoxvnwv2iscx7Yexy6OlKAru1mXo3tDE9OO23aIJ91k9sowYDRf9TDKPugo3qifVzOA63M5TTCGx2e89kfdNIefCRbiLjNWT1iZbh3TZz3vjwSEwP", "Info", "Business", "testUser");
 
             //Assert (2 options)
             Assert.IsNotNull(actual);
@@ -80,7 +80,7 @@ namespace HAGSJP.WeCasa.Logging.Test
             //Act
             MariaDbDAO testMariaDao = new MariaDbDAO();
             Logger testLogger = new Logger(testMariaDao);
-            var actual = await testLogger.Log("Testing", "Invalid Log Level", "Business", "1234");
+            var actual = await testLogger.Log("Testing", "Invalid Log Level", "Business", "testUser");
 
             //Assert (2 options)
             Assert.IsNotNull(actual);
@@ -99,7 +99,7 @@ namespace HAGSJP.WeCasa.Logging.Test
             //Act
             MariaDbDAO testMariaDao = new MariaDbDAO();
             Logger testLogger = new Logger(testMariaDao);
-            var actual = await testLogger.Log("Testing", "Info", "Invalid Category", "1234");
+            var actual = await testLogger.Log("Testing", "Info", "Invalid Category", "testUser");
 
             //Assert (2 options)
             Assert.IsNotNull(actual);
