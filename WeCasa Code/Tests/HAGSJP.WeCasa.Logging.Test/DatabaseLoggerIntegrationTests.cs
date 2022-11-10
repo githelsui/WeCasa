@@ -11,21 +11,21 @@ namespace HAGSJP.WeCasa.Logging.Test
     {
 
         [TestMethod]
-        public async void ShouldLogWithin5Seconds()
+        public async Task ShouldLogWithin5Seconds()
         {
             // Arrange
             var stopwatch = new Stopwatch();
             var expected = 5;
-            var systemUnderTest = new MariaDbDAO();
+            var testMariaDao = new MariaDbDAO();
 
             // Act
             stopwatch.Start();
-            Log testLog = new Log("Testing", "Info", "Business", DateTime.Now, "test_user");
-            var logResult = await systemUnderTest.LogData(testLog);
+            Logger systemUnderTest = new Logger(testMariaDao);
+            var logResult = await systemUnderTest.Log("Testing", "Info", "Business", "test_user");
             stopwatch.Stop();
 
             // turn ms to seconds
-            var actual = stopwatch.ElapsedMilliseconds * 60_000;
+            var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
 
             // Assert
             Assert.IsNotNull(actual);

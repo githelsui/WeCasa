@@ -44,6 +44,7 @@ namespace HAGSJP.WeCasa.Logging.Test
             MariaDbDAO testMariaDao = new MariaDbDAO();
             Logger testLogger = new Logger(testMariaDao);
             var actual = await testLogger.Log("test$", "Info", "Business", "testUser");
+            Console.Write("ERROR"+ actual.ErrorMessage);
 
             Assert.IsNotNull(actual);
             Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
