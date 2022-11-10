@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<None Remove="Microsoft.Data.SqlClient" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
+		<PackageReference Include="MySqlConnector" Version="2.1.13" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Models\HAGSJP.WeCasa.Models\HAGSJP.WeCasa.Models.csproj" />
+	</ItemGroup>
+
+</Project>
