@@ -9,26 +9,22 @@ namespace HAGSJP.WeCasa.Logging.Test
     [TestClass]
     public class DatabaseLoggerUnitTest
     {
-        // [TestMethod]
-        // public Task ShouldCreateInstanceWithDefaultCtor()
-        // {
-        //    //Arrange
-        //    var expected = typeof(Logger);
+        [TestMethod]
+        public void ShouldCreateInstanceWithDefaultCtor()
+        {
+           var expected = typeof(Logger);
 
-        //    //Act
-        //    var actual = new MariaDbDAO();
+           var actual = new Logger(new MariaDbDAO());
 
-        //    //Assert (2 options)
-        //    Assert.IsNotNull(actual);
-        //    Assert.IsTrue(actual.GetType() == expected);
-        // }
+           Assert.IsNotNull(actual);
+           Assert.IsTrue(actual.GetType() == expected);
+        }
 
         [TestMethod]
         public async Task ShouldLogSuccessfully()
         {
             var expected = new Result();
-            expected.IsSuccessful = false;
-            expected.ErrorMessage = "Message contains invalid character: $";
+            expected.IsSuccessful = true;
 
             MariaDbDAO testMariaDao = new MariaDbDAO();
             Logger testLogger = new Logger(testMariaDao);
@@ -36,7 +32,6 @@ namespace HAGSJP.WeCasa.Logging.Test
 
             Assert.IsNotNull(actual);
             Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
-            Assert.IsTrue(actual.ErrorMessage == expected.ErrorMessage);
         }
 
         [TestMethod]
@@ -66,7 +61,7 @@ namespace HAGSJP.WeCasa.Logging.Test
             //Act
             MariaDbDAO testMariaDao = new MariaDbDAO();
             Logger testLogger = new Logger(testMariaDao);
-            var actual = await testLogger.Log("AofQks6zVX7vylbYjfJ4Iu9u5Zd1vr014cZrIyRHSdGTzhF9aAbkGDNOpohAA0zqw3XxJqxO0wxSmJ140A3BXtpLoxvnwv2iscx7Yexy6OlKAru1mXo3tDE9OO23aIJ91k9sowYDRf9TDKPugo3qifVzOA63M5TTCGx2e89kfdNIefCRbiLjNWT1iZbh3TZz3vjwSEwP", "Info", "Business", "1234");
+            var actual = await testLogger.Log("Ao0fQks6zVX7vylbYjfJ4Iu9u5Zd1vr014cZrIyRHSdGTzhF9aAbkGDNOpohAA0zqw3XxJqxO0wxSmJ140A3BXtpLoxvnwv2iscx7Yexy6OlKAru1mXo3tDE9OO23aIJ91k9sowYDRf9TDKPugo3qifVzOA63M5TTCGx2e89kfdNIefCRbiLjNWT1iZbh3TZz3vjwSEwP", "Info", "Business", "1234");
 
             //Assert (2 options)
             Assert.IsNotNull(actual);
