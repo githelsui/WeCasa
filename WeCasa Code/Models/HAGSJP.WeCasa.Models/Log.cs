@@ -4,7 +4,7 @@
     {
 
         // Constructor without DateTime (defaulted to current_timestamp in Logs database)
-        public Log(string message, LogLevels logLevel, string category, string user)
+        public Log(string message, LogLevel logLevel, string category, string user)
         {
             Message = message;
             LogLevel = logLevel.ToString();
@@ -13,7 +13,7 @@
         }
        
         // Constructor with DateTime
-        public Log(string message, LogLevels logLevel, string category, DateTime date_time, string user)
+        public Log(string message, LogLevel logLevel, string category, DateTime date_time, string user)
         {
             Message = message;
             LogLevel = logLevel.ToString();

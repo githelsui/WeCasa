@@ -1,17 +1,16 @@
-﻿using Microsoft.VisualBasic;
-using Microsoft.Data.SqlClient;
-using HAGSJP.WeCasa.sqlDataAccess;
-using HAGSJP.WeCasa.Models;
+﻿using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Logging.Abstractions;
 using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
 
 namespace HAGSJP.WeCasa.Logging.Implementations
 {
-
+    /// <summary>
+    /// Logger object used to record internal system events
+    /// </summary>
     public class Logger : ILogger
     {
         private readonly ILoggerDAO _dao;
-        public static string[] Categories = {"View", "Business", "Server", "Data", "Data Store"};
+        public static string[] Categories = {"view", "business", "server", "data", "data store"};
         public static char[] specialCharacters = {',', '&', '?', '{', '}', '\\', '(', ')', '[', ']', '-', ';', '~', '|', '$', '!', '>', '*', '%', '_'};
 
 
@@ -22,7 +21,16 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             _dao = dao;
         }
 
-        public async Task<Result> Log(string message, LogLevels logLevel, string category, string username)
+        /// <summary>
+        /// Asynchronous method for building and sending logs to the database
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="logLevel"></param>
+        /// <param name="category"></param>
+        /// <param name="rows"></param>
+        /// <param name="username"></param>
+        /// <returns>Result object</returns>
+        public async Task<Result> Log(string message, LogLevel logLevel, string category, string username)
         {             
             var result = new Result();
 
@@ -30,7 +38,6 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             // Getting number of processors
             //var numOfProcessors = Environment.ProcessorCount > 1 ? Environment.ProcessorCount - 1 : 1;
 
-            // Step 1: Input Validation (include bool AND feedback for what went wrong)
             #region Step 1: Input validation
             if (message == null)
             {
@@ -38,7 +45,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
 
                 return result;
             }
-            // Invalid length
+            // Check length
             if (message.Length > 200)
             {
                 result.IsSuccessful = false;
@@ -46,7 +53,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
 
                 return result;
             }
-            // Invalid characters
+            // Check characters
             var matchedIndex = message.IndexOfAny(specialCharacters);
             if (matchedIndex != -1)
             {
@@ -56,7 +63,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
                 return result;
             }
             // Invalid Log Level
-            if (!Enum.IsDefined(typeof(LogLevels), logLevel))
+            if (!Enum.IsDefined(typeof(LogLevel), logLevel))
             {
                 result.IsSuccessful = false;
                 result.ErrorMessage = "Invalid log level";
@@ -64,7 +71,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
                 return result;
             }
             // Invalid Category
-            if (!Categories.Contains(category))
+            if (!Categories.Contains(category.ToLower()))
             {
                 result.IsSuccessful = false;
                 result.ErrorMessage = "Invalid category";
@@ -87,8 +94,6 @@ namespace HAGSJP.WeCasa.Logging.Implementations
 
                 return result;
             }
-
-            // Translate the error to something that is more user friendly or layer friendly
 
             result.IsSuccessful = false;
             result.ErrorMessage = daoResult.ErrorMessage;

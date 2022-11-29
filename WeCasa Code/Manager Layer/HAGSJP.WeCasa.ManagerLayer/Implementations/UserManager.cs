@@ -129,13 +129,13 @@ namespace HAGSJP.WeCasa.ManagerLayer.Implementations
             {
                 // Logging the registration
                 Logger successfulLogger = new Logger(dao);
-                successfulLogger.Log("Account created successfully", LogLevels.Info, "Data Store", user.Email);
+                successfulLogger.Log("Account created successfully", LogLevel.Info, "Data Store", user.Email);
             }
             else
             {
                 // Logging the error
                 Logger errorLogger = new Logger(dao);
-                errorLogger.Log("Error creating an account", LogLevels.Error, "Data Store", user.Email);
+                errorLogger.Log("Error creating an account", LogLevel.Error, "Data Store", user.Email);
 
             }
             return userPersistResult;
