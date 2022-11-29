@@ -11,7 +11,6 @@ namespace HAGSJP.WeCasa.Logging.Implementations
     public class Logger : ILogger
     {
         private readonly ILoggerDAO _dao;
-        public static string[] LogLevels = {"Info", "Debug", "Warning", "Error"};
         public static string[] Categories = {"View", "Business", "Server", "Data", "Data Store"};
         public static char[] specialCharacters = {',', '&', '?', '{', '}', '\\', '(', ')', '[', ']', '-', ';', '~', '|', '$', '!', '>', '*', '%', '_'};
 
@@ -23,12 +22,8 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             _dao = dao;
         }
 
-        public async Task<Result> Log(string message, string logLevel, string category, string username)
-        {     
-            // System.Timers.Timer aTimer = new System.Timers.Timer();
-            // aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            // aTimer.Close = 5000;
-            // aTimer.Enabled = true; 
+        public async Task<Result> Log(string message, LogLevels logLevel, string category, string username)
+        {             
             var result = new Result();
 
             // Task Parallelism Library TPL
@@ -61,7 +56,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
                 return result;
             }
             // Invalid Log Level
-            if (!LogLevels.Contains(logLevel))
+            if (!Enum.IsDefined(typeof(LogLevels), logLevel))
             {
                 result.IsSuccessful = false;
                 result.ErrorMessage = "Invalid log level";
