@@ -56,37 +56,37 @@ namespace HAGSJP.WeCasa.ManagerLayer.Implementations
                 if (!checkLength.IsMatch(password))
                 {
                     result.IsSuccessful = false;
-                    result.ErrorMessage = "Invalid Password: Password is not within the character range (8-80)";
+                    result.Message = "Invalid Password: Password is not within the character range (8-80)";
                 }
                 else if (!checkUppercase.IsMatch(password))
                 {
                     result.IsSuccessful = false;
-                    result.ErrorMessage = "Invalid Password: Password does not contain upper case letter";
+                    result.Message = "Invalid Password: Password does not contain upper case letter";
                 }
                 else if (!checkLowercase.IsMatch(password))
                 {
                     result.IsSuccessful = false;
-                    result.ErrorMessage = "Invalid Password: Password does not contain lower case letter";
+                    result.Message = "Invalid Password: Password does not contain lower case letter";
                 }
                 else if (!checkNumber.IsMatch(password))
                 {
                     result.IsSuccessful = false;
-                    result.ErrorMessage = "Invalid Password: Password does not contain a numeric value";
+                    result.Message = "Invalid Password: Password does not contain a numeric value";
                 }
                 else if (!checkSpecialChar.IsMatch(password))
                 {
                     result.IsSuccessful = false;
-                    result.ErrorMessage = "Invalid Password: Password does not contain a special case character";
+                    result.Message = "Invalid Password: Password does not contain a special case character";
                 }
                 else if (!checkValidChar.IsMatch(password))
                 {
                     result.IsSuccessful = false;
-                    result.ErrorMessage = "Invalid Password: Password contains invalid characters";
+                    result.Message = "Invalid Password: Password contains invalid characters";
                 }
                 else
                 {
                     result.IsSuccessful = true;
-                    result.ErrorMessage = "";
+                    result.Message = "";
                 }
                 return result;
             }

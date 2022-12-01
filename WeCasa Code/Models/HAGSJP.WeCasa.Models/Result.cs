@@ -8,6 +8,8 @@ namespace HAGSJP.WeCasa.Models
 
         public string? Message { get; set; }
 
+        public Result() { }
+
         public Result(bool isSuccessful, HttpStatusCode errorStatus, string? message) 
         {
             this.IsSuccessful = isSuccessful;

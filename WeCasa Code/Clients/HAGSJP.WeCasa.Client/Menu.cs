@@ -33,7 +33,7 @@ namespace HAGSJP.WeCasa.Client
             validP = um.ValidatePassword(password);
             while (validP.IsSuccessful == false)
             {
-                Console.WriteLine(validP.ErrorMessage);
+                Console.WriteLine(validP.Message);
                 password = Console.ReadLine();
                 validP = um.ValidatePassword(password);
             }
@@ -46,8 +46,8 @@ namespace HAGSJP.WeCasa.Client
             while (menu != false)
             {
                 Console.WriteLine("(1) Register New Account");
-                //Console.WriteLine("(2) Login to Existing Account");
-                Console.WriteLine("(2) Exit");
+                Console.WriteLine("(2) Login to Existing Account");
+                Console.WriteLine("(3) Exit");
                 switch (Console.ReadLine())
                 {
                     case "1":
@@ -64,10 +64,10 @@ namespace HAGSJP.WeCasa.Client
                             Console.WriteLine("An error occurred. Please try again later.");
                         }
                         break;
-                    /*case "2":
-                        Login l = new Login();
-                        break;*/
                     case "2":
+                        Login l = new Login();
+                        break;
+                    case "3":
                         menu = false;
                         break;
                 }

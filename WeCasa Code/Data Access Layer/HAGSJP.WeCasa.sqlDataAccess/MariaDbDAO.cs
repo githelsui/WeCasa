@@ -22,7 +22,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
              var builder = new MySqlConnectionStringBuilder
              {
                  Server = "localhost",
-                 Port = 3306,
+                 Port = 3307,
                  UserID = "HAGSJP.WeCasa.SqlUser",
                  Password = "cecs491",
                  Database = "HAGSJP.WeCasa"
@@ -44,12 +44,12 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             if (rows == 1)
             {
                 result.IsSuccessful = true;
-                result.ErrorMessage = string.Empty;
+                result.Message = string.Empty;
 
                 return result;
             }
             result.IsSuccessful = false;
-            result.ErrorMessage = $"Rows affected were not 1. It was {rows}";
+            result.Message = $"Rows affected were not 1. It was {rows}";
 
             return result;
         }

@@ -49,7 +49,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             if (message.Length > 200)
             {
                 result.IsSuccessful = false;
-                result.ErrorMessage = "Message log too long";
+                result.Message = "Message log too long";
 
                 return result;
             }
@@ -58,7 +58,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             if (matchedIndex != -1)
             {
                 result.IsSuccessful = false;
-                result.ErrorMessage = "Message contains invalid character: " + message[matchedIndex];
+                result.Message = "Message contains invalid character: " + message[matchedIndex];
 
                 return result;
             }
@@ -66,7 +66,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             if (!Enum.IsDefined(typeof(LogLevel), logLevel))
             {
                 result.IsSuccessful = false;
-                result.ErrorMessage = "Invalid log level";
+                result.Message = "Invalid log level";
 
                 return result;
             }
@@ -74,7 +74,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             if (!Categories.Contains(category.ToLower()))
             {
                 result.IsSuccessful = false;
-                result.ErrorMessage = "Invalid category";
+                result.Message = "Invalid category";
 
                 return result;
             }
@@ -96,7 +96,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             }
 
             result.IsSuccessful = false;
-            result.ErrorMessage = daoResult.ErrorMessage;
+            result.Message = daoResult.Message;
 
             return result;
         }
