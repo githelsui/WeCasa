@@ -22,7 +22,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
              var builder = new MySqlConnectionStringBuilder
              {
                  Server = "localhost",
-                 Port = 3307,
+                 Port = 3306,
                  UserID = "HAGSJP.WeCasa.SqlUser",
                  Password = "cecs491",
                  Database = "HAGSJP.WeCasa"
@@ -70,7 +70,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 connection.Open();
 
                 // Insert SQL statement
-                var insertSql = @"INSERT INTO `Users` (`email`, `password`, `is_enabled`, `is_admin`) values (@email, @password, 0, 0);";
+                var insertSql = @"INSERT INTO `Users` (`email`, `password`, `is_enabled`, `is_admin`, `is_auth`) values (@email, @password, 0, 0);";
 
                 var command = connection.CreateCommand();
                 command.CommandText = insertSql;
