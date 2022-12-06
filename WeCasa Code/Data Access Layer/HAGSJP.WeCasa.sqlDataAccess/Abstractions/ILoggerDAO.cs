@@ -10,7 +10,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess.Abstractions
 {
     public interface ILoggerDAO
     {
-        public Result AddUser(User user, string password);
+        public Result PersistUser(UserAccount userAccount, string password);
         public Task<Result> LogData(Log log);
     }
 }

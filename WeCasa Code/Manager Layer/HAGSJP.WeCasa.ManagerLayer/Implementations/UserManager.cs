@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
+using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -120,25 +121,46 @@ namespace HAGSJP.WeCasa.ManagerLayer.Implementations
         {
             Result userPersistResult = new Result();
 
-            User user = new User(email);
+            UserAccount userAccount = new UserAccount(email);
             MariaDbDAO dao = new MariaDbDAO();
 
-            userPersistResult = dao.AddUser(user, password);
+            userPersistResult = dao.PersistUser(userAccount, password);
+
+            // Add userID from userPersistResult
 
             if (userPersistResult.IsSuccessful)
             {
                 // Logging the registration
                 Logger successfulLogger = new Logger(dao);
-                successfulLogger.Log("Account created successfully", LogLevel.Info, "Data Store", user.Email);
+                successfulLogger.Log("Account created successfully", LogLevel.Info, "Data Store", userAccount.Username);
             }
             else
             {
                 // Logging the error
                 Logger errorLogger = new Logger(dao);
-                errorLogger.Log("Error creating an account", LogLevel.Error, "Data Store", user.Email);
-
+                errorLogger.Log("Error creating an account", LogLevel.Error, "Data Store", userAccount.Username);
             }
             return userPersistResult;
+        }
+
+        public Result UpdateUser(UserProfile userProfile)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Result DeleteUser()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Result EnableUser()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Result DisableUser()
+        {
+            throw new NotImplementedException();
         }
     }
 }
