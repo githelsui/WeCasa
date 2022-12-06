@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HAGSJP.WeCasa.ManagerLayer"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manager Layer", "Manager Layer", "{56FE6D95-20FB-447A-AC79-A9D870F5101F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HAGSJP.WeCasa.Registration.Test", "Tests\HAGSJP.WeCasa.Registration.Test\HAGSJP.WeCasa.Registration.Test.csproj", "{131CD808-F39E-4C52-AED4-8FF02782B57B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HAGSJP.WeCasa.Registration.Test", "Tests\HAGSJP.WeCasa.Registration.Test\HAGSJP.WeCasa.Registration.Test.csproj", "{131CD808-F39E-4C52-AED4-8FF02782B57B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
