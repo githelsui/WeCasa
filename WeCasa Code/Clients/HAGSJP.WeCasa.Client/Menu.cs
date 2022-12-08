@@ -59,6 +59,7 @@ namespace HAGSJP.WeCasa.Client
                         if (result.IsSuccessful)
                         {
                             Console.WriteLine("Account Created!");
+                            // Create User Profile
                         } else
                         {
                             Console.WriteLine("An error occurred. Please try again later.");

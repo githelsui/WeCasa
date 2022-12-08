@@ -62,27 +62,34 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         /// <param name="username"></param>
         /// <param name="otp_phrase"></param>
         /// <returns></returns>
-        public Result AddUser(User user, string password)
+        public Result PersistUser(UserAccount userAccount, string password)
         {
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
+                var result = new Result();
 
                 // Insert SQL statement
                 var insertSql = @"INSERT INTO `Users` (`email`, `password`, `is_enabled`, `is_admin`, `is_auth`) values (@email, @password, 0, 0);";
 
                 var command = connection.CreateCommand();
                 command.CommandText = insertSql;
-                command.Parameters.AddWithValue("@email", user.Email);
+                command.Parameters.AddWithValue("@email", userAccount.Username);
                 command.Parameters.AddWithValue("@password", password);
 
                 // Execution of SQL
-                var rows = command.ExecuteNonQuery();
+                var id = (command.ExecuteScalar());
 
-                //connection.Close();
-
-                var result = ValidateSqlStatement(rows);
+                if (id == null)
+                {
+                    result = ValidateSqlStatement(0);
+                } else
+                {
+                    result.IsSuccessful = true;
+                    // Adding userID to result message
+                    result.Message = id.ToString();
+                }
                 return result;
             }
         }
