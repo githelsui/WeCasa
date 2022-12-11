@@ -8,11 +8,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Security.Principal;
+using HAGSJP.WeCasa.Models.Security;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
     public interface IAuthorization
     {
-       
+        public Result validateClaim(UserAccount ua);
+        public Result validateAdminRole(UserAccount ua;
     }
 }
