@@ -13,7 +13,7 @@ namespace HAGSJP.WeCasa.Registration.Test
             // Arrange
             var stopwatch = new Stopwatch();
             var expected = 5;
-            var systemUnderTest = new MariaDbDAO();
+            var systemUnderTest = new AccountMariaDAO();
 
             // Act
             stopwatch.Start();

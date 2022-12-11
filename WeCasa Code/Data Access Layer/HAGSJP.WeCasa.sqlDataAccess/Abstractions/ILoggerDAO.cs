@@ -1,4 +1,5 @@
 ﻿using HAGSJP.WeCasa.Models;
+using HAGSJP.WeCasa.Models.Security;
 using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;

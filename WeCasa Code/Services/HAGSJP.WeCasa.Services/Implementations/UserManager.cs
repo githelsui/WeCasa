@@ -1,4 +1,5 @@
 ﻿using HAGSJP.WeCasa.Logging.Implementations;
+using HAGSJP.WeCasa.Models.Security;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.sqlDataAccess;
 using System;
@@ -10,7 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace HAGSJP.WeCasa.ManagerLayer.Implementations
+namespace HAGSJP.WeCasa.Services.Implementations
 {
     public class UserManager : IUserManager
     {
@@ -21,12 +22,12 @@ namespace HAGSJP.WeCasa.ManagerLayer.Implementations
             if (!MailAddress.TryCreate(email, out var mailAddress))
             {
                 validEmail = false;
-            } 
-            else if(email.Length > 255)
+            }
+            else if (email.Length > 255)
             {
                 validEmail = false;
-            } 
-            else if(!checkValidChar.IsMatch(email))
+            }
+            else if (!checkValidChar.IsMatch(email))
             {
                 validEmail = false;
             }
@@ -93,13 +94,20 @@ namespace HAGSJP.WeCasa.ManagerLayer.Implementations
             }
         }
 
-        public string ConfirmPassword(string password)
+        public OTP GenerateOTPassword(UserAccount userAccount)
         {
-            Console.WriteLine("Re-enter Password");
+            string code = "";
+            var otp = new OTP(userAccount.Username, code);
+            return otp;
+        }
+
+        public bool ConfirmPassword(string otp)
+        {
+            Console.WriteLine("Enter your one time passphrase:");
             string confirmPassword = Console.ReadLine();
-            if (confirmPassword == password)
+            if (confirmPassword == otp)
             {
-                return confirmPassword;
+                return true;
             }
             else
             {
@@ -108,21 +116,20 @@ namespace HAGSJP.WeCasa.ManagerLayer.Implementations
                 {
                     Console.WriteLine("Passwords do not match. Re-enter Password: ");
                     confirmPassword = Console.ReadLine();
-                    if (confirmPassword == password)
+                    if (confirmPassword == otp)
                     {
                         validC = true;
                     }
                 }
             }
-            return confirmPassword;
+            return false;
         }
 
         public Result RegisterUser(string email, string password)
         {
-            Result userPersistResult = new Result();
-
+            var userPersistResult = new Result();
             UserAccount userAccount = new UserAccount(email);
-            MariaDbDAO dao = new MariaDbDAO();
+            AccountMariaDAO dao = new AccountMariaDAO();
 
             userPersistResult = dao.PersistUser(userAccount, password);
 

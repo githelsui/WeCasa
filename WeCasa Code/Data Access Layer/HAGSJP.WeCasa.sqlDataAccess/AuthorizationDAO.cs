@@ -4,6 +4,7 @@ using HAGSJP.WeCasa.Models;
 using System.Data;
 using MySqlConnector;
 using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
+using HAGSJP.WeCasa.Models.Security;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
@@ -11,30 +12,29 @@ namespace HAGSJP.WeCasa.sqlDataAccess
     {
 		public AuthorizationDAO() {}
 
-        public UserRoles getRole(string email)
+        public UserRoles GetRole(UserAccount ua)
         {
-            var DAO = new MariaDbDAO();
+            var DAO = new AccountMariaDAO();
             var _connectionString = DAO.BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
 
                 // Select SQL statement
-                var selectSql = @"SELECT * FROM `Users` where email = (`email`) values (@email);";
+                var selectSql = @"SELECT * FROM `Users` where username = @username;";
 
                 var command = connection.CreateCommand();
                 command.CommandText = selectSql;
-                command.Parameters.AddWithValue("@email", email);
+                command.Parameters.AddWithValue("@username", ua.Username);
 
                 // Execution of SQL
                 var reader = command.ExecuteReader();
-                //var role;
-                while (reader.Read())
+
+                while(reader.Read())
                 {
                     int is_admin = (int)reader["is_admin"];
-                    Console.WriteLine(is_admin); //Debugging
-
-                    // Get role
+                    
+                    // Get roel
                     switch (is_admin)
                     {
                         case 0:
@@ -44,7 +44,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     }
                 }
                 connection.Close();
-                throw new Exception("is_admin property not defined for user.");
+                throw new Exception("is_admin property is not defined for this user.");
             }
         }
     }
