@@ -4,6 +4,7 @@ using System.Data;
 using MySqlConnector;
 using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
 using HAGSJP.WeCasa.Models.Security;
+using System.Text.Json;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
@@ -58,12 +59,21 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 var result = new Result();
 
                 // Insert SQL statement
-                var insertSql = @"INSERT INTO `Users` (`username`, `password`, `is_enabled`, `is_admin`) values (@username, @password, 0, 0);";
+                var insertSql = @"INSERT INTO `Users` (`username`, `password`, `is_enabled`, `is_admin`, `claims`) values (@username, @password, 0, 0, @claims);";
 
                 var command = connection.CreateCommand();
                 command.CommandText = insertSql;
                 command.Parameters.AddWithValue("@username", userAccount.Username);
                 command.Parameters.AddWithValue("@password", password);
+
+                // Initial claims when new user is first registered
+                List<Claim> initialClaims = new List<Claim>();
+                initialClaims.Add(new Claim("Functionality", "Edit event"));
+                initialClaims.Add(new Claim("Read", "Read files"));
+                initialClaims.Add(new Claim("Write", "Edit note"));
+                initialClaims.Add(new Claim("View", "View section"));
+                string claimsJSON = JsonSerializer.Serialize(initialClaims);
+                command.Parameters.AddWithValue("@claims", claimsJSON);
 
                 // Execution of SQL
                 var rows = (command.ExecuteNonQuery());

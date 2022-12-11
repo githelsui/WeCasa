@@ -83,7 +83,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (isActiveSession == false)
             {
                 result.IsSuccessful = false;
-                result.Message = "User is not logged in. Cannot validate admin role.";
+                result.Message = "User is not logged in. Cannot authorize access.";
                 return result;
             }
 
