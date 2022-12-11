@@ -1,7 +1,7 @@
 namespace HAGSJP.WeCasa.Authorization.Test
 {
     [TestClass]
-    public class UnitTest1
+    public class AuthorizationIntegrationTests
     {
         [TestMethod]
         public void TestMethod1()

@@ -49,8 +49,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 while(reader.Read())
                 {
                     int is_admin = (int)reader["is_admin"];
-                    //return is_admin
-                    // Get roel
+                    
                     switch (is_admin)
                     {
                         case 0:
@@ -82,9 +81,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    string claims = reader["claims"].ToString();
-                    return new Claims(claims);
-                    //return serialized claims
+                    string jsonClaims = reader["claims"].ToString();
+                    return new Claims(jsonClaims);
                 }
 
                 connection.Close();

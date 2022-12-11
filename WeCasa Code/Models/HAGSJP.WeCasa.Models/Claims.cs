@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text.Json;
-using Newtonsoft.Json;
 
 namespace HAGSJP.WeCasa.Models
 {
@@ -13,7 +12,7 @@ namespace HAGSJP.WeCasa.Models
 
         private List<Claim> DeserializeUsingGenericSystemTextJson(string jsonClaims)
         {
-            List<Claim> claims = JsonConvert.DeserializeObject<List<Claim>>(jsonClaims);
+            List<Claim> claims = JsonSerializer.Deserialize<List<Claim>>(jsonClaims);
             return claims;
         }
 
