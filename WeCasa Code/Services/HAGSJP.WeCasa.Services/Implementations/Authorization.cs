@@ -18,12 +18,14 @@ namespace HAGSJP.WeCasa.Services.Implementations
     public class AuthorizationService : IAuthorization
     {
         private readonly IAuthorizationDAO _dao;
-        private Logger successlogger;
+        private Logger successLogger;
+        private Logger errorLogger;
 
         public AuthorizationService(IAuthorizationDAO dao)
         {
             _dao = dao;
-            successlogger = new Logger(new AccountMariaDAO());
+            successLogger = new Logger(new AccountMariaDAO());
+            errorLogger = new Logger(new AccountMariaDAO());
         }
 
         public ResultObj ValidateAdminRole(UserAccount ua)
@@ -33,31 +35,34 @@ namespace HAGSJP.WeCasa.Services.Implementations
             // Preconditions:
             // Check if user is active/logged in
             ResultObj daoResultActivity = _dao.GetActiveStatus(ua);
-            if (daoResultActivity == null)
+            if (daoResultActivity.IsSuccessful == false)
             {
-                // Failure case from previous layer
+                // Failure case from data store layer
+                errorLogger.Log(daoResultActivity.Message, LogLevel.Error, "Data Store", ua.Username);
                 return daoResultActivity;
             }
-            bool isActiveSession = (bool)daoResultActivity.ReturnedObject;
-            if(isActiveSession == false)
+            bool isActive = (bool)daoResultActivity.ReturnedObject;
+            if (isActive == false)
             {
+                result.Message = "Deny access to unauthorized, logged out user.";
+                successLogger.Log(result.Message, LogLevel.Info, "Data Store", ua.Username);
                 result.IsSuccessful = false;
-                result.Message = "User is not logged in. Cannot validate admin role.";
                 return result;
             }
 
-            ResultObj daoResultClaims = _dao.GetRole(ua);
-            if(daoResultClaims == null)
+            ResultObj daoResultRoles = _dao.GetRole(ua);
+            if (daoResultRoles.IsSuccessful == false)
             {
-                // Failure case from previous layer
-                return daoResultClaims;
+                // Failure case from data store layer
+                errorLogger.Log(daoResultRoles.Message, LogLevel.Error, "Data Store", ua.Username);
+                return daoResultRoles;
             }
-            var userRole = daoResultClaims.ReturnedObject;
-            UserRoles roleEnum = (UserRoles)Enum.Parse(typeof(UserRoles), userRole.ToString());
+            var userRoleObj = daoResultRoles.ReturnedObject;
+            UserRoles userRole = (UserRoles)Enum.Parse(typeof(UserRoles), userRoleObj.ToString());
 
             result.IsSuccessful = true;
             result.Message = string.Empty;
-            if (roleEnum == Models.Security.UserRoles.AdminUser)
+            if (userRole == Models.Security.UserRoles.AdminUser)
             {
                 result.ReturnedObject = true;
             } else
@@ -74,27 +79,30 @@ namespace HAGSJP.WeCasa.Services.Implementations
             //Preconditions
             // Check if user is active/logged in
             ResultObj daoResultActivity = _dao.GetActiveStatus(ua);
-            if (daoResultActivity == null)
+            if (daoResultActivity.IsSuccessful == false)
             {
-                // Failure case from previous layer
+                // Failure case from data store layer
+                errorLogger.Log(daoResultActivity.Message, LogLevel.Error, "Data Store", ua.Username);
                 return daoResultActivity;
             }
-            bool isActiveSession = (bool)daoResultActivity.ReturnedObject;
-            if (isActiveSession == false)
+            bool isActive = (bool)daoResultActivity.ReturnedObject;
+            if (isActive == false)
             {
+                result.Message = "Deny access to unauthorized, logged out user.";
+                successLogger.Log(result.Message, LogLevel.Info, "Data Store", ua.Username);
                 result.IsSuccessful = false;
-                result.Message = "User is not logged in. Cannot authorize access.";
                 return result;
             }
 
-            ResultObj daoResult = _dao.GetClaims(ua);
-            if (daoResult == null)
+            ResultObj daoResultClaims = _dao.GetClaims(ua);
+            if (daoResultClaims.IsSuccessful == false)
             {
-                // Failure case from previous layer
-                return daoResult;
+                // Failure case from data store layer
+                errorLogger.Log(daoResultClaims.Message, LogLevel.Error, "Data Store", ua.Username);
+                return daoResultClaims;
             }
 
-            Claims claims = (Claims)daoResult.ReturnedObject;
+            Claims claims = (Claims)daoResultClaims.ReturnedObject;
             List<Claim> userClaims = (List<Claim>)claims.UserClaims;
             foreach (Claim claim in userClaims)
             {
@@ -109,7 +117,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
             // Unauthorized User Scenarios
             var successUnauthLogMsg = $"Unauthorized access to {targetClaim.ClaimType} Permissions.";
-            successlogger.Log(successUnauthLogMsg, LogLevel.Info, "Data Store", ua.Username);
+            successLogger.Log(successUnauthLogMsg, LogLevel.Info, "Business", ua.Username);
             result.ReturnedObject = false;
             result.IsSuccessful = true;
             result.Message = successUnauthLogMsg;

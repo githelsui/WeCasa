@@ -68,7 +68,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 // Failure Cases
                 result.IsSuccessful = false;
-                result.Message = "Error retrieving is_admin.";
+                result.Message = "Error fetching role from database.";
                 return result;
             }
         }
@@ -103,7 +103,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 // Failure Cases
                 result.IsSuccessful = false;
-                result.Message = "Error retrieving claims.";
+                result.Message = "Error fetching claims from database.";
                 return result;
             }
         }
@@ -144,7 +144,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 // Failure Cases
                 result.IsSuccessful = false;
-                result.Message = "Error retrieving is_enabled.";
+                result.Message = "Error fetching active status from database.";
                 return result;
             }
          }
