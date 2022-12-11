@@ -15,11 +15,4 @@
     <PackageReference Include="coverlet.collector" Version="3.1.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\HAGSJP.WeCasa.Logging.csproj" />
-    <ProjectReference Include="..\..\Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\HAGSJP.WeCasa.sqlDataAccess.csproj" />
-    <ProjectReference Include="..\..\Models\HAGSJP.WeCasa.Models\HAGSJP.WeCasa.Models.csproj" />
-    <ProjectReference Include="..\..\Services\HAGSJP.WeCasa.Services\HAGSJP.WeCasa.Services.csproj" />
-  </ItemGroup>
-
 </Project>

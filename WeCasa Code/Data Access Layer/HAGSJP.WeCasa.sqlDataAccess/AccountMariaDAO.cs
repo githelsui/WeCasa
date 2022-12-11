@@ -3,6 +3,7 @@ using HAGSJP.WeCasa.Models;
 using System.Data;
 using MySqlConnector;
 using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
+using HAGSJP.WeCasa.Models.Security;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
@@ -11,11 +12,11 @@ namespace HAGSJP.WeCasa.sqlDataAccess
     /// Connecting to MariaDB Server to perform database operations
     /// https://www.nuget.org/packages/MySqlConnector/
     /// </summary>
-    public class MariaDbDAO : ILoggerDAO
+    public class AccountMariaDAO : ILoggerDAO
     {
         private string _connectionString;
 
-        public MariaDbDAO() { }
+        public AccountMariaDAO() { }
 
         public MySqlConnectionStringBuilder BuildConnectionString()
         {
@@ -71,25 +72,16 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 var result = new Result();
 
                 // Insert SQL statement
-                var insertSql = @"INSERT INTO `Users` (`email`, `password`, `is_enabled`, `is_admin`, `is_auth`) values (@email, @password, 0, 0);";
+                var insertSql = @"INSERT INTO `Users` (`username`, `password`, `is_enabled`, `is_admin`) values (@username, @password, 0, 0);";
 
                 var command = connection.CreateCommand();
                 command.CommandText = insertSql;
-                command.Parameters.AddWithValue("@email", userAccount.Username);
+                command.Parameters.AddWithValue("@username", userAccount.Username);
                 command.Parameters.AddWithValue("@password", password);
 
                 // Execution of SQL
-                var id = (command.ExecuteScalar());
-
-                if (id == null)
-                {
-                    result = ValidateSqlStatement(0);
-                } else
-                {
-                    result.IsSuccessful = true;
-                    // Adding userID to result message
-                    result.Message = id.ToString();
-                }
+                var rows = (command.ExecuteNonQuery());
+                result = ValidateSqlStatement(rows);
                 return result;
             }
         }
@@ -102,7 +94,9 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         /// <returns>bool Result</returns>
         public async Task<Result> LogData(Log log)
         {
+
             _connectionString = BuildConnectionString().ConnectionString;
+
             using (var connection = new MySqlConnection(_connectionString))
             {
                 await connection.OpenAsync();

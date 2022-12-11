@@ -2,11 +2,13 @@
 {
     public class UserProfile
     {
-        public UserProfile() { }
-        public UserProfile(string fullName) {
-            FullName = fullName;
+        public UserProfile(string firstName, string lastName, string userId) {
+            FirstName = firstName;
+            LastName = lastName;
+            UserId = userId;
         }
-        public string FullName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public string UserId { get; set; }
     }
 }

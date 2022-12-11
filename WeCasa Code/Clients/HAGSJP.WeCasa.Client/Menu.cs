@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using HAGSJP.WeCasa.ManagerLayer.Implementations;
+using HAGSJP.WeCasa.Services.Implementations;
 using HAGSJP.WeCasa.Models;
+using HAGSJP.WeCasa.Models.Security;
 
 namespace HAGSJP.WeCasa.Client
 {
@@ -48,25 +50,35 @@ namespace HAGSJP.WeCasa.Client
                 Console.WriteLine("(1) Register New Account");
                 Console.WriteLine("(2) Login to Existing Account");
                 Console.WriteLine("(3) Exit");
+                UserManager um = new UserManager();
                 switch (Console.ReadLine())
                 {
                     case "1":
-                        UserManager um = new UserManager();
                         string email = GetEmail(um);
+                        // check if user already exists, is authenticated
                         string password = GetPassword(um);
-                        string confirmPassword = um.ConfirmPassword(password);
-                        var result = um.RegisterUser(email, password);
-                        if (result.IsSuccessful)
+                        var validPW = um.ValidatePassword(password);
+                        var registerResult = um.RegisterUser(email, password);
+                        if (validPW.IsSuccessful && registerResult.IsSuccessful)
                         {
                             Console.WriteLine("Account Created!");
-                            // Create User Profile
-                        } else
+                            // Create User Account
+                            UserAccount userAccount = new UserAccount(email);
+                            // Providing username and OTP to the user
+                            OTP otp = um.GenerateOTPassword(userAccount);
+                            Console.WriteLine("Username: ", email);
+                            Console.WriteLine("One-time login code: ", otp.Code);
+                            Console.WriteLine("Your one-time code will expire at ", otp.CreateTime.AddMinutes(2));
+                        }
+                        else
                         {
                             Console.WriteLine("An error occurred. Please try again later.");
                         }
                         break;
-                    case "2":
-                        Login l = new Login();
+                    case "2": // TODO
+                        Login login = new Login();
+                        login.LoginUser();
+                        // Creating User Profile
                         break;
                     case "3":
                         menu = false;
