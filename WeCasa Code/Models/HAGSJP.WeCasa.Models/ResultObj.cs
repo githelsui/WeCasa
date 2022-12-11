@@ -5,7 +5,7 @@ namespace HAGSJP.WeCasa.Models
 {
 	public class ResultObj
 	{
-        public Object ReturnedObject { get; set; }
+        public Object? ReturnedObject { get; set; }
         public bool IsSuccessful { get; set; }
         public HttpStatusCode ErrorStatus { get; set; }
         public string? Message { get; set; }

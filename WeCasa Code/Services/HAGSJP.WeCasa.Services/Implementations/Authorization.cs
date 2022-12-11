@@ -10,6 +10,8 @@ using Microsoft.Identity.Client;
 using HAGSJP.WeCasa.sqlDataAccess;
 using Logger = HAGSJP.WeCasa.Logging.Implementations.Logger;
 using LogLevel = HAGSJP.WeCasa.Models.LogLevel;
+using HAGSJP.WeCasa.Models.Security;
+using System.Collections;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
@@ -24,53 +26,93 @@ namespace HAGSJP.WeCasa.Services.Implementations
             successlogger = new Logger(new AccountMariaDAO());
         }
 
-        public bool ValidateAdminRole(UserAccount ua)
+        public ResultObj ValidateAdminRole(UserAccount ua)
         {
-            var userRole = _dao.GetRole(ua);
-            if(userRole == Models.Security.UserRoles.AdminUser)
+            var result = new ResultObj();
+
+            // Preconditions:
+            // Check if user is active/logged in
+            ResultObj daoResultActivity = _dao.GetActiveStatus(ua);
+            if (daoResultActivity == null)
             {
-                return true;
+                // Failure case from previous layer
+                return daoResultActivity;
             }
-            return false;
+            bool isActiveSession = (bool)daoResultActivity.ReturnedObject;
+            if(isActiveSession == false)
+            {
+                result.IsSuccessful = false;
+                result.Message = "User is not logged in. Cannot validate admin role.";
+                return result;
+            }
+
+            ResultObj daoResultClaims = _dao.GetRole(ua);
+            if(daoResultClaims == null)
+            {
+                // Failure case from previous layer
+                return daoResultClaims;
+            }
+            var userRole = daoResultClaims.ReturnedObject;
+            UserRoles roleEnum = (UserRoles)Enum.Parse(typeof(UserRoles), userRole.ToString());
+
+            result.IsSuccessful = true;
+            result.Message = string.Empty;
+            if (roleEnum == Models.Security.UserRoles.AdminUser)
+            {
+                result.ReturnedObject = true;
+            } else
+            {
+                result.ReturnedObject = false;
+            }
+            return result;
         }
 
         public ResultObj ValidateClaim(UserAccount ua, Claim targetClaim)
         {
             var result = new ResultObj();
 
-            List<Claim> userClaims = _dao.GetClaims(ua).UserClaims;
+            //Preconditions
+            // Check if user is active/logged in
+            ResultObj daoResultActivity = _dao.GetActiveStatus(ua);
+            if (daoResultActivity == null)
+            {
+                // Failure case from previous layer
+                return daoResultActivity;
+            }
+            bool isActiveSession = (bool)daoResultActivity.ReturnedObject;
+            if (isActiveSession == false)
+            {
+                result.IsSuccessful = false;
+                result.Message = "User is not logged in. Cannot validate admin role.";
+                return result;
+            }
+
+            ResultObj daoResult = _dao.GetClaims(ua);
+            if (daoResult == null)
+            {
+                // Failure case from previous layer
+                return daoResult;
+            }
+
+            Claims claims = (Claims)daoResult.ReturnedObject;
+            List<Claim> userClaims = (List<Claim>)claims.UserClaims;
             foreach (Claim claim in userClaims)
             {
                 if(targetClaim.ClaimType == claim.ClaimType && targetClaim.ClaimValue == claim.ClaimValue)
                 {
                     result.ReturnedObject = true;
                     result.IsSuccessful = true;
-                    result.Message = string.Empty;
+                    result.Message = $"Authorized access to {targetClaim.ClaimType} Permissions.";
                     return result;
                 }
             }
 
             // Unauthorized User Scenarios
-            var successUnauthLogMsg = "Unauthorized user denied access." + targetClaim.ClaimType + " access.";
+            var successUnauthLogMsg = $"Unauthorized access to {targetClaim.ClaimType} Permissions.";
             successlogger.Log(successUnauthLogMsg, LogLevel.Info, "Data Store", ua.Username);
             result.ReturnedObject = false;
             result.IsSuccessful = true;
-            if (targetClaim.ClaimType.Equals("Functionality"))
-            {
-                result.Message = "Unauthorized access to functionality.";
-            }
-            if (targetClaim.ClaimType.Equals("Read"))
-            {
-                result.Message = "Unauthorized access to read data.";
-            }
-            if (targetClaim.ClaimType.Equals("Write"))
-            {
-                result.Message = "Unauthorized access to modify data.";
-            }
-            if (targetClaim.ClaimType.Equals("View"))
-            {
-                result.Message = "Unauthorized access to view.";
-            }
+            result.Message = successUnauthLogMsg;
             return result;
         }
 

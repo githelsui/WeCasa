@@ -29,8 +29,10 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             return builder;
         }
 
-        public UserRoles GetRole(UserAccount ua)
+        public ResultObj GetRole(UserAccount ua)
         {
+            var result = new ResultObj();
+
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
             {
@@ -48,23 +50,33 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 while(reader.Read())
                 {
+                    result.IsSuccessful = true;
+                    result.Message = string.Empty;
                     int is_admin = (int)reader["is_admin"];
-                    
                     switch (is_admin)
                     {
                         case 0:
-                            return UserRoles.GenericUser;
+                            result.ReturnedObject = UserRoles.GenericUser;
+                            break;
                         case 1:
-                            return UserRoles.AdminUser;
+                            result.ReturnedObject = UserRoles.AdminUser;
+                            break;
                     }
+                    return result;
                 }
                 connection.Close();
-                throw new Exception("is_admin column is not defined for this user.");
+
+                // Failure Cases
+                result.IsSuccessful = false;
+                result.Message = "Error retrieving is_admin.";
+                return result;
             }
         }
 
-        public Claims GetClaims(UserAccount ua)
+        public ResultObj GetClaims(UserAccount ua)
         {
+            var result = new ResultObj();
+
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
             {
@@ -81,14 +93,61 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
+                    result.IsSuccessful = true;
+                    result.Message = string.Empty;
                     string jsonClaims = reader["claims"].ToString();
-                    return new Claims(jsonClaims);
+                    result.ReturnedObject = new Claims(jsonClaims);
+                    return result;
                 }
-
                 connection.Close();
-                throw new Exception("claims column is not defined for this user.");
+
+                // Failure Cases
+                result.IsSuccessful = false;
+                result.Message = "Error retrieving claims.";
+                return result;
             }
         }
+
+        // Whether user is logged in / enabled
+        public ResultObj GetActiveStatus(UserAccount ua)
+        {
+            var result = new ResultObj();
+
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                // Select SQL statement
+                var selectSql = @"SELECT is_enabled FROM `Users` where username = @username;";
+
+                var command = connection.CreateCommand();
+                command.CommandText = selectSql;
+                command.Parameters.AddWithValue("@username", ua.Username);
+
+                // Execution of SQL
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    result.IsSuccessful = true;
+                    result.Message = string.Empty;
+                    int is_enabled = (int)reader["is_enabled"];
+                    if(is_enabled == 1)
+                    {
+                        result.ReturnedObject = true;
+                    } else {
+                        result.ReturnedObject = false;
+                    }
+                    return result;
+                }
+                connection.Close();
+
+                // Failure Cases
+                result.IsSuccessful = false;
+                result.Message = "Error retrieving is_enabled.";
+                return result;
+            }
+         }
     }
 }
 
