@@ -87,7 +87,6 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             Log log = new Log(message, logLevel, category, username);
 
             var daoResult = await _dao.LogData(log).ConfigureAwait(false);
-            Console.Write("DAOOO" + daoResult);
 
             if(daoResult.IsSuccessful)
             {

@@ -15,6 +15,6 @@ namespace HAGSJP.WeCasa.Services.Implementations
     public interface IAuthorization
     {
         public Result validateClaim(UserAccount ua);
-        public Result validateAdminRole(UserAccount ua;
+        public Result validateAdminRole(UserAccount ua);
     }
 }

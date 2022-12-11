@@ -96,6 +96,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
         public OTP GenerateOTPassword(UserAccount userAccount)
         {
+            var savingOTPresult = new Result();
             Random r = new Random();
             string code = "";
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-@";
@@ -107,17 +108,30 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
             // Saving activation code
             AccountMariaDAO dao = new AccountMariaDAO();
+            savingOTPresult = dao.SaveCode(userAccount, otp);
 
+            if (savingOTPresult.IsSuccessful)
+            {
+                // Logging the OTP save
+                Logger successfulLogger = new Logger(dao);
+                successfulLogger.Log("One-time password generated successfully", LogLevel.Info, "Data Store", userAccount.Username);
+            }
+            else
+            {
+                // Logging the error
+                Logger errorLogger = new Logger(dao);
+                errorLogger.Log("Error saving a one-time password", LogLevel.Error, "Data Store", userAccount.Username);
+            }
             return otp;
         }
 
-        public bool ConfirmPassword(string otp)
+        public string ConfirmPassword(string password)
         {
-            Console.WriteLine("Enter your one time passphrase:");
+            Console.WriteLine("Re-enter Password:");
             string confirmPassword = Console.ReadLine();
-            if (confirmPassword == otp)
+            if (confirmPassword == password)
             {
-                return true;
+                return confirmPassword;
             }
             else
             {
@@ -126,13 +140,13 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 {
                     Console.WriteLine("Passwords do not match. Re-enter Password: ");
                     confirmPassword = Console.ReadLine();
-                    if (confirmPassword == otp)
+                    if (confirmPassword == password)
                     {
                         validC = true;
                     }
                 }
             }
-            return false;
+            return confirmPassword;
         }
 
         public Result RegisterUser(string email, string password)

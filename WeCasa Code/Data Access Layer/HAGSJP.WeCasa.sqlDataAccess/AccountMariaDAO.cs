@@ -23,7 +23,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
              var builder = new MySqlConnectionStringBuilder
              {
                  Server = "localhost",
-                 Port = 3306,
+                 Port = 3307,
                  UserID = "HAGSJP.WeCasa.SqlUser",
                  Password = "cecs491",
                  Database = "HAGSJP.WeCasa"
@@ -32,12 +32,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             return builder;
         }
 
-        /// <summary>
-        /// Based on the number of rows passed in, returns a result
-        /// that is readable by source call
-        /// </summary>
-        /// <param name="rows"></param>
-        /// <returns></returns>
         public Result ValidateSqlStatement(int rows)
         {
             var result = new Result();
@@ -55,14 +49,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             return result;
         }
 
-        /// <summary>
-        /// Synchronous method for connecting to Users database for 
-        /// persisting a new user
-        /// </summary>
-        /// <param name="email"></param>
-        /// <param name="username"></param>
-        /// <param name="otp_phrase"></param>
-        /// <returns></returns>
         public Result PersistUser(UserAccount userAccount, string password)
         {
             _connectionString = BuildConnectionString().ConnectionString;
@@ -86,12 +72,30 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
-        /// <summary>
-        /// Asynchronous method that connects to the Logs database
-        /// and persists a record
-        /// </summary>
-        /// <param name="message"></param>
-        /// <returns>bool Result</returns>
+        public Result SaveCode(UserAccount userAccount, OTP otp)
+        {
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new Result();
+
+                // Insert SQL statement
+                var insertSql = @"UPDATE `Users` SET `otp_code` = @otp_code, `otp_time` = @otp_time WHERE `id`= @userAccId";
+
+                var command = connection.CreateCommand();
+                command.CommandText = insertSql;
+                command.Parameters.AddWithValue("@otp_code", otp.Code);
+                command.Parameters.AddWithValue("@otp_time", otp.CreateTime);
+                command.Parameters.AddWithValue("@userAccId", userAccount.UserAccountId);
+
+                // Execution of SQL
+                var rows = (command.ExecuteNonQuery());
+                result = ValidateSqlStatement(rows);
+                return result;
+            }
+        }
+
         public async Task<Result> LogData(Log log)
         {
 

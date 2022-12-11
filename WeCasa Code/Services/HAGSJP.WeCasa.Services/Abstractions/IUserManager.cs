@@ -13,7 +13,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public bool ValidateEmail(string email);
         public Result ValidatePassword(string Password);
         public OTP GenerateOTPassword(UserAccount userAccount);
-        public bool ConfirmPassword(string password);
+        public string ConfirmPassword(string password);
         public Result RegisterUser(string email, string password);
         public Result DeleteUser();
         public Result UpdateUser(UserProfile userProfile);

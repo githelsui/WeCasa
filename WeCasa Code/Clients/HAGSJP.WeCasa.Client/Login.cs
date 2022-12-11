@@ -1,4 +1,5 @@
 ﻿using HAGSJP.WeCasa.Models;
+using HAGSJP.WeCasa.Services.Implementations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,10 +41,9 @@ namespace HAGSJP.WeCasa.Client
         }
 
         // TODO
-        public Result LoginUser()
+        public void LoginUser(UserManager um)
         {
-            var loginResult = new Result();
-            return loginResult;
+            
         }
     }
 }
