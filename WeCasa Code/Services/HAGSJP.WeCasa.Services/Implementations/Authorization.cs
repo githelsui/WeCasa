@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
+using Microsoft.Identity.Client;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
@@ -17,16 +18,28 @@ namespace HAGSJP.WeCasa.Services.Implementations
             _dao = dao;
         }
 
-        public Result validateClaim(UserAccount ua)
-        {
-            var userClaims = _dao.GetClaims(ua);
-            throw new NotImplementedException();
-        }
-
-        public Result validateAdminRole(UserAccount ua)
+        public bool ValidateAdminRole(UserAccount ua)
         {
             var userRole = _dao.GetRole(ua);
-            throw new NotImplementedException();
+            if(userRole == Models.Security.UserRoles.AdminUser)
+            {
+                return true;
+            }
+            return false;
         }
+
+        public bool ValidateClaim(UserAccount ua, Claim targetClaim)
+        {
+            List<Claim> userClaims = _dao.GetClaims(ua).UserClaims;
+            foreach (Claim claim in userClaims)
+            {
+                if(targetClaim.ClaimType == claim.ClaimType && targetClaim.ClaimValue == claim.ClaimValue)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
     }
 }

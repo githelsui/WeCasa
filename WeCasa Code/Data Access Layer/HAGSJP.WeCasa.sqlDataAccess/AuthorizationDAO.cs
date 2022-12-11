@@ -29,23 +29,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             return builder;
         }
 
-        public Result ValidateSqlStatement(int rows)
-        {
-            var result = new Result();
-
-            if (rows == 1)
-            {
-                result.IsSuccessful = true;
-                result.Message = string.Empty;
-
-                return result;
-            }
-            result.IsSuccessful = false;
-            result.Message = $"Rows affected were not 1. It was {rows}";
-
-            return result;
-        }
-
         public UserRoles GetRole(UserAccount ua)
         {
             _connectionString = BuildConnectionString().ConnectionString;

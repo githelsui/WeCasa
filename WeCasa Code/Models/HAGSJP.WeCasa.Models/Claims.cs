@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Text.Json;
+using Newtonsoft.Json;
+
 namespace HAGSJP.WeCasa.Models
 {
 	public class Claims
@@ -9,13 +11,13 @@ namespace HAGSJP.WeCasa.Models
 			UserClaims = DeserializeUsingGenericSystemTextJson(jsonClaims);
 		}
 
-        private Claim DeserializeUsingGenericSystemTextJson(string json)
+        private List<Claim> DeserializeUsingGenericSystemTextJson(string jsonClaims)
         {
-            var claims = JsonSerializer.Deserialize<Claim>(json, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            List<Claim> claims = JsonConvert.DeserializeObject<List<Claim>>(jsonClaims);
             return claims;
         }
 
-        public Claim UserClaims { get; set; }
+        public List<Claim> UserClaims { get; set; }
 	}
 }
 
