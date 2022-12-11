@@ -96,8 +96,18 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
         public OTP GenerateOTPassword(UserAccount userAccount)
         {
+            Random r = new Random();
             string code = "";
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-@";
+            foreach (var i in Enumerable.Range(0,10))
+            {
+                code += chars[r.Next(0, 65)];
+            }
             var otp = new OTP(userAccount.Username, code);
+
+            // Saving activation code
+            AccountMariaDAO dao = new AccountMariaDAO();
+
             return otp;
         }
 

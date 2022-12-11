@@ -94,7 +94,9 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         /// <returns>bool Result</returns>
         public async Task<Result> LogData(Log log)
         {
+
             _connectionString = BuildConnectionString().ConnectionString;
+
             using (var connection = new MySqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
