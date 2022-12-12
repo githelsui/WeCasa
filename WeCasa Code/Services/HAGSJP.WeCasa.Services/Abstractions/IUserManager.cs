@@ -4,22 +4,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Security.Principal;
+using HAGSJP.WeCasa.Models.Security;
 
-namespace HAGSJP.WeCasa.ManagerLayer.Implementations
+namespace HAGSJP.WeCasa.Services.Implementations
 {
     public interface IUserManager
     {
         public bool ValidateEmail(string email);
+        public bool IsUsernameTaken(string username);
         public Result ValidatePassword(string Password);
+        public OTP GenerateOTPassword(UserAccount userAccount);
         public string ConfirmPassword(string password);
         public Result RegisterUser(string email, string password);
         public Result DeleteUser();
         public Result UpdateUser(UserProfile userProfile);
-        public Result EnableUser();
-        public Result DisableUser();
+        public Result EnableUser(UserAccount userAccount);
+        public Result DisableUser(UserAccount userAccount);
     }
 }

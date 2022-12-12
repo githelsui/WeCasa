@@ -1,4 +1,4 @@
-using HAGSJP.WeCasa.ManagerLayer.Implementations;
+using HAGSJP.WeCasa.Services.Implementations;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.sqlDataAccess;
 using NuGet.Frameworks;

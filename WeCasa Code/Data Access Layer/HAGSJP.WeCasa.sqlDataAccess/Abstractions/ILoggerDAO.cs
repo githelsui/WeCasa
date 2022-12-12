@@ -1,4 +1,5 @@
 ﻿using HAGSJP.WeCasa.Models;
+using HAGSJP.WeCasa.Models.Security;
 using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess.Abstractions
 {
     public interface ILoggerDAO
     {
-        public Result PersistUser(UserAccount userAccount, string password);
         public Task<Result> LogData(Log log);
     }
 }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
- <ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\HAGSJP.WeCasa.Logging.csproj" />
     <ProjectReference Include="..\..\Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\HAGSJP.WeCasa.sqlDataAccess.csproj" />
     <ProjectReference Include="..\..\Models\HAGSJP.WeCasa.Models\HAGSJP.WeCasa.Models.csproj" />
