@@ -5,6 +5,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
 {
     public interface IAuthentication
     {
-        public Result VerifyOTPassword(OTP otp);
+        public Result VerifyOTPassword(string email, string code);
+        public Result AuthenticateUser(string password, OTP otp);
     }
 }

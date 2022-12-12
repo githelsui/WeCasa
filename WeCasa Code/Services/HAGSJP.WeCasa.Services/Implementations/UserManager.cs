@@ -10,11 +10,28 @@ using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
     public class UserManager : IUserManager
     {
+        private readonly AccountMariaDAO _dao;
+        private Logger successLogger;
+        private Logger errorLogger;
+
+        public UserManager() 
+        {
+            _dao = new AccountMariaDAO();
+            successLogger = new Logger(_dao);
+            errorLogger = new Logger(_dao);
+        }
+        public UserManager(AccountMariaDAO dao)
+        {
+            _dao = dao;
+            successLogger = new Logger(dao);
+            errorLogger = new Logger(dao);
+        }
         public bool ValidateEmail(string email)
         {
             bool validEmail;
@@ -113,13 +130,11 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (savingOTPresult.IsSuccessful)
             {
                 // Logging the OTP save
-                Logger successfulLogger = new Logger(dao);
-                successfulLogger.Log("One-time password generated successfully", LogLevel.Info, "Data Store", userAccount.Username);
+                successLogger.Log("One-time password generated successfully", LogLevel.Info, "Data Store", userAccount.Username);
             }
             else
             {
                 // Logging the error
-                Logger errorLogger = new Logger(dao);
                 errorLogger.Log("Error saving a one-time password", LogLevel.Error, "Data Store", userAccount.Username);
             }
             return otp;
@@ -153,22 +168,17 @@ namespace HAGSJP.WeCasa.Services.Implementations
         {
             var userPersistResult = new Result();
             UserAccount userAccount = new UserAccount(email);
-            AccountMariaDAO dao = new AccountMariaDAO();
 
-            userPersistResult = dao.PersistUser(userAccount, password);
-
-            // Add userID from userPersistResult
+            userPersistResult = _dao.PersistUser(userAccount, password);
 
             if (userPersistResult.IsSuccessful)
             {
                 // Logging the registration
-                Logger successfulLogger = new Logger(dao);
-                successfulLogger.Log("Account created successfully", LogLevel.Info, "Data Store", userAccount.Username);
+                successLogger.Log("Account created successfully", LogLevel.Info, "Data Store", userAccount.Username);
             }
             else
             {
                 // Logging the error
-                Logger errorLogger = new Logger(dao);
                 errorLogger.Log("Error creating an account", LogLevel.Error, "Data Store", userAccount.Username);
             }
             return userPersistResult;

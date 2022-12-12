@@ -5,6 +5,7 @@ using MySqlConnector;
 using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
 using HAGSJP.WeCasa.Models.Security;
 using System.Text.Json;
+using static System.Net.WebRequestMethods;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
@@ -24,7 +25,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
              var builder = new MySqlConnectionStringBuilder
              {
                  Server = "localhost",
-                 Port = 3307,
+                 Port = 3306,
                  UserID = "HAGSJP.WeCasa.SqlUser",
                  Password = "cecs491",
                  Database = "HAGSJP.WeCasa"
@@ -74,6 +75,30 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 initialClaims.Add(new Claim("View", "View section"));
                 string claimsJSON = JsonSerializer.Serialize(initialClaims);
                 command.Parameters.AddWithValue("@claims", claimsJSON);
+
+                // Execution of SQL
+                var rows = (command.ExecuteNonQuery());
+                result = ValidateSqlStatement(rows);
+                return result;
+            }
+        }
+
+        public Result AuthenticateUser(UserAccount userAccount, string password, OTP otp)
+        {
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new Result();
+
+                // Insert SQL statement
+                var insertSql = @"SELECT FROM `Users` WHERE `username` = @username, `password = @password, `otp_code` = @otp, `is_auth` = 0;";
+
+                var command = connection.CreateCommand();
+                command.CommandText = insertSql;
+                command.Parameters.AddWithValue("@username", userAccount.UserAccountId);
+                command.Parameters.AddWithValue("@password", password);
+                command.Parameters.AddWithValue("@otp_code", otp.Code);
 
                 // Execution of SQL
                 var rows = (command.ExecuteNonQuery());

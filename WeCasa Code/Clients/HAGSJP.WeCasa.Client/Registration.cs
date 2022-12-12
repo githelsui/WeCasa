@@ -11,44 +11,11 @@ namespace HAGSJP.WeCasa.Client
 {
     public class Registration
     {
-        public string GetEmail(UserManager um)
-        {
-            Console.WriteLine("Enter Email Address: ");
-            string email = Console.ReadLine();
-            bool validEmail = um.ValidateEmail(email);
-            while (!validEmail)
-            {
-                Console.WriteLine("Invalid email provided. Retry again or contact system administrator: ");
-                email = Console.ReadLine();
-                validEmail = um.ValidateEmail(email);
-            }
-            return email;
-        }
 
-        public string GetPassword(UserManager um)
+        public void Register(String email, String password, UserManager um)
         {
-            Console.WriteLine("Enter Password: ");
-            string password = Console.ReadLine();
-            var validP = new Result();
-            validP = um.ValidatePassword(password);
-            while (validP.IsSuccessful == false)
-            {
-                Console.WriteLine(validP.Message);
-                password = Console.ReadLine();
-                validP = um.ValidatePassword(password);
-            }
-            return password;
-        }
-
-        public void RegisterUser(UserManager um)
-        {
-            string email = GetEmail(um);
-            // check if user already exists, is authenticated
-            string password = GetPassword(um);
-            var validPW = um.ValidatePassword(password);
-            string confirmPassword = um.ConfirmPassword(password);
             var registerResult = um.RegisterUser(email, password);
-            if (validPW.IsSuccessful && registerResult.IsSuccessful)
+            if (registerResult.IsSuccessful)
             {
                 Console.WriteLine("Account created successfully!\n");
                 // Create User Account

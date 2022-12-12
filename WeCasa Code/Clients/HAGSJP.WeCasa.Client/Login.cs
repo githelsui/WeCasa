@@ -1,4 +1,5 @@
 ﻿using HAGSJP.WeCasa.Models;
+using HAGSJP.WeCasa.Models.Security;
 using HAGSJP.WeCasa.Services.Implementations;
 using System;
 using System.Collections.Generic;
@@ -10,40 +11,19 @@ namespace HAGSJP.WeCasa.Client
     {
     class Login
     {
-        public Result CheckEmail(string email)
+        public void LoginUser(string password, OTP otp, Authentication auth)
         {
-            var validEmail = new Result();
-            return validEmail;
-        }
-        public bool CheckPassword(string password)
-        {
-            var validPW = new Result();
-            Console.WriteLine("Re-enter Password");
-            string confirmPassword = Console.ReadLine();
-            if (confirmPassword == password)
+            // check if the user exists, make sure they are not already authenticated
+            var loginResult = auth.AuthenticateUser(password, otp); 
+   
+            if (loginResult.IsSuccessful)
             {
-                return true;
+                Console.WriteLine(otp.Username, " logged in...");
             }
             else
             {
-                bool validC = false;
-                while (validC == false)
-                {
-                    Console.WriteLine("Passwords do not match. Re-enter Password: ");
-                    confirmPassword = Console.ReadLine();
-                    if (confirmPassword == password)
-                    {
-                        validC = true;
-                    }
-                }
+                Console.WriteLine(loginResult.Message);
             }
-            return false;
-        }
-
-        // TODO
-        public void LoginUser(UserManager um)
-        {
-            
         }
     }
 }
