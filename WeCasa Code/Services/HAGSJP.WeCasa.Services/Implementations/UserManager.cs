@@ -56,6 +56,13 @@ namespace HAGSJP.WeCasa.Services.Implementations
             }
             return validEmail;
         }
+
+        public bool IsUsernameTaken(string username)
+        {
+            UserAccount userAccount = new UserAccount(username);
+            var result = _dao.GetUserInfo(userAccount);
+            return result.ExistingAcc;
+        }
         public Result ValidatePassword(string password)
         {
             var result = new Result();
@@ -200,7 +207,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         {
             var enablingUser = new Result();
             // disabling user
-            enablingUser = _dao.setUserAbility(userAccount, 1);
+            enablingUser = _dao.SetUserAbility(userAccount, 1);
 
             if (enablingUser.IsSuccessful)
             {
@@ -219,7 +226,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         {
             var disablingUser = new Result();
             // disabling user
-            disablingUser = _dao.setUserAbility(userAccount, 0);
+            disablingUser = _dao.SetUserAbility(userAccount, 0);
 
             if (disablingUser.IsSuccessful)
             {

@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Text.Json;
 
-namespace HAGSJP.WeCasa.Models
+namespace HAGSJP.WeCasa.Models.Security
 {
-	public class Claims
-	{
-		public Claims(string jsonClaims)
-		{
-			UserClaims = DeserializeUsingGenericSystemTextJson(jsonClaims);
-		}
-
-        public Claims()
+    public class Claims
+    {
+        public Claims() { }
+        public Claims(string jsonClaims)
         {
-            UserClaims = new List<Claim>();
+            UserClaims = DeserializeUsingGenericSystemTextJson(jsonClaims);
         }
 
         private List<Claim> DeserializeUsingGenericSystemTextJson(string jsonClaims)
@@ -22,7 +18,6 @@ namespace HAGSJP.WeCasa.Models
         }
 
         public List<Claim> UserClaims { get; set; }
-        public string? Username { get; set; }
     }
 }
 

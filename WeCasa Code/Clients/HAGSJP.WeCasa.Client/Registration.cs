@@ -11,8 +11,20 @@ namespace HAGSJP.WeCasa.Client
 {
     public class Registration
     {
-
-        public void Register(String email, String password, UserManager um)
+        public string GetEmail(UserManager um)
+        {
+            Console.WriteLine("Enter Email Address: ");
+            string email = Console.ReadLine();
+            bool validEmail = um.ValidateEmail(email);
+            while (!validEmail || um.IsUsernameTaken(email))
+            {
+                Console.WriteLine("Invalid username or password provided. Retry again or contact system administrator.");
+                email = Console.ReadLine();
+                validEmail = um.ValidateEmail(email);
+            }
+            return email;
+        }
+        public void Register(string email, string password, UserManager um)
         {
             var registerResult = um.RegisterUser(email, password);
             if (registerResult.IsSuccessful)
@@ -20,11 +32,8 @@ namespace HAGSJP.WeCasa.Client
                 Console.WriteLine("Account created successfully!\n");
                 // Create User Account
                 UserAccount userAccount = new UserAccount(email);
-                // Providing username and OTP to the user
-                OTP otp = um.GenerateOTPassword(userAccount);
+                // Providing username to the user
                 Console.WriteLine("Username: " + email);
-                Console.WriteLine("One-time login code: " + otp.Code);
-                Console.WriteLine("Your one-time code will expire at " + otp.CreateTime.AddMinutes(2) + "\n");
             }
             else
             {

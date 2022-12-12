@@ -13,13 +13,14 @@
         }
        
         // Constructor with DateTime
-        public Log(string message, LogLevel logLevel, string category, DateTime date_time, string user)
+        public Log(string message, LogLevel logLevel, string category, DateTime date_time, string user, UserOperation uo)
         {
             Message = message;
             LogLevel = logLevel.ToString();
             Category = category;
             Date_Time = date_time;
             Username = user;
+            Operation = uo;
         }
 
         public string Message { get; set; }
@@ -31,5 +32,6 @@
         public DateTime Date_Time { get; set; } 
 
         public string Username { get; set; }
+        public UserOperation Operation { get; set; }
     }
 }

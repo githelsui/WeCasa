@@ -30,16 +30,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HAGSJP.WeCasa.Registration.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{ED6EFEDA-C3B5-40C9-9B5E-EC1FD4A260AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HAGSJP.WeCasa.Services", "Services\HAGSJP.WeCasa.Services\HAGSJP.WeCasa.Services.csproj", "{F0970CAD-C6FD-4148-998B-A5296DCEDC6A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HAGSJP.WeCasa.Services", "Services\HAGSJP.WeCasa.Services\HAGSJP.WeCasa.Services.csproj", "{F0970CAD-C6FD-4148-998B-A5296DCEDC6A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1A4FA945-DEC1-40C3-842D-90CE9781104A} = {1A4FA945-DEC1-40C3-842D-90CE9781104A}
 		{8F53CA96-25B1-4387-B170-532B6D1B1B10} = {8F53CA96-25B1-4387-B170-532B6D1B1B10}
 		{E0BD7C64-BB4D-4B91-B38B-5892A71715DA} = {E0BD7C64-BB4D-4B91-B38B-5892A71715DA}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HAGSJP.WeCasa.Authentication.Test", "Tests\HAGSJP.WeCasa.Authentication.Test\HAGSJP.WeCasa.Authentication.Test.csproj", "{57BACD13-CB3E-4DD6-B19A-C8D632929E42}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HAGSJP.WeCasa.Authentication.Test", "Tests\HAGSJP.WeCasa.Authentication.Test\HAGSJP.WeCasa.Authentication.Test.csproj", "{57BACD13-CB3E-4DD6-B19A-C8D632929E42}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HAGSJP.WeCasa.Authorization.Test", "Tests\HAGSJP.WeCasa.Authorization.Test\HAGSJP.WeCasa.Authorization.Test.csproj", "{8F9C36F5-06E9-4C2B-91A4-5E91EE5405DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HAGSJP.WeCasa.Authorization.Test", "Tests\HAGSJP.WeCasa.Authorization.Test\HAGSJP.WeCasa.Authorization.Test.csproj", "{8F9C36F5-06E9-4C2B-91A4-5E91EE5405DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

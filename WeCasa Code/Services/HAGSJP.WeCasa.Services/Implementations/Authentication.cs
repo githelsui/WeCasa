@@ -43,51 +43,104 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
             else
             {
-                // Ensuring that the one-time code has not expired
                 result.IsSuccessful = true;
                 return result;
             }
         }
-        public Result AuthenticateUser(string password, OTP otp)
+
+        // Resets OTP code and time for a user account
+        public Result ResetOTP(UserAccount userAccount)
         {
-            var loginUserResult = new Result();
-            UserAccount userAccount = new UserAccount(otp.Username);
+            var result = _dao.ResetOTP(userAccount);
+            if(!result.IsSuccessful)
+            {
+                errorLogger.Log("Error updating one-time code", LogLevel.Error, "Data Store", userAccount.Username);
+            }
+            return result;
+        }
 
-            loginUserResult = _dao.AuthenticateUser(userAccount, password, otp);
+        // Checks if the user already exists in the database and makes sure they are not authenticated or disabled
+        public Result IsExistingAccount(UserAccount userAccount)
+        {
+            var result = _dao.GetUserInfo(userAccount);
+            // User account checks
+            // User is already authenticated
+            if (result.IsAuth == true)
+            {
+                result.IsSuccessful = false;
+                result.Message = "Account is already authenticated.";
+            }
+            // Invalid credentials
+            else if (result.HasValidCredentials == false)
+            {
+                result.IsSuccessful = false;
+                result.Message = "Invalid username or password provided. Retry again or contact the System Administrator.";
+            }
+            // Account is disabled
+            else if (result.IsEnabled == false)
+            {
+                result.IsSuccessful = false;
+                result.Message = "Account Disabled. Perform account recovery or contact the System Administrator.";
+            }
+            else
+            {
+                result.IsSuccessful = true;
+                result.Message = "";
+            }
+            return result;
+        }
 
-            if (loginUserResult.IsSuccessful && IsAccountEnabled(userAccount))
+        public Result AuthenticateUser(UserAccount userAccount, OTP otp)
+        {
+            var loginUser = _dao.AuthenticateUser(userAccount, otp);
+
+            if (loginUser.HasValidOTP && loginUser.IsSuccessful && IsAccountEnabled(userAccount))
             {
                 // Reset all authentication attempts upon successful login
                 ResetAuthenticationAttempts(userAccount);
+                ResetOTP(userAccount);
                 // Logging the registration
                 successLogger.Log("Login successful", LogLevel.Info, "Data Store", userAccount.Username);
             }
             else
             {
+                if(!loginUser.HasValidOTP)
+                {
+                    loginUser.Message = "One-time code is invalid.";
+                }
+                if(loginUser.ExpiredOTP)
+                {
+                    loginUser.Message = "One-time code is expired.";
+                }
                 // Logging the error with ip address
                 string host = Dns.GetHostName();
                 IPHostEntry ip = Dns.GetHostEntry(host);
                 errorLogger.Log("Error during Authentication from " + ip.AddressList[0].ToString(), LogLevel.Error, "Data Store", userAccount.Username);
-
             }
-            return loginUserResult;
+            return loginUser;
         }
 
         // Checks if there were 3 failed login attempts in the past 24 hours
         // On the third attempt, disable user account
         public Boolean IsAccountEnabled(UserAccount userAccount){
-            List<DateTime> failedAttemptTimes = _dao.GetAuthenticationAttempts(userAccount);
-            DateTime now = DateTime.Now;
+            List<DateTime> failedAttemptTimes = _dao.GetUserOperations(userAccount, UserOperation.Login);
+            /*DateTime now = DateTime.Now;
             DateTime timeLimit = now.AddHours(-24);
-            List<DateTime> itemsAfter = failedAttemptTimes.FindAll(i => i > timeLimit);
-            Console.WriteLine("itemsAfter" + itemsAfter.Count);
+            List<DateTime> itemsAfter = failedAttemptTimes.FindAll(i => i > timeLimit);*/
 
-            if (itemsAfter.Count >= 3) 
+            if (failedAttemptTimes.Count >= 3) 
             {
-                // disabling account
+                // Disabling account
                 UserManager um = new UserManager();
-                um.DisableUser(userAccount);
-                errorLogger.Log("User has been disabled after 3 failed login attempts in the past 24 hours", LogLevel.Debug, "Business", userAccount.Username);
+                var result = um.DisableUser(userAccount);
+                if (result.IsSuccessful)
+                {
+                    successLogger.Log("User has been disabled after 3 failed login attempts in the past 24 hours", LogLevel.Debug, "Business", userAccount.Username);
+                }
+                else
+                {
+                    errorLogger.Log("Error disabling user account.", LogLevel.Error, "Data Store", userAccount.Username);
+                }
                 return false;
             }
             else 
@@ -99,7 +152,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         // system recovery is performed
         public Result ResetAuthenticationAttempts(UserAccount userAccount) {
             var resetResult = new Result();
-            resetResult = _dao.ResetAuthenticationAttempts(userAccount);
+            resetResult = _dao.ResetAuthenticationAttempts(userAccount, UserOperation.Login);
             
             if (resetResult.IsSuccessful)
             {

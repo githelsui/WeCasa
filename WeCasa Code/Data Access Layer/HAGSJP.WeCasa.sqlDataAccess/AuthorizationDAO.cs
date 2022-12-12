@@ -10,7 +10,7 @@ using System.Net;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
-	public class AuthorizationDAO : IAuthorizationDAO
+    public class AuthorizationDAO : IAuthorizationDAO
     {
         private string _connectionString;
 
@@ -21,7 +21,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             var builder = new MySqlConnectionStringBuilder
             {
                 Server = "localhost",
-                Port = 3307,
+                Port = 3306,
                 UserID = "HAGSJP.WeCasa.SqlUser",
                 Password = "cecs491",
                 Database = "HAGSJP.WeCasa"
@@ -61,7 +61,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 var command = connection.CreateCommand();
                 command.CommandText = selectSql;
-                command.Parameters.AddWithValue("@username", ua.Username);
+                command.Parameters.AddWithValue("@username".ToLower(), ua.Username.ToLower());
 
                 // Execution of SQL
                 var reader = command.ExecuteReader();
@@ -105,7 +105,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 var command = connection.CreateCommand();
                 command.CommandText = selectSql;
-                command.Parameters.AddWithValue("@username", ua.Username);
+                command.Parameters.AddWithValue("@username".ToLower(), ua.Username.ToLower());
 
                 // Execution of SQL
                 var reader = command.ExecuteReader();
@@ -149,7 +149,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 var command = connection.CreateCommand();
                 command.CommandText = insertSql;
-                command.Parameters.AddWithValue("@username", ua.Username);
+                command.Parameters.AddWithValue("@username".ToLower(), ua.Username.ToLower());
                 string claimsJSON = JsonSerializer.Serialize(newClaims);
                 command.Parameters.AddWithValue("@claims", claimsJSON);
 
@@ -178,7 +178,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 var command = connection.CreateCommand();
                 command.CommandText = selectSql;
-                command.Parameters.AddWithValue("@username", ua.Username);
+                command.Parameters.AddWithValue("@username".ToLower(), ua.Username.ToLower());
 
                 // Execution of SQL
                 var reader = command.ExecuteReader();

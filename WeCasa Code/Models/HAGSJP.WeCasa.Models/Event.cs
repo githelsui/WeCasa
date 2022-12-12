@@ -1,6 +1,8 @@
+using HAGSJP.WeCasa.Models.Security;
+
 namespace HAGSJP.WeCasa.Models
 {
-	public interface Event
+    public interface Event
 	{
         public UserAccount user { get; set; }
         public string isAdmin { get; set; }

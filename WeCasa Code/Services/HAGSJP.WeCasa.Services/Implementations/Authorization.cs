@@ -62,7 +62,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
             result.IsSuccessful = true;
             result.Message = string.Empty;
-            if (userRole == Models.Security.UserRoles.AdminUser)
+            if (userRole == UserRoles.AdminUser)
             {
                 result.ReturnedObject = true;
             }

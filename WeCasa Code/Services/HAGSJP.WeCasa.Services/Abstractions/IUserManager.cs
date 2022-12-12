@@ -11,6 +11,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
     public interface IUserManager
     {
         public bool ValidateEmail(string email);
+        public bool IsUsernameTaken(string username);
         public Result ValidatePassword(string Password);
         public OTP GenerateOTPassword(UserAccount userAccount);
         public string ConfirmPassword(string password);

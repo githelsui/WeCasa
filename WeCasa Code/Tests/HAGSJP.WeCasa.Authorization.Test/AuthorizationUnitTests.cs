@@ -1,5 +1,6 @@
 using HAGSJP.WeCasa.Services.Implementations;
 using HAGSJP.WeCasa.Models;
+using HAGSJP.WeCasa.Models.Security;
 using HAGSJP.WeCasa.sqlDataAccess;
 
 namespace HAGSJP.WeCasa.Authorization.Test

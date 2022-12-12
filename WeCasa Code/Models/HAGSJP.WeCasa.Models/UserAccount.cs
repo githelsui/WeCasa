@@ -6,6 +6,12 @@
         {
             Username = email;
         }
+
+        public UserAccount(string email, string password)
+        {
+            Username = email;
+            Password = password;
+        }
         // System Assigned Key (SAK) -- primary key
         public int UserAccountId { get; set; }
         public string Username { get; set; }

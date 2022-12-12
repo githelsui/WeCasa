@@ -11,10 +11,29 @@ namespace HAGSJP.WeCasa.Client
 {
     class Login
     {
-        public void LoginUser(string password, OTP otp, Authentication auth)
+        public string GetEmail(UserManager um)
         {
-            // check if the user exists, make sure they are not already authenticated
-            var loginResult = auth.AuthenticateUser(password, otp);
+            Console.WriteLine("Enter Email Address: ");
+            string email = Console.ReadLine();
+            bool validEmail = um.ValidateEmail(email);
+            while (!validEmail)
+            {
+                Console.WriteLine("Invalid username or password provided. Retry again or contact system administrator.");
+                email = Console.ReadLine();
+                validEmail = um.ValidateEmail(email);
+            }
+            return email;
+        }
+        public Result CheckUser(UserAccount userAccount, Authentication auth, UserManager um)
+        {
+            // Checking if the user exists, make sure they are not already authenticated
+            var result = auth.IsExistingAccount(userAccount);
+            return result;
+        }
+        public void LoginUser(UserAccount userAccount, OTP otp, Authentication auth)
+        {
+            // Checking OTP, creating a new authentication session for the user
+            var loginResult = auth.AuthenticateUser(userAccount, otp);
 
             if (loginResult.IsSuccessful)
             {

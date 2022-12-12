@@ -3,6 +3,7 @@ using MySqlConnector;
 using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
 using HAGSJP.WeCasa.Models.Security;
 using System.Text.Json;
+using Azure;
 
 
 namespace HAGSJP.WeCasa.sqlDataAccess
@@ -62,7 +63,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 var command = connection.CreateCommand();
                 command.CommandText = insertSql;
-                command.Parameters.AddWithValue("@username", userAccount.Username);
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
                 command.Parameters.AddWithValue("@password", password);
 
                 // Initial claims when new user is first registered
@@ -83,32 +84,124 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
-        public Result AuthenticateUser(UserAccount userAccount, string password, OTP otp)
+        // Checks if authentication pre-conditions are met
+        public AuthResult GetUserInfo(UserAccount userAccount)
         {
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
-                var result = new Result();
+                var result = new AuthResult();
 
-                // Insert SQL statement
-                var insertSql = @"SELECT FROM `Users` WHERE `username` = @username, `password = @password, `otp_code` = @otp, `is_auth` = 0;";
+                // Select SQL statement
+                var selectSql = @"SELECT  * 
+                                    FROM  `Users` 
+                                    WHERE `username` = @username";
 
                 var command = connection.CreateCommand();
-                command.CommandText = insertSql;
-                command.Parameters.AddWithValue("@username", userAccount.UserAccountId);
-                command.Parameters.AddWithValue("@password", password);
-                command.Parameters.AddWithValue("@otp_code", otp.Code);
+                command.CommandText = selectSql;
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
 
                 // Execution of SQL
-                var rows = (command.ExecuteNonQuery());
-                result = ValidateSqlStatement(rows);
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        result.ExistingAcc = true;
+                        result.IsAuth = reader.GetInt32(reader.GetOrdinal("is_auth")) == 1 ? true : false;
+                        result.IsEnabled = reader.GetInt32(reader.GetOrdinal("is_enabled")) == 1 ? true : false;
+                        result.HasValidCredentials = reader.GetString(reader.GetOrdinal("password")) == userAccount.Password ? true : false;
+                    }
+                    // User not found
+                    else
+                    {
+                        result.ExistingAcc = false;
+                    }
+                }
                 return result;
             }
         }
 
-        // Returns a list of DateTime of all failure attempts
-        public List<DateTime> GetAuthenticationAttempts(UserAccount userAccount)
+        public AuthResult AuthenticateUser(UserAccount userAccount, OTP otp)
+        {
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new AuthResult();
+
+                // Select SQL statement
+                var selectSql = @"SELECT * 
+                                  FROM `Users` 
+                                  WHERE `username` = @username 
+                                  AND   `password` = @password 
+                                  AND   `otp_code` = @otp;";
+
+                var command = connection.CreateCommand();
+                command.CommandText = selectSql;
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
+                command.Parameters.AddWithValue("@password", userAccount.Password);
+                command.Parameters.AddWithValue("@otp", otp.Code);
+
+                // Execution of SQL
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        // Ensuring that the OTP has not expired
+                        var otp_time = reader.GetDateTime(reader.GetOrdinal("otp_time"));
+                        if (DateTime.Now < otp_time.AddMinutes(2))
+                        {
+                            result.IsSuccessful = true;
+                            result.HasValidOTP = true;
+                        }
+                        else
+                        {
+                            result.ExpiredOTP = true;
+                        }
+                    }
+                    // One-time code is incorrect
+                    else
+                    {
+                        result.HasValidOTP = false;
+                    }
+                }
+                return result;
+            }
+        }
+
+        // Returns a list of DateTimes of all failure attempts
+        public List<DateTime> GetUserOperations(UserAccount userAccount, UserOperation operation)
+        {
+            List<DateTime> auth_attempts = new List<DateTime>();
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new Result();
+
+                // Select SQL statement
+                var selectSql = @"SELECT Timestamp FROM `Logs` 
+                                    WHERE `Username` = @username 
+                                    AND `Operation` = @operation 
+                                    AND Timestamp >= NOW() - INTERVAL 1 DAY;";
+
+                var command = connection.CreateCommand();
+                command.CommandText = selectSql;
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
+                command.Parameters.AddWithValue("@operation", operation.ToString());
+
+                // Execution of SQL
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    auth_attempts.Add(JsonSerializer.Deserialize<DateTime>(reader.GetString(0)));
+                }
+                return auth_attempts;
+            }
+        }
+        // Resets OTP after successful use
+        public Result ResetOTP(UserAccount userAccount)
         {
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
@@ -116,22 +209,27 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 connection.Open();
                 var result = new Result();
 
-                // Insert SQL statement
-                var insertSql = @"SELECT `Authentication_Attempts` FROM `Users` WHERE `username` = @username;";
+                // Update SQL statement
+                var updateSql = @"UPDATE `Users` 
+                                    SET `otp_code`   = NULL, 
+                                        `otp_time`   = NULL,
+                                        `is_auth`    = 1
+                                    WHERE `username` = @username;";
 
                 var command = connection.CreateCommand();
-                command.CommandText = insertSql;
-                command.Parameters.AddWithValue("@userAccId", userAccount.UserAccountId);
+                command.CommandText = updateSql;
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
 
                 // Execution of SQL
-                var reader = command.ExecuteReader();
-
-                return JsonSerializer.Deserialize<List<DateTime>>(reader.GetString(0));
+                var rows = (command.ExecuteNonQuery());
+                result = ValidateSqlStatement(rows);
+                connection.Close();
+                return result;
             }
         }
 
         // Clears all failure attempts
-        public Result ResetAuthenticationAttempts(UserAccount userAccount)
+        public Result ResetAuthenticationAttempts(UserAccount userAccount, UserOperation operation)
         {
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
@@ -139,16 +237,19 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 connection.Open();
                 var result = new Result();
 
-                // Insert SQL statement
-                var insertSql = @"UPDATE `Users` SET `Authentication_Attempts` = @authenticationAttempts WHERE `id`= @userAccId;";
+                // Update SQL statement
+                var updateSql = @"UPDATE `Logs` 
+                                    SET `Operation`  = NULL
+                                    WHERE `Username` = @username 
+                                    AND `Operation`  = @operation 
+                                    AND `Timestamp`  >= NOW() - INTERVAL 1 DAY;";
 
                 var command = connection.CreateCommand();
-                command.CommandText = insertSql;
-                command.Parameters.AddWithValue("@authenticationAttempts", new List<DateTime>());
+                command.CommandText = updateSql;
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
+                command.Parameters.AddWithValue("@operation", operation.ToString());
 
                 // Execution of SQL
-                var reader = command.ExecuteReader();
-
                 var rows = (command.ExecuteNonQuery());
                 result = ValidateSqlStatement(rows);
                 return result;
@@ -162,14 +263,17 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 connection.Open();
                 var result = new Result();
 
-                // Insert SQL statement
-                var insertSql = @"UPDATE `Users` SET `otp_code` = @otp_code, `otp_time` = @otp_time WHERE `id`= @userAccId;";
+                // Update SQL statement
+                var updateSql = @"UPDATE `Users` 
+                                    SET `otp_code`  = @otp_code, 
+                                        `otp_time`  = @otp_time 
+                                    WHERE `username`= @username;";
 
                 var command = connection.CreateCommand();
-                command.CommandText = insertSql;
+                command.CommandText = updateSql;
                 command.Parameters.AddWithValue("@otp_code", otp.Code);
                 command.Parameters.AddWithValue("@otp_time", otp.CreateTime);
-                command.Parameters.AddWithValue("@userAccId", userAccount.UserAccountId);
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
 
                 // Execution of SQL
                 var rows = (command.ExecuteNonQuery());
@@ -178,7 +282,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
-        public Result setUserAbility(UserAccount userAccount, int isEnabled)
+        public Result SetUserAbility(UserAccount userAccount, int isEnabled)
         {
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
@@ -186,13 +290,15 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 connection.Open();
                 var result = new Result();
 
-                // Insert SQL statement
-                var insertSql = @"UPDATE `Users` SET `is_enabled` = @is_enabled WHERE `id`= @userAccId";
+                // Update SQL statement
+                var updateSql = @"UPDATE `Users` 
+                                    SET `is_enabled` = @is_enabled 
+                                    WHERE `username` = @username";
 
                 var command = connection.CreateCommand();
-                command.CommandText = insertSql;
+                command.CommandText = updateSql;
                 command.Parameters.AddWithValue("@is_enabled", isEnabled);
-                command.Parameters.AddWithValue("@userAccId", userAccount.UserAccountId);
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
 
                 // Execution of SQL
                 var rows = (command.ExecuteNonQuery());
@@ -211,7 +317,10 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 await connection.OpenAsync();
 
                 // Insert SQL statement
-                var insertSql = @"INSERT INTO `Logs` (`Message`, `Log_Level`, `Category`, `Username`) values (@message, @logLevel, @category, @username);";
+                var insertSql = @"INSERT INTO `Logs` 
+                                    (`Message`, `Log_Level`, `Category`, `Username`, `Operation`) 
+                                VALUES 
+                                    (@message, @logLevel, @category, @username, @operation);";
 
                 var command = connection.CreateCommand();
                 command.CommandText = insertSql;
@@ -219,6 +328,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 command.Parameters.AddWithValue("@logLevel", log.LogLevel);
                 command.Parameters.AddWithValue("@category", log.Category);
                 command.Parameters.AddWithValue("@username", log.Username);
+                command.Parameters.AddWithValue("@operation", log.Operation);
 
                 // Execution of SQL
                 int rows = await command.ExecuteNonQueryAsync();
