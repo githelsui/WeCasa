@@ -39,7 +39,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 connection.Open();
 
                 // Select SQL statement
-                var selectSql = @"SELECT is_admin FROM `Users` where username = @username;";
+                var selectSql = @"SELECT `is_admin` FROM `Users` WHERE username = @username;";
 
                 var command = connection.CreateCommand();
                 command.CommandText = selectSql;
@@ -52,7 +52,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     result.IsSuccessful = true;
                     result.Message = string.Empty;
-                    int is_admin = (int)reader["is_admin"];
+                    int is_admin = reader.GetByte(0);
                     switch (is_admin)
                     {
                         case 0:
@@ -83,7 +83,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 connection.Open();
 
                 // Select SQL statement
-                var selectSql = @"SELECT claims FROM `Users` where username = @username;";
+                var selectSql = @"SELECT `claims` FROM `Users` WHERE username = @username;";
 
                 var command = connection.CreateCommand();
                 command.CommandText = selectSql;
@@ -95,7 +95,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     result.IsSuccessful = true;
                     result.Message = string.Empty;
-                    string jsonClaims = reader["claims"].ToString();
+                    string jsonClaims = reader.GetString(0);
                     result.ReturnedObject = new Claims(jsonClaims);
                     return result;
                 }
@@ -119,7 +119,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 connection.Open();
 
                 // Select SQL statement
-                var selectSql = @"SELECT is_enabled FROM `Users` where username = @username;";
+                var selectSql = @"SELECT `is_enabled` FROM `Users` WHERE username = @username;";
 
                 var command = connection.CreateCommand();
                 command.CommandText = selectSql;
@@ -131,7 +131,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     result.IsSuccessful = true;
                     result.Message = string.Empty;
-                    int is_enabled = (int)reader["is_enabled"];
+                    int is_enabled = reader.GetByte(0);
                     if(is_enabled == 1)
                     {
                         result.ReturnedObject = true;
