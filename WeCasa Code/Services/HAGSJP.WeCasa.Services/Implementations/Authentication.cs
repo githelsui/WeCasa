@@ -16,7 +16,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         private readonly AccountMariaDAO _dao;
         private Logger successLogger;
         private Logger errorLogger;
-        public Authentication() 
+        public Authentication()
         {
             _dao = new AccountMariaDAO();
             successLogger = new Logger(_dao);

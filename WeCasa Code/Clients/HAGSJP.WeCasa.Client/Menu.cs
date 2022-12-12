@@ -47,12 +47,12 @@ namespace HAGSJP.WeCasa.Client
             Console.WriteLine("Enter one-time code: ");
             string code = Console.ReadLine();
             var validP = new Result();
-            validP = auth.VerifyOTPassword(email,code);
+            validP = auth.VerifyOTPassword(email, code);
             while (validP.IsSuccessful == false)
             {
                 Console.WriteLine(validP.Message);
                 code = Console.ReadLine();
-                validP = auth.VerifyOTPassword(email,code);
+                validP = auth.VerifyOTPassword(email, code);
             }
             otp = new OTP(email, code);
             return otp;

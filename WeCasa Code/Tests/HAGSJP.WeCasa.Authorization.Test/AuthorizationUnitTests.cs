@@ -23,15 +23,44 @@ namespace HAGSJP.WeCasa.Authorization.Test
         {
             //Arrange
             var expected = new ResultObj();
-            expected.IsSuccessful = false;
-            expected.Message = "Deny access to unauthorized, logged out user.";
+            expected.IsSuccessful = true;
+            expected.ReturnedObject = false;
+            expected.Message = "Successfully denied access to unauthorized, logged out user.";
 
             //Act
             AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
-            //TODO: Edit this specific user has is_enabled set to 0 in the database before testing
-            UserAccount testUser = new UserAccount("AuthTestInactiveAcc@gmail.com");
-            Claim testClaim = new Claim("Functionality", "Edit event");
-            var actual = authService.ValidateClaim(testUser, testClaim);
+            UserAccount testUser = new UserAccount("AuthTestInactiveAcc@gmail.com"); //User has is_enabled = 0
+            var actual = authService.ValidateActiveUser(testUser);
+            bool actualBool = (bool)actual.ReturnedObject;
+            bool expectedBool = (bool)expected.ReturnedObject;
+
+            //Assert
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
+            Assert.IsTrue(actualBool == expectedBool);
+            Assert.IsTrue(actual.Message == expected.Message);
+        }
+
+        [TestMethod]
+        public void ShouldUpdateClaims()
+        {
+            //Arrange
+            var expected = new ResultObj();
+            expected.IsSuccessful = true;
+            expected.Message = "Successfully updated claims for user.";
+
+            //Act
+            AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
+            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_enabled = 1      
+            // Initial claims when new user is first registered
+            List<Claim> newClaims = new List<Claim>
+                {
+                    new Claim("Functionality", "Edit event"),
+                    new Claim("Read", "Read files"),
+                    new Claim("Write", "Edit note"),
+                    new Claim("View", "View section")
+                };
+            var actual = authService.AddClaims(testUser, newClaims);
 
             //Assert
             Assert.IsNotNull(actual);
@@ -40,18 +69,17 @@ namespace HAGSJP.WeCasa.Authorization.Test
         }
 
         [TestMethod]
-        public void ShouldAuthorizeFunctionality()
+        public void ShouldAuthorizeFunctionalityClaim()
         {
             //Arrange
             var expected = new ResultObj();
             expected.IsSuccessful = true;
-            expected.Message = "Authorized access to Functionality Permissions";
+            expected.Message = "Authorized access to Functionality Permissions.";
             expected.ReturnedObject = true;
 
             //Act
             AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
-            //TODO: Edit this specific user has is_enabled set to 1 in the database before testing
-            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com");
+            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_enabled = 1
             Claim testClaim = new Claim("Functionality", "Edit event");
             var actual = authService.ValidateClaim(testUser, testClaim);
             bool actualObject = (bool)actual.ReturnedObject;
@@ -70,13 +98,12 @@ namespace HAGSJP.WeCasa.Authorization.Test
             //Arrange
             var expected = new ResultObj();
             expected.IsSuccessful = true;
-            expected.Message = "Authorized access to Read Permissions";
+            expected.Message = "Authorized access to Read Permissions.";
             expected.ReturnedObject = true;
 
             //Act
             AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
-            //TODO: Edit this specific user has is_enabled set to 1 in the database before testing
-            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com");
+            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_enabled = 1
             Claim testClaim = new Claim("Read", "Read files");
             var actual = authService.ValidateClaim(testUser, testClaim);
             bool actualObject = (bool)actual.ReturnedObject;
@@ -95,13 +122,12 @@ namespace HAGSJP.WeCasa.Authorization.Test
             //Arrange
             var expected = new ResultObj();
             expected.IsSuccessful = true;
-            expected.Message = "Authorized access to Write Permissions";
+            expected.Message = "Authorized access to Write Permissions.";
             expected.ReturnedObject = true;
 
             //Act
             AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
-            //TODO: Edit this specific user has is_enabled set to 1 in the database before testing
-            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com");
+            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_enabled = 1
             Claim testClaim = new Claim("Write", "Edit note");
             var actual = authService.ValidateClaim(testUser, testClaim);
             bool actualObject = (bool)actual.ReturnedObject;
@@ -120,13 +146,12 @@ namespace HAGSJP.WeCasa.Authorization.Test
             //Arrange
             var expected = new ResultObj();
             expected.IsSuccessful = true;
-            expected.Message = "Authorized access to View Permissions";
+            expected.Message = "Authorized access to View Permissions.";
             expected.ReturnedObject = true;
 
             //Act
             AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
-            //TODO: Edit this specific user has is_enabled set to 1 in the database before testing
-            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com");
+            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_enabled = 1
             Claim testClaim = new Claim("View", "View section");
             var actual = authService.ValidateClaim(testUser, testClaim);
             bool actualObject = (bool)actual.ReturnedObject;
@@ -140,7 +165,7 @@ namespace HAGSJP.WeCasa.Authorization.Test
         }
 
         [TestMethod]
-        // Testing for user who is logged in, but does not have specific claim.
+        // Testing for user who is logged in, but does not have target claim.
         public void ShouldUnauthorizeInvalidClaim()
         {
             //Arrange
@@ -150,8 +175,7 @@ namespace HAGSJP.WeCasa.Authorization.Test
 
             //Act
             AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
-            //TODO: Edit this specific user has is_enabled set to 1 in the database before testing
-            UserAccount testUser = new UserAccount("UnauthorizedTest@gmail.com");
+            UserAccount testUser = new UserAccount("UnauthorizedTest@gmail.com"); //User has is_enabled = 1
             Claim testClaim = new Claim("View", "View section");
             var actual = authService.ValidateClaim(testUser, testClaim);
             bool actualObject = (bool)actual.ReturnedObject;
@@ -161,11 +185,6 @@ namespace HAGSJP.WeCasa.Authorization.Test
             Assert.IsNotNull(actual);
             Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
             Assert.IsTrue(actualObject == expectedObject);
-        }
-
-        [TestMethod]
-        public void LogUnauthorizedAccessFailure()
-        {
         }
     }
 }

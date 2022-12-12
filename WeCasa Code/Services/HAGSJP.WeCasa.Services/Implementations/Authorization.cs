@@ -34,7 +34,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
             // Preconditions:
             // Check if user is active/logged in
-            ResultObj daoResultActivity = _dao.GetActiveStatus(ua);
+            ResultObj daoResultActivity = ValidateActiveUser(ua);
             if (daoResultActivity.IsSuccessful == false)
             {
                 // Failure case from data store layer
@@ -44,13 +44,13 @@ namespace HAGSJP.WeCasa.Services.Implementations
             bool isActive = (bool)daoResultActivity.ReturnedObject;
             if (isActive == false)
             {
-                result.Message = "Deny access to unauthorized, logged out user.";
+                result.Message = "Successfully denied access to unauthorized, logged out user.";
                 successLogger.Log(result.Message, LogLevel.Info, "Data Store", ua.Username);
-                result.IsSuccessful = false;
+                result.IsSuccessful = true;
                 return result;
             }
 
-            ResultObj daoResultRoles = _dao.GetRole(ua);
+            ResultObj daoResultRoles = ValidateActiveUser(ua);
             if (daoResultRoles.IsSuccessful == false)
             {
                 // Failure case from data store layer
@@ -65,7 +65,8 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (userRole == Models.Security.UserRoles.AdminUser)
             {
                 result.ReturnedObject = true;
-            } else
+            }
+            else
             {
                 result.ReturnedObject = false;
             }
@@ -78,7 +79,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
             //Preconditions
             // Check if user is active/logged in
-            ResultObj daoResultActivity = _dao.GetActiveStatus(ua);
+            ResultObj daoResultActivity = ValidateActiveUser(ua);
             if (daoResultActivity.IsSuccessful == false)
             {
                 // Failure case from data store layer
@@ -88,9 +89,9 @@ namespace HAGSJP.WeCasa.Services.Implementations
             bool isActive = (bool)daoResultActivity.ReturnedObject;
             if (isActive == false)
             {
-                result.Message = "Deny access to unauthorized, logged out user.";
+                result.Message = "Successfully denied to unauthorized, logged out user.";
                 successLogger.Log(result.Message, LogLevel.Info, "Data Store", ua.Username);
-                result.IsSuccessful = false;
+                result.IsSuccessful = true;
                 return result;
             }
 
@@ -106,7 +107,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             List<Claim> userClaims = (List<Claim>)claims.UserClaims;
             foreach (Claim claim in userClaims)
             {
-                if(targetClaim.ClaimType == claim.ClaimType && targetClaim.ClaimValue == claim.ClaimValue)
+                if (targetClaim.ClaimType.Equals(claim.ClaimType) && targetClaim.ClaimValue.Equals(claim.ClaimValue))
                 {
                     result.ReturnedObject = true;
                     result.IsSuccessful = true;
@@ -115,7 +116,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 }
             }
 
-            // Unauthorized User Scenarios
+            // Unauthorized User Scenarios (Missing Permissions)
             var successUnauthLogMsg = $"Unauthorized access to {targetClaim.ClaimType} Permissions.";
             successLogger.Log(successUnauthLogMsg, LogLevel.Info, "Business", ua.Username);
             result.ReturnedObject = false;
@@ -124,5 +125,85 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return result;
         }
 
+        public ResultObj ValidateActiveUser(UserAccount ua)
+        {
+            var result = new ResultObj();
+
+            //Preconditions: Check if user is active/logged in
+            ResultObj daoResultActivity = _dao.GetActiveStatus(ua);
+            if (daoResultActivity.IsSuccessful == false)
+            {
+                // Failure case from data store layer
+                errorLogger.Log(daoResultActivity.Message, LogLevel.Error, "Data Store", ua.Username);
+                return daoResultActivity;
+            }
+            bool isActive = (bool)daoResultActivity.ReturnedObject;
+            if (isActive == true)
+            {
+                result.Message = string.Empty;
+                result.ReturnedObject = true;
+                result.IsSuccessful = true;
+                return result;
+            }
+
+            // Unauthorized User Scenario (Not enabled / Logged in)
+            result.Message = "Successfully denied access to unauthorized, logged out user.";
+            successLogger.Log(result.Message, LogLevel.Info, "Data Store", ua.Username);
+            result.IsSuccessful = true;
+            result.ReturnedObject = false;
+            return result;
+        }
+
+        public ResultObj AddClaims(UserAccount ua, Claim newClaim)
+        {
+            ResultObj daoResultClaims = _dao.GetClaims(ua);
+            if (daoResultClaims.IsSuccessful == false)
+            {
+                // Failure case from data store layer
+                errorLogger.Log(daoResultClaims.Message, LogLevel.Error, "Data Store", ua.Username);
+                return daoResultClaims;
+            }
+
+            Claims claims = (Claims)daoResultClaims.ReturnedObject;
+            List<Claim> userClaims = claims.UserClaims;
+            userClaims.Add(newClaim);
+
+            ResultObj daoResultInsertClaims = _dao.InsertClaims(ua, userClaims);
+            if (daoResultInsertClaims.IsSuccessful == false)
+            {
+                // Failure case from data store layer
+                errorLogger.Log(daoResultClaims.Message, LogLevel.Error, "Data Store", ua.Username);
+                return daoResultClaims;
+            }
+
+            // Successful Update of Claims
+            return daoResultInsertClaims;
+        }
+
+        public ResultObj AddClaims(UserAccount ua, List<Claim> newClaims)
+        {
+            ResultObj daoResultClaims = _dao.GetClaims(ua);
+            if (daoResultClaims.IsSuccessful == false)
+            {
+                // Failure case from data store layer
+                errorLogger.Log(daoResultClaims.Message, LogLevel.Error, "Data Store", ua.Username);
+                return daoResultClaims;
+            }
+
+            Claims claims = (Claims)daoResultClaims.ReturnedObject;
+            List<Claim> userClaims = claims.UserClaims;
+            userClaims.AddRange(newClaims);
+
+            ResultObj daoResultInsertClaims = _dao.InsertClaims(ua, userClaims);
+            if (daoResultInsertClaims.IsSuccessful == false)
+            {
+                // Failure case from data store layer
+                errorLogger.Log(daoResultClaims.Message, LogLevel.Error, "Data Store", ua.Username);
+                return daoResultClaims;
+            }
+
+            // Successful Update of Claims
+            return daoResultInsertClaims;
+        }
     }
 }

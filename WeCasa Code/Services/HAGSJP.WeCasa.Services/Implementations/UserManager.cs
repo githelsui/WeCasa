@@ -20,7 +20,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         private Logger successLogger;
         private Logger errorLogger;
 
-        public UserManager() 
+        public UserManager()
         {
             _dao = new AccountMariaDAO();
             successLogger = new Logger(_dao);
@@ -117,7 +117,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             Random r = new Random();
             string code = "";
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-@";
-            foreach (var i in Enumerable.Range(0,10))
+            foreach (var i in Enumerable.Range(0, 10))
             {
                 code += chars[r.Next(0, 65)];
             }

@@ -16,6 +16,8 @@ namespace HAGSJP.WeCasa.Services.Implementations
     {
         public ResultObj ValidateClaim(UserAccount ua, Claim targetClaim);
         public ResultObj ValidateAdminRole(UserAccount ua);
-        //public bool ValidateActiveUser(UserAccount ua);
+        public ResultObj ValidateActiveUser(UserAccount ua);
+        public ResultObj AddClaims(UserAccount ua, List<Claim> newClaims);
+        public ResultObj AddClaims(UserAccount ua, Claim newClaim);
     }
 }

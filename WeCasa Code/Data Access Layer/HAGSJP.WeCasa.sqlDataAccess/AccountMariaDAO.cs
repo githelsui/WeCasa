@@ -22,14 +22,14 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public MySqlConnectionStringBuilder BuildConnectionString()
         {
-             var builder = new MySqlConnectionStringBuilder
-             {
-                 Server = "localhost",
-                 Port = 3306,
-                 UserID = "HAGSJP.WeCasa.SqlUser",
-                 Password = "cecs491",
-                 Database = "HAGSJP.WeCasa"
-             };
+            var builder = new MySqlConnectionStringBuilder
+            {
+                Server = "localhost",
+                Port = 3306,
+                UserID = "HAGSJP.WeCasa.SqlUser",
+                Password = "cecs491",
+                Database = "HAGSJP.WeCasa"
+            };
 
             return builder;
         }
@@ -68,11 +68,13 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 command.Parameters.AddWithValue("@password", password);
 
                 // Initial claims when new user is first registered
-                List<Claim> initialClaims = new List<Claim>();
-                initialClaims.Add(new Claim("Functionality", "Edit event"));
-                initialClaims.Add(new Claim("Read", "Read files"));
-                initialClaims.Add(new Claim("Write", "Edit note"));
-                initialClaims.Add(new Claim("View", "View section"));
+                List<Claim> initialClaims = new List<Claim>
+                {
+                    new Claim("Functionality", "Edit event"),
+                    new Claim("Read", "Read files"),
+                    new Claim("Write", "Edit note"),
+                    new Claim("View", "View section")
+                };
                 string claimsJSON = JsonSerializer.Serialize(initialClaims);
                 command.Parameters.AddWithValue("@claims", claimsJSON);
 

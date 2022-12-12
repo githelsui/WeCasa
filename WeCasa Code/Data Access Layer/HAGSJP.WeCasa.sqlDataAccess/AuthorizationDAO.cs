@@ -5,6 +5,7 @@ using System.Data;
 using MySqlConnector;
 using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
 using HAGSJP.WeCasa.Models.Security;
+using System.Text.Json;
 using System.Net;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
@@ -20,13 +21,30 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             var builder = new MySqlConnectionStringBuilder
             {
                 Server = "localhost",
-                Port = 3306,
+                Port = 3307,
                 UserID = "HAGSJP.WeCasa.SqlUser",
                 Password = "cecs491",
                 Database = "HAGSJP.WeCasa"
             };
 
             return builder;
+        }
+
+        public Result ValidateSqlStatement(int rows)
+        {
+            var result = new Result();
+
+            if (rows == 1)
+            {
+                result.IsSuccessful = true;
+                result.Message = string.Empty;
+
+                return result;
+            }
+            result.IsSuccessful = false;
+            result.Message = $"Rows affected were not 1. It was {rows}";
+
+            return result;
         }
 
         public ResultObj GetRole(UserAccount ua)
@@ -39,7 +57,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 connection.Open();
 
                 // Select SQL statement
-                var selectSql = @"SELECT `is_admin` FROM `Users` WHERE username = @username;";
+                var selectSql = @"SELECT `is_admin` FROM `Users` WHERE `username` = @username;";
 
                 var command = connection.CreateCommand();
                 command.CommandText = selectSql;
@@ -83,7 +101,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 connection.Open();
 
                 // Select SQL statement
-                var selectSql = @"SELECT `claims` FROM `Users` WHERE username = @username;";
+                var selectSql = @"SELECT `claims` FROM `Users` WHERE `username` = @username;";
 
                 var command = connection.CreateCommand();
                 command.CommandText = selectSql;
@@ -95,8 +113,16 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     result.IsSuccessful = true;
                     result.Message = string.Empty;
-                    string jsonClaims = reader.GetString(0);
-                    result.ReturnedObject = new Claims(jsonClaims);
+
+                    // User does not have any claims initizlied yet
+                    if(reader.IsDBNull(0))
+                    {
+                        result.ReturnedObject = new Claims();
+                    } else
+                    {
+                        string jsonClaims = reader.GetString(0);
+                        result.ReturnedObject = new Claims(jsonClaims);
+                    }
                     return result;
                 }
                 connection.Close();
@@ -104,6 +130,35 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 // Failure Cases
                 result.IsSuccessful = false;
                 result.Message = "Error fetching claims from database.";
+                return result;
+            }
+        }
+
+        // Replaces entire claims field
+        public ResultObj InsertClaims(UserAccount ua, List<Claim> newClaims)
+        {
+            var result = new ResultObj();
+
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                // Update SQL statement
+                var insertSql = @"UPDATE `Users` SET `claims` = @claims WHERE `username` = @username;";
+
+                var command = connection.CreateCommand();
+                command.CommandText = insertSql;
+                command.Parameters.AddWithValue("@username", ua.Username);
+                string claimsJSON = JsonSerializer.Serialize(newClaims);
+                command.Parameters.AddWithValue("@claims", claimsJSON);
+
+                // Execution of SQL
+                var rows = (command.ExecuteNonQuery());
+                connection.Close();
+                Result sqlRes = ValidateSqlStatement(rows);
+                result.IsSuccessful = sqlRes.IsSuccessful;
+                result.Message = "Successfully updated claims for user.";
                 return result;
             }
         }
@@ -119,7 +174,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 connection.Open();
 
                 // Select SQL statement
-                var selectSql = @"SELECT `is_enabled` FROM `Users` WHERE username = @username;";
+                var selectSql = @"SELECT `is_enabled` FROM `Users` WHERE `username` = @username;";
 
                 var command = connection.CreateCommand();
                 command.CommandText = selectSql;
