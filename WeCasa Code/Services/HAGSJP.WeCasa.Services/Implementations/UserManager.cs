@@ -32,6 +32,8 @@ namespace HAGSJP.WeCasa.Services.Implementations
             successLogger = new Logger(dao);
             errorLogger = new Logger(dao);
         }
+
+        // checks whether a new email has the correct characters
         public bool ValidateEmail(string email)
         {
             bool validEmail;
@@ -194,14 +196,42 @@ namespace HAGSJP.WeCasa.Services.Implementations
             throw new NotImplementedException();
         }
 
-        public Result EnableUser()
+        public Result EnableUser(UserAccount userAccount)
         {
-            throw new NotImplementedException();
+            var enablingUser = new Result();
+            // disabling user
+            enablingUser = _dao.setUserAbility(userAccount, 1);
+
+            if (enablingUser.IsSuccessful)
+            {
+                // Logging the enabling user
+                successLogger.Log("User enabled successfully", LogLevel.Info, "Data Store", userAccount.Username);
+            }
+            else
+            {
+                // Logging the error
+                errorLogger.Log("Error enabling user", LogLevel.Error, "Data Store", userAccount.Username);
+            }
+            return enablingUser;
         }
 
-        public Result DisableUser()
+        public Result DisableUser(UserAccount userAccount)
         {
-            throw new NotImplementedException();
+            var disablingUser = new Result();
+            // disabling user
+            disablingUser = _dao.setUserAbility(userAccount, 0);
+
+            if (disablingUser.IsSuccessful)
+            {
+                // Logging the disabling user
+                successLogger.Log("User disabled successfully", LogLevel.Info, "Data Store", userAccount.Username);
+            }
+            else
+            {
+                // Logging the error
+                errorLogger.Log("Error disabling user", LogLevel.Error, "Data Store", userAccount.Username);
+            }
+            return disablingUser;
         }
     }
 }

@@ -82,10 +82,12 @@ namespace HAGSJP.WeCasa.Client
                     case "2":
                         Authentication auth = new Authentication();
                         Login login = new Login();
+                        // Get username and password from commandline
                         email = GetEmail(um);
-                        // check if user already exists
                         password = GetPassword(um);
                         OTP otp = GetOTP(email, auth);
+                        // Fetch all user info from database
+                        
                         login.LoginUser(password, otp, auth);
                         break;
                     case "3":
