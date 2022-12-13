@@ -21,7 +21,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             var builder = new MySqlConnectionStringBuilder
             {
                 Server = "localhost",
-                Port = 3306,
+                Port = 3307,
                 UserID = "HAGSJP.WeCasa.SqlUser",
                 Password = "cecs491",
                 Database = "HAGSJP.WeCasa"
@@ -47,9 +47,9 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             return result;
         }
 
-        public ResultObj GetRole(UserAccount ua)
+        public AuthResult GetRole(UserAccount ua)
         {
-            var result = new ResultObj();
+            var result = new AuthResult();
 
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
@@ -91,9 +91,9 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
-        public ResultObj GetClaims(UserAccount ua)
+        public AuthResult GetClaims(UserAccount ua)
         {
-            var result = new ResultObj();
+            var result = new AuthResult();
 
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
@@ -117,7 +117,10 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     // User does not have any claims initizlied yet
                     if(reader.IsDBNull(0))
                     {
-                        result.ReturnedObject = new Claims();
+                        Claims newClaims = new Claims();
+                        newClaims.UserClaims = new List<Claim>();
+                        result.ReturnedObject = newClaims;
+
                     } else
                     {
                         string jsonClaims = reader.GetString(0);
@@ -135,9 +138,9 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         }
 
         // Replaces entire claims field
-        public ResultObj InsertClaims(UserAccount ua, List<Claim> newClaims)
+        public AuthResult InsertClaims(UserAccount ua, List<Claim> newClaims)
         {
-            var result = new ResultObj();
+            var result = new AuthResult();
 
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
@@ -164,9 +167,9 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         }
 
         // Whether user is logged in / enabled
-        public ResultObj GetActiveStatus(UserAccount ua)
+        public AuthResult GetActiveStatus(UserAccount ua)
         {
-            var result = new ResultObj();
+            var result = new AuthResult();
 
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))

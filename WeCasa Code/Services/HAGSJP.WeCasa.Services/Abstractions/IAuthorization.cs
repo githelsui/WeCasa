@@ -14,10 +14,10 @@ namespace HAGSJP.WeCasa.Services.Implementations
 {
     public interface IAuthorization
     {
-        public ResultObj ValidateClaim(UserAccount ua, Claim targetClaim);
-        public ResultObj ValidateAdminRole(UserAccount ua);
-        public ResultObj ValidateActiveUser(UserAccount ua);
-        public ResultObj AddClaims(UserAccount ua, List<Claim> newClaims);
-        public ResultObj AddClaims(UserAccount ua, Claim newClaim);
+        public AuthResult ValidateClaim(UserAccount ua, Claim targetClaim);
+        public AuthResult ValidateAdminRole(UserAccount ua);
+        public AuthResult ValidateActiveUser(UserAccount ua);
+        public AuthResult AddClaims(UserAccount ua, List<Claim> newClaims);
+        public AuthResult AddClaims(UserAccount ua, Claim newClaim);
     }
 }
