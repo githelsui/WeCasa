@@ -28,13 +28,13 @@ namespace HAGSJP.WeCasa.Services.Implementations
             errorLogger = new Logger(new AccountMariaDAO());
         }
 
-        public ResultObj ValidateAdminRole(UserAccount ua)
+        public AuthResult ValidateAdminRole(UserAccount ua)
         {
-            var result = new ResultObj();
+            var result = new AuthResult();
 
             // Preconditions:
             // Check if user is active/logged in
-            ResultObj daoResultActivity = ValidateActiveUser(ua);
+            AuthResult daoResultActivity = ValidateActiveUser(ua);
             if (daoResultActivity.IsSuccessful == false)
             {
                 // Failure case from data store layer
@@ -50,7 +50,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 return result;
             }
 
-            ResultObj daoResultRoles = ValidateActiveUser(ua);
+            AuthResult daoResultRoles = ValidateActiveUser(ua);
             if (daoResultRoles.IsSuccessful == false)
             {
                 // Failure case from data store layer
@@ -73,13 +73,13 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return result;
         }
 
-        public ResultObj ValidateClaim(UserAccount ua, Claim targetClaim)
+        public AuthResult ValidateClaim(UserAccount ua, Claim targetClaim)
         {
-            var result = new ResultObj();
+            var result = new AuthResult();
 
             //Preconditions
             // Check if user is active/logged in
-            ResultObj daoResultActivity = ValidateActiveUser(ua);
+            AuthResult daoResultActivity = ValidateActiveUser(ua);
             if (daoResultActivity.IsSuccessful == false)
             {
                 // Failure case from data store layer
@@ -95,7 +95,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 return result;
             }
 
-            ResultObj daoResultClaims = _dao.GetClaims(ua);
+            AuthResult daoResultClaims = _dao.GetClaims(ua);
             if (daoResultClaims.IsSuccessful == false)
             {
                 // Failure case from data store layer
@@ -125,12 +125,12 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return result;
         }
 
-        public ResultObj ValidateActiveUser(UserAccount ua)
+        public AuthResult ValidateActiveUser(UserAccount ua)
         {
-            var result = new ResultObj();
+            var result = new AuthResult();
 
             //Preconditions: Check if user is active/logged in
-            ResultObj daoResultActivity = _dao.GetActiveStatus(ua);
+            AuthResult daoResultActivity = _dao.GetActiveStatus(ua);
             if (daoResultActivity.IsSuccessful == false)
             {
                 // Failure case from data store layer
@@ -154,9 +154,9 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return result;
         }
 
-        public ResultObj AddClaims(UserAccount ua, Claim newClaim)
+        public AuthResult AddClaims(UserAccount ua, Claim newClaim)
         {
-            ResultObj daoResultClaims = _dao.GetClaims(ua);
+            AuthResult daoResultClaims = _dao.GetClaims(ua);
             if (daoResultClaims.IsSuccessful == false)
             {
                 // Failure case from data store layer
@@ -168,7 +168,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             List<Claim> userClaims = claims.UserClaims;
             userClaims.Add(newClaim);
 
-            ResultObj daoResultInsertClaims = _dao.InsertClaims(ua, userClaims);
+            AuthResult daoResultInsertClaims = _dao.InsertClaims(ua, userClaims);
             if (daoResultInsertClaims.IsSuccessful == false)
             {
                 // Failure case from data store layer
@@ -180,9 +180,9 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return daoResultInsertClaims;
         }
 
-        public ResultObj AddClaims(UserAccount ua, List<Claim> newClaims)
+        public AuthResult AddClaims(UserAccount ua, List<Claim> newClaims)
         {
-            ResultObj daoResultClaims = _dao.GetClaims(ua);
+            AuthResult daoResultClaims = _dao.GetClaims(ua);
             if (daoResultClaims.IsSuccessful == false)
             {
                 // Failure case from data store layer
@@ -194,7 +194,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             List<Claim> userClaims = claims.UserClaims;
             userClaims.AddRange(newClaims);
 
-            ResultObj daoResultInsertClaims = _dao.InsertClaims(ua, userClaims);
+            AuthResult daoResultInsertClaims = _dao.InsertClaims(ua, userClaims);
             if (daoResultInsertClaims.IsSuccessful == false)
             {
                 // Failure case from data store layer

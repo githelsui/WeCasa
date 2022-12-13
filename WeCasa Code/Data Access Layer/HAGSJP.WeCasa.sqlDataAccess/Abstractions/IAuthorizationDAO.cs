@@ -6,10 +6,10 @@ namespace HAGSJP.WeCasa.sqlDataAccess.Abstractions
 {
     public interface IAuthorizationDAO
     {
-        public ResultObj GetRole(UserAccount ua);
-        public ResultObj GetClaims(UserAccount ua);
-        public ResultObj GetActiveStatus(UserAccount ua);
-        public ResultObj InsertClaims(UserAccount ua, List<Claim> newClaims);
+        public AuthResult GetRole(UserAccount ua);
+        public AuthResult GetClaims(UserAccount ua);
+        public AuthResult GetActiveStatus(UserAccount ua);
+        public AuthResult InsertClaims(UserAccount ua, List<Claim> newClaims);
     }
 }
 
