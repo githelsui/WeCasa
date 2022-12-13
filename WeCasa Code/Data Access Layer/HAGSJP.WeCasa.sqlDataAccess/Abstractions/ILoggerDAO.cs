@@ -12,5 +12,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess.Abstractions
     public interface ILoggerDAO
     {
         public Task<Result> LogData(Log log);
+        public List<Log> GetLogData(UserAccount userAccount, Operations userOperation);
     }
 }

@@ -30,7 +30,7 @@ namespace HAGSJP.WeCasa.Authorization.Test
 
             //Act
             AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
-            UserAccount testUser = new UserAccount("AuthTestInactiveAcc@gmail.com"); //User has is_enabled = 0
+            UserAccount testUser = new UserAccount("AuthTestInactiveAcc@gmail.com"); //User has is_auth = 0
             var actual = authService.ValidateActiveUser(testUser);
             bool actualBool = (bool)actual.ReturnedObject;
             bool expectedBool = (bool)expected.ReturnedObject;
@@ -52,7 +52,7 @@ namespace HAGSJP.WeCasa.Authorization.Test
 
             //Act
             AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
-            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_enabled = 1      
+            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_auth = 1      
             // Initial claims when new user is first registered
             List<Claim> newClaims = new List<Claim>
                 {
@@ -80,7 +80,7 @@ namespace HAGSJP.WeCasa.Authorization.Test
 
             //Act
             AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
-            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_enabled = 1
+            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_auth = 1
             Claim testClaim = new Claim("Functionality", "Edit event");
             var actual = authService.ValidateClaim(testUser, testClaim);
             bool actualObject = (bool)actual.ReturnedObject;
@@ -104,7 +104,7 @@ namespace HAGSJP.WeCasa.Authorization.Test
 
             //Act
             AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
-            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_enabled = 1
+            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_auth = 1
             Claim testClaim = new Claim("Read", "Read files");
             var actual = authService.ValidateClaim(testUser, testClaim);
             bool actualObject = (bool)actual.ReturnedObject;
@@ -128,7 +128,7 @@ namespace HAGSJP.WeCasa.Authorization.Test
 
             //Act
             AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
-            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_enabled = 1
+            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_auth = 1
             Claim testClaim = new Claim("Write", "Edit note");
             var actual = authService.ValidateClaim(testUser, testClaim);
             bool actualObject = (bool)actual.ReturnedObject;
@@ -152,7 +152,7 @@ namespace HAGSJP.WeCasa.Authorization.Test
 
             //Act
             AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
-            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_enabled = 1
+            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_auth = 1
             Claim testClaim = new Claim("View", "View section");
             var actual = authService.ValidateClaim(testUser, testClaim);
             bool actualObject = (bool)actual.ReturnedObject;
@@ -176,17 +176,17 @@ namespace HAGSJP.WeCasa.Authorization.Test
 
             //Act
             AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
-            UserAccount testUser = new UserAccount("UnauthorizedTest@gmail.com"); //User has is_enabled = 1
+            UserAccount testUser = new UserAccount("UnauthorizedTest@gmail.com"); //User has is_auth = 1
             Claim testClaim = new Claim("View", "View section");
             var actual = authService.ValidateClaim(testUser, testClaim);
             Console.Write("bool = " + actual.Message);
-            //bool actualObject = (bool)actual.ReturnedObject;
-            //bool expectedObject = (bool)expected.ReturnedObject;
+            bool actualObject = (bool)actual.ReturnedObject;
+            bool expectedObject = (bool)expected.ReturnedObject;
 
             //Assert
             Assert.IsNotNull(actual);
             Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
-            //Assert.IsTrue(actualObject == expectedObject);
+            Assert.IsTrue(actualObject == expectedObject);
         }
     }
 }

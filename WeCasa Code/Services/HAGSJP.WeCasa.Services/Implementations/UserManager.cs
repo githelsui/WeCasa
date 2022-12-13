@@ -11,6 +11,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
+using System.Diagnostics;
+using HAGSJP.WeCasa.Logging.Abstractions;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
@@ -175,6 +177,11 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
         public Result RegisterUser(string email, string password)
         {
+            // System log entry recorded if registration process takes longer than 5 seconds
+            var stopwatch = new Stopwatch();
+            var expected = 5;
+
+            stopwatch.Start();
             var userPersistResult = new Result();
             UserAccount userAccount = new UserAccount(email);
 
@@ -190,6 +197,14 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 // Logging the error
                 errorLogger.Log("Error creating an account", LogLevels.Error, "Data Store", userAccount.Username);
             }
+
+            stopwatch.Stop();
+            var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
+            if(userPersistResult.IsSuccessful && actual > expected)
+            {
+                errorLogger.Log("Account created successfully, but took longer than 5 seconds", LogLevels.Info, "Business", userAccount.Username, new UserOperation(Operations.Registration, 0));
+            }
+
             return userPersistResult;
         }
 

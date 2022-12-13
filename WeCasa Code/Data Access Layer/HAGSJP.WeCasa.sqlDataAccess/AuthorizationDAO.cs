@@ -21,7 +21,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             var builder = new MySqlConnectionStringBuilder
             {
                 Server = "localhost",
-                Port = 3307,
+                Port = 3306,
                 UserID = "HAGSJP.WeCasa.SqlUser",
                 Password = "cecs491",
                 Database = "HAGSJP.WeCasa"
@@ -177,7 +177,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 connection.Open();
 
                 // Select SQL statement
-                var selectSql = @"SELECT `is_enabled` FROM `Users` WHERE `username` = @username;";
+                var selectSql = @"SELECT `is_auth` FROM `Users` WHERE `username` = @username;";
 
                 var command = connection.CreateCommand();
                 command.CommandText = selectSql;
@@ -189,8 +189,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     result.IsSuccessful = true;
                     result.Message = string.Empty;
-                    int is_enabled = reader.GetByte(0);
-                    if(is_enabled == 1)
+                    int is_auth = reader.GetByte(0);
+                    if(is_auth == 1)
                     {
                         result.ReturnedObject = true;
                     } else {

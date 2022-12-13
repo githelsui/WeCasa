@@ -24,7 +24,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
              var builder = new MySqlConnectionStringBuilder
              {
                  Server = "localhost",
-                 Port = 3307,
+                 Port = 3306,
                  UserID = "HAGSJP.WeCasa.SqlUser",
                  Password = "cecs491",
                  Database = "HAGSJP.WeCasa"
@@ -337,6 +337,45 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 var result = ValidateSqlStatement(rows);
 
                 return result;
+            }
+        }
+
+        //Primarily for testing purposes
+        public List<Log> GetLogData(UserAccount userAccount, Operations userOperation)
+        {
+            List<Log> logs = new List<Log>();
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new Result();
+
+                // Select SQL statement
+                var selectSql = @"SELECT * FROM `Logs` 
+                                    WHERE `Username` = @username 
+                                    AND `Operation` = @operation 
+                                    AND `Timestamp` >= NOW() - INTERVAL 1 DAY
+                                    ORDER BY `Timestamp` ASC;";
+
+                var command = connection.CreateCommand();
+                command.CommandText = selectSql;
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
+                command.Parameters.AddWithValue("@operation", userOperation.ToString());
+
+                // Execution of SQL
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var message = reader.GetString(1);
+                    LogLevels logLevel = (LogLevels) Enum.Parse(typeof(LogLevels), reader.GetString(2));
+                    var category = reader.GetString(3);
+                    var timestamp = reader.GetDateTime(4);
+                    var username = reader.GetString(5);
+                    Operations op = (Operations)Enum.Parse(typeof(Operations), reader.GetString(6));
+                    UserOperation operation = new UserOperation(op, 1);
+                    logs.Add(new Log(message, logLevel, category, timestamp, username, operation));
+                }
+                return logs;
             }
         }
     }
