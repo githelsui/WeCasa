@@ -33,7 +33,7 @@ namespace HAGSJP.WeCasa.Client
                 // Create User Account
                 UserAccount userAccount = new UserAccount(email);
                 // Providing username to the user
-                Console.WriteLine("Username: " + email);
+                Console.WriteLine("Username: " + email + "\n");
             }
             else
             {

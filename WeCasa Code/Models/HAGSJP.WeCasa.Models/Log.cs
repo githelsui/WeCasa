@@ -11,7 +11,17 @@
             Category = category;
             Username = user;
         }
-       
+
+        // Constructor without DateTime, with UserOperation
+        public Log(string message, LogLevel logLevel, string category, string user, UserOperation uo)
+        {
+            Message = message;
+            LogLevel = logLevel.ToString();
+            Category = category;
+            Username = user;
+            Operation = uo;
+        }
+
         // Constructor with DateTime
         public Log(string message, LogLevel logLevel, string category, DateTime date_time, string user, UserOperation uo)
         {

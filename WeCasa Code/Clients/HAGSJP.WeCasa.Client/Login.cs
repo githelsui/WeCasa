@@ -35,12 +35,7 @@ namespace HAGSJP.WeCasa.Client
             // Checking OTP, creating a new authentication session for the user
             var loginResult = auth.AuthenticateUser(userAccount, otp);
 
-            if (loginResult.IsSuccessful)
-            {
-                Console.WriteLine(otp.Username, " logged in...");
-            }
-            else
-            {
+            if (!loginResult.IsSuccessful) { 
                 Console.WriteLine(loginResult.Message);
             }
         }

@@ -85,13 +85,15 @@ namespace HAGSJP.WeCasa.Client
                             // Getting OTP from user
                             OTP inputOtp = GetOTP(ua, auth);
                             login.LoginUser(ua, inputOtp, auth);
+                            // Going to home page
+                            menu = false;
                         }
                         // User is unable to log in
                         else
                         {
                             // Displaying user-friendly error message
                             Console.WriteLine(result.Message);
-                        } 
+                        }
                         break;
                     case "3":
                         menu = false;

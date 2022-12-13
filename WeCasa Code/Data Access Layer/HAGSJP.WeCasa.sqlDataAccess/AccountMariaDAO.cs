@@ -134,13 +134,11 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 var selectSql = @"SELECT * 
                                   FROM `Users` 
                                   WHERE `username` = @username 
-                                  AND   `password` = @password 
                                   AND   `otp_code` = @otp;";
 
                 var command = connection.CreateCommand();
                 command.CommandText = selectSql;
                 command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
-                command.Parameters.AddWithValue("@password", userAccount.Password);
                 command.Parameters.AddWithValue("@otp", otp.Code);
 
                 // Execution of SQL

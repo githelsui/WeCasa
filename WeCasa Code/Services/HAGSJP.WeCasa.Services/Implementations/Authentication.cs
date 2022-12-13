@@ -100,7 +100,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 ResetAuthenticationAttempts(userAccount);
                 ResetOTP(userAccount);
                 // Logging the registration
-                successLogger.Log("Login successful", LogLevel.Info, "Data Store", userAccount.Username);
+                successLogger.Log("Login successful", LogLevel.Info, "Data Store", userAccount.Username, UserOperation.Login);
             }
             else
             {
