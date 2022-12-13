@@ -326,7 +326,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 command.Parameters.AddWithValue("@logLevel", log.LogLevel);
                 command.Parameters.AddWithValue("@category", log.Category);
                 command.Parameters.AddWithValue("@username", log.Username);
-                command.Parameters.AddWithValue("@operation", log.Operation);
+                command.Parameters.AddWithValue("@operation", log.Operation.ToString());
 
                 // Execution of SQL
                 int rows = await command.ExecuteNonQueryAsync();
