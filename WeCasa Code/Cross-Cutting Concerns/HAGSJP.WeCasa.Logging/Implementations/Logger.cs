@@ -20,7 +20,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
         }
 
         // Asynchronous method for building and sending logs to the database without including a UserOperation
-        public async Task<Result> Log(string message, LogLevel logLevel, string category, string username)
+        public async Task<Result> Log(string message, LogLevels logLevel, string category, string username)
         {             
             var result = new Result();
             #region Step 1: Input validation
@@ -45,7 +45,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
                 return result;
             }
             // Invalid Log Level
-            if (!Enum.IsDefined(typeof(LogLevel), logLevel))
+            if (!Enum.IsDefined(typeof(LogLevels), logLevel))
             {
                 result.IsSuccessful = false;
                 result.Message = "Invalid log level";
@@ -70,8 +70,8 @@ namespace HAGSJP.WeCasa.Logging.Implementations
             result.Message = daoResult.Message;
             return result;
         }
-        // Asynchronous method for logging a UserOperation
-        public async Task<Result> Log(string message, LogLevel logLevel, string category, string username, UserOperation operation)
+        // Asynchronous method for logging a UserOperation with a success score
+        public async Task<Result> Log(string message, LogLevels logLevel, string category, string username, UserOperation userOperation)
         {
             var result = new Result();
             #region Step 1: Input validation
@@ -96,7 +96,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
                 return result;
             }
             // Invalid Log Level
-            if (!Enum.IsDefined(typeof(LogLevel), logLevel))
+            if (!Enum.IsDefined(typeof(LogLevels), logLevel))
             {
                 result.IsSuccessful = false;
                 result.Message = "Invalid log level";
@@ -110,7 +110,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
                 return result;
             }
             #endregion
-            Log log = new Log(message, logLevel, category, username, operation);
+            Log log = new Log(message, logLevel, category, username, userOperation);
             var daoResult = await _dao.LogData(log).ConfigureAwait(false);
             if (daoResult.IsSuccessful)
             {

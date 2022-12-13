@@ -24,7 +24,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
              var builder = new MySqlConnectionStringBuilder
              {
                  Server = "localhost",
-                 Port = 3306,
+                 Port = 3307,
                  UserID = "HAGSJP.WeCasa.SqlUser",
                  Password = "cecs491",
                  Database = "HAGSJP.WeCasa"
@@ -169,7 +169,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         }
 
         // Returns a list of DateTimes of all failure attempts
-        public List<DateTime> GetUserOperations(UserAccount userAccount, UserOperation operation)
+        public List<DateTime> GetUserOperations(UserAccount userAccount, Operations operation)
         {
             List<DateTime> auth_attempts = new List<DateTime>();
             _connectionString = BuildConnectionString().ConnectionString;
@@ -227,7 +227,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         }
 
         // Clears all failure attempts
-        public Result ResetAuthenticationAttempts(UserAccount userAccount, UserOperation operation)
+        public Result ResetAuthenticationAttempts(UserAccount userAccount, Operations operation)
         {
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
@@ -316,9 +316,9 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 // Insert SQL statement
                 var insertSql = @"INSERT INTO `Logs` 
-                                    (`Message`, `Log_Level`, `Category`, `Username`, `Operation`) 
+                                    (`Message`, `Log_Level`, `Category`, `Username`, `Operation`, `Success`) 
                                 VALUES 
-                                    (@message, @logLevel, @category, @username, @operation);";
+                                    (@message, @logLevel, @category, @username, @operation, @success);";
 
                 var command = connection.CreateCommand();
                 command.CommandText = insertSql;
@@ -326,7 +326,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 command.Parameters.AddWithValue("@logLevel", log.LogLevel);
                 command.Parameters.AddWithValue("@category", log.Category);
                 command.Parameters.AddWithValue("@username", log.Username);
-                command.Parameters.AddWithValue("@operation", log.Operation.ToString());
+                command.Parameters.AddWithValue("@operation", log.Operation);
+                command.Parameters.AddWithValue("@success", log.Success);
 
                 // Execution of SQL
                 int rows = await command.ExecuteNonQueryAsync();

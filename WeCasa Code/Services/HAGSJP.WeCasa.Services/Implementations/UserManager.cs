@@ -139,12 +139,12 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (savingOTPresult.IsSuccessful)
             {
                 // Logging the OTP save
-                successLogger.Log("One-time password generated successfully", LogLevel.Info, "Data Store", userAccount.Username);
+                successLogger.Log("One-time password generated successfully", LogLevels.Info, "Data Store", userAccount.Username);
             }
             else
             {
                 // Logging the error
-                errorLogger.Log("Error saving a one-time password", LogLevel.Error, "Data Store", userAccount.Username);
+                errorLogger.Log("Error saving a one-time password", LogLevels.Error, "Data Store", userAccount.Username);
             }
             return otp;
         }
@@ -183,12 +183,12 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (userPersistResult.IsSuccessful)
             {
                 // Logging the registration
-                successLogger.Log("Account created successfully", LogLevel.Info, "Data Store", userAccount.Username);
+                successLogger.Log("Account created successfully", LogLevels.Info, "Data Store", userAccount.Username);
             }
             else
             {
                 // Logging the error
-                errorLogger.Log("Error creating an account", LogLevel.Error, "Data Store", userAccount.Username);
+                errorLogger.Log("Error creating an account", LogLevels.Error, "Data Store", userAccount.Username);
             }
             return userPersistResult;
         }
@@ -212,12 +212,12 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (enablingUser.IsSuccessful)
             {
                 // Logging the enabling user
-                successLogger.Log("User enabled successfully", LogLevel.Info, "Data Store", userAccount.Username);
+                successLogger.Log("User enabled successfully", LogLevels.Info, "Data Store", userAccount.Username);
             }
             else
             {
                 // Logging the error
-                errorLogger.Log("Error enabling user", LogLevel.Error, "Data Store", userAccount.Username);
+                errorLogger.Log("Error enabling user", LogLevels.Error, "Data Store", userAccount.Username);
             }
             return enablingUser;
         }
@@ -231,12 +231,12 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (disablingUser.IsSuccessful)
             {
                 // Logging the disabling user
-                successLogger.Log("User disabled successfully", LogLevel.Info, "Data Store", userAccount.Username);
+                successLogger.Log("User disabled successfully", LogLevels.Info, "Data Store", userAccount.Username);
             }
             else
             {
                 // Logging the error
-                errorLogger.Log("Error disabling user", LogLevel.Error, "Data Store", userAccount.Username);
+                errorLogger.Log("Error disabling user", LogLevels.Error, "Data Store", userAccount.Username);
             }
             return disablingUser;
         }

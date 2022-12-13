@@ -1,11 +1,16 @@
 ﻿using System;
 namespace HAGSJP.WeCasa.Models
 {
-    public enum UserOperation
+    public class UserOperation
     {
-        Registration,
-        Login,
-        Logout,
+        public UserOperation(Operations op, int success)
+        {
+            Operation = op;
+            Success = success;
+        }
+
+        public Operations Operation { get; set; }
+        public int Success { get; set; }
     }
 }
 

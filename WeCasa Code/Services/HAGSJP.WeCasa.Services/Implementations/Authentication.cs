@@ -54,7 +54,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var result = _dao.ResetOTP(userAccount);
             if(!result.IsSuccessful)
             {
-                errorLogger.Log("Error updating one-time code", LogLevel.Error, "Data Store", userAccount.Username);
+                errorLogger.Log("Error updating one-time code", LogLevels.Error, "Data Store", userAccount.Username);
             }
             return result;
         }
@@ -100,7 +100,8 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 ResetAuthenticationAttempts(userAccount);
                 ResetOTP(userAccount);
                 // Logging the registration
-                successLogger.Log("Login successful", LogLevel.Info, "Data Store", userAccount.Username, UserOperation.Login);
+                UserOperation loginSuccess = new UserOperation(Operations.Login, 1);
+                successLogger.Log("Login successful", LogLevels.Info, "Data Store", userAccount.Username, loginSuccess);
             }
             else
             {
@@ -115,7 +116,8 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 // Logging the error with ip address
                 string host = Dns.GetHostName();
                 IPHostEntry ip = Dns.GetHostEntry(host);
-                errorLogger.Log("Error during Authentication from " + ip.AddressList[0].ToString(), LogLevel.Error, "Data Store", userAccount.Username);
+                UserOperation loginFailure = new UserOperation(Operations.Login, 0);
+                errorLogger.Log("Error during Authentication from " + ip.AddressList[0].ToString(), LogLevels.Error, "Data Store", userAccount.Username, loginFailure);
             }
             return loginUser;
         }
@@ -123,7 +125,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         // Checks if there were 3 failed login attempts in the past 24 hours
         // On the third attempt, disable user account
         public Boolean IsAccountEnabled(UserAccount userAccount){
-            List<DateTime> failedAttemptTimes = _dao.GetUserOperations(userAccount, UserOperation.Login);
+            List<DateTime> failedAttemptTimes = _dao.GetUserOperations(userAccount, Operations.Login);
             /*DateTime now = DateTime.Now;
             DateTime timeLimit = now.AddHours(-24);
             List<DateTime> itemsAfter = failedAttemptTimes.FindAll(i => i > timeLimit);*/
@@ -135,11 +137,11 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 var result = um.DisableUser(userAccount);
                 if (result.IsSuccessful)
                 {
-                    successLogger.Log("User has been disabled after 3 failed login attempts in the past 24 hours", LogLevel.Debug, "Business", userAccount.Username);
+                    successLogger.Log("User has been disabled after 3 failed login attempts in the past 24 hours", LogLevels.Debug, "Business", userAccount.Username);
                 }
                 else
                 {
-                    errorLogger.Log("Error disabling user account.", LogLevel.Error, "Data Store", userAccount.Username);
+                    errorLogger.Log("Error disabling user account.", LogLevels.Error, "Data Store", userAccount.Username);
                 }
                 return false;
             }
@@ -152,17 +154,17 @@ namespace HAGSJP.WeCasa.Services.Implementations
         // system recovery is performed
         public Result ResetAuthenticationAttempts(UserAccount userAccount) {
             var resetResult = new Result();
-            resetResult = _dao.ResetAuthenticationAttempts(userAccount, UserOperation.Login);
+            resetResult = _dao.ResetAuthenticationAttempts(userAccount, Operations.Login);
             
             if (resetResult.IsSuccessful)
             {
                 // Logging the successful reset
-                successLogger.Log("Authentication attempts reset successful", LogLevel.Info, "Data Store", userAccount.Username);
+                successLogger.Log("Authentication attempts reset successful", LogLevels.Info, "Data Store", userAccount.Username);
             }
             else
             {
                 // Logging the error 
-                errorLogger.Log("Error while resetting authentication attempts", LogLevel.Error, "Data Store", userAccount.Username);
+                errorLogger.Log("Error while resetting authentication attempts", LogLevels.Error, "Data Store", userAccount.Username);
 
             }
             return resetResult;

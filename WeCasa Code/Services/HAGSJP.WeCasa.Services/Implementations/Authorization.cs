@@ -9,7 +9,7 @@ using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
 using Microsoft.Identity.Client;
 using HAGSJP.WeCasa.sqlDataAccess;
 using Logger = HAGSJP.WeCasa.Logging.Implementations.Logger;
-using LogLevel = HAGSJP.WeCasa.Models.LogLevel;
+using LogLevels = HAGSJP.WeCasa.Models.LogLevels;
 using HAGSJP.WeCasa.Models.Security;
 using System.Collections;
 
@@ -38,14 +38,14 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (daoResultActivity.IsSuccessful == false)
             {
                 // Failure case from data store layer
-                errorLogger.Log(daoResultActivity.Message, LogLevel.Error, "Data Store", ua.Username);
+                errorLogger.Log(daoResultActivity.Message, LogLevels.Error, "Data Store", ua.Username);
                 return daoResultActivity;
             }
             bool isActive = (bool)daoResultActivity.ReturnedObject;
             if (isActive == false)
             {
                 result.Message = "Successfully denied access to unauthorized, logged out user.";
-                successLogger.Log(result.Message, LogLevel.Info, "Data Store", ua.Username);
+                successLogger.Log(result.Message, LogLevels.Info, "Data Store", ua.Username);
                 result.IsSuccessful = true;
                 return result;
             }
@@ -54,7 +54,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (daoResultRoles.IsSuccessful == false)
             {
                 // Failure case from data store layer
-                errorLogger.Log(daoResultRoles.Message, LogLevel.Error, "Data Store", ua.Username);
+                errorLogger.Log(daoResultRoles.Message, LogLevels.Error, "Data Store", ua.Username);
                 return daoResultRoles;
             }
             var userRoleObj = daoResultRoles.ReturnedObject;
@@ -83,14 +83,14 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (daoResultActivity.IsSuccessful == false)
             {
                 // Failure case from data store layer
-                errorLogger.Log(daoResultActivity.Message, LogLevel.Error, "Data Store", ua.Username);
+                errorLogger.Log(daoResultActivity.Message, LogLevels.Error, "Data Store", ua.Username);
                 return daoResultActivity;
             }
             bool isActive = (bool)daoResultActivity.ReturnedObject;
             if (isActive == false)
             {
                 result.Message = "Successfully denied to unauthorized, logged out user.";
-                successLogger.Log(result.Message, LogLevel.Info, "Data Store", ua.Username);
+                successLogger.Log(result.Message, LogLevels.Info, "Data Store", ua.Username);
                 result.IsSuccessful = true;
                 return result;
             }
@@ -99,7 +99,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (daoResultClaims.IsSuccessful == false)
             {
                 // Failure case from data store layer
-                errorLogger.Log(daoResultClaims.Message, LogLevel.Error, "Data Store", ua.Username);
+                errorLogger.Log(daoResultClaims.Message, LogLevels.Error, "Data Store", ua.Username);
                 return daoResultClaims;
             }
 
@@ -118,7 +118,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
             // Unauthorized User Scenarios (Missing Permissions)
             var successUnauthLogMsg = $"Unauthorized access to {targetClaim.ClaimType} Permissions.";
-            successLogger.Log(successUnauthLogMsg, LogLevel.Info, "Business", ua.Username);
+            successLogger.Log(successUnauthLogMsg, LogLevels.Info, "Business", ua.Username);
             result.ReturnedObject = false;
             result.IsSuccessful = true;
             result.Message = successUnauthLogMsg;
@@ -134,7 +134,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (daoResultActivity.IsSuccessful == false)
             {
                 // Failure case from data store layer
-                errorLogger.Log(daoResultActivity.Message, LogLevel.Error, "Data Store", ua.Username);
+                errorLogger.Log(daoResultActivity.Message, LogLevels.Error, "Data Store", ua.Username);
                 return daoResultActivity;
             }
             bool isActive = (bool)daoResultActivity.ReturnedObject;
@@ -148,7 +148,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
             // Unauthorized User Scenario (Not enabled / Logged in)
             result.Message = "Successfully denied access to unauthorized, logged out user.";
-            successLogger.Log(result.Message, LogLevel.Info, "Data Store", ua.Username);
+            successLogger.Log(result.Message, LogLevels.Info, "Data Store", ua.Username);
             result.IsSuccessful = true;
             result.ReturnedObject = false;
             return result;
@@ -160,7 +160,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (daoResultClaims.IsSuccessful == false)
             {
                 // Failure case from data store layer
-                errorLogger.Log(daoResultClaims.Message, LogLevel.Error, "Data Store", ua.Username);
+                errorLogger.Log(daoResultClaims.Message, LogLevels.Error, "Data Store", ua.Username);
                 return daoResultClaims;
             }
 
@@ -172,7 +172,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (daoResultInsertClaims.IsSuccessful == false)
             {
                 // Failure case from data store layer
-                errorLogger.Log(daoResultClaims.Message, LogLevel.Error, "Data Store", ua.Username);
+                errorLogger.Log(daoResultClaims.Message, LogLevels.Error, "Data Store", ua.Username);
                 return daoResultClaims;
             }
 
@@ -186,7 +186,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (daoResultClaims.IsSuccessful == false)
             {
                 // Failure case from data store layer
-                errorLogger.Log(daoResultClaims.Message, LogLevel.Error, "Data Store", ua.Username);
+                errorLogger.Log(daoResultClaims.Message, LogLevels.Error, "Data Store", ua.Username);
                 return daoResultClaims;
             }
 
@@ -198,7 +198,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (daoResultInsertClaims.IsSuccessful == false)
             {
                 // Failure case from data store layer
-                errorLogger.Log(daoResultClaims.Message, LogLevel.Error, "Data Store", ua.Username);
+                errorLogger.Log(daoResultClaims.Message, LogLevels.Error, "Data Store", ua.Username);
                 return daoResultClaims;
             }
 

@@ -21,7 +21,7 @@ namespace HAGSJP.WeCasa.Logging.Test
             // Act
             stopwatch.Start();
             Logger systemUnderTest = new Logger(testMariaDao);
-            var logResult = await systemUnderTest.Log("Testing", LogLevel.Info, "Business", "test_user");
+            var logResult = await systemUnderTest.Log("Testing", LogLevels.Info, "Business", "test_user");
             stopwatch.Stop();
 
             // turn ms to seconds

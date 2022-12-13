@@ -4,7 +4,7 @@ namespace HAGSJP.WeCasa.Models
     /// <summary>
     /// Log Level show levels of severity in Logs
     /// </summary>
-    public enum LogLevel
+    public enum LogLevels
     {
         Info,
         Debug,
