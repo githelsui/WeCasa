@@ -9,6 +9,8 @@ using HAGSJP.WeCasa.Services.Implementations;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Models.Security;
 using static System.Net.WebRequestMethods;
+using HAGSJP.WeCasa.Logging.Implementations;
+using HAGSJP.WeCasa.sqlDataAccess;
 
 namespace HAGSJP.WeCasa.Client
 {

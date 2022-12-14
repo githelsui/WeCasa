@@ -1,5 +1,6 @@
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Services.Implementations;
+using HAGSJP.WeCasa.sqlDataAccess;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
@@ -7,62 +8,56 @@ namespace HAGSJP.WeCasa.Services.Implementations
     public class LoginUnitTests
     {
         [TestMethod]
-        public void ShouldReturnTrueGivenValidNumberOfAttempts()
+        public void ShouldReturnAccountEnabledGivenValidNumberOfAttempts()
         {
             //Arrange
             var expected = true;
-            List<DateTime> failedAttemptTimes = new List<DateTime>();
-            failedAttemptTimes.Add(DateTime.Now.AddHours(-23));
-            failedAttemptTimes.Add(DateTime.Now.AddHours(-1));
+            var systemUnderTest = new AccountMariaDAO();
+            UserAccount testUser = new UserAccount("AccountEnabledTestSuccess@gmail.com");
+            UserOperation testOperation = new UserOperation(Operations.Login, 0);
+            var log = new Log("Error during Authentication", LogLevels.Error, "Data Store", "AccountEnabledTestSuccess@gmail.com", testOperation);
 
-            //Act
+            // Act
+            if (systemUnderTest.GetUserOperations(testUser, testOperation).Count == 0)
+            {
+                var testResult = systemUnderTest.LogData(log);
+            }
             var actual = new Authentication();
-            /*bool accountEnabled = actual.IsAccountEnabled(failedAttemptTimes);
-
-            //Assert
-            Assert.IsNotNull(actual);
-            Console.WriteLine(accountEnabled);
-            Assert.IsTrue(accountEnabled == expected); */
-        }
-
-        [TestMethod]
-        public void ShouldLogInvalidAttemps()
-        {
-            //Arrange
-            var expected = true;
-            List<DateTime> failedAttemptTimes = new List<DateTime>();
-            failedAttemptTimes.Add(DateTime.Now.AddHours(-23));
-            failedAttemptTimes.Add(DateTime.Now.AddHours(-1));
-
-            //Act
-            var actual = new Authentication();
-            /*bool accountEnabled = actual.IsAccountEnabled(failedAttemptTimes);
-
-            //Assert
-            Assert.IsNotNull(actual);
-            Console.WriteLine(accountEnabled);
-            Assert.IsTrue(accountEnabled == expected); */
-        }
-
-        [TestMethod]
-        public void ShouldReturnFalseGivenInvalidNumberOfAttempts()
-        {
-            //Arrange
-            var expected = false;
-            List<DateTime> failedAttemptTimes = new List<DateTime>();
-            failedAttemptTimes.Add(DateTime.Now.AddHours(-23));
-            failedAttemptTimes.Add(DateTime.Now.AddHours(-1));
-            failedAttemptTimes.Add(DateTime.Now.AddHours(-.5));
-
-            //Act
-            var actual = new Authentication();
-            UserAccount testUser = new UserAccount("AuthTestInactiveAcc@gmail.com");
             bool accountEnabled = actual.IsAccountEnabled(testUser);
 
             //Assert
             Assert.IsNotNull(actual);
             Console.WriteLine(accountEnabled);
-            Assert.IsTrue(accountEnabled == expected);
+            Assert.IsTrue(accountEnabled == expected); 
+        }
+
+        [TestMethod]
+        public void ShouldReturnAccountNotEnabledGivenInvalidNumberOfAttempts()
+        {
+            //Arrange
+            var expected = false;
+            var systemUnderTest = new AccountMariaDAO();
+            UserAccount testUser = new UserAccount("AccountEnabledTestFailure@gmail.com");
+            UserOperation testOperation = new UserOperation(Operations.Login, 0);
+            var log = new Log("Error during Authentication", LogLevels.Error, "Data Store", "AccountEnabledTestFailure@gmail.com", testOperation);
+
+
+            // Act
+            if (systemUnderTest.GetUserOperations(testUser, testOperation).Count == 0)
+            {
+                systemUnderTest.PersistUser(testUser, "P@ssw0rd!");
+                systemUnderTest.LogData(log);
+                systemUnderTest.LogData(log);
+                systemUnderTest.LogData(log);
+            }
+            var actual = new Authentication();
+            bool accountEnabled = actual.IsAccountEnabled(testUser);
+            Console.WriteLine("isEnabled " + accountEnabled);
+
+            //Assert
+            Assert.IsNotNull(actual);
+            Console.WriteLine(accountEnabled);
+            Assert.IsTrue(accountEnabled == expected); 
         }
 
         [TestMethod]

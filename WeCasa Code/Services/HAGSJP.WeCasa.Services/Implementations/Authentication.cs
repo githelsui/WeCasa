@@ -151,10 +151,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public Boolean IsAccountEnabled(UserAccount userAccount){
             UserOperation userOperation = new UserOperation(Operations.Login, 0);
             List<DateTime> failedAttemptTimes = _dao.GetUserOperations(userAccount, userOperation);
-            /*DateTime now = DateTime.Now;
-            DateTime timeLimit = now.AddHours(-24);
-            List<DateTime> itemsAfter = failedAttemptTimes.FindAll(i => i > timeLimit);*/
-
+            
             if (failedAttemptTimes.Count >= 3) 
             {
                 // Disabling account
