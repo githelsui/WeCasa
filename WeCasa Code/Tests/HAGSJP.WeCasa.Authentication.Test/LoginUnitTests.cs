@@ -136,7 +136,6 @@ namespace HAGSJP.WeCasa.Services.Implementations
             //Arrange
             Result expected = new Result();
             var systemUnderTest = new AccountMariaDAO();
-            expected.IsSuccessful = true;
             UserAccount testUser = new UserAccount("UpdateAuthenticationInDB2@gmail.com", "P@ssw0rd!");
 
             // Act
@@ -146,7 +145,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
             //Assert
             Assert.IsNotNull(actualResult);
-            Assert.IsTrue(actualResult.IsSuccessful == expected.IsSuccessful);
+            Assert.IsTrue(actualResult.IsAuth == true);
         }
 
         [TestMethod]
