@@ -167,9 +167,36 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 return result;
             }
         }
+        // Updates authentication status for user
+        public Result UpdateUserAuthentication(UserAccount userAccount, bool is_auth)
+        {
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new Result();
+
+                // Update SQL statement
+                var updateSql = @"UPDATE `Users` 
+                                    SET `is_auth`    = @is_auth
+                                    WHERE `username` = @username;";
+
+                var command = connection.CreateCommand();
+                command.CommandText = updateSql;
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
+                command.Parameters.AddWithValue("@is_auth", is_auth == true ? 1 : 0);
+
+                // Execution of SQL
+                var rows = (command.ExecuteNonQuery());
+                result = ValidateSqlStatement(rows);
+                connection.Close();
+                return result;
+            }
+        }
+
 
         // Returns a list of DateTimes of all failure attempts
-        public List<DateTime> GetUserOperations(UserAccount userAccount, Operations operation)
+        public List<DateTime> GetUserOperations(UserAccount userAccount, UserOperation userOperation)
         {
             List<DateTime> auth_attempts = new List<DateTime>();
             _connectionString = BuildConnectionString().ConnectionString;
@@ -181,19 +208,21 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 // Select SQL statement
                 var selectSql = @"SELECT Timestamp FROM `Logs` 
                                     WHERE `Username` = @username 
-                                    AND `Operation` = @operation 
-                                    AND Timestamp >= NOW() - INTERVAL 1 DAY;";
+                                    AND `Operation`  = @operation 
+                                    AND `Success`    = @success
+                                    AND Timestamp    >= NOW() - INTERVAL 1 DAY;";
 
                 var command = connection.CreateCommand();
                 command.CommandText = selectSql;
                 command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
-                command.Parameters.AddWithValue("@operation", operation.ToString());
+                command.Parameters.AddWithValue("@operation", userOperation.Operation.ToString());
+                command.Parameters.AddWithValue("@success", userOperation.Success);
 
                 // Execution of SQL
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    auth_attempts.Add(JsonSerializer.Deserialize<DateTime>(reader.GetString(0)));
+                    auth_attempts.Add(reader.GetDateTime(0));
                 }
                 return auth_attempts;
             }
@@ -210,8 +239,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 // Update SQL statement
                 var updateSql = @"UPDATE `Users` 
                                     SET `otp_code`   = NULL, 
-                                        `otp_time`   = NULL,
-                                        `is_auth`    = 1
+                                        `otp_time`   = NULL
                                     WHERE `username` = @username;";
 
                 var command = connection.CreateCommand();
@@ -237,10 +265,11 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 // Update SQL statement
                 var updateSql = @"UPDATE `Logs` 
-                                    SET `Operation`  = NULL
-                                    WHERE `Username` = @username 
-                                    AND `Operation`  = @operation 
-                                    AND `Timestamp`  >= NOW() - INTERVAL 1 DAY;";
+                                    SET `Success`    = NULL
+                                        WHERE `Username` = @username 
+                                        AND `Operation`  = @operation
+                                        AND `Success`    = 0
+                                        AND `Timestamp`  >= NOW() - INTERVAL 1 DAY;";
 
                 var command = connection.CreateCommand();
                 command.CommandText = updateSql;
@@ -249,7 +278,14 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 // Execution of SQL
                 var rows = (command.ExecuteNonQuery());
-                result = ValidateSqlStatement(rows);
+                if (rows == -1)
+                {
+                    result.IsSuccessful = false;
+                }
+                else
+                {
+                    result.IsSuccessful = true;
+                }
                 return result;
             }
         }

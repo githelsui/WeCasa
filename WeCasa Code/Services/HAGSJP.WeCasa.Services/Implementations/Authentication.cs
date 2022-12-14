@@ -48,6 +48,16 @@ namespace HAGSJP.WeCasa.Services.Implementations
             }
         }
 
+        public Result UpdateUserAuthentication(UserAccount userAccount, bool is_auth)
+        {
+            var result = _dao.UpdateUserAuthentication(userAccount, is_auth);
+            if (!result.IsSuccessful)
+            {
+                errorLogger.Log($"Error updating user authentication status to {is_auth}", LogLevels.Error, "Data Store", userAccount.Username);
+            }
+            return result;
+        }
+
         // Resets OTP code and time for a user account
         public Result ResetOTP(UserAccount userAccount)
         {
@@ -97,11 +107,18 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (loginUser.HasValidOTP && loginUser.IsSuccessful && IsAccountEnabled(userAccount))
             {
                 // Reset all authentication attempts upon successful login
-                ResetAuthenticationAttempts(userAccount);
-                ResetOTP(userAccount);
-                // Logging the registration
-                UserOperation loginSuccess = new UserOperation(Operations.Login, 1);
-                successLogger.Log("Login successful", LogLevels.Info, "Data Store", userAccount.Username, loginSuccess);
+                var authAttemptsResult = ResetAuthenticationAttempts(userAccount);
+                // Changes OTP in data store to null
+                var otpResetResult = ResetOTP(userAccount);
+                // Updates authentication status of user
+                var authUpdateResult = UpdateUserAuthentication(userAccount, true);
+
+                if (authAttemptsResult.IsSuccessful && otpResetResult.IsSuccessful && authUpdateResult.IsSuccessful)
+                {
+                    // Logs the successful login
+                    UserOperation loginSuccess = new UserOperation(Operations.Login, 1);
+                    successLogger.Log("Login successful", LogLevels.Info, "Data Store", userAccount.Username, loginSuccess);
+                }
             }
             else
             {
@@ -125,7 +142,8 @@ namespace HAGSJP.WeCasa.Services.Implementations
         // Checks if there were 3 failed login attempts in the past 24 hours
         // On the third attempt, disable user account
         public Boolean IsAccountEnabled(UserAccount userAccount){
-            List<DateTime> failedAttemptTimes = _dao.GetUserOperations(userAccount, Operations.Login);
+            UserOperation userOperation = new UserOperation(Operations.Login, 0);
+            List<DateTime> failedAttemptTimes = _dao.GetUserOperations(userAccount, userOperation);
             /*DateTime now = DateTime.Now;
             DateTime timeLimit = now.AddHours(-24);
             List<DateTime> itemsAfter = failedAttemptTimes.FindAll(i => i > timeLimit);*/
