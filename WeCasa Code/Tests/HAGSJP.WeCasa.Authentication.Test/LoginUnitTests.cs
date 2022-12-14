@@ -2,6 +2,7 @@ using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Client;
 using HAGSJP.WeCasa.Services.Implementations;
 using HAGSJP.WeCasa.sqlDataAccess;
+using HAGSJP.WeCasa.Models.Security;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
@@ -15,7 +16,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var expected = true;
             var systemUnderTest = new AccountMariaDAO();
             
-            UserAccount testUser = new UserAccount("EncryptedPasswordTest@gmail.com", "P@ssw0rd!");
+            UserAccount testUser = new UserAccount("LoginUnitTest@gmail.com", "P@ssw0rd!");
             // Password Encryption
             HashSaltSecurity hashService = new HashSaltSecurity();
             string salt = BitConverter.ToString(hashService.GenerateSalt(testUser.Password));
@@ -39,7 +40,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var systemUnderTest = new AccountMariaDAO();
             UserManager userManager = new UserManager();
             Authentication auth = new Authentication();
-            UserAccount testUser = new UserAccount("EncryptedPasswordTest", "P@ssw0rd!");
+            UserAccount testUser = new UserAccount("LoginUnitTest", "P@ssw0rd!");
 
             // Act
             Login login = new Login();
@@ -51,15 +52,61 @@ namespace HAGSJP.WeCasa.Services.Implementations
         }
 
         [TestMethod]
-        public void ShouldRejectPassword()
+        public void ShouldRejectInvalidPassword()
         {
-            // TODO
+            //Arrange
+            var expected = false;
+            var systemUnderTest = new AccountMariaDAO();
+            UserManager userManager = new UserManager();
+            Authentication auth = new Authentication();
+            UserAccount testUser = new UserAccount("LoginUnitTest@gmail.com", "invalidpassword");
+
+            // Act
+            Login login = new Login();
+            var actual = login.LoginUser(testUser, auth, userManager);
+
+            //Assert
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(actual.IsSuccessful == expected);
         }
 
         [TestMethod]
         public void ShouldRejectInvalidOTP()
         {
-            // TODO
+            //Arrange
+            var expected = false;
+            var systemUnderTest = new AccountMariaDAO();
+            UserManager userManager = new UserManager();
+            Authentication auth = new Authentication();
+            UserAccount testUser = new UserAccount("LoginUnitTest@gmail.com", "P@ssw0rd!");
+
+            // Act
+            OTP otp = userManager.GenerateOTPassword(testUser);
+            var actual = auth.VerifyOTPassword(testUser.Username, "test");
+
+            //Assert
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(actual.IsSuccessful == expected);
+        }
+
+        [TestMethod]
+        public void ShouldRejectIncorrectOTP()
+        {
+            //Arrange
+            var expected = false;
+            var systemUnderTest = new AccountMariaDAO();
+            UserManager userManager = new UserManager();
+            Authentication auth = new Authentication();
+            UserAccount testUser = new UserAccount("LoginUnitTest@gmail.com", "P@ssw0rd!");
+
+            // Act
+            OTP otp = userManager.GenerateOTPassword(testUser);
+            OTP testOtp = new OTP(testUser.Username, "mJdk5kByG.");
+            var actual = auth.AuthenticateUser(testUser, testOtp, otp);
+
+            //Assert
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(actual.IsSuccessful == expected);
         }
 
         [TestMethod]

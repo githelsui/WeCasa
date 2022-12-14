@@ -103,42 +103,45 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return result;
         }
 
-        public Result AuthenticateUser(UserAccount userAccount, OTP otp)
+        public Result AuthenticateUser(UserAccount userAccount, OTP userOtp, OTP otp)
         {
-            var loginUser = _dao.AuthenticateUser(userAccount, otp);
-
-            if (loginUser.HasValidOTP && loginUser.IsSuccessful && IsAccountEnabled(userAccount))
+            var loginUser = new AuthResult();
+            if (userOtp.Code == otp.Code)
             {
-                // Reset all authentication attempts upon successful login
-                var authAttemptsResult = ResetAuthenticationAttempts(userAccount);
-                // Changes OTP in data store to null
-                var otpResetResult = ResetOTP(userAccount);
-                // Updates authentication status of user
-                var authUpdateResult = UpdateUserAuthentication(userAccount, true);
-
-                if (authAttemptsResult.IsSuccessful && otpResetResult.IsSuccessful && authUpdateResult.IsSuccessful)
+                // Checking expiration of otp
+                loginUser = _dao.AuthenticateUser(userAccount, otp);
+                if (loginUser.HasValidOTP && loginUser.IsSuccessful && IsAccountEnabled(userAccount))
                 {
-                    // Logs the successful login
-                    UserOperation loginSuccess = new UserOperation(Operations.Login, 1);
-                    successLogger.Log("Login successful", LogLevels.Info, "Data Store", userAccount.Username, loginSuccess);
+                    // Reset all authentication attempts upon successful login
+                    var authAttemptsResult = ResetAuthenticationAttempts(userAccount);
+                    // Changes OTP in data store to null
+                    var otpResetResult = ResetOTP(userAccount);
+                    // Updates authentication status of user
+                    var authUpdateResult = UpdateUserAuthentication(userAccount, true);
+
+                    if (authAttemptsResult.IsSuccessful && otpResetResult.IsSuccessful && authUpdateResult.IsSuccessful)
+                    {
+                        // Logs the successful login
+                        UserOperation loginSuccess = new UserOperation(Operations.Login, 1);
+                        successLogger.Log("Login successful", LogLevels.Info, "Data Store", userAccount.Username, loginSuccess);
+                        return loginUser;
+                    }
+                    if (loginUser.ExpiredOTP)
+                    {
+                        loginUser.Message = "One-time code is expired.";
+                    }
                 }
             }
             else
             {
-                if(!loginUser.HasValidOTP)
-                {
-                    loginUser.Message = "One-time code is invalid.";
-                }
-                if(loginUser.ExpiredOTP)
-                {
-                    loginUser.Message = "One-time code is expired.";
-                }
-                // Logging the error with ip address
-                string host = Dns.GetHostName();
-                IPHostEntry ip = Dns.GetHostEntry(host);
-                UserOperation loginFailure = new UserOperation(Operations.Login, 0);
-                errorLogger.Log("Error during Authentication from " + ip.AddressList[0].ToString(), LogLevels.Error, "Data Store", userAccount.Username, loginFailure);
+                loginUser.HasValidOTP = false;
+                loginUser.Message = "One-time code is invalid.";
             }
+            // Logging the error with ip address
+            string host = Dns.GetHostName();
+            IPHostEntry ip = Dns.GetHostEntry(host);
+            UserOperation loginFailure = new UserOperation(Operations.Login, 0);
+            errorLogger.Log("Error during Authentication from " + ip.AddressList[0].ToString(), LogLevels.Error, "Data Store", userAccount.Username, loginFailure);
             return loginUser;
         }
 

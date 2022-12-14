@@ -61,7 +61,7 @@ namespace HAGSJP.WeCasa.Client
                 // Getting OTP from user
                 OTP inputOtp = GetOTP(userAccount, auth);
                 // Checking OTP, creating a new authentication session for the user
-                loginResult = auth.AuthenticateUser(userAccount, otp);
+                loginResult = auth.AuthenticateUser(userAccount, inputOtp, otp);
                 return loginResult;
             }
             else

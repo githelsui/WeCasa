@@ -7,7 +7,7 @@ namespace HAGSJP.WeCasa.Client
     {
         public void HomePage()
         {
-            Console.WriteLine("Welcome to WeCasa!");
+            Console.WriteLine("\nWelcome to WeCasa!");
             Console.WriteLine("Type x to exit:");
             string input = "";
             while (!input.Equals("x")) {
