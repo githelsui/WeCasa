@@ -73,17 +73,9 @@ namespace HAGSJP.WeCasa.Client
                         // Get username and password from commandline
                         email = login.GetEmail(um);
                         password = GetPassword(um);
-                        // Validate inputted password with saved password in database (encrypted)
-                        AuthResult encryptedPassValidation = login.ValidateEncryptedPasswords(auth, email, password);
-                        if ((bool)encryptedPassValidation.ReturnedObject == false)
-                        {
-                            Console.WriteLine(encryptedPassValidation.Message);
-                            Console.WriteLine("Exiting Login. Try again.");
-                            break;
-                        }
                         ua = new UserAccount(email, password);
                         // Checking pre-conditions for login
-                        var result = login.CheckUser(ua, auth, um);
+                        var result = login.ValidateEncryptedPasswords(ua, auth);
                         if (result.IsSuccessful)
                         { 
                             // Generating one-time code 
@@ -94,6 +86,8 @@ namespace HAGSJP.WeCasa.Client
                             OTP inputOtp = GetOTP(ua, auth);
                             login.LoginUser(ua, inputOtp, auth);
                             // Going to home page
+                            Home h = new Home();
+                            h.HomePage();
                             menu = false;
                         }
                         // User is unable to log in

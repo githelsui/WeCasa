@@ -62,7 +62,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public bool IsUsernameTaken(string username)
         {
             UserAccount userAccount = new UserAccount(username);
-            var result = _dao.GetUserInfo(userAccount);
+            var result = _dao.ValidateUserInfo(userAccount);
             return result.ExistingAcc;
         }
         public Result ValidatePassword(string password)

@@ -10,6 +10,7 @@ using HAGSJP.WeCasa.Logging.Implementations;
 using HAGSJP.WeCasa.sqlDataAccess; 
 using System.Net;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using System.Security.Cryptography;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
@@ -31,51 +32,35 @@ namespace HAGSJP.WeCasa.Services.Implementations
             errorLogger = new Logger(dao);
         }
 
-        public AuthResult VerifyEncryptedPasswords(UserAccount user)
+        public byte[] GenerateSalt(string password)
         {
-            var result = new AuthResult();
-          
-            AuthResult userInfoResult = _dao(username);
-            //if (saltResult.IsSuccessful == false)
-            //{
-            //    // Failure case from data store layer
-            //    errorLogger.Log(saltResult.Message, LogLevels.Error, "Data Store", username);
-            //    return saltResult;
-            //}
-            //string salt = saltResult.ReturnedObject.ToString();
-            //byte[] saltBytes = Encoding.ASCII.GetBytes(salt);
-            //string newEncryptedPass = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-            //    password: password!,
-            //    salt: saltBytes,
-            //    prf: KeyDerivationPrf.HMACSHA256,
-            //    iterationCount: 100000,
-            //    numBytesRequested: 256 / 8));
+            byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
+            return salt;
+        }
 
-            //AuthResult encryptedPasswordResult = _dao.GetEncryptedPassword(username);
-            //if (encryptedPasswordResult.IsSuccessful == false)
-            //{
-            //    // Failure case from data store layer
-            //    errorLogger.Log(encryptedPasswordResult.Message, LogLevels.Error, "Data Store", username);
-            //    return saltResult;
-            //}
-            //string savedEncryptedPass = encryptedPasswordResult.ReturnedObject.ToString();
-            //Console.Write("salt = " + salt + "\n");
-            //Console.Write("saved encrypted pass = " + savedEncryptedPass + "\n");
-            //Console.Write("new encrypted pass = " + newEncryptedPass + "\n");
-
-            //if (newEncryptedPass.Equals(savedEncryptedPass))
-            //{
-            //    //result.ExistingAcc = true;
-            //    //result.ReturnedObject = true;
-            //    //result.IsEnabled = 
-            //}
-            //else
-            //{
-            //    result.Message = "Invalid username or password provided. Retry again or contact system administrator if issue persists.";
-            //    result.ReturnedObject = false;
-            //}
-
-            return result;
+        public AuthResult VerifyEncryptedPasswords(UserAccount userAccount)
+        {
+            var userInfoResult = _dao.ValidateUserInfo(userAccount);
+            // User account checks
+            // User is already authenticated
+            if (userInfoResult.IsAuth == true)
+            {
+                userInfoResult.IsSuccessful = false;
+                userInfoResult.Message = "Account is already authenticated.";
+            }
+            // Account is disabled
+            else if (userInfoResult.IsEnabled == false)
+            {
+                userInfoResult.IsSuccessful = false;
+                userInfoResult.Message = "Account Disabled. Perform account recovery or contact the System Administrator.";
+            }
+            else
+            {
+                HashSaltSecurity hashSaltSecurity = new HashSaltSecurity();
+                userAccount.Salt = userInfoResult.Salt;
+                userInfoResult = hashSaltSecurity.ValidateHashedPasswords(userAccount, userInfoResult);
+            }
+            return userInfoResult;
         }
 
         public Result VerifyOTPassword(string email, string code)
@@ -114,37 +99,6 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if(!result.IsSuccessful)
             {
                 errorLogger.Log("Error updating one-time code", LogLevels.Error, "Data Store", userAccount.Username);
-            }
-            return result;
-        }
-
-        // Checks if the user already exists in the database and makes sure they are not authenticated or disabled
-        public Result IsExistingAccount(UserAccount userAccount)
-        {
-            var result = _dao.GetUserInfo(userAccount);
-            // User account checks
-            // User is already authenticated
-            if (result.IsAuth == true)
-            {
-                result.IsSuccessful = false;
-                result.Message = "Account is already authenticated.";
-            }
-            // Invalid credentials
-            else if (result.HasValidCredentials == false)
-            {
-                result.IsSuccessful = false;
-                result.Message = "Invalid username or password provided. Retry again or contact the System Administrator.";
-            }
-            // Account is disabled
-            else if (result.IsEnabled == false)
-            {
-                result.IsSuccessful = false;
-                result.Message = "Account Disabled. Perform account recovery or contact the System Administrator.";
-            }
-            else
-            {
-                result.IsSuccessful = true;
-                result.Message = "";
             }
             return result;
         }

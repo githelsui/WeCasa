@@ -25,18 +25,13 @@ namespace HAGSJP.WeCasa.Client
             return email;
         }
 
-        public AuthResult ValidateEncryptedPasswords(Authentication auth, UserAccount ua)
+        public Result ValidateEncryptedPasswords(UserAccount userAccount, Authentication auth)
         {
-            AuthResult validationResult = auth.VerifyEncryptedPasswords(ua);
+            // Checking if the user exists, make sure they are not already authenticated
+            var validationResult = auth.VerifyEncryptedPasswords(userAccount);
             return validationResult;
         }
 
-        public Result CheckUser(UserAccount userAccount, Authentication auth, UserManager um)
-        {
-            // Checking if the user exists, make sure they are not already authenticated
-            var result = auth.IsExistingAccount(userAccount);
-            return result;
-        }
         public void LoginUser(UserAccount userAccount, OTP otp, Authentication auth)
         {
             // Checking OTP, creating a new authentication session for the user

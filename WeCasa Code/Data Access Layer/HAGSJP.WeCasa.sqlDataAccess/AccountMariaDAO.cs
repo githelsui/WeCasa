@@ -24,7 +24,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
              var builder = new MySqlConnectionStringBuilder
              {
                  Server = "localhost",
-                 Port = 3306,
+                 Port = 3307,
                  UserID = "HAGSJP.WeCasa.SqlUser",
                  Password = "cecs491",
                  Database = "HAGSJP.WeCasa"
@@ -86,7 +86,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         }
 
         // Checks if authentication pre-conditions are met
-        public AuthResult GetUserInfo(UserAccount userAccount)
+        public AuthResult ValidateUserInfo(UserAccount userAccount)
         {
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
@@ -111,7 +111,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         result.ExistingAcc = true;
                         result.IsAuth = reader.GetInt32(reader.GetOrdinal("is_auth")) == 1 ? true : false;
                         result.IsEnabled = reader.GetInt32(reader.GetOrdinal("is_enabled")) == 1 ? true : false;
-                        result.HasValidCredentials = reader.GetString(reader.GetOrdinal("password")) == userAccount.Password ? true : false;
+                        result.ReturnedObject = reader.GetString(reader.GetOrdinal("password"));
+                        result.Salt = reader.GetString(reader.GetOrdinal("salt"));
                     }
                     // User not found
                     else
