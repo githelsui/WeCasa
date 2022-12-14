@@ -28,7 +28,7 @@ namespace HAGSJP.WeCasa.Authorization.Test
 
             // Assert
             Assert.IsNotNull(actual);
-            Assert.IsTrue(actual > 0);
+            Assert.IsTrue(actual >= 0);
             Assert.IsTrue(actual <= expected);
             Assert.IsTrue(testResult.IsSuccessful);
         }
@@ -52,7 +52,7 @@ namespace HAGSJP.WeCasa.Authorization.Test
 
             // Assert
             Assert.IsNotNull(actual);
-            Assert.IsTrue(actual > 0);
+            Assert.IsTrue(actual >= 0);
             Assert.IsTrue(actual <= expected);
             Assert.IsTrue(testResult.IsSuccessful);
         }

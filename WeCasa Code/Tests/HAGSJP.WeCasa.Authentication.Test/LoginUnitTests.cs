@@ -45,7 +45,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             // Act
             if (systemUnderTest.GetUserOperations(testUser, testOperation).Count == 0)
             {
-                systemUnderTest.PersistUser(testUser, "P@ssw0rd!");
+                systemUnderTest.PersistUser(testUser, "P@ssw0rd!", "testsalt");
                 systemUnderTest.LogData(log);
                 systemUnderTest.LogData(log);
                 systemUnderTest.LogData(log);
