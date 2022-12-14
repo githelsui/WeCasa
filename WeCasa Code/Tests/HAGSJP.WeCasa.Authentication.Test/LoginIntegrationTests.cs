@@ -1,4 +1,5 @@
 using HAGSJP.WeCasa.Models;
+using HAGSJP.WeCasa.Models.Security;
 using HAGSJP.WeCasa.Services.Implementations;
 using HAGSJP.WeCasa.sqlDataAccess;
 using System.Diagnostics;
@@ -9,27 +10,32 @@ namespace HAGSJP.WeCasa.Services.Implementations
     public class LoginIntegrationTests
     {
         [TestMethod]
-        public void ShouldFetchClaimsWithin5Seconds()
+        public void ShouldDisplaySuccessMessageSuccessfulLogin()
         {
             // Arrange
             var stopwatch = new Stopwatch();
-            var expected = 5;
-            var systemUnderTest = new AccountMariaDAO();
+            var expectedTime = 5;
+            var expectedSuccess = true;
+            var message = "Successfully logged user in.";
+            UserManager userManager = new UserManager();
+            var systemUnderTest = new Authentication();
 
             // Act
             stopwatch.Start();
             UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com");
-            //var testResult = systemUnderTest.AuthenticateUser(testUser);
+            OTP testOTP = userManager.GenerateOTPassword(testUser);
+            var actual = systemUnderTest.AuthenticateUser(testUser, testOTP, testOTP);
             stopwatch.Stop();
 
             // turn ms to seconds
-            var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
+            var time = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
 
             // Assert
             Assert.IsNotNull(actual);
-            Assert.IsTrue(actual >= 0);
-            Assert.IsTrue(actual <= expected);
-            //Assert.IsTrue(testResult.IsSuccessful);
+            Assert.IsTrue(time >= 0);
+            Assert.IsTrue(time <= expectedTime);
+            Assert.IsTrue(actual.Message.Equals(message)); //Display message is correct
+            Assert.IsTrue(actual.IsSuccessful == expectedSuccess);
         }
     }
 }

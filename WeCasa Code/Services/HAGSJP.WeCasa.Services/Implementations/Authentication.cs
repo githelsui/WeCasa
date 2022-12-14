@@ -124,6 +124,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
                         // Logs the successful login
                         UserOperation loginSuccess = new UserOperation(Operations.Login, 1);
                         successLogger.Log("Login successful", LogLevels.Info, "Data Store", userAccount.Username, loginSuccess);
+                        loginUser.Message = "Successfully logged user in.";
                         return loginUser;
                     }
                     if (loginUser.ExpiredOTP)
