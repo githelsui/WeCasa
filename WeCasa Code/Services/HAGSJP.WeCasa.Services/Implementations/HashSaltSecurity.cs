@@ -12,31 +12,26 @@ namespace HAGSJP.WeCasa.Services.Implementations
 {
 	public class HashSaltSecurity : IHashSaltSecurity
 	{
-        private readonly HashDAO _dao;
-        private readonly AccountMariaDAO _logDao;
+        private readonly AccountMariaDAO _dao;
         private Logger successLogger;
         private Logger errorLogger;
-
+        
         public HashSaltSecurity()
-		{
-            _dao = new HashDAO();
-            _logDao = new AccountMariaDAO();
-            successLogger = new Logger(_logDao);
-            errorLogger = new Logger(_logDao);
+        {
+            _dao = new AccountMariaDAO();
+            successLogger = new Logger(_dao);
+            errorLogger = new Logger(_dao);
         }
 
-        public HashSaltSecurity(HashDAO dao)
+        public byte[] GenerateSalt(string password)
         {
-            _dao = dao;
-            _logDao = new AccountMariaDAO();
-            successLogger = new Logger(_logDao);
-            errorLogger = new Logger(_logDao);
+            byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
+            return salt;
         }
 
         public string GetHashSaltCredentials(string password)
 		{
             byte[] salt = RandomNumberGenerator.GetBytes(128 / 8); 
-            Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
 
             string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password!,
@@ -59,51 +54,32 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return hashed;
         }
 
-        public AuthResult ValidateHashedPasswords(string username, string password)
+        public AuthResult ValidateHashedPasswords(UserAccount userAccount, AuthResult result)
         {
-            var result = new AuthResult();
-
-            AuthResult saltResult = _dao.GetSalt(username);
-            if (saltResult.IsSuccessful == false)
-            {
-                // Failure case from data store layer
-                errorLogger.Log(saltResult.Message, LogLevels.Error, "Data Store", username);
-                return saltResult;
-            }
-            var salt = saltResult.ReturnedObject.ToString();
+            string salt = userAccount.Salt;
             byte[] saltBytes = Encoding.ASCII.GetBytes(salt);
             string newEncryptedPass = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: password!,
+                password: userAccount.Password,
                 salt: saltBytes,
                 prf: KeyDerivationPrf.HMACSHA256,
                 iterationCount: 100000,
                 numBytesRequested: 256 / 8));
 
-            AuthResult encryptedPasswordResult = _dao.GetEncryptedPassword(username);
-            if (encryptedPasswordResult.IsSuccessful == false)
-            {
-                // Failure case from data store layer
-                errorLogger.Log(encryptedPasswordResult.Message, LogLevels.Error, "Data Store", username);
-                return saltResult;
-            }
-            var savedEncryptedPass = encryptedPasswordResult.ReturnedObject.ToString();
+            string savedEncryptedPass = result.ReturnedObject.ToString();
 
             if (newEncryptedPass.Equals(savedEncryptedPass))
             {
                 result.IsSuccessful = true;
-                result.ReturnedObject = true;
-            } else
-            {
-                result.IsSuccessful = true;
-                result.ReturnedObject = false;
+                result.HasValidCredentials = true;
+                result.Message = "Authentication successful.";
             }
-
+            else // Invalid credentials
+            {
+                result.IsSuccessful = false;
+                result.HasValidCredentials = false;
+                result.Message = "Invalid username or password provided. Retry again or contact the System Administrator.";
+            }
             return result;
-        }
-
-        public AuthResult ValidateHashedPasswords(UserAccount ua)
-        {
-            return ValidateHashedPasswords(ua.Username, ua.Password);
         }
     }
 }

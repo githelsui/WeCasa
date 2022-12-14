@@ -24,7 +24,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
              var builder = new MySqlConnectionStringBuilder
              {
                  Server = "localhost",
-                 Port = 3306,
+                 Port = 3307,
                  UserID = "HAGSJP.WeCasa.SqlUser",
                  Password = "cecs491",
                  Database = "HAGSJP.WeCasa"
@@ -50,7 +50,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             return result;
         }
 
-        public Result PersistUser(UserAccount userAccount, string password)
+        public Result PersistUser(UserAccount userAccount, string password, string salt)
         {
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
@@ -59,12 +59,13 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 var result = new Result();
 
                 // Insert SQL statement
-                var insertSql = @"INSERT INTO `Users` (`username`, `password`, `is_enabled`, `is_admin`, `claims`) values (@username, @password, 1, 0, @claims);";
+                var insertSql = @"INSERT INTO `Users` (`username`, `password`, `is_enabled`, `is_admin`, `claims`, `salt`) values (@username, @password, 1, 0, @claims, @salt);";
 
                 var command = connection.CreateCommand();
                 command.CommandText = insertSql;
                 command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
                 command.Parameters.AddWithValue("@password", password);
+                command.Parameters.AddWithValue("@salt", salt);
 
                 // Initial claims when new user is first registered
                 List<Claim> initialClaims = new List<Claim>
@@ -85,7 +86,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         }
 
         // Checks if authentication pre-conditions are met
-        public AuthResult GetUserInfo(UserAccount userAccount)
+        public AuthResult ValidateUserInfo(UserAccount userAccount)
         {
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
@@ -110,7 +111,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         result.ExistingAcc = true;
                         result.IsAuth = reader.GetInt32(reader.GetOrdinal("is_auth")) == 1 ? true : false;
                         result.IsEnabled = reader.GetInt32(reader.GetOrdinal("is_enabled")) == 1 ? true : false;
-                        result.HasValidCredentials = reader.GetString(reader.GetOrdinal("password")) == userAccount.Password ? true : false;
+                        result.ReturnedObject = reader.GetString(reader.GetOrdinal("password"));
+                        result.Salt = reader.GetString(reader.GetOrdinal("salt"));
                     }
                     // User not found
                     else

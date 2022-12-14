@@ -9,6 +9,8 @@ using System.Text.RegularExpressions;
 using HAGSJP.WeCasa.Logging.Implementations;
 using HAGSJP.WeCasa.sqlDataAccess; 
 using System.Net;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using System.Security.Cryptography;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
@@ -30,10 +32,35 @@ namespace HAGSJP.WeCasa.Services.Implementations
             errorLogger = new Logger(dao);
         }
 
-        public Result VerifyEncryptedPasswords(string email, string password)
+        public byte[] GenerateSalt(string password)
         {
-            //TODO: use hashsaltsecurity service
-            throw new NotImplementedException();
+            byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
+            return salt;
+        }
+
+        public AuthResult VerifyEncryptedPasswords(UserAccount userAccount)
+        {
+            var userInfoResult = _dao.ValidateUserInfo(userAccount);
+            // User account checks
+            // User is already authenticated
+            if (userInfoResult.IsAuth == true)
+            {
+                userInfoResult.IsSuccessful = false;
+                userInfoResult.Message = "Account is already authenticated.";
+            }
+            // Account is disabled
+            else if (userInfoResult.IsEnabled == false)
+            {
+                userInfoResult.IsSuccessful = false;
+                userInfoResult.Message = "Account Disabled. Perform account recovery or contact the System Administrator.";
+            }
+            else
+            {
+                HashSaltSecurity hashSaltSecurity = new HashSaltSecurity();
+                userAccount.Salt = userInfoResult.Salt;
+                userInfoResult = hashSaltSecurity.ValidateHashedPasswords(userAccount, userInfoResult);
+            }
+            return userInfoResult;
         }
 
         public Result VerifyOTPassword(string email, string code)
@@ -72,37 +99,6 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if(!result.IsSuccessful)
             {
                 errorLogger.Log("Error updating one-time code", LogLevels.Error, "Data Store", userAccount.Username);
-            }
-            return result;
-        }
-
-        // Checks if the user already exists in the database and makes sure they are not authenticated or disabled
-        public Result IsExistingAccount(UserAccount userAccount)
-        {
-            var result = _dao.GetUserInfo(userAccount);
-            // User account checks
-            // User is already authenticated
-            if (result.IsAuth == true)
-            {
-                result.IsSuccessful = false;
-                result.Message = "Account is already authenticated.";
-            }
-            // Invalid credentials
-            else if (result.HasValidCredentials == false)
-            {
-                result.IsSuccessful = false;
-                result.Message = "Invalid username or password provided. Retry again or contact the System Administrator.";
-            }
-            // Account is disabled
-            else if (result.IsEnabled == false)
-            {
-                result.IsSuccessful = false;
-                result.Message = "Account Disabled. Perform account recovery or contact the System Administrator.";
-            }
-            else
-            {
-                result.IsSuccessful = true;
-                result.Message = "";
             }
             return result;
         }

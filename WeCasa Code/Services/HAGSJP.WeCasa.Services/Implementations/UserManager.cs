@@ -62,7 +62,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public bool IsUsernameTaken(string username)
         {
             UserAccount userAccount = new UserAccount(username);
-            var result = _dao.GetUserInfo(userAccount);
+            var result = _dao.ValidateUserInfo(userAccount);
             return result.ExistingAcc;
         }
         public Result ValidatePassword(string password)
@@ -185,8 +185,11 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var userPersistResult = new Result();
             UserAccount userAccount = new UserAccount(email);
 
+            // Password encryption
             HashSaltSecurity hashService = new HashSaltSecurity();
-            userPersistResult = _dao.PersistUser(userAccount, hashService.GetHashSaltCredentials(password));
+            string salt = BitConverter.ToString(hashService.GenerateSalt(password));
+            string encryptedPass = hashService.GetHashSaltCredentials(password, salt);
+            userPersistResult = _dao.PersistUser(userAccount, encryptedPass, salt);
 
             if (userPersistResult.IsSuccessful)
             {

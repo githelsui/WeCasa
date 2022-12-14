@@ -19,7 +19,7 @@ namespace HAGSJP.WeCasa.Registration.Test
             // Act
             stopwatch.Start();
             UserAccount testUser = new UserAccount("5secondintegration@gmail.com");
-            var testResult = systemUnderTest.PersistUser(testUser, "P@ssw0rd");
+            var testResult = systemUnderTest.PersistUser(testUser, "P@ssw0rd", "testsalt");
             stopwatch.Stop();
 
             // turn ms to seconds

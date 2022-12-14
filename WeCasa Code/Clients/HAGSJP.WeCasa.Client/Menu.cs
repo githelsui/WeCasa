@@ -77,7 +77,7 @@ namespace HAGSJP.WeCasa.Client
                         password = GetPassword(um);
                         ua = new UserAccount(email, password);
                         // Checking pre-conditions for login
-                        var result = login.CheckUser(ua, auth, um);
+                        var result = login.ValidateEncryptedPasswords(ua, auth);
                         if (result.IsSuccessful)
                         { 
                             // Generating one-time code 
@@ -88,6 +88,8 @@ namespace HAGSJP.WeCasa.Client
                             OTP inputOtp = GetOTP(ua, auth);
                             login.LoginUser(ua, inputOtp, auth);
                             // Going to home page
+                            Home h = new Home();
+                            h.HomePage();
                             menu = false;
                         }
                         // User is unable to log in

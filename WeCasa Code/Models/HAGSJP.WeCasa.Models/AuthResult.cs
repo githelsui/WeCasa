@@ -8,7 +8,7 @@ namespace HAGSJP.WeCasa.Models
         public bool ExistingAcc { get; set; }
         public bool HasValidCredentials { get; set; }
         public Object? ReturnedObject { get; set; }
-
+        public string Salt { get; set; }
         public bool HasValidOTP { get; set; }
         public bool ExpiredOTP { get; set; }
 
