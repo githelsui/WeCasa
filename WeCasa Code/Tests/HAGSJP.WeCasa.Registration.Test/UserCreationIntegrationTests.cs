@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using HAGSJP.WeCasa.Services.Implementations;
 using HAGSJP.WeCasa.Models;
+using HAGSJP.WeCasa.Client;
 using HAGSJP.WeCasa.sqlDataAccess;
 
 namespace HAGSJP.WeCasa.Registration.Test
@@ -31,6 +32,25 @@ namespace HAGSJP.WeCasa.Registration.Test
             Assert.IsTrue(actual >= 0);
             Assert.IsTrue(actual <= expected);
             Assert.IsTrue(testResult.IsSuccessful);
+        }
+
+        [TestMethod]
+        public void ShouldRegisterAccountOnlyWithUniqueUsername()
+        {
+            // Arrange
+            var expected = true;
+            var expectedMessage = "Account created successfully!\n";
+            var um = new UserManager();
+            RegistrationClient systemUnderTest = new RegistrationClient(); 
+
+            // Act
+            UserAccount testUser = new UserAccount("RegisterUniqueUsername1@gmail.com", "P@ssw0rd");
+            var actual = systemUnderTest.Register(testUser.Username, testUser.Password, um);
+
+            // Assert
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(actual.IsSuccessful == expected);
+            Assert.IsTrue(actual.Message.Equals(expectedMessage));
         }
 
         [TestMethod] //Tests that no error log has been made for user creation that takes less than 5 seconds

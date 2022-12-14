@@ -90,7 +90,7 @@ namespace HAGSJP.WeCasa.Registration.Test
             Assert.IsTrue(actualResult == result.ExistingAcc);
         }
 
-        public void ShouldCreateUniqueUsernameFromValidEmail()
+        public void ShouldAssignUniqueSystemWideUsername()
         {
             //Arrange
             var result = new AuthResult();

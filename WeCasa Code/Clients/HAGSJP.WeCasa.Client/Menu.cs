@@ -60,7 +60,7 @@ namespace HAGSJP.WeCasa.Client
                 switch (Console.ReadLine())
                 {
                     case "1":
-                        Registration reg = new Registration();
+                        RegistrationClient reg = new RegistrationClient();
                         email = GetEmail(um);
                         password = GetPassword(um);
                         string confirmPassword = um.ConfirmPassword(password);

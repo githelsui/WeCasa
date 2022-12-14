@@ -10,7 +10,7 @@ using System.Data;
 
 namespace HAGSJP.WeCasa.Client
 {
-    public class Registration
+    public class RegistrationClient
     {
         public Result Register(string email, string password, UserManager um)
         {
