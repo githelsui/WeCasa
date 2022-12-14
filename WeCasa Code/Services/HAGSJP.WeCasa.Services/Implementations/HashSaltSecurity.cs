@@ -58,6 +58,53 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 numBytesRequested: 256 / 8));
             return hashed;
         }
+
+        public AuthResult ValidateHashedPasswords(string username, string password)
+        {
+            var result = new AuthResult();
+
+            AuthResult saltResult = _dao.GetSalt(username);
+            if (saltResult.IsSuccessful == false)
+            {
+                // Failure case from data store layer
+                errorLogger.Log(saltResult.Message, LogLevels.Error, "Data Store", username);
+                return saltResult;
+            }
+            var salt = saltResult.ReturnedObject.ToString();
+            byte[] saltBytes = Encoding.ASCII.GetBytes(salt);
+            string newEncryptedPass = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: password!,
+                salt: saltBytes,
+                prf: KeyDerivationPrf.HMACSHA256,
+                iterationCount: 100000,
+                numBytesRequested: 256 / 8));
+
+            AuthResult encryptedPasswordResult = _dao.GetEncryptedPassword(username);
+            if (encryptedPasswordResult.IsSuccessful == false)
+            {
+                // Failure case from data store layer
+                errorLogger.Log(encryptedPasswordResult.Message, LogLevels.Error, "Data Store", username);
+                return saltResult;
+            }
+            var savedEncryptedPass = encryptedPasswordResult.ReturnedObject.ToString();
+
+            if (newEncryptedPass.Equals(savedEncryptedPass))
+            {
+                result.IsSuccessful = true;
+                result.ReturnedObject = true;
+            } else
+            {
+                result.IsSuccessful = true;
+                result.ReturnedObject = false;
+            }
+
+            return result;
+        }
+
+        public AuthResult ValidateHashedPasswords(UserAccount ua)
+        {
+            return ValidateHashedPasswords(ua.Username, ua.Password);
+        }
     }
 }
 

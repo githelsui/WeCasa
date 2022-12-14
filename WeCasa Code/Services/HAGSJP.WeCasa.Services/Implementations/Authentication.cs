@@ -29,6 +29,13 @@ namespace HAGSJP.WeCasa.Services.Implementations
             successLogger = new Logger(dao);
             errorLogger = new Logger(dao);
         }
+
+        public Result VerifyEncryptedPasswords(string email, string password)
+        {
+            //TODO: use hashsaltsecurity service
+            throw new NotImplementedException();
+        }
+
         public Result VerifyOTPassword(string email, string code)
         {
             var result = new Result();

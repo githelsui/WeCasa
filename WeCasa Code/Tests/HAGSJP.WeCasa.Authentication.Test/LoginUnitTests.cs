@@ -9,7 +9,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         [TestMethod]
         public void ShouldReturnTrueGivenValidNumberOfAttempts()
         {
-           //Arrange
+            //Arrange
             var expected = true;
             List<DateTime> failedAttemptTimes = new List<DateTime>();
             failedAttemptTimes.Add(DateTime.Now.AddHours(-23));
@@ -64,6 +64,11 @@ namespace HAGSJP.WeCasa.Services.Implementations
             Console.WriteLine(accountEnabled);
             Assert.IsTrue(accountEnabled == expected);
         }
-    
+
+        [TestMethod]
+        public void ShouldValidateEncryptedPasswordInLogin()
+        {
+            //using HashSaltSecurity service within Authentication service
+        }
     }
 }

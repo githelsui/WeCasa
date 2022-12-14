@@ -5,7 +5,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess.Abstractions
 {
 	public interface IHashDAO
 	{
-        public AuthResult PushEncryptedPassword(UserAccount ua);
         public AuthResult GetEncryptedPassword(string username);
         public AuthResult GetSalt(string username);
         public AuthResult SaveSalt(string username);

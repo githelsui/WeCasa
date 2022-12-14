@@ -50,7 +50,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 return result;
             }
 
-            AuthResult daoResultRoles = ValidateActiveUser(ua);
+            AuthResult daoResultRoles = _dao.GetRole(ua);
             if (daoResultRoles.IsSuccessful == false)
             {
                 // Failure case from data store layer
