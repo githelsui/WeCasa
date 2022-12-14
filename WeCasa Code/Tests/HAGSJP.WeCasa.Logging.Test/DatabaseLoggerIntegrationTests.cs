@@ -16,7 +16,7 @@ namespace HAGSJP.WeCasa.Logging.Test
             // Arrange
             var stopwatch = new Stopwatch();
             var expected = 5;
-            var testMariaDao = new MariaDbDAO();
+            var testMariaDao = new AccountMariaDAO();
 
             // Act
             stopwatch.Start();

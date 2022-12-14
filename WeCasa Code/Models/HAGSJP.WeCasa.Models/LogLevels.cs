@@ -1,6 +1,9 @@
 ﻿using System;
 namespace HAGSJP.WeCasa.Models
 {
+    /// <summary>
+    /// Log Level show levels of severity in Logs
+    /// </summary>
     public enum LogLevels
     {
         Info,
@@ -8,14 +11,5 @@ namespace HAGSJP.WeCasa.Models
         Warning,
         Error
     }
-
-    // public enum Categories
-    // {
-    //     view,
-    //     Business ,
-    //     Server,
-    //     Data,
-    //     DataStore
-    // }
 }
 
