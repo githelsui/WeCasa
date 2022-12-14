@@ -11,7 +11,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
-		<PackageReference Include="MySqlConnector" Version="2.1.13" />
+		<PackageReference Include="MySqlConnector" Version="2.2.2" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Models\HAGSJP.WeCasa.Models\HAGSJP.WeCasa.Models.csproj" />

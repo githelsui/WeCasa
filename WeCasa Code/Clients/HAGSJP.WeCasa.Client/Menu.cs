@@ -2,23 +2,28 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using HAGSJP.WeCasa.ManagerLayer.Implementations;
+using HAGSJP.WeCasa.Services.Implementations;
 using HAGSJP.WeCasa.Models;
+using HAGSJP.WeCasa.Models.Security;
+using static System.Net.WebRequestMethods;
+using HAGSJP.WeCasa.Logging.Implementations;
+using HAGSJP.WeCasa.sqlDataAccess;
 
 namespace HAGSJP.WeCasa.Client
 {
     class Menu
-    { 
+    {
         public string GetEmail(UserManager um)
         {
             Console.WriteLine("Enter Email Address: ");
             string email = Console.ReadLine();
-            bool validEmail = um.ValidateEmail(email);
-            while (!validEmail)
+            var validEmail = um.ValidateEmail(email);
+            while (!validEmail.IsSuccessful)
             {
-                Console.WriteLine("Invalid email provided. Retry again or contact system administrator: ");
+                Console.WriteLine(validEmail.Message);
                 email = Console.ReadLine();
                 validEmail = um.ValidateEmail(email);
             }
@@ -48,25 +53,41 @@ namespace HAGSJP.WeCasa.Client
                 Console.WriteLine("(1) Register New Account");
                 Console.WriteLine("(2) Login to Existing Account");
                 Console.WriteLine("(3) Exit");
+                UserManager um = new UserManager();
+                UserAccount ua;
+                string email;
+                string password;
                 switch (Console.ReadLine())
                 {
                     case "1":
-                        UserManager um = new UserManager();
-                        string email = GetEmail(um);
-                        string password = GetPassword(um);
+                        Registration reg = new Registration();
+                        email = GetEmail(um);
+                        password = GetPassword(um);
                         string confirmPassword = um.ConfirmPassword(password);
-                        var result = um.RegisterUser(email, password);
-                        if (result.IsSuccessful)
-                        {
-                            Console.WriteLine("Account Created!");
-                            // Create User Profile
-                        } else
-                        {
-                            Console.WriteLine("An error occurred. Please try again later.");
-                        }
+                        var regResult = reg.Register(email, password, um);
+                        Console.WriteLine(regResult.Message);
                         break;
                     case "2":
-                        Login l = new Login();
+                        Authentication auth = new Authentication();
+                        Login login = new Login();
+                        // Get username and password from commandline
+                        email = GetEmail(um);
+                        password = GetPassword(um);
+                        ua = new UserAccount(email, password);
+                        var loginResult = login.LoginUser(ua, auth, um);
+                        if(loginResult.IsSuccessful)
+                        {
+                            // Going to home page
+                            Home h = new Home();
+                            h.HomePage();
+                            menu = false;
+                        } 
+                        // User is unable to log in
+                        else
+                        {
+                            // Displaying user-friendly error message
+                            Console.WriteLine(loginResult.Message);
+                        }
                         break;
                     case "3":
                         menu = false;
