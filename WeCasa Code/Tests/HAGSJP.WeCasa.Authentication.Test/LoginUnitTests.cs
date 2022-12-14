@@ -112,7 +112,22 @@ namespace HAGSJP.WeCasa.Services.Implementations
         [TestMethod]
         public void ShouldRejectExpiredOTP()
         {
-            // TODO
+            //Arrange
+            var expected = false;
+            var systemUnderTest = new AccountMariaDAO();
+            UserManager userManager = new UserManager();
+            Authentication auth = new Authentication();
+            UserAccount testUser = new UserAccount("LoginUnitTest@gmail.com", "P@ssw0rd!");
+
+            // Act
+            OTP otp = userManager.GenerateOTPassword(testUser);
+            OTP testOtp = otp;
+            testOtp.CreateTime = DateTime.Now.AddMinutes(5);
+            var actual = auth.AuthenticateUser(testUser, testOtp, otp);
+
+            //Assert
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(actual.IsSuccessful == expected);
         }
 
         [TestMethod]

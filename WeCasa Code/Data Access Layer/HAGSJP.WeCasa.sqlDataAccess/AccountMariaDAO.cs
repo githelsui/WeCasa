@@ -150,7 +150,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     {
                         // Ensuring that the OTP has not expired
                         var otp_time = reader.GetDateTime(reader.GetOrdinal("otp_time"));
-                        if (DateTime.Now < otp_time.AddMinutes(2))
+                        if (otp.CreateTime < otp_time.AddMinutes(2))
                         {
                             result.IsSuccessful = true;
                             result.HasValidOTP = true;
