@@ -16,6 +16,20 @@ namespace HAGSJP.WeCasa.Client
 {
     class Menu
     {
+        public string GetEmail(UserManager um)
+        {
+            Console.WriteLine("Enter Email Address: ");
+            string email = Console.ReadLine();
+            var validEmail = um.ValidateEmail(email);
+            while (!validEmail.IsSuccessful)
+            {
+                Console.WriteLine(validEmail.Message);
+                email = Console.ReadLine();
+                validEmail = um.ValidateEmail(email);
+            }
+            return email;
+        }
+
         public string GetPassword(UserManager um)
         {
             Console.WriteLine("Enter Password: ");
@@ -29,23 +43,6 @@ namespace HAGSJP.WeCasa.Client
                 validP = um.ValidatePassword(password);
             }
             return password;
-        }
-
-        public OTP GetOTP(UserAccount userAccount, Authentication auth)
-        {
-            OTP otp;
-            Console.WriteLine("Enter one-time code: ");
-            string code = Console.ReadLine();
-            var validP = new Result();
-            validP = auth.VerifyOTPassword(userAccount.Username, code);
-            while (validP.IsSuccessful == false)
-            {
-                Console.WriteLine(validP.Message);
-                code = Console.ReadLine();
-                validP = auth.VerifyOTPassword(userAccount.Username, code);
-            }
-            otp = new OTP(userAccount.Username, code);
-            return otp;
         }
 
         public void OpenMenu()
@@ -64,39 +61,32 @@ namespace HAGSJP.WeCasa.Client
                 {
                     case "1":
                         Registration reg = new Registration();
-                        email = reg.GetEmail(um);
+                        email = GetEmail(um);
                         password = GetPassword(um);
                         string confirmPassword = um.ConfirmPassword(password);
-                        reg.Register(email, password, um);
+                        var regResult = reg.Register(email, password, um);
+                        Console.WriteLine(regResult.Message);
                         break;
                     case "2":
                         Authentication auth = new Authentication();
                         Login login = new Login();
                         // Get username and password from commandline
-                        email = login.GetEmail(um);
+                        email = GetEmail(um);
                         password = GetPassword(um);
                         ua = new UserAccount(email, password);
-                        // Checking pre-conditions for login
-                        var result = login.ValidateEncryptedPasswords(ua, auth);
-                        if (result.IsSuccessful)
-                        { 
-                            // Generating one-time code 
-                            OTP otp = um.GenerateOTPassword(ua);
-                            Console.WriteLine("One-time login code: " + otp.Code);
-                            Console.WriteLine("Your one-time code will expire at " + otp.CreateTime.AddMinutes(2) + "\n");
-                            // Getting OTP from user
-                            OTP inputOtp = GetOTP(ua, auth);
-                            login.LoginUser(ua, inputOtp, auth);
+                        var loginResult = login.LoginUser(ua, auth, um);
+                        if(loginResult.IsSuccessful)
+                        {
                             // Going to home page
                             Home h = new Home();
                             h.HomePage();
                             menu = false;
-                        }
+                        } 
                         // User is unable to log in
                         else
                         {
                             // Displaying user-friendly error message
-                            Console.WriteLine(result.Message);
+                            Console.WriteLine(loginResult.Message);
                         }
                         break;
                     case "3":

@@ -1,4 +1,5 @@
 using HAGSJP.WeCasa.Models;
+using HAGSJP.WeCasa.Client;
 using HAGSJP.WeCasa.Services.Implementations;
 using HAGSJP.WeCasa.sqlDataAccess;
 
@@ -7,6 +8,72 @@ namespace HAGSJP.WeCasa.Services.Implementations
     [TestClass]
     public class LoginUnitTests
     {
+        [TestMethod]
+        public void ShouldValidateEncryptedPasswordInLogin()
+        {
+            //Arrange
+            var expected = true;
+            var systemUnderTest = new AccountMariaDAO();
+            
+            UserAccount testUser = new UserAccount("EncryptedPasswordTest@gmail.com", "P@ssw0rd!");
+            // Password Encryption
+            HashSaltSecurity hashService = new HashSaltSecurity();
+            string salt = BitConverter.ToString(hashService.GenerateSalt(testUser.Password));
+            string encryptedPass = hashService.GetHashSaltCredentials(testUser.Password, salt);
+            var testResult = systemUnderTest.PersistUser(testUser, encryptedPass, salt);
+
+
+            // Act
+            Authentication auth = new Authentication();
+            var actual = auth.VerifyEncryptedPasswords(testUser);
+
+            //Assert
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(actual.IsSuccessful == expected);
+        }
+        [TestMethod]
+        public void ShouldRejectInvalidEmail()
+        {
+            //Arrange
+            var expected = false;
+            var systemUnderTest = new AccountMariaDAO();
+            UserManager userManager = new UserManager();
+            Authentication auth = new Authentication();
+            UserAccount testUser = new UserAccount("EncryptedPasswordTest", "P@ssw0rd!");
+
+            // Act
+            Login login = new Login();
+            var actual = login.LoginUser(testUser, auth, userManager);
+
+            //Assert
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(actual.IsSuccessful == expected);
+        }
+
+        [TestMethod]
+        public void ShouldRejectPassword()
+        {
+            // TODO
+        }
+
+        [TestMethod]
+        public void ShouldRejectInvalidOTP()
+        {
+            // TODO
+        }
+
+        [TestMethod]
+        public void ShouldRejectExpiredOTP()
+        {
+            // TODO
+        }
+
+        [TestMethod]
+        public void ShouldUpdateAuthenticationInDB()
+        {
+            // TODO
+        }
+
         [TestMethod]
         public void ShouldReturnAccountEnabledGivenValidNumberOfAttempts()
         {
@@ -28,7 +95,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             //Assert
             Assert.IsNotNull(actual);
             Console.WriteLine(accountEnabled);
-            Assert.IsTrue(accountEnabled == expected); 
+            Assert.IsTrue(accountEnabled == expected);
         }
 
         [TestMethod]
@@ -57,13 +124,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             //Assert
             Assert.IsNotNull(actual);
             Console.WriteLine(accountEnabled);
-            Assert.IsTrue(accountEnabled == expected); 
-        }
-
-        [TestMethod]
-        public void ShouldValidateEncryptedPasswordInLogin()
-        {
-            //using HashSaltSecurity service within Authentication service
+            Assert.IsTrue(accountEnabled == expected);
         }
     }
 }

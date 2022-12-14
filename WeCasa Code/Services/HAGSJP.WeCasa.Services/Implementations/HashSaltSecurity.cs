@@ -12,16 +12,8 @@ namespace HAGSJP.WeCasa.Services.Implementations
 {
 	public class HashSaltSecurity : IHashSaltSecurity
 	{
-        private readonly AccountMariaDAO _dao;
-        private Logger successLogger;
-        private Logger errorLogger;
         
-        public HashSaltSecurity()
-        {
-            _dao = new AccountMariaDAO();
-            successLogger = new Logger(_dao);
-            errorLogger = new Logger(_dao);
-        }
+        public HashSaltSecurity() { }
 
         public byte[] GenerateSalt(string password)
         {

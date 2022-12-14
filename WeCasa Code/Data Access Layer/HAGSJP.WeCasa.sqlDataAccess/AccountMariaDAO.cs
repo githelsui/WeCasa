@@ -24,7 +24,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
              var builder = new MySqlConnectionStringBuilder
              {
                  Server = "localhost",
-                 Port = 3307,
+                 Port = 3306,
                  UserID = "HAGSJP.WeCasa.SqlUser",
                  Password = "cecs491",
                  Database = "HAGSJP.WeCasa"
@@ -267,7 +267,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 // Update SQL statement
                 var updateSql = @"UPDATE `Logs` 
-                                    SET `Success`    = NULL
+                                    SET `Success`    = 1
                                         WHERE `Username` = @username 
                                         AND `Operation`  = @operation
                                         AND `Success`    = 0

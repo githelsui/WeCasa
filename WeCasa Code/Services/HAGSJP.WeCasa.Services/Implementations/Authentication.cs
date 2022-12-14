@@ -32,12 +32,6 @@ namespace HAGSJP.WeCasa.Services.Implementations
             errorLogger = new Logger(dao);
         }
 
-        public byte[] GenerateSalt(string password)
-        {
-            byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
-            return salt;
-        }
-
         public AuthResult VerifyEncryptedPasswords(UserAccount userAccount)
         {
             var userInfoResult = _dao.ValidateUserInfo(userAccount);
@@ -53,6 +47,12 @@ namespace HAGSJP.WeCasa.Services.Implementations
             {
                 userInfoResult.IsSuccessful = false;
                 userInfoResult.Message = "Account Disabled. Perform account recovery or contact the System Administrator.";
+            }
+            // Invalid Email
+            else if(userInfoResult.ExistingAcc == false)
+            {
+                userInfoResult.IsSuccessful = false;
+                userInfoResult.Message = "Invalid email provided. Retry again or contact the System Administrator.";
             }
             else
             {

@@ -15,11 +15,12 @@ namespace HAGSJP.WeCasa.Registration.Test
             var stopwatch = new Stopwatch();
             var expected = 5;
             var systemUnderTest = new AccountMariaDAO();
+            var um = new UserManager(systemUnderTest);
 
             // Act
             stopwatch.Start();
-            UserAccount testUser = new UserAccount("5secondintegration@gmail.com");
-            var testResult = systemUnderTest.PersistUser(testUser, "P@ssw0rd", "testsalt");
+            UserAccount testUser = new UserAccount("5secondintegration@gmail.com", "P@ssw0rd");
+            var testResult = um.RegisterUser(testUser.Username, testUser.Password);
             stopwatch.Stop();
 
             // turn ms to seconds
@@ -27,7 +28,7 @@ namespace HAGSJP.WeCasa.Registration.Test
 
             // Assert
             Assert.IsNotNull(actual);
-            Assert.IsTrue(actual > 0);
+            Assert.IsTrue(actual >= 0);
             Assert.IsTrue(actual <= expected);
             Assert.IsTrue(testResult.IsSuccessful);
         }
@@ -64,8 +65,8 @@ namespace HAGSJP.WeCasa.Registration.Test
 
             // Assert
             Assert.IsNotNull(time);
-            Assert.IsNotNull(time > 0);
-            Assert.IsNotNull(time <= expectedTime);
+            Assert.IsTrue(time >= 0);
+            Assert.IsTrue(time <= expectedTime);
             Assert.IsNotNull(logs);
             Assert.IsTrue(expected == actual); // No error logs were made because user creation took less than 5 seconds
         }

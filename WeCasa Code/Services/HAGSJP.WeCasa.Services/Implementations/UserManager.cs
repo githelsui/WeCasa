@@ -36,25 +36,30 @@ namespace HAGSJP.WeCasa.Services.Implementations
         }
 
         // checks whether a new email has the correct characters
-        public bool ValidateEmail(string email)
+        public Result ValidateEmail(string email)
         {
-            bool validEmail;
+            var validEmail = new Result();
             var checkValidChar = new Regex(@"^[a-zA-Z0-9.,@!\- ]*$");
             if (!MailAddress.TryCreate(email, out var mailAddress))
             {
-                validEmail = false;
+                validEmail.IsSuccessful = false;
+                validEmail.Message = "Invalid email provided. Retry again or contact the System Administrator.";
             }
             else if (email.Length > 255)
             {
-                validEmail = false;
+                validEmail.IsSuccessful = false;
+                validEmail.Message = "Invalid email provided. Retry again or contact the System Administrator.";
+
             }
             else if (!checkValidChar.IsMatch(email))
             {
-                validEmail = false;
+                validEmail.IsSuccessful = false;
+                validEmail.Message = "Invalid email provided. Retry again or contact the System Administrator.";
+
             }
             else
             {
-                validEmail = true;
+                validEmail.IsSuccessful = true;
             }
             return validEmail;
         }

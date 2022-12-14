@@ -53,8 +53,8 @@ namespace HAGSJP.WeCasa.Registration.Test
 
             //Assert
             Assert.IsNotNull(actual);
-            Assert.IsTrue(tooLong == expected);
-            Assert.IsTrue(notRealEmail == expected);
+            Assert.IsTrue(tooLong.IsSuccessful == expected);
+            Assert.IsTrue(notRealEmail.IsSuccessful == expected);
         }
 
         [TestMethod]
@@ -69,7 +69,7 @@ namespace HAGSJP.WeCasa.Registration.Test
 
             //Assert
             Assert.IsNotNull(actual);
-            Assert.IsTrue(invalidEmailString == expected);
+            Assert.IsTrue(invalidEmailString.IsSuccessful == expected);
         }
 
         [TestMethod]

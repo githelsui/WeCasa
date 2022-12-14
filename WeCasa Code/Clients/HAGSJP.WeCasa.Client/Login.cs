@@ -9,20 +9,23 @@ using System.Threading.Tasks;
 
 namespace HAGSJP.WeCasa.Client
 {
-    class Login
+    public class Login
     {
-        public string GetEmail(UserManager um)
+        public OTP GetOTP(UserAccount userAccount, Authentication auth)
         {
-            Console.WriteLine("Enter Email Address: ");
-            string email = Console.ReadLine();
-            bool validEmail = um.ValidateEmail(email);
-            while (!validEmail)
+            OTP otp;
+            Console.WriteLine("Enter one-time code: ");
+            string code = Console.ReadLine();
+            var validP = new Result();
+            validP = auth.VerifyOTPassword(userAccount.Username, code);
+            while (validP.IsSuccessful == false)
             {
-                Console.WriteLine("Invalid username or password provided. Retry again or contact system administrator.");
-                email = Console.ReadLine();
-                validEmail = um.ValidateEmail(email);
+                Console.WriteLine(validP.Message);
+                code = Console.ReadLine();
+                validP = auth.VerifyOTPassword(userAccount.Username, code);
             }
-            return email;
+            otp = new OTP(userAccount.Username, code);
+            return otp;
         }
 
         public Result ValidateEncryptedPasswords(UserAccount userAccount, Authentication auth)
@@ -32,13 +35,38 @@ namespace HAGSJP.WeCasa.Client
             return validationResult;
         }
 
-        public void LoginUser(UserAccount userAccount, OTP otp, Authentication auth)
+        public Result LoginUser(UserAccount userAccount, Authentication auth, UserManager userManager)
         {
-            // Checking OTP, creating a new authentication session for the user
-            var loginResult = auth.AuthenticateUser(userAccount, otp);
-
-            if (!loginResult.IsSuccessful) { 
-                Console.WriteLine(loginResult.Message);
+            // Checking pre-conditions for login
+            var loginResult = new Result();
+            var validEmail = userManager.ValidateEmail(userAccount.Username);
+            if  (!validEmail.IsSuccessful)
+            {
+                loginResult.IsSuccessful = false;
+                loginResult.Message = "Invalid email provided. Retry again or contact the System Administrator.";
+            }
+            bool validPassword = userManager.ValidatePassword(userAccount.Password).IsSuccessful;
+            if (!validPassword)
+            {
+                loginResult.IsSuccessful = false;
+                loginResult.Message = "Invalid email provided. Retry again or contact the System Administrator.";
+            }
+            loginResult = ValidateEncryptedPasswords(userAccount, auth);
+            if (loginResult.IsSuccessful)
+            {
+                // Generating one-time code 
+                OTP otp = userManager.GenerateOTPassword(userAccount);
+                Console.WriteLine("One-time login code: " + otp.Code);
+                Console.WriteLine("Your one-time code will expire at " + otp.CreateTime.AddMinutes(2) + "\n");
+                // Getting OTP from user
+                OTP inputOtp = GetOTP(userAccount, auth);
+                // Checking OTP, creating a new authentication session for the user
+                loginResult = auth.AuthenticateUser(userAccount, otp);
+                return loginResult;
+            }
+            else
+            {
+                return loginResult;
             }
         }
     }
