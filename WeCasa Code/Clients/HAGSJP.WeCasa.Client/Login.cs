@@ -24,6 +24,13 @@ namespace HAGSJP.WeCasa.Client
             }
             return email;
         }
+
+        public AuthResult ValidateEncryptedPasswords(Authentication auth, UserAccount ua)
+        {
+            AuthResult validationResult = auth.VerifyEncryptedPasswords(ua);
+            return validationResult;
+        }
+
         public Result CheckUser(UserAccount userAccount, Authentication auth, UserManager um)
         {
             // Checking if the user exists, make sure they are not already authenticated

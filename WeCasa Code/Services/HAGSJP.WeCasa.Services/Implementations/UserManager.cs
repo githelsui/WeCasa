@@ -185,8 +185,11 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var userPersistResult = new Result();
             UserAccount userAccount = new UserAccount(email);
 
+            // Password encryption
             HashSaltSecurity hashService = new HashSaltSecurity();
-            userPersistResult = _dao.PersistUser(userAccount, hashService.GetHashSaltCredentials(password));
+            string salt = BitConverter.ToString(hashService.GenerateSalt(password));
+            string encryptedPass = hashService.GetHashSaltCredentials(password, salt);
+            userPersistResult = _dao.PersistUser(userAccount, encryptedPass, salt);
 
             if (userPersistResult.IsSuccessful)
             {

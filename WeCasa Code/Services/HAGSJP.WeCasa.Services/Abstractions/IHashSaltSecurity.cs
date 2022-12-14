@@ -5,6 +5,8 @@ namespace HAGSJP.WeCasa.Services.Abstractions
 	{
 		public string GetHashSaltCredentials(string password);
 		public string GetHashSaltCredentials(string password, string salt);
-	}
+		public byte[] GenerateSalt(string password);
+
+    }
 }
 

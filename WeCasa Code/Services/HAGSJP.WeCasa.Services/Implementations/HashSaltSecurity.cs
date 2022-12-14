@@ -33,10 +33,15 @@ namespace HAGSJP.WeCasa.Services.Implementations
             errorLogger = new Logger(_logDao);
         }
 
+        public byte[] GenerateSalt(string password)
+        {
+            byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
+            return salt;
+        }
+
         public string GetHashSaltCredentials(string password)
 		{
             byte[] salt = RandomNumberGenerator.GetBytes(128 / 8); 
-            Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
 
             string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password!,
@@ -70,7 +75,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 errorLogger.Log(saltResult.Message, LogLevels.Error, "Data Store", username);
                 return saltResult;
             }
-            var salt = saltResult.ReturnedObject.ToString();
+            string salt = saltResult.ReturnedObject.ToString();
             byte[] saltBytes = Encoding.ASCII.GetBytes(salt);
             string newEncryptedPass = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password!,
@@ -86,15 +91,18 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 errorLogger.Log(encryptedPasswordResult.Message, LogLevels.Error, "Data Store", username);
                 return saltResult;
             }
-            var savedEncryptedPass = encryptedPasswordResult.ReturnedObject.ToString();
+            string savedEncryptedPass = encryptedPasswordResult.ReturnedObject.ToString();
+            Console.Write("salt = " + salt + "\n");
+            Console.Write("saved encrypted pass = " + savedEncryptedPass + "\n");
+            Console.Write("new encrypted pass = " + newEncryptedPass + "\n");
 
             if (newEncryptedPass.Equals(savedEncryptedPass))
             {
-                result.IsSuccessful = true;
-                result.ReturnedObject = true;
-            } else
-            {
-                result.IsSuccessful = true;
+                //result.ExistingAcc = true;
+                //result.ReturnedObject = true;
+                //result.IsEnabled = 
+            } else {
+                result.Message = "Invalid username or password provided. Retry again or contact system administrator if issue persists.";
                 result.ReturnedObject = false;
             }
 

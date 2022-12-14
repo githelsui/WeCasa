@@ -120,11 +120,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 return result;
             }
         }
-
-        public AuthResult SaveSalt(string username)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
 

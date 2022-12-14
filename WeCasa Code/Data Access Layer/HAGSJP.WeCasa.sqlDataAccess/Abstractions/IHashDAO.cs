@@ -7,7 +7,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess.Abstractions
 	{
         public AuthResult GetEncryptedPassword(string username);
         public AuthResult GetSalt(string username);
-        public AuthResult SaveSalt(string username);
     }
 }
 

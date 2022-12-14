@@ -73,6 +73,14 @@ namespace HAGSJP.WeCasa.Client
                         // Get username and password from commandline
                         email = login.GetEmail(um);
                         password = GetPassword(um);
+                        // Validate inputted password with saved password in database (encrypted)
+                        AuthResult encryptedPassValidation = login.ValidateEncryptedPasswords(auth, email, password);
+                        if ((bool)encryptedPassValidation.ReturnedObject == false)
+                        {
+                            Console.WriteLine(encryptedPassValidation.Message);
+                            Console.WriteLine("Exiting Login. Try again.");
+                            break;
+                        }
                         ua = new UserAccount(email, password);
                         // Checking pre-conditions for login
                         var result = login.CheckUser(ua, auth, um);

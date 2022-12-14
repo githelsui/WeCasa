@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using HAGSJP.WeCasa.Logging.Implementations;
 using HAGSJP.WeCasa.sqlDataAccess; 
 using System.Net;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
@@ -30,10 +31,51 @@ namespace HAGSJP.WeCasa.Services.Implementations
             errorLogger = new Logger(dao);
         }
 
-        public Result VerifyEncryptedPasswords(string email, string password)
+        public AuthResult VerifyEncryptedPasswords(UserAccount user)
         {
-            //TODO: use hashsaltsecurity service
-            throw new NotImplementedException();
+            var result = new AuthResult();
+          
+            AuthResult userInfoResult = _dao(username);
+            //if (saltResult.IsSuccessful == false)
+            //{
+            //    // Failure case from data store layer
+            //    errorLogger.Log(saltResult.Message, LogLevels.Error, "Data Store", username);
+            //    return saltResult;
+            //}
+            //string salt = saltResult.ReturnedObject.ToString();
+            //byte[] saltBytes = Encoding.ASCII.GetBytes(salt);
+            //string newEncryptedPass = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            //    password: password!,
+            //    salt: saltBytes,
+            //    prf: KeyDerivationPrf.HMACSHA256,
+            //    iterationCount: 100000,
+            //    numBytesRequested: 256 / 8));
+
+            //AuthResult encryptedPasswordResult = _dao.GetEncryptedPassword(username);
+            //if (encryptedPasswordResult.IsSuccessful == false)
+            //{
+            //    // Failure case from data store layer
+            //    errorLogger.Log(encryptedPasswordResult.Message, LogLevels.Error, "Data Store", username);
+            //    return saltResult;
+            //}
+            //string savedEncryptedPass = encryptedPasswordResult.ReturnedObject.ToString();
+            //Console.Write("salt = " + salt + "\n");
+            //Console.Write("saved encrypted pass = " + savedEncryptedPass + "\n");
+            //Console.Write("new encrypted pass = " + newEncryptedPass + "\n");
+
+            //if (newEncryptedPass.Equals(savedEncryptedPass))
+            //{
+            //    //result.ExistingAcc = true;
+            //    //result.ReturnedObject = true;
+            //    //result.IsEnabled = 
+            //}
+            //else
+            //{
+            //    result.Message = "Invalid username or password provided. Retry again or contact system administrator if issue persists.";
+            //    result.ReturnedObject = false;
+            //}
+
+            return result;
         }
 
         public Result VerifyOTPassword(string email, string code)
