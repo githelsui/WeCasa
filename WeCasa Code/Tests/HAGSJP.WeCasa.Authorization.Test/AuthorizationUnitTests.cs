@@ -52,7 +52,7 @@ namespace HAGSJP.WeCasa.Authorization.Test
 
             //Act
             AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
-            UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_auth = 1      
+            UserAccount testUser = new UserAccount("UpdateClaims@gmail.com"); //User has is_auth = 1      
             // Initial claims when new user is first registered
             List<Claim> newClaims = new List<Claim>
                 {
@@ -79,8 +79,17 @@ namespace HAGSJP.WeCasa.Authorization.Test
             expected.ReturnedObject = true;
 
             //Act
-            AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
+            AuthorizationDAO dao = new AuthorizationDAO();
+            AuthorizationService authService = new AuthorizationService(dao);
             UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_auth = 1
+            List<Claim> newClaims = new List<Claim>
+                {
+                    new Claim("Functionality", "Edit event"),
+                    new Claim("Read", "Read files"),
+                    new Claim("Write", "Edit note"),
+                    new Claim("View", "View section")
+                };
+            authService.AddClaims(testUser, newClaims);
             Claim testClaim = new Claim("Functionality", "Edit event");
             var actual = authService.ValidateClaim(testUser, testClaim);
             bool actualObject = (bool)actual.ReturnedObject;
@@ -106,6 +115,14 @@ namespace HAGSJP.WeCasa.Authorization.Test
             AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
             UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_auth = 1
             Claim testClaim = new Claim("Read", "Read files");
+            List<Claim> newClaims = new List<Claim>
+                {
+                    new Claim("Functionality", "Edit event"),
+                    new Claim("Read", "Read files"),
+                    new Claim("Write", "Edit note"),
+                    new Claim("View", "View section")
+                };
+            authService.AddClaims(testUser, newClaims);
             var actual = authService.ValidateClaim(testUser, testClaim);
             bool actualObject = (bool)actual.ReturnedObject;
             bool expectedObject = (bool)expected.ReturnedObject;
@@ -130,6 +147,14 @@ namespace HAGSJP.WeCasa.Authorization.Test
             AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
             UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_auth = 1
             Claim testClaim = new Claim("Write", "Edit note");
+            List<Claim> newClaims = new List<Claim>
+                {
+                    new Claim("Functionality", "Edit event"),
+                    new Claim("Read", "Read files"),
+                    new Claim("Write", "Edit note"),
+                    new Claim("View", "View section")
+                };
+            authService.AddClaims(testUser, newClaims);
             var actual = authService.ValidateClaim(testUser, testClaim);
             bool actualObject = (bool)actual.ReturnedObject;
             bool expectedObject = (bool)expected.ReturnedObject;
@@ -154,6 +179,14 @@ namespace HAGSJP.WeCasa.Authorization.Test
             AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
             UserAccount testUser = new UserAccount("AuthTestSuccess@gmail.com"); //User has is_auth = 1
             Claim testClaim = new Claim("View", "View section");
+            List<Claim> newClaims = new List<Claim>
+                {
+                    new Claim("Functionality", "Edit event"),
+                    new Claim("Read", "Read files"),
+                    new Claim("Write", "Edit note"),
+                    new Claim("View", "View section")
+                };
+            authService.AddClaims(testUser, newClaims);
             var actual = authService.ValidateClaim(testUser, testClaim);
             bool actualObject = (bool)actual.ReturnedObject;
             bool expectedObject = (bool)expected.ReturnedObject;
