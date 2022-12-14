@@ -134,19 +134,17 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public void ShouldUpdateAuthenticationInDB()
         {
             //Arrange
-            Result expected = new Result();
+            bool expected = true;
             var systemUnderTest = new AccountMariaDAO();
-            expected.IsSuccessful = true;
-            UserAccount testUser = new UserAccount("UpdateAuthenticationInDB2@gmail.com", "P@ssw0rd!");
+            UserAccount testUser = new UserAccount("LoginUnitTest@gmail.com", "P@ssw0rd!");
+            var result = systemUnderTest.UpdateUserAuthentication(testUser, true);
 
             // Act
-            systemUnderTest.PersistUser(testUser, "P@ssw0rd!", "testsalt");
-            systemUnderTest.UpdateUserAuthentication(testUser, true);
-            var actualResult = systemUnderTest.ValidateUserInfo(testUser);
+            var actual = systemUnderTest.ValidateUserInfo(testUser);
 
             //Assert
-            Assert.IsNotNull(actualResult);
-            Assert.IsTrue(actualResult.IsSuccessful == expected.IsSuccessful);
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(actual.IsAuth == expected);
         }
 
         [TestMethod]
