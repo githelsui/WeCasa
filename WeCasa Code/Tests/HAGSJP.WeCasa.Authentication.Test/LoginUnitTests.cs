@@ -16,7 +16,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var expected = true;
             var systemUnderTest = new AccountMariaDAO();
             
-            UserAccount testUser = new UserAccount("LoginUnitTest@gmail.com", "P@ssw0rd!");
+            UserAccount testUser = new UserAccount("DifferentUsername@gmail.com", "P@ssw0rd!");
             // Password Encryption
             HashSaltSecurity hashService = new HashSaltSecurity();
             string salt = BitConverter.ToString(hashService.GenerateSalt(testUser.Password));
