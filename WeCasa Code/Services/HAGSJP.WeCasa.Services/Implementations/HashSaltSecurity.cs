@@ -7,13 +7,18 @@ using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
-	public class HashSaltSecurity : IHashSaltSecurity
-	{
-        
-        public HashSaltSecurity() { }
+    public class HashSaltSecurity : IHashSaltSecurity
+    {
+        private PasswordHasher<UserAccount> PwHasher = new PasswordHasher<UserAccount>();
+
+        public HashSaltSecurity()
+        {
+            PwHasher = new PasswordHasher<UserAccount>();
+        }
 
         public byte[] GenerateSalt(string password)
         {
@@ -21,58 +26,36 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return salt;
         }
 
-        public string GetHashSaltCredentials(string password)
-		{
-            byte[] salt = RandomNumberGenerator.GetBytes(128 / 8); 
-
-            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: password!,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 100000,
-                numBytesRequested: 256 / 8));
-            return hashed;
-		}
-
         public string GetHashSaltCredentials(string password, string salt)
-		{
-            byte[] saltBytes = Encoding.ASCII.GetBytes(salt);
-            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: password!,
-                salt: saltBytes,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 100000,
-                numBytesRequested: 256 / 8));
-            return hashed;
+        {
+            return PwHasher.HashPassword(password, salt);
         }
 
         public AuthResult ValidateHashedPasswords(UserAccount userAccount, AuthResult result)
         {
-            string salt = userAccount.Salt;
-            byte[] saltBytes = Encoding.ASCII.GetBytes(salt);
-            string newEncryptedPass = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: userAccount.Password,
-                salt: saltBytes,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 100000,
-                numBytesRequested: 256 / 8));
-
+            string providedPassword = userAccount.Password;
             string savedEncryptedPass = result.ReturnedObject.ToString();
+            PasswordVerificationResult verification = PwHasher.VerifyHashedPassword(userAccount, savedEncryptedPass, providedPassword);
 
-            if (newEncryptedPass.Equals(savedEncryptedPass))
+            if (verification.Equals(PasswordVerificationResult.Success))
             {
                 result.IsSuccessful = true;
                 result.HasValidCredentials = true;
                 result.Message = "Authentication successful.";
             }
-            else // Invalid credentials
+            else if (verification.Equals(PasswordVerificationResult.Failed)) // Invalid credentials
             {
                 result.IsSuccessful = false;
                 result.HasValidCredentials = false;
                 result.Message = "Invalid username or password provided. Retry again or contact the System Administrator.";
             }
+            else //PasswordVerificationResult.SuccessRehashNeeded
+            {
+                result.IsSuccessful = false;
+                result.HasValidCredentials = true;
+                result.Message = "Password verification was successful however the password was encoded using a deprecated algorithm and should be rehashed and updated.";
+            }
             return result;
         }
     }
 }
-

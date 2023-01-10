@@ -194,6 +194,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             HashSaltSecurity hashService = new HashSaltSecurity();
             string salt = BitConverter.ToString(hashService.GenerateSalt(password));
             string encryptedPass = hashService.GetHashSaltCredentials(password, salt);
+            userAccount.Salt = salt;
             userPersistResult = _dao.PersistUser(userAccount, encryptedPass, salt);
 
             if (userPersistResult.IsSuccessful)

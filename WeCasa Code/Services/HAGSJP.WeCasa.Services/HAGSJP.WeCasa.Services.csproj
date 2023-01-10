@@ -14,8 +14,12 @@
 
   <ItemGroup>
     <None Remove="Microsoft.AspNetCore.Cryptography.KeyDerivation" />
+    <None Remove="Microsoft.AspNetCore.Identity" />
+    <None Remove="Identity.PasswordHasher" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="7.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Identity.PasswordHasher" Version="1.0.0" />
   </ItemGroup>
 </Project>
