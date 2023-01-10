@@ -9,6 +9,7 @@ namespace HAGSJP.WeCasa.Client
         public void HomePage(UserAccount userAccount)
         {
             Console.WriteLine("\nWelcome to WeCasa!");
+            Menu mainMenu = new Menu();
             bool menu = true;
             while (menu != false)
             {
@@ -22,7 +23,8 @@ namespace HAGSJP.WeCasa.Client
                         var logoutRes = logout.LogoutUser(userAccount);
                         if (logoutRes.IsSuccessful)
                         {
-                            Console.Write("Successfully logged " + userAccount.Username + " out.");
+                            Console.Write("Successfully logged " + userAccount.Username + " out.\n");
+                            mainMenu.OpenMenu();
                         }
                         else // User is unable to logout
                         {
@@ -31,6 +33,7 @@ namespace HAGSJP.WeCasa.Client
                         break;
                     case "2":
                         menu = false;
+                        mainMenu.OpenMenu();
                         break;
                 }
             }
