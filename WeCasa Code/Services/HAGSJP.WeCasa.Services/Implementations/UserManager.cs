@@ -227,6 +227,23 @@ namespace HAGSJP.WeCasa.Services.Implementations
             throw new NotImplementedException();
         }
 
+        public Result LogoutUser(UserAccount userAccount)
+        {
+            var userInfoResult = _dao.ValidateUserInfo(userAccount);
+            // User is in authenticated session
+            if (userInfoResult.IsAuth == true)
+            {
+                Result logoutResult = _dao.UpdateUserAuthentication(userAccount, false);
+                return logoutResult;
+            }
+            else // User is in authenticated session
+            {
+                userInfoResult.IsSuccessful = false;
+                userInfoResult.Message = "Unable to log out of an account that is not authenticated.";
+                return userInfoResult;
+            }
+        }
+
         public Result EnableUser(UserAccount userAccount)
         {
             var enablingUser = new Result();
