@@ -23,12 +23,12 @@ namespace HAGSJP.WeCasa.Client
                         var logoutRes = logout.LogoutUser(userAccount);
                         if (logoutRes.IsSuccessful)
                         {
-                            Console.Write("Successfully logged " + userAccount.Username + " out.\n");
+                            Console.Write("Successfully logged " + userAccount.Username + " out.\n\n");
                             mainMenu.OpenMenu();
                         }
                         else // User is unable to logout
                         {
-                            Console.Write(logoutRes.Message);
+                            Console.Write(logoutRes.Message + "\n\n");
                         }
                         break;
                     case "2":
