@@ -52,7 +52,8 @@ namespace HAGSJP.WeCasa.Client
             {
                 Console.WriteLine("(1) Register New Account");
                 Console.WriteLine("(2) Login to Existing Account");
-                Console.WriteLine("(3) Exit");
+                Console.WriteLine("(3) Logout");
+                Console.WriteLine("(4) Exit");
                 UserManager um = new UserManager();
                 UserAccount ua;
                 string email;
@@ -79,7 +80,7 @@ namespace HAGSJP.WeCasa.Client
                         {
                             // Going to home page
                             Home h = new Home();
-                            h.HomePage();
+                            h.HomePage(ua);
                             menu = false;
                         } 
                         // User is unable to log in
@@ -90,6 +91,22 @@ namespace HAGSJP.WeCasa.Client
                         }
                         break;
                     case "3":
+                        Logout logout = new Logout();
+                        Console.Write("Enter credentials for account to logout.\n\n");
+                        email = GetEmail(um);
+                        password = GetPassword(um);
+                        ua = new UserAccount(email, password);
+                        var logoutRes = logout.LogoutUser(ua);
+                        if (logoutRes.IsSuccessful)
+                        {
+                            Console.Write("Successfully logged " + ua.Username + " out.\n\n");
+                        }
+                        else // User is unable to logout
+                        {
+                            Console.Write(logoutRes.Message + "\n");
+                        }
+                        break;
+                    case "4":
                         menu = false;
                         break;
                 }

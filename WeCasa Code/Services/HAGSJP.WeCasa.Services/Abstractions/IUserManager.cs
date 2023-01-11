@@ -18,6 +18,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public Result RegisterUser(string email, string password);
         public Result DeleteUser();
         public Result UpdateUser(UserProfile userProfile);
+        public Result LogoutUser(UserAccount userAccount);
         public Result EnableUser(UserAccount userAccount);
         public Result DisableUser(UserAccount userAccount);
     }
