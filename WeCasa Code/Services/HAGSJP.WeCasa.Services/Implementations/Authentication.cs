@@ -1,15 +1,9 @@
 ﻿using HAGSJP.WeCasa.Models.Security;
 using HAGSJP.WeCasa.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using HAGSJP.WeCasa.Logging.Implementations;
 using HAGSJP.WeCasa.sqlDataAccess; 
 using System.Net;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Security.Cryptography;
 
 namespace HAGSJP.WeCasa.Services.Implementations

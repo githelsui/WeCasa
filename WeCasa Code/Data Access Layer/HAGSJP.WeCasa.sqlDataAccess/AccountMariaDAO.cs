@@ -70,6 +70,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 // Initial claims when new user is first registered
                 List<Claim> initialClaims = new List<Claim>
                 {
+                    new Claim("Account", "Delete Account"),
                     new Claim("Functionality", "Edit event"),
                     new Claim("Read", "Read files"),
                     new Claim("Write", "Edit note"),
@@ -414,6 +415,30 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     logs.Add(new Log(message, logLevel, category, timestamp, username, operation));
                 }
                 return logs;
+            }
+        }
+    
+        public Result DeleteUser(UserAccount userAccount)
+        {
+            _connectionString = BuildConnectionString().ConnectionString;
+            using(var connection = new MySqlConnection(_connectionString)) 
+            {
+                connection.Open();
+                var result = new Result();
+
+                // Select SQL statement
+                var selectSql = @"DELETE FROM `Users` 
+                                    WHERE `Username` = @username";
+
+                var command = connection.CreateCommand();
+                command.CommandText = selectSql;
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
+
+                // Execution of SQL
+                var rows = (command.ExecuteNonQuery());
+                result = ValidateSqlStatement(rows);
+                connection.Close();
+                return result;
             }
         }
     }

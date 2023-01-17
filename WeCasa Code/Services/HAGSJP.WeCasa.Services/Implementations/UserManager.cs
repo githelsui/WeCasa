@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
 using System.Diagnostics;
 using HAGSJP.WeCasa.Logging.Abstractions;
+using System.Net;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
@@ -223,9 +224,41 @@ namespace HAGSJP.WeCasa.Services.Implementations
             throw new NotImplementedException();
         }
 
-        public Result DeleteUser()
+        public Result DeleteUser(UserAccount userAccount)
         {
-            throw new NotImplementedException();
+            AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
+            var authenticationResult = _dao.ValidateUserInfo(userAccount);
+            var authorizationResult = authService.ValidateClaim(userAccount, new Claim("Account", "Delete Account"));
+            
+            if (authenticationResult.IsAuth && authorizationResult.ReturnedObject.Equals(true)) {
+                Result deleteUserResult = _dao.DeleteUser(userAccount);
+                if (deleteUserResult.IsSuccessful) {
+                    successLogger.Log("Account Deletion Successful", LogLevels.Info, "Data Store", userAccount.Username);
+                    deleteUserResult.Message = "Account Deletion Successful";
+                    return deleteUserResult;
+                }
+                else
+                {
+                    errorLogger.Log("Account Deletion Unsuccessful", LogLevels.Error, "Data Store", userAccount.Username);
+                    deleteUserResult.Message = "Account Deletion Unsuccessful";
+                    return deleteUserResult;
+                }    
+            }
+            else if (authenticationResult.IsAuth == false) 
+            {
+                // User is not Authenticated
+                authenticationResult.ErrorStatus = HttpStatusCode.Unauthorized;
+                authenticationResult.IsSuccessful = false;
+                authenticationResult.Message = "Account Deletion Unsuccessful: User is not Authenticated";
+                return authenticationResult;
+            }
+            else
+            {
+                // User is not Authenticated and does not have the correct permissions
+                authorizationResult.ErrorStatus = HttpStatusCode.Forbidden;
+                authorizationResult.Message = "Account Deletion Unsuccessful: User does not have correct permissions";
+                return authorizationResult;
+            }
         }
 
         public Result LogoutUser(UserAccount userAccount)

@@ -23,6 +23,28 @@ namespace HAGSJP.WeCasa.Models
             this.ErrorStatus = errorStatus;
             this.Message = message;
         }
+
+        public new bool Equals(AuthResult result)
+        {
+            if (GetType() != result.GetType())
+                return false;
+            var result1 = (AuthResult)result;
+            return (IsEnabled == result1.IsEnabled) 
+                    && (IsAuth == result1.IsAuth) 
+                    && (ExistingAcc == result1.ExistingAcc)
+                    && (IsSuccessful == result1.IsSuccessful) 
+                    && (ErrorStatus == result1.ErrorStatus)
+                    && (Message == result1.Message);
+        }
+        public static bool operator !=(AuthResult result1, AuthResult result2)        
+        {
+            return !result1.Equals(result2);
+        }
+
+        public static bool operator ==(AuthResult result1, AuthResult result2)        
+        {
+            return result1.Equals(result2);
+        }
     }
 }
 
