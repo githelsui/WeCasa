@@ -2,17 +2,9 @@
 using HAGSJP.WeCasa.Models.Security;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.sqlDataAccess;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Mail;
-using System.Security.Principal;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
 using System.Diagnostics;
-using HAGSJP.WeCasa.Logging.Abstractions;
 using System.Net;
 
 namespace HAGSJP.WeCasa.Services.Implementations
@@ -226,39 +218,18 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
         public Result DeleteUser(UserAccount userAccount)
         {
-            AuthorizationService authService = new AuthorizationService(new AuthorizationDAO());
-            var authenticationResult = _dao.ValidateUserInfo(userAccount);
-            var authorizationResult = authService.ValidateClaim(userAccount, new Claim("Account", "Delete Account"));
-            
-            if (authenticationResult.IsAuth && authorizationResult.ReturnedObject.Equals(true)) {
-                Result deleteUserResult = _dao.DeleteUser(userAccount);
-                if (deleteUserResult.IsSuccessful) {
-                    successLogger.Log("Account Deletion Successful", LogLevels.Info, "Data Store", userAccount.Username);
-                    deleteUserResult.Message = "Account Deletion Successful";
-                    return deleteUserResult;
-                }
-                else
-                {
-                    errorLogger.Log("Account Deletion Unsuccessful", LogLevels.Error, "Data Store", userAccount.Username);
-                    deleteUserResult.Message = "Account Deletion Unsuccessful";
-                    return deleteUserResult;
-                }    
-            }
-            else if (authenticationResult.IsAuth == false) 
-            {
-                // User is not Authenticated
-                authenticationResult.ErrorStatus = HttpStatusCode.Unauthorized;
-                authenticationResult.IsSuccessful = false;
-                authenticationResult.Message = "Account Deletion Unsuccessful: User is not Authenticated";
-                return authenticationResult;
+            Result deleteUserResult = _dao.DeleteUser(userAccount);
+            if (deleteUserResult.IsSuccessful) {
+                successLogger.Log("Account Deletion Successful", LogLevels.Info, "Data Store", userAccount.Username);
+                deleteUserResult.Message = "Account Deletion Successful";
+                return deleteUserResult;
             }
             else
             {
-                // User is not Authenticated and does not have the correct permissions
-                authorizationResult.ErrorStatus = HttpStatusCode.Forbidden;
-                authorizationResult.Message = "Account Deletion Unsuccessful: User does not have correct permissions";
-                return authorizationResult;
-            }
+                errorLogger.Log("Account Deletion Unsuccessful", LogLevels.Error, "Data Store", userAccount.Username);
+                deleteUserResult.Message = "Account Deletion Unsuccessful";
+                return deleteUserResult;
+            } 
         }
 
         public Result LogoutUser(UserAccount userAccount)
