@@ -6,7 +6,7 @@ namespace HAGSJP.WeCasa.Client
 {
     public class Home
     {
-        public void HomePage(UserAccount userAccount)
+        public void HomePage(UserAccount userAccount, UserStatus userStatus)
         {
             Console.WriteLine("\nWelcome to WeCasa!");
             Menu mainMenu = new Menu();
@@ -22,7 +22,7 @@ namespace HAGSJP.WeCasa.Client
                     case "1": 
                         // Going to Account Settings Page
                         AccountSettings ac = new AccountSettings();
-                        ac.AccountSettingsPage(userAccount);
+                        ac.AccountSettingsPage(userAccount, userStatus);
                         break;
                     case "2":
                         Logout logout = new Logout();

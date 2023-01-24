@@ -2,6 +2,7 @@
 {
     public class UserAccount
     {
+        public UserAccount(){}
         public UserAccount(string email)
         {
             Username = email;

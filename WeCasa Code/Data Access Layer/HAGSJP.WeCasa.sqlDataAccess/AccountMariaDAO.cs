@@ -441,5 +441,52 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 return result;
             }
         }
+    
+        public AuthResult PopulateUserStatus(UserAccount userAccount)
+        {
+            AuthResult populateResult= new AuthResult();
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                // Select SQL statement
+                var selectSql = @"SELECT  * 
+                                    FROM  `Users` 
+                                    WHERE `username` = @username";
+
+                var command = connection.CreateCommand();
+                command.CommandText = selectSql;
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
+
+                // Execution of SQL
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        bool isAuth = reader.GetInt32(reader.GetOrdinal("is_auth")) == 1 ? true : false;
+                        bool isEnabled = reader.GetInt32(reader.GetOrdinal("is_enabled")) == 1 ? true : false;
+                        string password = reader.GetString(reader.GetOrdinal("password"));
+                        bool isAdmin = reader.GetInt32(reader.GetOrdinal("is_admin")) == 1 ? true : false;
+                        string otpCode = reader.GetString(reader.GetOrdinal("otp_code"));
+                        DateTime otpTime =  reader.GetDateTime(reader.GetOrdinal("otp_time"));
+                        List<Claim>? claims = JsonSerializer.Deserialize<List<Claim>>(reader.GetString(reader.GetOrdinal("claims")));
+                        UserStatus userstatus = new UserStatus(userAccount.Username, userAccount.Password, userAccount.UserAccountId, isEnabled, isAuth, isAdmin, otpCode, otpTime, claims);
+                        populateResult.ErrorStatus = System.Net.HttpStatusCode.Found;
+                        populateResult.Message = "User information was found";
+                        populateResult.IsSuccessful = true;
+                        populateResult.ReturnedObject = userstatus;
+                        return populateResult;
+                    }
+                    else 
+                    {
+                        populateResult.ErrorStatus = System.Net.HttpStatusCode.NotFound;
+                        populateResult.Message = "User information was not found";
+                        populateResult.IsSuccessful = false;
+                        return populateResult;
+                    }
+                }
+            }
+        }
     }
 }

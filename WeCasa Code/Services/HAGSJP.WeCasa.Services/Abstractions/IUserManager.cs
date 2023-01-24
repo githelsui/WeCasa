@@ -15,6 +15,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public bool IsUsernameTaken(string username);
         public OTP GenerateOTPassword(UserAccount userAccount);
         public string ConfirmPassword(string password);
+        public UserStatus PopulateUserStatus(UserAccount userAccount);
         public Result RegisterUser(string email, string password);
         public Result DeleteUser(UserAccount userAccount);
         public Result UpdateUser(UserProfile userProfile);

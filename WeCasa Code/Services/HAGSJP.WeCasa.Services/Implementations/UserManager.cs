@@ -173,6 +173,11 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return confirmPassword;
         }
 
+        public UserStatus PopulateUserStatus(UserAccount userAccount)
+        {
+            AuthResult populateResult = _dao.PopulateUserStatus(userAccount);
+            return (UserStatus) populateResult.ReturnedObject;
+        }
         public Result RegisterUser(string email, string password)
         {
             // System log entry recorded if registration process takes longer than 5 seconds
@@ -222,12 +227,14 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (deleteUserResult.IsSuccessful) {
                 successLogger.Log("Account Deletion Successful", LogLevels.Info, "Data Store", userAccount.Username);
                 deleteUserResult.Message = "Account Deletion Successful";
+                deleteUserResult.ErrorStatus = HttpStatusCode.OK;
                 return deleteUserResult;
             }
             else
             {
                 errorLogger.Log("Account Deletion Unsuccessful", LogLevels.Error, "Data Store", userAccount.Username);
                 deleteUserResult.Message = "Account Deletion Unsuccessful";
+                deleteUserResult.ErrorStatus = HttpStatusCode.NotFound;
                 return deleteUserResult;
             } 
         }

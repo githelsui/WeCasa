@@ -15,6 +15,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
     public interface IAuthorization
     {
         public AuthResult ValidateClaim(UserAccount ua, Claim targetClaim);
+        public AuthResult ValidateClaim(List<Claim> claims, Claim targetClaim);
         public AuthResult ValidateAdminRole(UserAccount ua);
         public AuthResult ValidateActiveUser(UserAccount ua);
         public AuthResult AddClaims(UserAccount ua, List<Claim> newClaims);

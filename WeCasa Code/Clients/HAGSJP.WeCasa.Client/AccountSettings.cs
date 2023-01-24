@@ -4,7 +4,7 @@ using HAGSJP.WeCasa.Services.Implementations;
 
 class AccountSettings {
 
-    public void AccountSettingsPage(UserAccount userAccount) 
+    public void AccountSettingsPage(UserAccount userAccount, UserStatus userStatus) 
     {
         Menu mainMenu = new Menu();
         Home h = new Home();
@@ -35,7 +35,7 @@ class AccountSettings {
                     break;
                 case "2":
                     menu = false;
-                    h.HomePage(userAccount);
+                    h.HomePage(userAccount, userStatus);
                     break;
             }
         }
