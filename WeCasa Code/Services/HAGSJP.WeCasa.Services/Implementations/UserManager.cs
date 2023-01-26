@@ -248,7 +248,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 Result logoutResult = _dao.UpdateUserAuthentication(userAccount, false);
                 return logoutResult;
             }
-            else // User is in authenticated session
+            else // User is not in authenticated session
             {
                 userInfoResult.IsSuccessful = false;
                 userInfoResult.Message = "Unable to log out of an account that is not authenticated.";
