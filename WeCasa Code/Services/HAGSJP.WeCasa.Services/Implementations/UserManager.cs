@@ -242,6 +242,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public Result LogoutUser(UserAccount userAccount)
         {
             var userInfoResult = _dao.ValidateUserInfo(userAccount);
+            Console.Write("IsAuth = " + userInfoResult.IsAuth);
             // User is in authenticated session
             if (userInfoResult.IsAuth == true)
             {
