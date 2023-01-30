@@ -21,7 +21,7 @@ namespace HAGSJP.WeCasa.Registration.Test
                     new Claim("View", "View section")
                 };
             UserAccount ua = new UserAccount("DeleteAcc2@gmail.com", "ACBZ8fMCEK6oBQsM3AT8FdtQWOYRUUmOGEvio5+x98JldraeToc998Yrd551Zg9/ew==");
-            UserStatus us = new UserStatus("DeleteAcc2@gmail.com", "ACBZ8fMCEK6oBQsM3AT8FdtQWOYRUUmOGEvio5+x98JldraeToc998Yrd551Zg9/ew==", 2, true, false, false, "51-C3-12-5B-9B-00-11-1F-C4-41-AF-23-AB-D7-CB-33",  DateTime.UtcNow, initialClaims);
+            UserStatus us = new UserStatus("DeleteAcc2@gmail.com", "ACBZ8fMCEK6oBQsM3AT8FdtQWOYRUUmOGEvio5+x98JldraeToc998Yrd551Zg9/ew==", 2, true, false, false, initialClaims);
             GenericUser gu = new GenericUser();
             Result expected = new Result(false, HttpStatusCode.Unauthorized, "Account Deletion Unsuccessful");
 
@@ -47,7 +47,7 @@ namespace HAGSJP.WeCasa.Registration.Test
                     new Claim("View", "View section")
                 };
             UserAccount ua = new UserAccount("DeleteAcc2@gmail.com", "ACBZ8fMCEK6oBQsM3AT8FdtQWOYRUUmOGEvio5+x98JldraeToc998Yrd551Zg9/ew==");
-            UserStatus us = new UserStatus("DeleteAcc2@gmail.com", "ACBZ8fMCEK6oBQsM3AT8FdtQWOYRUUmOGEvio5+x98JldraeToc998Yrd551Zg9/ew==", 2, true, true, false, "51-C3-12-5B-9B-00-11-1F-C4-41-AF-23-AB-D7-CB-33",  DateTime.UtcNow, initialClaims);
+            UserStatus us = new UserStatus("DeleteAcc2@gmail.com", "ACBZ8fMCEK6oBQsM3AT8FdtQWOYRUUmOGEvio5+x98JldraeToc998Yrd551Zg9/ew==", 2, true, true, false, initialClaims);
             GenericUser gu = new GenericUser();
             Result expected = new Result(false, HttpStatusCode.Unauthorized, "Account Deletion Unsuccessful");
 

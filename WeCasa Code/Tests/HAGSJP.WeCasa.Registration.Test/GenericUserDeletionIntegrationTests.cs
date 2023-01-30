@@ -23,7 +23,7 @@ namespace HAGSJP.WeCasa.Registration.Test
                     new Claim("Write", "Edit note"),
                     new Claim("View", "View section")
                 };
-            UserStatus us = new UserStatus("DeleteAcc2@gmail.com", "ACBZ8fMCEK6oBQsM3AT8FdtQWOYRUUmOGEvio5+x98JldraeToc998Yrd551Zg9/ew==", 2, true, true, false, "Ws.eWwX5R8",  DateTime.UtcNow, initialClaims);
+            UserStatus us = new UserStatus("DeleteAcc2@gmail.com", "ACBZ8fMCEK6oBQsM3AT8FdtQWOYRUUmOGEvio5+x98JldraeToc998Yrd551Zg9/ew==", 2, true, true, false, initialClaims);
             GenericUser gu = new GenericUser();
             Result expected = new Result(true, HttpStatusCode.OK, "Account Deletion Successful");
 

@@ -4,7 +4,7 @@ using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
 using HAGSJP.WeCasa.Models.Security;
 using System.Text.Json;
 using Azure;
-
+using System.Data;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
@@ -468,10 +468,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         bool isEnabled = reader.GetInt32(reader.GetOrdinal("is_enabled")) == 1 ? true : false;
                         string password = reader.GetString(reader.GetOrdinal("password"));
                         bool isAdmin = reader.GetInt32(reader.GetOrdinal("is_admin")) == 1 ? true : false;
-                        string otpCode = reader.GetString(reader.GetOrdinal("otp_code"));
-                        DateTime otpTime =  reader.GetDateTime(reader.GetOrdinal("otp_time"));
                         List<Claim>? claims = JsonSerializer.Deserialize<List<Claim>>(reader.GetString(reader.GetOrdinal("claims")));
-                        UserStatus userstatus = new UserStatus(userAccount.Username, userAccount.Password, userAccount.UserAccountId, isEnabled, isAuth, isAdmin, otpCode, otpTime, claims);
+                        UserStatus userstatus = new UserStatus(userAccount.Username, userAccount.Password, userAccount.UserAccountId, isEnabled, isAuth, isAdmin, claims);
                         populateResult.ErrorStatus = System.Net.HttpStatusCode.Found;
                         populateResult.Message = "User information was found";
                         populateResult.IsSuccessful = true;
