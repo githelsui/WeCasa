@@ -4,10 +4,11 @@ using HAGSJP.WeCasa.Services.Implementations;
 
 class AccountSettings {
 
-    public void AccountSettingsPage(UserAccount userAccount, UserStatus userStatus) 
+    public void AccountSettingsPage(UserAccount userAccount) 
     {
         Menu mainMenu = new Menu();
         Home h = new Home();
+        UserManager um = new UserManager();
         bool menu = true;
         while (menu != false)
         {
@@ -26,7 +27,8 @@ class AccountSettings {
                     {
                         case "1":
                             GenericUser gu = new GenericUser();
-                            var deleteUserResult = gu.DeleteUser(userAccount);
+                            UserStatus userStatus = um.PopulateUserStatus(userAccount);
+                            var deleteUserResult = gu.DeleteUser(userAccount,userStatus);
                             Console.WriteLine(deleteUserResult.Message);
                             mainMenu.OpenMenu();
                             menu = false;
@@ -35,7 +37,7 @@ class AccountSettings {
                     break;
                 case "2":
                     menu = false;
-                    h.HomePage(userAccount, userStatus);
+                    h.HomePage(userAccount);
                     break;
             }
         }

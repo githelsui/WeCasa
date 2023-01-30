@@ -79,9 +79,8 @@ namespace HAGSJP.WeCasa.Client
                         if(loginResult.IsSuccessful)
                         {
                             // Going to home page
-                            UserStatus userStatus = um.PopulateUserStatus(ua);
                             Home h = new Home();
-                            h.HomePage(ua, userStatus);
+                            h.HomePage(ua);
                             menu = false;
                         } 
                         // User is unable to log in
