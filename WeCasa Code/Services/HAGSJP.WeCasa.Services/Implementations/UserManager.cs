@@ -241,20 +241,8 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
         public Result LogoutUser(UserAccount userAccount)
         {
-            var userInfoResult = _dao.ValidateUserInfo(userAccount);
-            Console.Write("IsAuth = " + userInfoResult.IsAuth);
-            // User is in authenticated session
-            if (userInfoResult.IsAuth == true)
-            {
-                Result logoutResult = _dao.UpdateUserAuthentication(userAccount, false);
-                return logoutResult;
-            }
-            else // User is not in authenticated session
-            {
-                userInfoResult.IsSuccessful = false;
-                userInfoResult.Message = "Unable to log out of an account that is not authenticated.";
-                return userInfoResult;
-            }
+            Result logoutResult = _dao.UpdateUserAuthentication(userAccount, false);
+            return logoutResult;
         }
 
         public Result EnableUser(UserAccount userAccount)

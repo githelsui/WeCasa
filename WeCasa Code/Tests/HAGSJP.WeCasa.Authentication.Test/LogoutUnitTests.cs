@@ -45,6 +45,18 @@ namespace HAGSJP.WeCasa.Authentication.Test
             Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
             Assert.IsTrue(actual.Message == expected.Message);
         }
+
+        [TestMethod]
+        public void ShouldRedirectToHomePage()
+        {
+            
+        }
+
+        [TestMethod]
+        public void ShouldDisplayConfirmationMessage()
+        {
+            
+        }
     }
 }
 

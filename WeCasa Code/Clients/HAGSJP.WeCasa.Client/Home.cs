@@ -29,7 +29,7 @@ namespace HAGSJP.WeCasa.Client
                         var logoutRes = logout.LogoutUser(userAccount);
                         if (logoutRes.IsSuccessful)
                         {
-                            Console.Write("Successfully logged " + userAccount.Username + " out.\n\n");
+                            Console.Write(logoutRes.Message);
                             mainMenu.OpenMenu();
                         }
                         else // User is unable to logout
