@@ -3,15 +3,15 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:17690",
-      "sslPort": 44355
+      "applicationUrl": "http://localhost:28608",
+      "sslPort": 44333
     }
   },
   "profiles": {
     "HAGSJP.WeCasa.Frontend": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:7163;http://localhost:5228",
+      "applicationUrl": "https://localhost:7130;http://localhost:5153",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.SpaProxy"
