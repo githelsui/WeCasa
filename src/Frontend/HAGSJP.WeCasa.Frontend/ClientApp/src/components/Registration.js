@@ -2,17 +2,8 @@
 import { Form, Input, Button } from 'antd';
 import axios from 'axios';
 
-//const registerAccount = ({ values }) => {
-//    console.log("run")
-//}
-
-const registerAccount = (values) => {
-    console.log("run")
-    console.log(values)
-
-    const headers = {
-        "Content-Type": "application/json",
-    };
+const submitForm = (values) => {
+    var proceedRegistration = true;
 
     let userAccount = {
         FirstName: values.firstName,
@@ -21,62 +12,57 @@ const registerAccount = (values) => {
         Password: values.password1
     };
 
+    // -- Client-side Input Validation
 
-    const registrationData = new FormData();
-    registrationData.append("FirstName", values.firstName);
-    registrationData.append("LastName", values.lastName);
-    registrationData.append("Email", values.email);
-    registrationData.append("Password", values.password1);
-  
-    //fetch('weatherforecast')
-    // fetch('weatherforecast', {
-    //    method: 'POST',
-    //    headers: { 'Content-type': 'application/json' },
-    //    body: JSON.stringify(userAccount),
-    //}).then(r => r.json()).then(res => {
-    //    if (res) {
-    //        console.log(res.data);
-    //        this.setState({ message: 'New Account is Created Successfully' });
-    //    }
-    //});
+    // Blank User Inputs
+    for (let key in userAccount) {
+        if (userAccount[key] == null) {
+            proceedRegistration = false;
+            break;
+        }
+    }
 
-    //fetch('registration', {
-    //    method: 'POST',
-    //    headers: { 'Content-type': 'application/json' },
-    //    mode:
-    //    body: JSON.stringify(registerInfo),
-    //});
+    // Password Matching Validation
+    proceedRegistration = values.password1 == values.password2
 
-    //fetch('registration', {
-    //    method: 'POST',
-    //    headers: { 'Content-type': 'application/json' },
-    //    body: JSON.stringify(userAccount),
-    //}).then(r => r.json()).then(res => {
-    //    if (res) {
-    //        console.log(res.data);
-    //        this.setState({ message: 'New Account is Created Successfully' });
-    //    }
-    //});
+    if (proceedRegistration) {
+        registerAccount(userAccount)
+    } else {
+        userFailureRegistrationView();
+    }
+};
 
-    //fetch('registration');
-
-    var text = 'hmmmm'
-
-    // -- GET REQUEST -- 
-    axios.get('registration')
-        .then(res => console.log(res.data))
-        .catch((error) => { console.error(error) });
-
-    // -- POST REQUEST --
-    axios.post('registration', {
-            FirstName: values.firstName,
-            LastName: values.lastName,
-            Username: values.email,
-            Password: values.password1
+const registerAccount = (userAccount) => {
+    axios.post('registration', userAccount)
+        .then(res => {
+            console.log(res.data)
+            var isSuccessful = res.data['isSuccessful'];
+            var errorStatus = res.data['errorStatus'];
+            if (isSuccessful) {
+                successRegistrationView();
+            } else if (errorStatus != 0) {
+                errorRegistrationView();
+            } else {
+                userFailureRegistrationView();
+            }
         })
-        .then(res => console.log(res.data))
         .catch((error) => { console.error(error) });
 };
+
+const userFailureRegistrationView = () => {
+    // Display all input validation messages
+    console.log("User Failure Cases")
+}
+
+const successRegistrationView = () => {
+    // Transition to next view AccountCreationSuccess
+    console.log("Success")
+}
+
+const errorRegistrationView = () => {
+    // Display system error messages
+    console.log("System Error")
+}
 
 export class Registration extends Component {
     static displayName = Registration.name;
@@ -86,37 +72,11 @@ export class Registration extends Component {
         this.state = { registrationResult: [], loading: true };
     }
 
-    //static registerAccount = () => {
-
-    //}
-
-    //static registerAccount = ({ values }) => {
-    //    console.log("run")
-    //    console.log(values)
-    //    let registerInfo = {
-    //        'firstname': values.firstName,
-    //        lastName: values.lastName,
-    //        email: values.email,
-    //        password1: values.password1,
-    //        password2: values.password2
-    //    };
-
-    //    fetch('registration', {
-    //        method: 'POST',
-    //        headers: { 'Content-type': 'application/json' },
-    //        body: registerInfo
-    //    }).then(r => r.json()).then(res => {
-    //        if (res) {
-    //            this.setState({ message: 'New Account is Created Successfully' });
-    //        }
-    //    });
-    //};
-
     render() {
         return (
             <div>
                 <h1>Register Account</h1>
-                <Form id="registrationForm" onFinish={(values) => registerAccount(values)}>
+                <Form id="registrationForm" onFinish={(values) => submitForm(values)}>
                     <Form.Item name="firstName">
                         <Input placeholder="First Name" />
                     </Form.Item>
