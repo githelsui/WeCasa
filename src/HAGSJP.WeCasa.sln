@@ -43,8 +43,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HAGSJP.WeCasa.Authorization
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{7B12BBB6-DEBA-49C3-94B8-93310D37F25F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HAGSJP.WeCasa.Frontend", "Frontend\HAGSJP.WeCasa.Frontend.csproj", "{14EC60AD-6D11-40CB-AD63-6A4289C578E4}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HAGSJP.WeCasa.Frontend", "Frontend\HAGSJP.WeCasa.Frontend\HAGSJP.WeCasa.Frontend.csproj", "{DA12407B-882C-4998-B0DD-4EB2300FDABD}"
 EndProject
 Global
