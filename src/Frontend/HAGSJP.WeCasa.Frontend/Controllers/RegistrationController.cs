@@ -12,19 +12,13 @@ namespace HAGSJP.WeCasa.Frontend.Controllers;
 [Route("[controller]")]
 public class RegistrationController : Controller
 {
-
-    [HttpGet]
-    public bool Get()
-    {
-        Console.Write("WORKS!!!");
-        return true;
-    }
-
     [HttpPost]
-    public ViewResult Post([FromBody] UserAccount ua)
+    public Result Post([FromBody]RegistrationForm form)
     {
-        Console.Write("WEB API SERVER CONNECTED");
-        ViewBag.Message = "test.";
-        return View();
+        RegistrationClient rc = new RegistrationClient();
+
+        var result = rc.Register(form.Username, form.Password);
+
+        return result;
     }
 }
