@@ -10,6 +10,7 @@ namespace HAGSJP.WeCasa.Models
         public Object? ReturnedObject { get; set; }
         public string Salt { get; set; }
         public bool HasValidOTP { get; set; }
+        public string OTPCode { get; set; }
         public bool ExpiredOTP { get; set; }
 
         public AuthResult() { }

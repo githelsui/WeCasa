@@ -114,6 +114,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         result.IsEnabled = reader.GetInt32(reader.GetOrdinal("is_enabled")) == 1 ? true : false;
                         result.ReturnedObject = reader.GetString(reader.GetOrdinal("password"));
                         result.Salt = reader.GetString(reader.GetOrdinal("salt"));
+                        result.OTPCode = reader.IsDBNull(reader.GetOrdinal("otp_code")) ? String.Empty : reader.GetString(reader.GetOrdinal("otp_code"));
                     }
                     // User not found
                     else

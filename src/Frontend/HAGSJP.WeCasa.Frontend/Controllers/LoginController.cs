@@ -39,12 +39,6 @@ public class LoginController : Controller
     {
         UserAccount ua = new UserAccount(form.Username);
         Login login = new Login();
-        var verifyOTP = login.SubmitOTP(ua, form.Password);
-        if (verifyOTP.IsSuccessful)
-        {
-            // Verify if OTPs match
-            //return authOTP result
-        } 
-        return verifyOTP;
+        return login.SubmitOTP(ua, form.Password);
     }
 }

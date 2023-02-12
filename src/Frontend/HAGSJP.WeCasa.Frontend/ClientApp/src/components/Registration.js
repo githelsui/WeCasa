@@ -127,7 +127,7 @@ export class Registration extends Component {
                         </div>)
                 }
                 <div id="LoginButton">
-                    <Button> <Link style={{ textDecoration: 'none' }} to="/login">Login</Link></Button>
+                    <Link style={{ textDecoration: 'none' }} to="/login"><Button>Login</Button></Link>
                 </div>
             </div>
         );

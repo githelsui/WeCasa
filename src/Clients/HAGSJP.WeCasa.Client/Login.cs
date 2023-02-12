@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace HAGSJP.WeCasa.Client
 {
@@ -45,7 +46,14 @@ namespace HAGSJP.WeCasa.Client
 
         public Result SubmitOTP(UserAccount userAccount, string code)
         {
-            return _auth.VerifyOTPassword(userAccount.Username, code);
+            var loginResult = new Result();
+            var verifyOTP = _auth.VerifyOTPassword(userAccount.Username, code);
+            OTP submittedOTP = new OTP(userAccount.Username, code);
+            if (verifyOTP.IsSuccessful)
+            {
+                return _auth.AuthenticateUser(userAccount, submittedOTP);
+            }
+            return verifyOTP;
         }
 
         public Result ValidateEncryptedPasswords(UserAccount userAccount, Authentication auth)
