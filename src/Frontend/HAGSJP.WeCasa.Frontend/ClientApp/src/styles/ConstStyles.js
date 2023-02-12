@@ -3,6 +3,12 @@
 //Using javascript instead of css files to edit AntDesign elements because it
 //won't let me override the styles in separate css files :-(, if anyone knows a way around this lmk
 
+import '../styles/System.css';
+
+export const body = {
+    fontfamily: 'Mulish'
+}
+
 export const inputFieldStyle = {
     fontFamily: 'Mulish',
     backgroundColor: '#F4F5F4',
@@ -35,3 +41,11 @@ export const buttonHover = {
         }
     }
 }
+
+export const defaultImage = {
+    borderRadius: '20px'
+}
+
+// Navbar styles 
+export const originalNavBarStyle = 'navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3'
+export const defaultNavbarStyle = 'navbar-expand-sm navbar-toggleable-sm border-bottom ng-white mb-3'

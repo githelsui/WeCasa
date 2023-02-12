@@ -1,11 +1,19 @@
 ﻿import React, { Component, useState, useEffect } from 'react';
-import { Form, Input, Button, notification } from 'antd';
+import { Form, Input, Button, notification, ConfigProvider, Row, Gutter, Col, Image} from 'antd';
 import { withRouter, useNavigate, Navigate } from 'react-router-dom';
 import axios from 'axios';
+import * as Styles from '../styles/ConstStyles.js';
+import defaultImage from '../assets/defaultimgs/wecasatemp.jpg';
+
+export const resetPassBtnStyle = {
+    fontFamily: 'Mulish',
+    width: '100%',
+    fontWeight: 'thin',
+    borderWidth: 'thin'
+}
 
 export class Login extends Component {
     static displayName = Login.name;
-    //navigate = useNavigate()
 
     constructor(props) {
         super(props);
@@ -122,48 +130,60 @@ export class Login extends Component {
 
     render() {
         return (
-            <div>
-                <h1>Login</h1>
-                { (this.state.loginResults == true) ?
-                    (<Navigate to="/home" replace={true} />) :
-                    (<div>
-                        {(this.state.loginProcess == 1) ?
-                            (<div id="LoginForm">
-                                <Form id="loginForm" onFinish={(values) => this.submitLoginForm(values)}>
+            <div id="LoginPage"> 
+                <Row gutter={[48, 48]} align="middle">
+                    <Col span={12} style={{ fontFamily: 'Mulish' }}>
+                        <div>
+                            <h1>Welcome Back</h1>
+                            {(this.state.loginResults == true) ?
+                                (<Navigate to="/home" replace={true} />) :
+                                (<div>
+                                    {(this.state.loginProcess == 1) ?
+                                        (<div id="LoginForm">
+                                            <p>a home organized.</p>
+                                            <Form id="loginForm" onFinish={(values) => this.submitLoginForm(values)}>
 
-                                    <Form.Item name="email">
-                                        <Input placeholder="Email" />
-                                    </Form.Item>
+                                                <Form.Item name="email" style={{ marginBottom: 15 }}>
+                                                    <Input style={Styles.inputFieldStyle} placeholder="Email" />
+                                                </Form.Item>
 
-                                    <Form.Item name="password">
-                                        <Input.Password placeholder="Password" />
-                                    </Form.Item>
+                                                <Form.Item name="password">
+                                                    <Input.Password style={Styles.inputFieldStyle} placeholder="Password" />
+                                                </Form.Item>
 
-                                    <Button type="primary" htmlType="submit">Login</Button>
-                                </Form>
+                                                <Button style={Styles.primaryButtonStyle} type="primary" htmlType="submit">Login</Button>
+                                            </Form>
 
-                                <div id="ForgotPassBtn" style={{ paddingTop: '20px' }}>
-                                    <Button>Forgot Password</Button>
-                                </div>
-                            </div>) :
-                            (<div id="OTPSection">
-                                <h3>Account Name: {this.state.account}</h3>
-                                <h5>One-time login code: {this.state.otpCode}</h5>
-                                <h5>Expires at: {this.state.otpExpiration}</h5>
-                                <Form id="loginForm" onFinish={(values) => this.submitOTPForm(values)}>
+                                            <ConfigProvider theme={Styles.buttonHover}>
+                                                <div id="ForgotPassBtn" style={{ marginTop: 15 }}>
+                                                    <Button style={resetPassBtnStyle}>Forgot Password? Reset Here</Button>
+                                                </div>
+                                            </ConfigProvider>
+                                        </div>) :
+                                        (<div id="OTPSection">
+                                            <h6>Account Name: {this.state.account}</h6>
+                                            <h6>One-time login code: {this.state.otpCode}</h6>
+                                            <h6>Expires at: {this.state.otpExpiration}</h6>
+                                            <Form id="loginForm" onFinish={(values) => this.submitOTPForm(values)}>
 
-                                    <Form.Item name="otp">
-                                        <Input placeholder="Enter one-time login code" />
-                                    </Form.Item>
+                                                <Form.Item name="otp">
+                                                    <Input style={Styles.inputFieldStyle} placeholder="Enter one-time login code" />
+                                                </Form.Item>
 
-                                    <Button type="primary" htmlType="submit">Login</Button>
-                                </Form>
-                            </div>)
+                                                <Button style={Styles.primaryButtonStyle} type="primary" htmlType="submit">Login</Button>
+                                            </Form>
+                                        </div>)
 
-                        }
-                    </div>)
-                }
-      
+                                    }
+                                </div>)
+                            }
+
+                        </div>
+                    </Col>
+                    <Col span={12}>
+                        <Image style={Styles.defaultImage} src={defaultImage} preview={false} />
+                    </Col>
+                  </Row>
             </div>
         );
     }
