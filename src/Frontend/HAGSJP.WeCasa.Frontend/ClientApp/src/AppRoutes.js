@@ -1,6 +1,5 @@
 import { Counter } from "./components/Counter";
 import { FetchData } from "./components/FetchData";
-import { Home } from "./components/Home";
 import { Registration } from "./components/Registration";
 import { Login } from "./components/Login";
 
@@ -24,15 +23,15 @@ const AppRoutes = [
   {
     path: '/login',
     element: <Login />
-  },
-  {
-    path: '/',
-    element: <Home />
-  },
-  {
-    path: '/home',
-    element: <Home />
-  }
+   },
+  // {
+  //   path: '/',
+  //   element: <Home />
+  // },
+  // {
+  //   path: '/home',
+  //   element: <Home />
+  // }
 ];
 
 export default AppRoutes;

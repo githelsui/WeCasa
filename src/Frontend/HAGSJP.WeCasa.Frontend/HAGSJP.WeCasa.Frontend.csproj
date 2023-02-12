@@ -15,6 +15,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="7.0.2" />
+    <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
+    <PackageReference Include="ResXResourceReader.NetStandard" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
