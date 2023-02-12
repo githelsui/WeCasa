@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using HAGSJP.WeCasa.Services.Implementations;
 using HAGSJP.WeCasa.Client;
 using HAGSJP.WeCasa.Models;
+using HAGSJP.WeCasa.Models.Security;
 
 namespace HAGSJP.WeCasa.Frontend.Controllers;
 
@@ -18,31 +19,32 @@ public class LoginController : Controller
     [Route("AttemptLogin")]
     public Result AttemptLogin([FromBody] LoginForm form)
     {
-        RegistrationClient rc = new RegistrationClient();
-
         UserAccount ua = new UserAccount(form.Username, form.Password);
-
         Login login = new Login();
-        Authentication auth = new Authentication();
-        UserManager um = new UserManager();
-        var result = login.AttemptLogin(ua);
-
-        return result;
+        return login.AttemptLogin(ua);
     }
 
-    //TODO: POST request for OTP submission
     [HttpPost]
-    public Result GetOTP([FromBody] LoginForm form)
+    [Route("GetOTP")]
+    public OTP GetOTP([FromBody] LoginForm form)
     {
-        RegistrationClient rc = new RegistrationClient();
-
-        UserAccount ua = new UserAccount(form.Username, form.Password);
-
+        UserAccount ua = new UserAccount(form.Username);
         Login login = new Login();
-        Authentication auth = new Authentication();
-        UserManager um = new UserManager();
-        var result = login.LoginUser(ua, auth, um);
+        return login.GetOTP(ua);
+    }
 
-        return result;
+    [HttpPost]
+    [Route("LoginWithOTP")]
+    public Result LoginWithOTP([FromBody] LoginForm form)
+    {
+        UserAccount ua = new UserAccount(form.Username);
+        Login login = new Login();
+        var verifyOTP = login.SubmitOTP(ua, form.Password);
+        if (verifyOTP.IsSuccessful)
+        {
+            // Verify if OTPs match
+            //return authOTP result
+        } 
+        return verifyOTP;
     }
 }

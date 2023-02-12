@@ -13,11 +13,13 @@ export class Login extends Component {
             inputFailures: false,
             loginProcess: 1,
             loading: true,
-            otp: null
+            otpCode: '',
+            otpExpiration: '',
+            account: '',
         };
     }
 
-    submitForm = (values) => {
+    submitLoginForm = (values) => {
         var failureMessage = '';
 
         let userAccount = {
@@ -51,10 +53,10 @@ export class Login extends Component {
 
             axios.post('login/AttemptLogin', userAccount)
                 .then(res => {
-                    console.log(res.data)
                     var isSuccessful = res.data['isSuccessful'];
                     if (isSuccessful) {
-                        this.submitOTP(userAccount['Username']);
+                        this.state.loginProcess = 2;
+                        this.getNewOTP(userAccount);
                     } else {
                         this.failureLoginView(res.data['message']);
                     }
@@ -63,18 +65,54 @@ export class Login extends Component {
         }
     };
 
-    // Login Process 2: Receive new OTP
-    submitOTP = (userAccount) => {
-        this.state.loginProcess = 2;
-        this.forceUpdate();
+    // Login Process 2: Receive new OTP and submit OTP
+    getNewOTP = (userAccount) => {
+        axios.post('login/GetOTP', userAccount)
+            .then(res => {
+                var otpRes = res.data
+                this.state.account = otpRes['username']
+                this.state.otpCode = otpRes['code']
+                this.state.otpExpiration = otpRes['expirationTime']
+                this.forceUpdate();
+                //this.setState({
+                //    loginResults: false,
+                //    inputFailures: false,
+                //    loginProcess: 2,
+                //    loading: true,
+                //    otpCode: otpRes['code'],
+                //    otpExpiration: otpRes['expirationTime'],
+                //    account: otpRes['username'],
+                //})
+                //  this.forceUpdate();
+            })
+            .catch((error) => { console.error(error) });
+
     };
 
+    submitOTPForm = (values) => {
+        let otpData = {
+            Username: this.state.account,
+            Password: values.otp
+        }
+        if (values.otp != null) {
+            axios.post('login/LoginWithOTP', otpData)
+                .then(res => {
+                    //var isSuccessful = res.data['isSuccessful'];
+                    //if (isSuccessful) {
+                    //    console.log(res.data)
+                    //} else {
+                    //    this.failureLoginView(res.data['message']);
+                    //}
+                })
+                .catch((error) => { console.error(error) });
+        } else {
+            this.failureLoginView('Empty fields not accepted.')
+        }
+    }
 
     failureLoginView = (failureMessage) => {
         // Accounts for user failure cases and system errors
         this.state.registrationResults = false
-        console.log("registration result: " + this.state.loginResults)
-        console.log("User Failure Cases")
         notification.open({
             message: "Try again.",
             description: failureMessage,
@@ -98,7 +136,7 @@ export class Login extends Component {
                 <div>
                     {(this.state.loginProcess == 1) ?
                         (<div id="LoginForm">
-                            <Form id="loginForm" onFinish={(values) => this.submitForm(values)}>
+                            <Form id="loginForm" onFinish={(values) => this.submitLoginForm(values)}>
 
                                 <Form.Item name="email">
                                     <Input placeholder="Email" />
@@ -112,10 +150,10 @@ export class Login extends Component {
                             </Form>
                         </div>) :
                         (<div id="OTPSection">
-                            <h3>Account Name</h3>
-                            <h5>One-time login code: </h5>
-                            <h5>Expires at: </h5>
-                            <Form id="loginForm" onFinish={(values) => this.submitForm(values)}>
+                            <h3>Account Name: {this.state.account}</h3>
+                            <h5>One-time login code: {this.state.otpCode}</h5>
+                            <h5>Expires at: {this.state.otpExpiration}</h5>
+                            <Form id="loginForm" onFinish={(values) => this.submitOTPForm(values)}>
 
                                 <Form.Item name="otp">
                                     <Input placeholder="Enter one-time login code" />

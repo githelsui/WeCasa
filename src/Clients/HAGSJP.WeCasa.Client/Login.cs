@@ -40,17 +40,22 @@ namespace HAGSJP.WeCasa.Client
 
         public OTP GetOTP(UserAccount userAccount)
         {
-
+            return _um.GenerateOTPassword(userAccount);
         }
 
-            public Result ValidateEncryptedPasswords(UserAccount userAccount, Authentication auth)
+        public Result SubmitOTP(UserAccount userAccount, string code)
+        {
+            return _auth.VerifyOTPassword(userAccount.Username, code);
+        }
+
+        public Result ValidateEncryptedPasswords(UserAccount userAccount, Authentication auth)
         {
             // Checking if the user exists, make sure they are not already authenticated
             var validationResult = auth.VerifyEncryptedPasswords(userAccount);
             return validationResult;
         }
 
-        //Prior to receiving an OTP Code
+        //Prior to receiving an OTP Code: validate preconditions and encrypted passwords
         public Result AttemptLogin(UserAccount userAccount)
         {
             // Checking pre-conditions for login
@@ -65,9 +70,14 @@ namespace HAGSJP.WeCasa.Client
             if (!validPassword)
             {
                 loginResult.IsSuccessful = false;
-                loginResult.Message = "Invalid email provided. Retry again or contact the System Administrator.";
+                loginResult.Message = "Invalid password provided. Retry again or contact the System Administrator.";
             }
-            loginResult = ValidateEncryptedPasswords(userAccount, _auth);
+            var correctPassword = ValidateEncryptedPasswords(userAccount, _auth);
+            if (correctPassword.IsSuccessful)
+            {
+                loginResult.IsSuccessful = true;
+                loginResult.Message = "Login attempt successful.";
+            }
             return loginResult;
         }
 
