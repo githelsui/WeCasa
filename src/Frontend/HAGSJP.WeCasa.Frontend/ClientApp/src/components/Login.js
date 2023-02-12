@@ -119,7 +119,7 @@ export class Login extends Component {
             message: "Try again.",
             description: failureMessage,
             duration: 10,
-            placement: "topRight",
+            placement: "topLeft",
         });
     }
 
