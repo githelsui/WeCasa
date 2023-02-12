@@ -1,6 +1,7 @@
 ﻿using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Models.Security;
 using HAGSJP.WeCasa.Services.Implementations;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,15 @@ namespace HAGSJP.WeCasa.Client
 {
     public class Login
     {
+        private UserManager _um;
+        private Authentication _auth;
+
+        public Login()
+        {
+            _um = new UserManager();
+            _auth = new Authentication(); 
+        }
+
         public OTP GetOTP(UserAccount userAccount, Authentication auth)
         {
             OTP otp;
@@ -28,11 +38,37 @@ namespace HAGSJP.WeCasa.Client
             return otp;
         }
 
-        public Result ValidateEncryptedPasswords(UserAccount userAccount, Authentication auth)
+        public OTP GetOTP(UserAccount userAccount)
+        {
+
+        }
+
+            public Result ValidateEncryptedPasswords(UserAccount userAccount, Authentication auth)
         {
             // Checking if the user exists, make sure they are not already authenticated
             var validationResult = auth.VerifyEncryptedPasswords(userAccount);
             return validationResult;
+        }
+
+        //Prior to receiving an OTP Code
+        public Result AttemptLogin(UserAccount userAccount)
+        {
+            // Checking pre-conditions for login
+            var loginResult = new Result();
+            var validEmail = _um.ValidateEmail(userAccount.Username);
+            if (!validEmail.IsSuccessful)
+            {
+                loginResult.IsSuccessful = false;
+                loginResult.Message = "Invalid email provided. Retry again or contact the System Administrator.";
+            }
+            bool validPassword = _um.ValidatePassword(userAccount.Password).IsSuccessful;
+            if (!validPassword)
+            {
+                loginResult.IsSuccessful = false;
+                loginResult.Message = "Invalid email provided. Retry again or contact the System Administrator.";
+            }
+            loginResult = ValidateEncryptedPasswords(userAccount, _auth);
+            return loginResult;
         }
 
         public Result LoginUser(UserAccount userAccount, Authentication auth, UserManager userManager)

@@ -1,5 +1,6 @@
 ﻿import React, { Component, useState, useEffect } from 'react';
 import { Form, Input, Button, notification } from 'antd';
+import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 
 export class Login extends Component {
@@ -10,7 +11,9 @@ export class Login extends Component {
         this.state = {
             loginResults: false,
             inputFailures: false,
-            loading: true
+            loginProcess: 1,
+            loading: true,
+            otp: null
         };
     }
 
@@ -19,7 +22,7 @@ export class Login extends Component {
 
         let userAccount = {
             Username: values.email,
-            Password: values.password1
+            Password: values.password
         };
 
         // -- Client-side Input Validation
@@ -34,20 +37,24 @@ export class Login extends Component {
         }
 
         if (!this.state.inputFailures) {
-            this.loginAccount(userAccount)
+            this.attemptInitialLogin(userAccount)
         } else {
             this.failureLoginView(failureMessage);
         }
     };
 
-    loginAccount = (userAccount) => {
+    // Login Process 1: Prior to receiving an OTP
+    attemptInitialLogin = (userAccount) => {
         if (!this.state.inputFailures) {
-            axios.post('registration', userAccount)
+
+            this.state.loginProcess = 1;
+
+            axios.post('login/AttemptLogin', userAccount)
                 .then(res => {
                     console.log(res.data)
                     var isSuccessful = res.data['isSuccessful'];
                     if (isSuccessful) {
-                        this.successLoginView(userAccount['Username']);
+                        this.submitOTP(userAccount['Username']);
                     } else {
                         this.failureLoginView(res.data['message']);
                     }
@@ -56,10 +63,17 @@ export class Login extends Component {
         }
     };
 
+    // Login Process 2: Receive new OTP
+    submitOTP = (userAccount) => {
+        this.state.loginProcess = 2;
+        this.forceUpdate();
+    };
+
+
     failureLoginView = (failureMessage) => {
         // Accounts for user failure cases and system errors
         this.state.registrationResults = false
-        console.log("registration result: " + this.state.registrationResults)
+        console.log("registration result: " + this.state.loginResults)
         console.log("User Failure Cases")
         notification.open({
             message: "Try again.",
@@ -70,30 +84,50 @@ export class Login extends Component {
     }
 
     successLoginView = (accountName) => {
-        this.state.registrationResults = true
-        this.state.newAccount = accountName
-        this.forceUpdate();
+        this.state.loginResults = true
 
         // go to logged in home page
+        this.props.history.push('/home');
+
     }
 
     render() {
         return (
             <div>
                 <h1>Login</h1>
-                <div id="LoginForm">
-                    <Form id="registrationForm" onFinish={(values) => this.submitForm(values)}>
+                <div>
+                    {(this.state.loginProcess == 1) ?
+                        (<div id="LoginForm">
+                            <Form id="loginForm" onFinish={(values) => this.submitForm(values)}>
 
-                        <Form.Item name="email">
-                            <Input placeholder="Email" />
-                        </Form.Item>
+                                <Form.Item name="email">
+                                    <Input placeholder="Email" />
+                                </Form.Item>
 
-                        <Form.Item name="password">
-                            <Input.Password placeholder="Password" />
-                        </Form.Item>
-                        <Button type="primary" htmlType="submit">Login</Button>
-                    </Form>
+                                <Form.Item name="password">
+                                    <Input.Password placeholder="Password" />
+                                </Form.Item>
+
+                                <Button type="primary" htmlType="submit">Login</Button>
+                            </Form>
+                        </div>) :
+                        (<div id="OTPSection">
+                            <h3>Account Name</h3>
+                            <h5>One-time login code: </h5>
+                            <h5>Expires at: </h5>
+                            <Form id="loginForm" onFinish={(values) => this.submitForm(values)}>
+
+                                <Form.Item name="otp">
+                                    <Input placeholder="Enter one-time login code" />
+                                </Form.Item>
+
+                                <Button type="primary" htmlType="submit">Login</Button>
+                            </Form>
+                        </div>)
+
+                }
                 </div>
+      
             </div>
         );
     }

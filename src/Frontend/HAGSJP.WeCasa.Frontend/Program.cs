@@ -1,4 +1,6 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using HAGSJP.WeCasa.Client;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
@@ -20,9 +22,8 @@ app.UseRouting();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
+    pattern: "{controller}/{action}/{id?}");
 
 app.MapFallbackToFile("index.html");
 
 app.Run();
-

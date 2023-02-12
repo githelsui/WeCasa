@@ -11,7 +11,8 @@ export class NavMenu extends Component {
 
     this.toggleNavbar = this.toggleNavbar.bind(this);
     this.state = {
-      collapsed: true
+        collapsed: true,
+        loggedIn: false
     };
   }
 
@@ -19,7 +20,7 @@ export class NavMenu extends Component {
   toggleNavbar () {
     this.setState({
         collapsed: !this.state.collapsed,
-        loggedIn: false
+        loggedIn: this.state.loggedIn
     });
   }
 
@@ -31,7 +32,7 @@ export class NavMenu extends Component {
                 <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
                 <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
                     {
-                        !this.state.loggedIn ?
+                        (!this.state.loggedIn) ?
                             (
                                 <ul className="navbar-nav flex-grow">
                                     <NavItem>
@@ -40,15 +41,20 @@ export class NavMenu extends Component {
                                     <NavItem>
                                         <NavLink tag={Link} className="text-dark" to="/login">Login</NavLink>
                                     </NavItem>
+                                    <NavItem>
+                                        <NavLink tag={Link} className="text-dark" to="/feedback">Feedback</NavLink>
+                                    </NavItem>
                                 </ul>
-                            ) :
-                            (
+                            ) : (
                                 <ul className="navbar-nav flex-grow">
                                     <NavItem>
-                                        <NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
+                                        <NavLink tag={Link} className="text-dark" to="/home">Home</NavLink>
                                     </NavItem>
                                     <NavItem>
-                                        <NavLink tag={Link} className="text-dark" to="/profile">Profile</NavLink>
+                                        <NavLink tag={Link} className="text-dark" to="/profile">Settings</NavLink>
+                                    </NavItem>
+                                    <NavItem>
+                                        <NavLink tag={Link} className="text-dark" to="/logout">Logout</NavLink>
                                     </NavItem>
                                 </ul>
                             )

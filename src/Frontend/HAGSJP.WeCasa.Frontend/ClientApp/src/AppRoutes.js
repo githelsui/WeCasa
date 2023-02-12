@@ -24,7 +24,12 @@ const AppRoutes = [
   {
     path: '/login',
     element: <Login />
-  }
+    },
+{
+    path: '/',
+    element: <Home />
+},
+
 ];
 
 export default AppRoutes;
