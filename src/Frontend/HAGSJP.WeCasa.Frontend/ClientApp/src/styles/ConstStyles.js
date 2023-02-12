@@ -11,9 +11,10 @@ export const body = {
 
 export const inputFieldStyle = {
     fontFamily: 'Mulish',
-    backgroundColor: '#F4F5F4',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#d9d9d9',
     borderRadius: '2%',
-    borderWidth: 0,
+    borderWidth: 1,
 }
 
 export const primaryButtonStyle = {
