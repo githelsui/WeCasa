@@ -104,25 +104,29 @@ export class Registration extends Component {
                         :
                         (<div id="RegistrationForm">
                             <Form id="registrationForm" onFinish={(values) => this.submitForm(values)}>
-                                <Form.Item name="firstName">
-                                    <Input placeholder="First Name" />
-                                </Form.Item>
 
-                                <Form.Item name="lastName">
-                                    <Input placeholder="Last Name" />
-                                </Form.Item>
-                                <Form.Item name="email">
+                                <Input.Group compact="true">
+                                    <Form.Item name="firstName" id="FirstName" style={{ width: '49%', marginRight: '2%', marginBottom: 10 }}>
+                                        <Input placeholder="First Name" />
+                                    </Form.Item>
+
+                                    <Form.Item name="lastName" style={{ width: '49%', marginBottom: 10 }}>
+                                        <Input placeholder="Last Name" />
+                                    </Form.Item>
+                                </Input.Group>
+                                
+                                <Form.Item name="email" style={{ marginBottom: 10 }}>
                                     <Input placeholder="Email" />
                                 </Form.Item>
 
-                                <Form.Item name="password1">
+                                <Form.Item name="password1" style={{ marginBottom: 10 }}>
                                     <Input.Password placeholder="Password" />
                                 </Form.Item>
 
                                 <Form.Item name="password2">
                                     <Input.Password placeholder="Reenter Password" />
                                 </Form.Item>
-                                <Button type="primary" htmlType="submit">Register</Button>
+                                <Button type="primary" htmlType="submit" style={{ marginTop: -40 }}>Register</Button>
                             </Form>
                         </div>)
                 }
