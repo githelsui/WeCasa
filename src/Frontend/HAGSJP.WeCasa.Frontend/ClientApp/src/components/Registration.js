@@ -1,10 +1,13 @@
 ﻿import React, { Component, useState, useEffect } from 'react';
 import { Form, Input, Button, notification } from 'antd';
+import { Routes, Route, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/Registration.css';
+import { Login } from "./Login";
 
 export class Registration extends Component {
     static displayName = Registration.name;
+    //static navigate = this.useNavigate();
 
     constructor(props) {
         super(props);
@@ -85,6 +88,12 @@ export class Registration extends Component {
         this.forceUpdate();
     }
 
+    navigateLogin = () => {
+        //console.log("clicked")
+        //alert("hello world")
+        //this.useNavigate.navigate('/login');
+    }
+
     render() {
         return (
             <div>
@@ -118,7 +127,7 @@ export class Registration extends Component {
                         </div>)
                 }
                 <div id="LoginButton">
-                    <Button>Login</Button>
+                    <Button> <Link style={{ textDecoration: 'none' }} to="/login">Login</Link></Button>
                 </div>
             </div>
         );
