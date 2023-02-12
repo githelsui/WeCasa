@@ -2,8 +2,39 @@
 import { Form, Input, Button, notification } from 'antd';
 import { Routes, Route, useNavigate, Link, withRouter } from 'react-router-dom';
 import axios from 'axios';
+import '../styles/System.css';
 import '../styles/Registration.css';
 import { Login } from "./Login";
+
+//Using javascript instead of css files to edit AntDesign elements because it
+//won't let me override the styles in a separate css file :-(, if anyone knows a way around this lmk
+const inputFieldStyle = {
+    fontFamily: 'Mulish',
+    backgroundColor: '#F4F5F4',
+    borderRadius: '2%'
+}
+
+const registerButtonStyle = {
+    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+    fontFamily: 'Mulish',
+    width: '100%',
+    fontWeight: 'bold',
+    backgroundColor: '#111827',
+    color: '#FFFFFF',
+    borderRadius: '1%',
+    marginTop: 0 
+}
+
+const loginButtonStyle = {
+    fontFamily: 'Mulish',
+    fontWeight: 'bold',
+    backgroundColor: '#FFFFFF',
+    borderRadius: '2%',
+    width: '100%',
+    borderWidth: 'thin',
+    borderColor: '#111827',
+    textDecoration: 'none'
+}
 
 export class Registration extends Component {
     static displayName = Registration.name;
@@ -88,50 +119,46 @@ export class Registration extends Component {
         this.forceUpdate();
     }
 
-    navigateLogin = () => {
-        //console.log("clicked")
-        //alert("hello world")
-        //this.useNavigate.navigate('/login');
-    }
-
     render() {
         return (
             <div>
-                <h1>Register Account</h1>
+                <h1>Create an Account</h1>
                 {
                     this.state.registrationResults ?
                         (<div><h2>Account {this.state.newAccount} created successfully.</h2></div>)
                         :
                         (<div id="RegistrationForm">
+                            <p>a home organized.</p>
                             <Form id="registrationForm" onFinish={(values) => this.submitForm(values)}>
 
                                 <Input.Group compact="true">
-                                    <Form.Item name="firstName" id="FirstName" style={{ width: '49%', marginRight: '2%', marginBottom: 10 }}>
-                                        <Input placeholder="First Name" />
+                                    <Form.Item name="firstName" id="FirstName" style={{ width: '49%', marginRight: '3%', marginBottom: 10 }}>
+                                        <Input style={inputFieldStyle} placeholder="First Name" />
                                     </Form.Item>
 
-                                    <Form.Item name="lastName" style={{ width: '49%', marginBottom: 10 }}>
-                                        <Input placeholder="Last Name" />
+                                    <Form.Item name="lastName" style={{ width: '48%', marginBottom: 20 }}>
+                                        <Input style={inputFieldStyle} placeholder="Last Name"/>
                                     </Form.Item>
                                 </Input.Group>
                                 
-                                <Form.Item name="email" style={{ marginBottom: 10 }}>
-                                    <Input placeholder="Email" />
+                                <Form.Item name="email" style={{ marginBottom: 20 }}>
+                                    <Input style={inputFieldStyle} placeholder="Email" />
                                 </Form.Item>
 
-                                <Form.Item name="password1" style={{ marginBottom: 10 }}>
-                                    <Input.Password placeholder="Password" />
+                                <Form.Item name="password1" style={{ marginBottom: 20 }}>
+                                    <Input.Password style={inputFieldStyle} placeholder="Password" />
                                 </Form.Item>
 
                                 <Form.Item name="password2">
-                                    <Input.Password placeholder="Reenter Password" />
+                                    <Input.Password style={inputFieldStyle} placeholder="Reenter Password" />
                                 </Form.Item>
-                                <Button type="primary" htmlType="submit" style={{ marginTop: -40 }}>Register</Button>
+
+                                <Button type="primary" htmlType="submit" style={registerButtonStyle}>Create Account</Button>
                             </Form>
                         </div>)
                 }
                 <div id="LoginButton">
-                    <Link style={{ textDecoration: 'none' }} to="/login"><Button>Login</Button></Link>
+                    <Link to="/login"><Button style={loginButtonStyle}>Login</Button></Link>
                 </div>
             </div>
         );
