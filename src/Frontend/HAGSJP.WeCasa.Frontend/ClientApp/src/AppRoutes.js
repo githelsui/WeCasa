@@ -18,6 +18,10 @@ const AppRoutes = [
     element: <FetchData />
   },
   {
+      path: '/registration',
+      element: <Registration />
+  },
+  {
     path: '/login',
     element: <Login />
   }
