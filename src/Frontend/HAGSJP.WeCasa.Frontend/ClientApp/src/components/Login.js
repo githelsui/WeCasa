@@ -141,6 +141,10 @@ export class Login extends Component {
 
                                     <Button type="primary" htmlType="submit">Login</Button>
                                 </Form>
+
+                                <div id="ForgotPassBtn" style={{ paddingTop: '20px' }}>
+                                    <Button>Forgot Password</Button>
+                                </div>
                             </div>) :
                             (<div id="OTPSection">
                                 <h3>Account Name: {this.state.account}</h3>
