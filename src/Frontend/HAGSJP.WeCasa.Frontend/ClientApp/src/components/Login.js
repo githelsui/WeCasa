@@ -30,6 +30,7 @@ export class Login extends Component {
     }
 
     submitLoginForm = (values) => {
+        this.state.inputFailures = false
         var failureMessage = '';
 
         let userAccount = {

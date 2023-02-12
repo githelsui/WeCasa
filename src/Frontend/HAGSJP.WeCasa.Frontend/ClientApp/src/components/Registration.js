@@ -22,6 +22,7 @@ export class Registration extends Component {
     }
 
     submitForm = (values) => {
+        this.state.inputFailures = false
         var failureMessage = '';
 
         let userAccount = {
@@ -64,6 +65,7 @@ export class Registration extends Component {
                     if (isSuccessful) {
                         this.successRegistrationView(userAccount['Username']);
                     } else {
+                        console.log(res.data)
                         this.failureRegistrationView(res.data['message']);
                     }
                 })
