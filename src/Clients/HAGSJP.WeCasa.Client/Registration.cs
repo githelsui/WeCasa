@@ -32,7 +32,7 @@ namespace HAGSJP.WeCasa.Client
 
             if(!emailTaken && validateEmail.IsSuccessful && validatePassword.IsSuccessful)
             {
-                registerResult = Register(email, password, _um);
+                registerResult = _um.RegisterUser(email, password, _um);
             } else
             {
                 var emailTakenMessage = emailTaken ? "An account already exists with this email." : "";

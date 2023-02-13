@@ -106,24 +106,24 @@ export class Registration extends Component {
                             <Form id="registrationForm" onFinish={(values) => this.submitForm(values)}>
 
                                 <Input.Group compact="true">
-                                    <Form.Item name="firstName" id="FirstName" style={{ width: '49%', marginRight: '2%', marginBottom: 10 }}>
+                                    <Form.Item name="firstName" id="FirstName" style={{ width: '49%', marginRight: '2%', marginBottom: 10 }} required>
                                         <Input placeholder="First Name" />
                                     </Form.Item>
 
-                                    <Form.Item name="lastName" style={{ width: '49%', marginBottom: 10 }}>
+                                    <Form.Item name="lastName" style={{ width: '49%', marginBottom: 10 }} required>
                                         <Input placeholder="Last Name" />
                                     </Form.Item>
                                 </Input.Group>
                                 
-                                <Form.Item name="email" style={{ marginBottom: 10 }}>
+                                <Form.Item name="email" style={{ marginBottom: 10 }} required>
                                     <Input placeholder="Email" />
                                 </Form.Item>
 
-                                <Form.Item name="password1" style={{ marginBottom: 10 }}>
+                                <Form.Item name="password1" style={{ marginBottom: 10 }} required>
                                     <Input.Password placeholder="Password" />
                                 </Form.Item>
 
-                                <Form.Item name="password2">
+                                <Form.Item name="password2" required>
                                     <Input.Password placeholder="Reenter Password" />
                                 </Form.Item>
                                 <Button type="primary" htmlType="submit" style={{ marginTop: -40 }}>Register</Button>
