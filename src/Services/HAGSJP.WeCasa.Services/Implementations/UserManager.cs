@@ -255,6 +255,44 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return userPersistResult;
         }
 
+        public Result RegisterUser(string firstName, string lastName, string email, string password)
+        {
+            // System log entry recorded if registration process takes longer than 5 seconds
+            var stopwatch = new Stopwatch();
+            var expected = 5;
+
+            stopwatch.Start();
+            var userPersistResult = new Result();
+            UserAccount userAccount = new UserAccount(firstName, lastName, email);
+
+            // Password encryption
+            HashSaltSecurity hashService = new HashSaltSecurity();
+            string salt = BitConverter.ToString(hashService.GenerateSalt(password));
+            string encryptedPass = hashService.GetHashSaltCredentials(password, salt);
+            userAccount.Salt = salt;
+            userPersistResult = _dao.PersistUser(userAccount, encryptedPass, salt);
+
+            if (userPersistResult.IsSuccessful)
+            {
+                // Logging the registration
+                successLogger.Log("Account created successfully", LogLevels.Info, "Data Store", userAccount.Username);
+            }
+            else
+            {
+                // Logging the error
+                errorLogger.Log("Error creating an account", LogLevels.Error, "Data Store", userAccount.Username);
+            }
+
+            stopwatch.Stop();
+            var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
+            if (userPersistResult.IsSuccessful && actual > expected)
+            {
+                errorLogger.Log("Account created successfully, but took longer than 5 seconds", LogLevels.Info, "Business", userAccount.Username, new UserOperation(Operations.Registration, 0));
+            }
+
+            return userPersistResult;
+        }
+
         public Result UpdateUser(UserProfile userProfile)
         {
             throw new NotImplementedException();

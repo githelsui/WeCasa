@@ -5,6 +5,7 @@ using HAGSJP.WeCasa.Models.Security;
 using System.Text.Json;
 using Azure;
 using System.Data;
+using System.Reflection.PortableExecutable;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {

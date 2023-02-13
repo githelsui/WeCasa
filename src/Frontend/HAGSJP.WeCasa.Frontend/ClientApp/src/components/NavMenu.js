@@ -5,6 +5,7 @@ import { Modal } from 'antd'
 import { Link } from 'react-router-dom';
 import Home, { attemptLogout } from './Home'
 import '../styles/NavMenu.css';
+import * as Styles from '../styles/ConstStyles.js';
 
 export class NavMenu extends Component {
   static displayName = NavMenu.name;
@@ -28,17 +29,10 @@ export class NavMenu extends Component {
     });
     }
 
-    setShowModal(show) {
-        this.setState({
-            ...this.state,
-            showModal: show
-        });
-    }
-
-    render() {
-      return (
+  render() {
+    return (
         <header>
-            <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" container light>
+            <Navbar className={Styles.defaultNavbarStyle} container light>
                 <NavbarBrand tag={Link} to="/">WeCasa</NavbarBrand>
                 <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
                 <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
@@ -46,12 +40,6 @@ export class NavMenu extends Component {
                         (!this.state.loggedIn) ?
                             (
                                 <ul className="navbar-nav flex-grow">
-                                    <NavItem>
-                                        <NavLink tag={Link} className="text-dark" to="/">Register</NavLink>
-                                    </NavItem>
-                                    <NavItem>
-                                        <NavLink tag={Link} className="text-dark" to="/login">Login</NavLink>
-                                    </NavItem>
                                     <NavItem>
                                         <NavLink tag={Link} className="text-dark" to="/feedback">Feedback</NavLink>
                                     </NavItem>
