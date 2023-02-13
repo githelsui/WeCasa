@@ -29,13 +29,13 @@ namespace HAGSJP.WeCasa.Client
             var validateEmail = _um.ValidateEmail(email);
             var validatePassword = _um.ValidatePassword(password);
 
-            if(!emailTaken && validateEmail.IsSuccessful && validatePassword.IsSuccessful)
+            if (!emailTaken && validateEmail.IsSuccessful && validatePassword.IsSuccessful)
             {
                 registerResult = _um.RegisterUser(firstName, lastName, email, password);
             } else
             {
                 var emailTakenMessage = emailTaken ? "An account already exists with this email." : "";
-                registerResult.Message = validateEmail.Message + "\n" + validatePassword.Message + "\n" + emailTakenMessage ;
+                registerResult.Message = validateEmail.Message + "\n" + validatePassword.Message + "\n" + emailTakenMessage;
                 registerResult.IsSuccessful = false;
             }
             return registerResult;

@@ -22,6 +22,13 @@ namespace HAGSJP.WeCasa.Models
             LastName = lastName;
             Username = email;
         }
+
+        public UserAccount(string firstName, string lastName, string email, string password)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            Username = email;
+        }
         // System Assigned Key (SAK) -- primary key
         public int UserAccountId { get; set; }
         public string Username { get; set; }
