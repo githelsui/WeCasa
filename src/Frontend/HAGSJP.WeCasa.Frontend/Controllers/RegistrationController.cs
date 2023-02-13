@@ -17,7 +17,7 @@ public class RegistrationController : Controller
     {
         RegistrationClient rc = new RegistrationClient();
 
-        var result = rc.Register(form.Username, form.Password);
+        var result = rc.Register(form.FirstName, form.LastName, form.Username, form.Password);
 
         return result;
     }

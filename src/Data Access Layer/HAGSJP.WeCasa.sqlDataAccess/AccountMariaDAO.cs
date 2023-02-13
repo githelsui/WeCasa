@@ -59,10 +59,14 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 var result = new Result();
 
                 // Insert SQL statement
-                var insertSql = @"INSERT INTO `Users` (`username`, `password`, `is_enabled`, `is_admin`, `claims`, `salt`) values (@username, @password, 1, 0, @claims, @salt);";
+                var insertSql = @"INSERT INTO `Users` (`first_name`, `last_name`, `username`, `password`, `is_enabled`, `is_admin`, `claims`, `salt`) values (@first_name, @last_name, @username, @password, 1, 0, @claims, @salt);";
 
                 var command = connection.CreateCommand();
                 command.CommandText = insertSql;
+                var firstNameVal = String.IsNullOrEmpty(userAccount.FirstName) ? String.Empty : userAccount.FirstName;
+                var lastNameVal = String.IsNullOrEmpty(userAccount.LastName) ? String.Empty : userAccount.LastName;
+                command.Parameters.AddWithValue("@first_name".ToLower(), firstNameVal.ToLower());
+                command.Parameters.AddWithValue("@last_name".ToLower(), lastNameVal.ToLower());
                 command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
                 command.Parameters.AddWithValue("@password", password);
                 command.Parameters.AddWithValue("@salt", salt);
