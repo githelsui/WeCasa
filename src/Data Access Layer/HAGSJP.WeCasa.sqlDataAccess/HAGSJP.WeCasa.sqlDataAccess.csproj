@@ -8,10 +8,12 @@
 
 	<ItemGroup>
 		<None Remove="Microsoft.Data.SqlClient" />
+		<None Remove="MySql.Data" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
 		<PackageReference Include="MySqlConnector" Version="2.2.2" />
+		<PackageReference Include="MySql.Data" Version="8.0.32" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Models\HAGSJP.WeCasa.Models\HAGSJP.WeCasa.Models.csproj" />

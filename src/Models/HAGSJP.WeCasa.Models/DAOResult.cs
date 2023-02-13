@@ -2,6 +2,9 @@ namespace HAGSJP.WeCasa.Models
 {
     public class DAOResult: Result
     { 
+        public string? ErrorStatus;
+         public string? SqlState;
+
         public DAOResult ValidateSqlResult(int rows)
         {
             var result = new DAOResult();
