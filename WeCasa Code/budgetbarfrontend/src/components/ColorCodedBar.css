@@ -1,0 +1,132 @@
+.budget-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+}
+
+.edit-budget-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.roommates {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.roommate {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+  margin-bottom: 10px;
+}
+
+.roommate-color {
+  width: 10px;
+  height: 10px;
+  margin-right: 10px;
+  border-radius: 50%;
+}
+
+.total-budget {
+  margin-top: 10px;
+}
+
+.bar-container {
+  display: flex;
+  height: 15px;
+  width: 100%;
+  background-color: lightgray;
+  margin-top: 20px;
+  position: relative;
+}
+
+.bar-item {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  color: #fff;
+}
+
+.bar-item::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 50px;
+  height: 20px;
+  background-color: white;
+  text-align: center;
+}
+
+.bar-item::before {
+  content: "$" attr(data-value);
+}
+
+.remaining-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: lightgray;
+  z-index: -1;
+}
+
+.spent-bar {
+  height: 100%;
+  width: 0;
+  background-color: blue;
+  transition: width 0.2s ease-in-out;
+}
+
+/* .remaining-budget-text::before {
+  content: "$" attr(data-value);
+} */
+
+.budget-bar-container {
+  display: flex;
+  height: 15px;
+  width: 100%;
+  position: relative;
+  margin-top: 20px;
+  }
+  
+  .total-spent-bar {
+    height: 100%;
+    background-color: purple;
+
+    left: 0;
+    top: 0; 
+    display: flex; 
+    align-items: center;
+    justify-content: center; 
+  }
+
+  
+  .remaining-budget-bar {
+  height: 100%;
+  background-color: brown;
+
+  left: 0;
+  top: 0; 
+  display: flex; 
+  align-items: center;
+  justify-content: center; 
+  }
+
+  .total-spent-text {
+    color: #fff;
+  }
+  
+  .remaining-budget-text {
+    color: #fff;
+  }
