@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import NavMenu from '../components/NavMenu';
 import { Modal, notification } from 'antd';
 import axios from 'axios';
 
@@ -14,7 +13,6 @@ export class Home extends Component {
             account: '',
         };
     }
-
 
 
     static attemptLogout() {

@@ -49,5 +49,5 @@ export const defaultImage = {
 }
 
 // Navbar styles 
-export const originalNavBarStyle = 'navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3'
-export const defaultNavbarStyle = 'navbar-expand-sm navbar-toggleable-sm border-bottom ng-white mb-3'
+export const originalHeaderStyle = 'navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3'
+export const defaultHeaderStyle = 'navbar-expand-sm navbar-toggleable-sm border-bottom ng-white mb-3'
