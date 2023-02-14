@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Navigate } from 'react-router-dom'
 import { Modal, notification } from 'antd';
 import axios from 'axios';
 
@@ -10,21 +11,32 @@ export class Home extends Component {
 
         this.state = {
             logoutResults: false,
-            account: '',
+            currentUser: '',
+            loggedIn: false
         };
+    }
+
+    componentDidMount() {
+        console.log(this.props);
+        this.setState({
+            ...this.state,
+            currentUser: this.props.account,
+            loggedIn: (this.props.account == null) ? false : true
+        })
     }
 
 
     static attemptLogout() {
         console.log("Attempting logout...");
-        axios.post('logout/AttemptLogout', this.props.account)
+        axios.post('logout/AttemptLogout', this.state.currentUser)
             .then(res => {
                 console.log(res.data)
                 var isSuccessful = res.data['isSuccessful'];
                 if (isSuccessful) {
                     this.state.logoutResults = true;
                     // return to main page
-                    this.props.history.push('/');
+                    this.state.currentUser = '';
+                    this.state.loggedIn = false;
                 } else {
                     this.failureLogoutView(res.data['message']);
                 }
@@ -43,12 +55,23 @@ export class Home extends Component {
         });
     }
 
+    setCurrentUser = (userAccount) => {
+        this.setState({
+            currentUser: userAccount,
+            loggedIn: true
+        })
+    }
+
   render() {
     return (
-      <div>
-        <h1>Hello, welcome to WeCasa</h1>
-            <p>Username</p>
-      </div>
+        <div>
+            (<div>
+                {(!this.state.loggedIn) ? 
+                    (<Navigate to='/login'></Navigate>)
+                    : (<div><h1>Hello, welcome to WeCasa</h1>
+                        <p>{this.state.currentUser.Username}</p></div>)}
+            </div>)
+        </div>
     );
   }
 } 

@@ -6,9 +6,10 @@ const LogoutModal = (props) => {
         <Modal title="Are you sure?"
            open={props.show}
            centered="true"
+           okText="Logout"
+           cancelText="No, thank you"
            onOk={props.confirm}
             onCancel={props.close}>
-            <p>Please confirm you want to logout by pressing OK.</p>
         </Modal>
     );
 }

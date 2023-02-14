@@ -1,6 +1,6 @@
 ﻿import React, { Component, useState, useEffect } from 'react';
 import { Form, Input, Button, notification, ConfigProvider, Row, Gutter, Col, Image} from 'antd';
-import { withRouter, useNavigate, Navigate } from 'react-router-dom';
+import { withRouter, useNavigate, Navigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import * as Styles from '../styles/ConstStyles.js';
 import defaultImage from '../assets/defaultimgs/wecasatemp.jpg';

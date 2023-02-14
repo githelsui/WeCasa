@@ -16,15 +16,15 @@ export class Header extends Component {
         this.state = {
             showModal: false,
             collapsed: true,
-            loggedIn: false,
+            loggedIn: false
         }; 
     }
 
-  //TODO: Update navbar when logged in
-  toggleHeader () {
+  //TODO: Update navbar
+  toggleHeader (props) {
     this.setState({
-        collapsed: !this.state.collapsed,
-        loggedIn: this.state.loggedIn,
+        collapsed: !props.isAuthenticated,
+        loggedIn: props.isAuthenticated
     });
     }
 
@@ -59,7 +59,7 @@ export class Header extends Component {
                                         <DropdownItem href="/settings">Account Settings</DropdownItem>
                                         <DropdownItem href="/feedback">Help</DropdownItem>
                                             <DropdownItem onClick={() => this.setShowModal(true)}>Logout</DropdownItem>
-                                            <LogoutModal show={this.state.showModal} close={() => this.setShowModal(false)} confirm={() => Home.attemptLogout()} />
+                                            <LogoutModal show={this.state.showModal} close={() => this.setShowModal(false)} confirm={this.props.logout} />
                                         </DropdownMenu>
                                 </UncontrolledDropdown>
                             )

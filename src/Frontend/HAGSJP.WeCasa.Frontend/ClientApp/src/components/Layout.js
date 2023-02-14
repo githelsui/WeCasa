@@ -14,12 +14,24 @@ export class Layout extends Component {
         };
     }
 
+    login() {
+        this.setState({
+            isAuthenticated: true
+        })
+    }
+
+    logout() {
+        this.setState({
+            isAuthenticated: false
+        })
+    }
+
   render() {
     return (
       <div>
-        <Header />
-            {(this.state.isAuthenticated == true) ?
-                (<NavMenu />) : <div></div>}
+        <Header isOpen={this.state.isAuthenticated} />
+        {(this.state.isAuthenticated == true) ?
+            (<NavMenu />) : <div></div>}
         <Container tag="main">
           {this.props.children}
         </Container>
