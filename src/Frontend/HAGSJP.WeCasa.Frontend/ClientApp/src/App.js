@@ -1,22 +1,30 @@
 import React, { Component } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Container } from 'reactstrap';
+import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import AppRoutes from './AppRoutes';
-import { Layout } from './components/Layout';
+import { Header } from './components/Header';
+import { NavMenu } from './components/NavMenu';
+import { useAuth } from './components/AuthContext';
 import './custom.css';
 
-export default class App extends Component {
-  static displayName = App.name;
+function App() {
+    const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
+    const { auth } = useAuth();
 
-  render() {
     return (
-      <Layout>
+        <BrowserRouter basename={baseUrl}>
+        <Header />
+            {auth ? <NavMenu /> : <div />}
+        <Container tag="main">
         <Routes>
           {AppRoutes.map((route, index) => {
             const { element, ...rest } = route;
             return <Route key={index} {...rest} element={element} />;
           })}
         </Routes>
-      </Layout>
+        </Container>
+      </BrowserRouter>
     );
-  }
 }
+
+export default App;

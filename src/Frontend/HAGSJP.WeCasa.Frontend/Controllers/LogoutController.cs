@@ -14,13 +14,11 @@ namespace HAGSJP.WeCasa.Frontend.Controllers;
 [Route("[controller]")]
 public class LogoutController : Controller
 {
-
     [HttpPost]
     [Route("AttemptLogout")]
-    public Result AttemptLogout()
+    public Result AttemptLogout(userAccount)
     {
-        UserAccount ua = new UserAccount();
         Logout logout = new Logout();
-        return logout.LogoutUser(ua);
+        return logout.LogoutUser(userAccount);
     }
 }

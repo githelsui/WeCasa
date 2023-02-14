@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Modal } from 'antd';
+import * as Styles from '../styles/ConstStyles.js';
 
 const LogoutModal = (props) => {
    return (
