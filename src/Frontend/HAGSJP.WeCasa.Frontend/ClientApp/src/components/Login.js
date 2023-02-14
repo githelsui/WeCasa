@@ -14,7 +14,7 @@ export const resetPassBtnStyle = {
 }
 
 export const Login = () => {
-    const { setAuth } = useAuth();
+    const { setAuth, setCurrentUser } = useAuth();
     const navigate = useNavigate();
 
     const [loginResults, setLoginResults] = useState(false);
@@ -98,6 +98,9 @@ export const Login = () => {
                     var isSuccessful = res.data['isSuccessful'];
                     if (isSuccessful) {
                         console.log(res.data)
+                        setLoginResults(true);
+                        setAuth(true);
+                        setCurrentUser(account);
                         successLoginView();
                     } else {
                         failureLoginView(res.data['message']);
@@ -122,8 +125,6 @@ export const Login = () => {
 
     const successLoginView = () => {
         console.log("Successful login");
-        setLoginResults(true);
-        setAuth(true);
         navigate('/home', { replace:true});
         //this.forceUpdate();
     }

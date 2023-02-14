@@ -13,7 +13,7 @@ export const Home = () => {
             {(!auth) ?
                 (<Navigate to='/login'></Navigate>)
                 : (
-                <div><h1>Hello, welcome to WeCasa</h1></div>)}
+                    <div><h1>Hello, welcome to WeCasa</h1></div>)}
         </div>
     );
 }; 

@@ -9,9 +9,10 @@ import { notification } from 'antd';
 import * as Styles from '../styles/ConstStyles.js';
 
 export const Header = () => {
-    const { setAuth, auth, currentUser } = useAuth();
+    const { setAuth, auth, setCurrentUser, currentUser } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [collapsed, setCollapsed] = useState(true);
+    const [logoutResults, setLogoutResults] = useState(false);
 
     const toggleHeader = () => {
         setCollapsed(!collapsed);
@@ -19,15 +20,18 @@ export const Header = () => {
 
     const attemptLogout = () => {
         console.log("Attempting logout...");
-        console.log(currentUser);
-        axios.post('logout/AttemptLogout', currentUser)
+        let account = {
+            Username: currentUser
+        }
+        axios.post('logout/AttemptLogout', account)
             .then(res => {
                 console.log(res.data)
                 var isSuccessful = res.data['isSuccessful'];
                 if (isSuccessful) {
-                    this.state.logoutResults = true;
+                    setLogoutResults(true);
                     // return to main page
                     setAuth(false);
+                    setCurrentUser(null);
                 } else {
                     failureLogoutView(res.data['message']);
                 }
@@ -37,7 +41,7 @@ export const Header = () => {
 
     const failureLogoutView = (failureMessage) => {
         // Accounts for user failure cases and system errors
-        this.state.logoutResults = false;
+        setLogoutResults(false);
         notification.open({
             message: "Try again.",
             description: failureMessage,

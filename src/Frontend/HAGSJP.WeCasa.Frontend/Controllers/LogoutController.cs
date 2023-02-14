@@ -16,9 +16,10 @@ public class LogoutController : Controller
 {
     [HttpPost]
     [Route("AttemptLogout")]
-    public Result AttemptLogout(userAccount)
+    public Result AttemptLogout([FromBody] LoginForm account)
     {
+        UserAccount currentUser = new UserAccount(account.Username);
         Logout logout = new Logout();
-        return logout.LogoutUser(userAccount);
+        return logout.LogoutUser(currentUser);
     }
 }
