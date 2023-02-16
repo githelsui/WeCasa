@@ -20,8 +20,7 @@ namespace HAGSJP.WeCasa.Client
         }
 
         // Used in Web API
-        //TODO: Include firstName, lastName as parameters for Registration Feature flow (Client -> MariaDAO)
-        public Result Register(string email, string password)
+        public Result Register(string firstName, string lastName, string email, string password)
         {
             var registerResult = new Result();
 
@@ -30,13 +29,13 @@ namespace HAGSJP.WeCasa.Client
             var validateEmail = _um.ValidateEmail(email);
             var validatePassword = _um.ValidatePassword(password);
 
-            if(!emailTaken && validateEmail.IsSuccessful && validatePassword.IsSuccessful)
+            if (!emailTaken && validateEmail.IsSuccessful && validatePassword.IsSuccessful)
             {
-                registerResult = Register(email, password, _um);
+                registerResult = _um.RegisterUser(firstName, lastName, email, password);
             } else
             {
                 var emailTakenMessage = emailTaken ? "An account already exists with this email." : "";
-                registerResult.Message = validateEmail.Message + "\n" + validatePassword.Message + "\n" + emailTakenMessage ;
+                registerResult.Message = validateEmail.Message + "\n" + validatePassword.Message + "\n" + emailTakenMessage;
                 registerResult.IsSuccessful = false;
             }
             return registerResult;

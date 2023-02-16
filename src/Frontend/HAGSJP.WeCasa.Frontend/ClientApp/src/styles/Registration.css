@@ -1,7 +1,17 @@
-﻿#RegistrationForm {
+:root {
+    --primary-color: #EB3052;
+    --primary-color-darken: #D62D4C;
+    --primary-hover-color: var(--primary-color-darken);
+}
+
+#RegistrationForm {
     padding-top: 1%;
 }
 
 #LoginButton {
     padding-top: 20px;
+}
+
+.mulish-font {
+    font-family: 'Mulish';
 }
