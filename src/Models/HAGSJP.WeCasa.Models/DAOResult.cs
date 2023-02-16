@@ -19,7 +19,7 @@ namespace HAGSJP.WeCasa.Models
             return result;
         }
 
-         public DAOResult ValidateSqlResultForDelete(int rows)
+         public DAOResult ValidateSqlResultMultiple(int rows)
         {
             var result = new DAOResult();
             if (rows >= 0)

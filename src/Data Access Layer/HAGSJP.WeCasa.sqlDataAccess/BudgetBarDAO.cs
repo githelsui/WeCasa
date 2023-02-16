@@ -1,7 +1,5 @@
 using HAGSJP.WeCasa.Models;
-using Microsoft.Data.SqlClient;
 using MySqlConnector;
-
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
    public class BudgetBarDAO : AccountMariaDAO
@@ -74,14 +72,14 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         
 
         public DAOResult UpdateBill(Bill bill)
-        {       
+        {    
+            var result = new DAOResult();   
             _connectionString = BuildConnectionString().ConnectionString;
             using(var connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
                     connection.Open();
-                    var result = new DAOResult();
 
                     var insertSql = @"UPDATE Bills 
                                             SET 
@@ -94,7 +92,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                                                 is_deleted = @is_deleted,
                                                 date_deleted = @date_deleted,
                                                 receipt_file_name = @receipt_file_name
-                                            WHERE bill_id = @bill_id;";
+                                            WHERE bill_id = @bill_id
+                                            AND username = @username;";
                     var command = connection.CreateCommand();
                     command.CommandText = insertSql;
                     command.Parameters.AddWithValue("@bill_id", bill.BillId);
@@ -107,27 +106,79 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@is_deleted", bill.IsDeleted);
                     command.Parameters.AddWithValue("@date_deleted", bill.DateDeleted);
                     command.Parameters.AddWithValue("@receipt_file_name", bill.PhotoFileName);
+                    command.Parameters.AddWithValue("@username", bill.Username);
+
 
                     var rows = (command.ExecuteNonQuery());
-                    result = result.ValidateSqlResult(rows);
+                    result = result.ValidateSqlResultMultiple(rows);
                                 }
                 catch (MySqlException sqlex)
                 {
+
                     PopulateResult(result, sqlex);
                 } 
                 return result;
             }
         }
+
+        // public DAOResult UpdateBill(string username, Boolean paymentStatus, Decimal PercentageOwed)
+        // {    
+        //     var result = new DAOResult();   
+        //     _connectionString = BuildConnectionString().ConnectionString;
+        //     using(var connection = new MySqlConnection(_connectionString))
+        //     {
+        //         try
+        //         {
+        //             connection.Open();
+
+        //             var insertSql = @"UPDATE Bills 
+        //                                     SET 
+        //                                         bill_description = @bill_description,
+        //                                         amount = @amount,
+        //                                         bill_name = @bill_name,
+        //                                         payment_status = @payment_status,
+        //                                         percentage_owed = @percentage_owed,
+        //                                         is_repeated = @is_repeated,
+        //                                         is_deleted = @is_deleted,
+        //                                         date_deleted = @date_deleted,
+        //                                         receipt_file_name = @receipt_file_name
+        //                                     WHERE bill_id = @bill_id;";
+        //             var command = connection.CreateCommand();
+        //             command.CommandText = insertSql;
+        //             command.Parameters.AddWithValue("@bill_id", bill.BillId);
+        //             command.Parameters.AddWithValue("@bill_description", bill.BillDescription);
+        //             command.Parameters.AddWithValue("@amount", bill.Amount);
+        //             command.Parameters.AddWithValue("@bill_name", bill.BillName);
+        //             command.Parameters.AddWithValue("@payment_status", bill.PaymentStatus);
+        //             command.Parameters.AddWithValue("@percentage_owed", bill.PercentageOwed);
+        //             command.Parameters.AddWithValue("@is_repeated", bill.IsRepeated);
+        //             command.Parameters.AddWithValue("@is_deleted", bill.IsDeleted);
+        //             command.Parameters.AddWithValue("@date_deleted", bill.DateDeleted);
+        //             command.Parameters.AddWithValue("@receipt_file_name", bill.PhotoFileName);
+        //             command.Parameters.AddWithValue("@username", bill.Username);
+
+
+        //             var rows = (command.ExecuteNonQuery());
+        //             result = result.ValidateSqlResult(rows);
+        //                         }
+        //         catch (MySqlException sqlex)
+        //         {
+
+        //             PopulateResult(result, sqlex);
+        //         } 
+        //         return result;
+        //     }
+        // }
     
-        public DAOResult DeleteBill(Bill bill)
+        public DAOResult DeleteBill(string billId, DateTime date)
         {
+            var result = new DAOResult();
             _connectionString = BuildConnectionString().ConnectionString;
             using(var connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
                     connection.Open();
-                    var result = new DAOResult();
 
                     var insertSql = @"UPDATE Bills 
                                             SET 
@@ -136,12 +187,12 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                                             WHERE bill_id = @bill_id;";
                     var command = connection.CreateCommand();
                     command.CommandText = insertSql;
-                    command.Parameters.AddWithValue("@bill_id", bill.BillId);
+                    command.Parameters.AddWithValue("@bill_id", billId);
                     command.Parameters.AddWithValue("@is_deleted", true);
-                    command.Parameters.AddWithValue("@date_deleted", bill.DateDeleted);
+                    command.Parameters.AddWithValue("@date_deleted", date);
 
                     var rows = (command.ExecuteNonQuery());
-                    result = result.ValidateSqlResult(rows);
+                    result = result.ValidateSqlResultMultiple(rows);
                 }
                 catch (MySqlException sqlex)
                 {
@@ -160,8 +211,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 try
                 {
                     connection.Open();
-
-                    var insertSql = @"UPDATE Bill 
+                    var insertSql = @"UPDATE Bills 
                                             SET
                                                 is_deleted = @is_deleted,
                                                 date_deleted = @date_deleted
@@ -173,7 +223,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@date_deleted", default);
 
                     var rows = (command.ExecuteNonQuery());
-                    result = result.ValidateSqlResult(rows);
+                    result = result.ValidateSqlResultMultiple(rows);
                 }
                 catch (MySqlException sqlex)
                 {
@@ -185,19 +235,18 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public DAOResult RefreshBillList()
        {
+            var result = new DAOResult();
            _connectionString = BuildConnectionString().ConnectionString;
            using(var connection = new MySqlConnection(_connectionString))
            {
                 try
                 {
                     connection.Open();
-                    var result = new DAOResult();
-
                     var insertSql = @"DELETE from Bills WHERE (SELECT MONTH(date_submitted) AS Month) != MONTH(NOW()) OR (SELECT YEAR(date_submitted) AS Month) != YEAR(NOW());";
                     var command = connection.CreateCommand();
                     command.CommandText = insertSql;
                     var rows = (command.ExecuteNonQuery());
-                    result = result.ValidateSqlResultForDelete(rows);
+                    result = result.ValidateSqlResultMultiple(rows);
                 }
                 catch (MySqlException sqlex)
                 {
@@ -209,19 +258,19 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
        public DAOResult DeleteAllOutdatedBills()
        {
+            var result = new DAOResult();
             _connectionString = BuildConnectionString().ConnectionString;
             using(var connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
                     connection.Open();
-                    var result = new DAOResult();
 
                     var insertSql = @"DELETE from Bills WHERE date_deleted <= NOW() - INTERVAL 1 DAY;";
                     var command = connection.CreateCommand();
                     command.CommandText = insertSql;
                     var rows = (command.ExecuteNonQuery());
-                    result = result.ValidateSqlResultForDelete(rows);
+                    result = result.ValidateSqlResultMultiple(rows);
                 }
                 catch (MySqlException sqlex)
                 {
@@ -231,7 +280,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
        }
 
-        public List<Bill> GetBills(string groupId, int isActive)
+        public List<Bill> GetBills(string username, int isDeleted)
         {
             _connectionString = BuildConnectionString().ConnectionString;
             using(var connection = new MySqlConnection(_connectionString))
@@ -239,16 +288,15 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 try
                 {
                     connection.Open();
-                    var result = new Result();
                     List<Bill> activeBills = new List<Bill>();
 
                     var insertSql = @"SELECT * from BILLS 
                                             WHERE is_deleted = @isDeleted
-                                            AND group_id = @groupId;";
+                                            AND username = @username;";
                     var command = connection.CreateCommand();
                     command.CommandText = insertSql;
-                    command.Parameters.AddWithValue("@isDeleted", isActive);
-                    command.Parameters.AddWithValue("@groupId".ToLower(), groupId.ToLower());
+                    command.Parameters.AddWithValue("@isDeleted", isDeleted);
+                    command.Parameters.AddWithValue("@username".ToLower(), username.ToLower());
 
                     using (var reader = command.ExecuteReader())
                     {
@@ -311,13 +359,13 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public DAOResult EditBudget(string groupID, decimal amount)
         {
+            var result = new DAOResult();
             _connectionString = BuildConnectionString().ConnectionString;
             using(var connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
                     connection.Open();
-                    var result = new DAOResult();
 
                     var insertSql = @"UPDATE GROUPS 
                                             SET 

@@ -44,6 +44,9 @@ export class NavMenu extends Component {
                                     <NavItem>
                                         <NavLink tag={Link} className="text-dark" to="/feedback">Feedback</NavLink>
                                     </NavItem>
+                                    <NavItem>
+                                        <NavLink tag={Link} className="text-dark" to="/budget-bar">Budget Bar</NavLink>
+                                    </NavItem>
                                 </ul>
                             ) : (
                                 <ul className="navbar-nav flex-grow">

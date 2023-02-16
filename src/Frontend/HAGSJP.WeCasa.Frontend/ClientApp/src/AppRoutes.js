@@ -2,6 +2,7 @@ import { Counter } from "./components/Counter";
 import { FetchData } from "./components/FetchData";
 import { Registration } from "./components/Registration";
 import { Login } from "./components/Login";
+import { BudgetBar } from "./components/BudgetBar/BudgetBar";
 
 const AppRoutes = [
   {
@@ -24,6 +25,10 @@ const AppRoutes = [
     path: '/login',
     element: <Login />
    },
+   {
+    path: '/budget-bar',
+    element: <BudgetBar />
+   }
   // {
   //   path: '/',
   //   element: <Home />

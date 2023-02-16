@@ -1,13 +1,15 @@
+using System.Text.Json.Serialization;
 using HAGSJP.WeCasa.Models.Security;
 
 
 namespace HAGSJP.WeCasa.Models
 {
+     [Serializable]
    public class Bill
    {
        public string Username { get; set; }
        public string BillId { get; set; }
-       public DateTime DateEntered { get; set; }
+       public DateTime? DateEntered { get; set; }
        public string BillName { get; set; }
        public string? BillDescription { get; set; }
        public decimal Amount { get; set; }
@@ -17,6 +19,7 @@ namespace HAGSJP.WeCasa.Models
        public Boolean? IsDeleted { get; set; }
        public DateTime? DateDeleted { get; set; }
        public string? PhotoFileName { get; set; }
+     [JsonConstructor]
        public Bill(){}
 
         public Bill(DateTime dateEntered, string billName , string billDescription, decimal amount, decimal percentageOwed, Boolean paymentStatus,Boolean isRepeated, Boolean isDeleted, DateTime dateDeleted, string photoFileName)
