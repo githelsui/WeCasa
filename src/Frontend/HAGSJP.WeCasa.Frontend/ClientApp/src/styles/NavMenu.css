@@ -37,7 +37,7 @@ ul.horizonal-list li {
 }
 
 ul.horizonal-list li:hover {
-    background-image: linear-gradient(rgb(0 0 0/40%) 0 0);
+    background-color: lightgray;
     border-radius: 50px;
     background-size: 200% 100%;
 }

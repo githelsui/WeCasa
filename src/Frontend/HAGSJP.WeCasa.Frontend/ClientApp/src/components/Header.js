@@ -1,7 +1,7 @@
 import React, { Component, useState, useEffect } from 'react';
 import { Collapse, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import LogoutModal from './LogoutModal'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import '../styles/NavMenu.css';
 import axios from 'axios'
@@ -23,7 +23,7 @@ export const Header = () => {
         let account = {
             Username: currentUser
         }
-        axios.post('logout/AttemptLogout', account)
+        axios.post('home/AttemptLogout', account)
             .then(res => {
                 console.log(res.data)
                 var isSuccessful = res.data['isSuccessful'];

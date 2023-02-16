@@ -12,7 +12,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class LogoutController : Controller
+public class HomeController : Controller
 {
     [HttpPost]
     [Route("AttemptLogout")]
