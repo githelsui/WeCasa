@@ -281,6 +281,10 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public Result LogoutUser(UserAccount userAccount)
         {
             Result logoutResult = _dao.UpdateUserAuthentication(userAccount, false);
+            if(logoutResult.IsSuccessful)
+            {
+                logoutResult.Message = "Successfully logged out.";
+            }
             return logoutResult;
         }
 

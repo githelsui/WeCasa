@@ -32,12 +32,24 @@ export const Header = () => {
                     // return to main page
                     setAuth(false);
                     setCurrentUser(null);
+                    successLogoutView(res.data['message']);
                 } else {
                     failureLogoutView(res.data['message']);
                 }
             })
             .catch((error) => { console.error(error) });
     };
+
+    const successLogoutView = (successMessage) => {
+        // display confirmation message
+        notification.open({
+            message: successMessage,
+            description: '',
+            duration: 10,
+            placement: "topRight",
+        });
+        setShowModal(false);
+    }
 
     const failureLogoutView = (failureMessage) => {
         // Accounts for user failure cases and system errors
