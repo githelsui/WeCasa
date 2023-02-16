@@ -1,0 +1,6 @@
+C:\Users\joshu\source\repos\WeCasa\src\Tests\HAGSJP.WeCasa.Authentication.Test\bin\Debug\net6.0\CoverletSourceRootsMapping
+C:\Users\joshu\source\repos\WeCasa\src\Tests\HAGSJP.WeCasa.Authentication.Test\obj\Debug\net6.0\HAGSJP.WeCasa.Authentication.Test.csproj.AssemblyReference.cache
+C:\Users\joshu\source\repos\WeCasa\src\Tests\HAGSJP.WeCasa.Authentication.Test\obj\Debug\net6.0\HAGSJP.WeCasa.Authentication.Test.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\joshu\source\repos\WeCasa\src\Tests\HAGSJP.WeCasa.Authentication.Test\obj\Debug\net6.0\HAGSJP.WeCasa.Authentication.Test.AssemblyInfoInputs.cache
+C:\Users\joshu\source\repos\WeCasa\src\Tests\HAGSJP.WeCasa.Authentication.Test\obj\Debug\net6.0\HAGSJP.WeCasa.Authentication.Test.AssemblyInfo.cs
+C:\Users\joshu\source\repos\WeCasa\src\Tests\HAGSJP.WeCasa.Authentication.Test\obj\Debug\net6.0\HAGSJP.WeCasa.Authentication.Test.csproj.CoreCompileInputs.cache

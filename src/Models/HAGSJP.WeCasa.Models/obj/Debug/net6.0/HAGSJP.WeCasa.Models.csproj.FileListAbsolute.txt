@@ -1,0 +1,12 @@
+C:\Users\joshu\source\repos\WeCasa\src\Models\HAGSJP.WeCasa.Models\bin\Debug\net6.0\HAGSJP.WeCasa.Models.deps.json
+C:\Users\joshu\source\repos\WeCasa\src\Models\HAGSJP.WeCasa.Models\bin\Debug\net6.0\HAGSJP.WeCasa.Models.dll
+C:\Users\joshu\source\repos\WeCasa\src\Models\HAGSJP.WeCasa.Models\bin\Debug\net6.0\HAGSJP.WeCasa.Models.pdb
+C:\Users\joshu\source\repos\WeCasa\src\Models\HAGSJP.WeCasa.Models\obj\Debug\net6.0\HAGSJP.WeCasa.Models.csproj.AssemblyReference.cache
+C:\Users\joshu\source\repos\WeCasa\src\Models\HAGSJP.WeCasa.Models\obj\Debug\net6.0\HAGSJP.WeCasa.Models.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\joshu\source\repos\WeCasa\src\Models\HAGSJP.WeCasa.Models\obj\Debug\net6.0\HAGSJP.WeCasa.Models.AssemblyInfoInputs.cache
+C:\Users\joshu\source\repos\WeCasa\src\Models\HAGSJP.WeCasa.Models\obj\Debug\net6.0\HAGSJP.WeCasa.Models.AssemblyInfo.cs
+C:\Users\joshu\source\repos\WeCasa\src\Models\HAGSJP.WeCasa.Models\obj\Debug\net6.0\HAGSJP.WeCasa.Models.csproj.CoreCompileInputs.cache
+C:\Users\joshu\source\repos\WeCasa\src\Models\HAGSJP.WeCasa.Models\obj\Debug\net6.0\HAGSJP.WeCasa.Models.dll
+C:\Users\joshu\source\repos\WeCasa\src\Models\HAGSJP.WeCasa.Models\obj\Debug\net6.0\refint\HAGSJP.WeCasa.Models.dll
+C:\Users\joshu\source\repos\WeCasa\src\Models\HAGSJP.WeCasa.Models\obj\Debug\net6.0\HAGSJP.WeCasa.Models.pdb
+C:\Users\joshu\source\repos\WeCasa\src\Models\HAGSJP.WeCasa.Models\obj\Debug\net6.0\ref\HAGSJP.WeCasa.Models.dll

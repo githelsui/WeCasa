@@ -1,0 +1,16 @@
+C:\Users\joshu\source\repos\WeCasa\src\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\bin\Debug\net6.0\HAGSJP.WeCasa.Logging.deps.json
+C:\Users\joshu\source\repos\WeCasa\src\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\bin\Debug\net6.0\HAGSJP.WeCasa.Logging.dll
+C:\Users\joshu\source\repos\WeCasa\src\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\bin\Debug\net6.0\HAGSJP.WeCasa.Logging.pdb
+C:\Users\joshu\source\repos\WeCasa\src\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\bin\Debug\net6.0\HAGSJP.WeCasa.Models.dll
+C:\Users\joshu\source\repos\WeCasa\src\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\bin\Debug\net6.0\HAGSJP.WeCasa.sqlDataAccess.dll
+C:\Users\joshu\source\repos\WeCasa\src\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\bin\Debug\net6.0\HAGSJP.WeCasa.sqlDataAccess.pdb
+C:\Users\joshu\source\repos\WeCasa\src\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\bin\Debug\net6.0\HAGSJP.WeCasa.Models.pdb
+C:\Users\joshu\source\repos\WeCasa\src\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\obj\Debug\net6.0\HAGSJP.WeCasa.Logging.csproj.AssemblyReference.cache
+C:\Users\joshu\source\repos\WeCasa\src\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\obj\Debug\net6.0\HAGSJP.WeCasa.Logging.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\joshu\source\repos\WeCasa\src\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\obj\Debug\net6.0\HAGSJP.WeCasa.Logging.AssemblyInfoInputs.cache
+C:\Users\joshu\source\repos\WeCasa\src\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\obj\Debug\net6.0\HAGSJP.WeCasa.Logging.csproj.CoreCompileInputs.cache
+C:\Users\joshu\source\repos\WeCasa\src\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\obj\Debug\net6.0\HAGSJP.WeCasa.Logging.csproj.CopyComplete
+C:\Users\joshu\source\repos\WeCasa\src\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\obj\Debug\net6.0\HAGSJP.WeCasa.Logging.dll
+C:\Users\joshu\source\repos\WeCasa\src\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\obj\Debug\net6.0\refint\HAGSJP.WeCasa.Logging.dll
+C:\Users\joshu\source\repos\WeCasa\src\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\obj\Debug\net6.0\HAGSJP.WeCasa.Logging.pdb
+C:\Users\joshu\source\repos\WeCasa\src\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\obj\Debug\net6.0\ref\HAGSJP.WeCasa.Logging.dll

@@ -442,6 +442,25 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 return result;
             }
         }
+
+        public Result UpdateUser(UserAccount userAccount, string updateSQL)
+        {
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new Result();
+
+                var command = connection.CreateCommand();
+                command.CommandText = updateSQL;
+
+                // Execution of SQL
+                var rows = (command.ExecuteNonQuery());
+                result = ValidateSqlStatement(rows);
+                connection.Close();
+                return result;
+            }
+        }
     
         public AuthResult PopulateUserStatus(UserAccount userAccount)
         {

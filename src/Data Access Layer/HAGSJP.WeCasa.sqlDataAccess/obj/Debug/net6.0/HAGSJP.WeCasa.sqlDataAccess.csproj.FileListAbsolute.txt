@@ -1,0 +1,15 @@
+C:\Users\joshu\source\repos\WeCasa\src\Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\bin\Debug\net6.0\HAGSJP.WeCasa.sqlDataAccess.deps.json
+C:\Users\joshu\source\repos\WeCasa\src\Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\bin\Debug\net6.0\HAGSJP.WeCasa.sqlDataAccess.dll
+C:\Users\joshu\source\repos\WeCasa\src\Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\bin\Debug\net6.0\HAGSJP.WeCasa.sqlDataAccess.pdb
+C:\Users\joshu\source\repos\WeCasa\src\Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\bin\Debug\net6.0\HAGSJP.WeCasa.Models.dll
+C:\Users\joshu\source\repos\WeCasa\src\Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\bin\Debug\net6.0\HAGSJP.WeCasa.Models.pdb
+C:\Users\joshu\source\repos\WeCasa\src\Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\obj\Debug\net6.0\HAGSJP.WeCasa.sqlDataAccess.csproj.AssemblyReference.cache
+C:\Users\joshu\source\repos\WeCasa\src\Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\obj\Debug\net6.0\HAGSJP.WeCasa.sqlDataAccess.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\joshu\source\repos\WeCasa\src\Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\obj\Debug\net6.0\HAGSJP.WeCasa.sqlDataAccess.AssemblyInfoInputs.cache
+C:\Users\joshu\source\repos\WeCasa\src\Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\obj\Debug\net6.0\HAGSJP.WeCasa.sqlDataAccess.AssemblyInfo.cs
+C:\Users\joshu\source\repos\WeCasa\src\Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\obj\Debug\net6.0\HAGSJP.WeCasa.sqlDataAccess.csproj.CoreCompileInputs.cache
+C:\Users\joshu\source\repos\WeCasa\src\Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\obj\Debug\net6.0\HAGSJP.WeCasa.sqlDataAccess.csproj.CopyComplete
+C:\Users\joshu\source\repos\WeCasa\src\Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\obj\Debug\net6.0\HAGSJP.WeCasa.sqlDataAccess.dll
+C:\Users\joshu\source\repos\WeCasa\src\Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\obj\Debug\net6.0\refint\HAGSJP.WeCasa.sqlDataAccess.dll
+C:\Users\joshu\source\repos\WeCasa\src\Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\obj\Debug\net6.0\HAGSJP.WeCasa.sqlDataAccess.pdb
+C:\Users\joshu\source\repos\WeCasa\src\Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\obj\Debug\net6.0\ref\HAGSJP.WeCasa.sqlDataAccess.dll

@@ -1,0 +1,462 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Tests\\HAGSJP.WeCasa.Registration.Test\\HAGSJP.WeCasa.Registration.Test.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Clients\\HAGSJP.WeCasa.Client\\HAGSJP.WeCasa.Client.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Clients\\HAGSJP.WeCasa.Client\\HAGSJP.WeCasa.Client.csproj",
+        "projectName": "HAGSJP.WeCasa.Client",
+        "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Clients\\HAGSJP.WeCasa.Client\\HAGSJP.WeCasa.Client.csproj",
+        "packagesPath": "C:\\Users\\joshu\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Clients\\HAGSJP.WeCasa.Client\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\joshu\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Cross-Cutting Concerns\\HAGSJP.WeCasa.Logging\\HAGSJP.WeCasa.Logging.csproj": {
+                "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Cross-Cutting Concerns\\HAGSJP.WeCasa.Logging\\HAGSJP.WeCasa.Logging.csproj"
+              },
+              "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Data Access Layer\\HAGSJP.WeCasa.sqlDataAccess\\HAGSJP.WeCasa.sqlDataAccess.csproj": {
+                "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Data Access Layer\\HAGSJP.WeCasa.sqlDataAccess\\HAGSJP.WeCasa.sqlDataAccess.csproj"
+              },
+              "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Models\\HAGSJP.WeCasa.Models\\HAGSJP.WeCasa.Models.csproj": {
+                "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Models\\HAGSJP.WeCasa.Models\\HAGSJP.WeCasa.Models.csproj"
+              },
+              "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Services\\HAGSJP.WeCasa.Services\\HAGSJP.WeCasa.Services.csproj": {
+                "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Services\\HAGSJP.WeCasa.Services\\HAGSJP.WeCasa.Services.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Cross-Cutting Concerns\\HAGSJP.WeCasa.Logging\\HAGSJP.WeCasa.Logging.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Cross-Cutting Concerns\\HAGSJP.WeCasa.Logging\\HAGSJP.WeCasa.Logging.csproj",
+        "projectName": "HAGSJP.WeCasa.Logging",
+        "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Cross-Cutting Concerns\\HAGSJP.WeCasa.Logging\\HAGSJP.WeCasa.Logging.csproj",
+        "packagesPath": "C:\\Users\\joshu\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Cross-Cutting Concerns\\HAGSJP.WeCasa.Logging\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\joshu\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Data Access Layer\\HAGSJP.WeCasa.sqlDataAccess\\HAGSJP.WeCasa.sqlDataAccess.csproj": {
+                "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Data Access Layer\\HAGSJP.WeCasa.sqlDataAccess\\HAGSJP.WeCasa.sqlDataAccess.csproj"
+              },
+              "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Models\\HAGSJP.WeCasa.Models\\HAGSJP.WeCasa.Models.csproj": {
+                "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Models\\HAGSJP.WeCasa.Models\\HAGSJP.WeCasa.Models.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "Microsoft.Data.SqlClient": {
+              "target": "Package",
+              "version": "[5.0.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Data Access Layer\\HAGSJP.WeCasa.sqlDataAccess\\HAGSJP.WeCasa.sqlDataAccess.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Data Access Layer\\HAGSJP.WeCasa.sqlDataAccess\\HAGSJP.WeCasa.sqlDataAccess.csproj",
+        "projectName": "HAGSJP.WeCasa.sqlDataAccess",
+        "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Data Access Layer\\HAGSJP.WeCasa.sqlDataAccess\\HAGSJP.WeCasa.sqlDataAccess.csproj",
+        "packagesPath": "C:\\Users\\joshu\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Data Access Layer\\HAGSJP.WeCasa.sqlDataAccess\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\joshu\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Models\\HAGSJP.WeCasa.Models\\HAGSJP.WeCasa.Models.csproj": {
+                "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Models\\HAGSJP.WeCasa.Models\\HAGSJP.WeCasa.Models.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "Microsoft.Data.SqlClient": {
+              "target": "Package",
+              "version": "[5.0.1, )"
+            },
+            "MySqlConnector": {
+              "target": "Package",
+              "version": "[2.2.2, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Models\\HAGSJP.WeCasa.Models\\HAGSJP.WeCasa.Models.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Models\\HAGSJP.WeCasa.Models\\HAGSJP.WeCasa.Models.csproj",
+        "projectName": "HAGSJP.WeCasa.Models",
+        "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Models\\HAGSJP.WeCasa.Models\\HAGSJP.WeCasa.Models.csproj",
+        "packagesPath": "C:\\Users\\joshu\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Models\\HAGSJP.WeCasa.Models\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\joshu\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Services\\HAGSJP.WeCasa.Services\\HAGSJP.WeCasa.Services.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Services\\HAGSJP.WeCasa.Services\\HAGSJP.WeCasa.Services.csproj",
+        "projectName": "HAGSJP.WeCasa.Services",
+        "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Services\\HAGSJP.WeCasa.Services\\HAGSJP.WeCasa.Services.csproj",
+        "packagesPath": "C:\\Users\\joshu\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Services\\HAGSJP.WeCasa.Services\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\joshu\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Cross-Cutting Concerns\\HAGSJP.WeCasa.Logging\\HAGSJP.WeCasa.Logging.csproj": {
+                "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Cross-Cutting Concerns\\HAGSJP.WeCasa.Logging\\HAGSJP.WeCasa.Logging.csproj"
+              },
+              "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Data Access Layer\\HAGSJP.WeCasa.sqlDataAccess\\HAGSJP.WeCasa.sqlDataAccess.csproj": {
+                "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Data Access Layer\\HAGSJP.WeCasa.sqlDataAccess\\HAGSJP.WeCasa.sqlDataAccess.csproj"
+              },
+              "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Models\\HAGSJP.WeCasa.Models\\HAGSJP.WeCasa.Models.csproj": {
+                "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Models\\HAGSJP.WeCasa.Models\\HAGSJP.WeCasa.Models.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "Identity.PasswordHasher": {
+              "target": "Package",
+              "version": "[1.0.0, )"
+            },
+            "Microsoft.AspNetCore.Cryptography.KeyDerivation": {
+              "target": "Package",
+              "version": "[7.0.1, )"
+            },
+            "Microsoft.AspNetCore.Identity": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Tests\\HAGSJP.WeCasa.Registration.Test\\HAGSJP.WeCasa.Registration.Test.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Tests\\HAGSJP.WeCasa.Registration.Test\\HAGSJP.WeCasa.Registration.Test.csproj",
+        "projectName": "HAGSJP.WeCasa.Registration.Test",
+        "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Tests\\HAGSJP.WeCasa.Registration.Test\\HAGSJP.WeCasa.Registration.Test.csproj",
+        "packagesPath": "C:\\Users\\joshu\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Tests\\HAGSJP.WeCasa.Registration.Test\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\joshu\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Clients\\HAGSJP.WeCasa.Client\\HAGSJP.WeCasa.Client.csproj": {
+                "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Clients\\HAGSJP.WeCasa.Client\\HAGSJP.WeCasa.Client.csproj"
+              },
+              "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Cross-Cutting Concerns\\HAGSJP.WeCasa.Logging\\HAGSJP.WeCasa.Logging.csproj": {
+                "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Cross-Cutting Concerns\\HAGSJP.WeCasa.Logging\\HAGSJP.WeCasa.Logging.csproj"
+              },
+              "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Data Access Layer\\HAGSJP.WeCasa.sqlDataAccess\\HAGSJP.WeCasa.sqlDataAccess.csproj": {
+                "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Data Access Layer\\HAGSJP.WeCasa.sqlDataAccess\\HAGSJP.WeCasa.sqlDataAccess.csproj"
+              },
+              "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Models\\HAGSJP.WeCasa.Models\\HAGSJP.WeCasa.Models.csproj": {
+                "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Models\\HAGSJP.WeCasa.Models\\HAGSJP.WeCasa.Models.csproj"
+              },
+              "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Services\\HAGSJP.WeCasa.Services\\HAGSJP.WeCasa.Services.csproj": {
+                "projectPath": "C:\\Users\\joshu\\source\\repos\\WeCasa\\src\\Services\\HAGSJP.WeCasa.Services\\HAGSJP.WeCasa.Services.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "MSTest.TestAdapter": {
+              "target": "Package",
+              "version": "[3.0.0, )"
+            },
+            "MSTest.TestFramework": {
+              "target": "Package",
+              "version": "[3.0.0, )"
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.4.0, )"
+            },
+            "coverlet.collector": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[3.2.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
