@@ -21,3 +21,12 @@ body {
     padding-bottom: 2%;
 }
 
+.ant-btn-primary:hover {
+    background-color: #bfbfbf !important;
+}
+
+.ant-btn-default:hover {
+    background-color: #bfbfbf !important;
+    color: white !important;
+    border-color: #bfbfbf !important;
+}

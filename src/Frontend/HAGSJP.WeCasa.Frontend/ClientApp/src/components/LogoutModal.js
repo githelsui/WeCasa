@@ -14,7 +14,7 @@ const LogoutModal = (props) => {
                onOk={props.confirm}
                onCancel={props.close}
                footer={[
-                   <Button key="cancel" onClick={props.close} style={Styles.defaultButtonModal}>No, thank you.</Button>,
+                   <Button key="cancel" onClick={props.close} type="default" style={Styles.defaultButtonModal}>No, thank you.</Button>,
                    <Button key="logout" onClick={props.confirm} type="primary" style={Styles.primaryButtonModal}>Logout</Button>
                ]}
                 >
