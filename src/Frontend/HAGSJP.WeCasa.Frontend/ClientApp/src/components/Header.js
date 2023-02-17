@@ -63,7 +63,6 @@ export const Header = () => {
         });
     }
 
-    setAuth(true)
     return (
         <header>
             <Navbar className={Styles.defaultHeaderStyle} container light>
