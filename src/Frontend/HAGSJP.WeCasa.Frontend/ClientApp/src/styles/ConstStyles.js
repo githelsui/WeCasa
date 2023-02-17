@@ -44,6 +44,26 @@ export const buttonHover = {
     }
 }
 
+export const primaryButtonModal = {
+    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+    fontFamily: 'Mulish',
+    width: '35%',
+    fontWeight: 'bold',
+    backgroundColor: '#111827',
+    color: '#FFFFFF',
+    marginRight: '13%'
+}
+
+export const defaultButtonModal = {
+    fontFamily: 'Mulish',
+    fontWeight: 'bold',
+    width: '35%',
+    borderWidth: 'thin',
+    borderColor: '#111827',
+    textDecoration: 'none',
+    margin: '2%'
+}
+
 export const defaultImage = {
     borderRadius: '20px'
 }

@@ -18,6 +18,7 @@ export const Header = () => {
         setCollapsed(!collapsed);
     }
 
+
     const attemptLogout = () => {
         console.log("Attempting logout...");
         let account = {
@@ -62,6 +63,7 @@ export const Header = () => {
         });
     }
 
+    setAuth(true)
     return (
         <header>
             <Navbar className={Styles.defaultHeaderStyle} container light>

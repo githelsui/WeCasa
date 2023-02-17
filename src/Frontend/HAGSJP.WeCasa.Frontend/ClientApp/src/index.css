@@ -1,0 +1,23 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Mulish&display=swap');
+
+body {
+    font-family: 'Mulish', sans-serif;
+}
+/*Overrides AntD styles by classes, instead of using ConstStyles.js !*/
+
+.ant-modal {
+    font-family: 'Mulish', sans-serif;
+    width: 100%;
+    overflow: hidden;
+}
+
+.ant-modal-content {
+      height: calc(100vh - 85vh) !important;
+}
+
+.ant-modal-title {
+    text-align: center;
+    padding-top: 5%;
+    padding-bottom: 2%;
+}
+
