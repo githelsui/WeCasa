@@ -22,4 +22,12 @@ public class HomeController : Controller
         Logout logout = new Logout();
         return logout.LogoutUser(currentUser);
     }
+
+    [HttpGet]
+    [Route("GetGroups")]
+    public Result GetGroups([FromBody] LoginForm account)
+    {
+        UserAccount currentUser = new UserAccount(account.Username);
+
+    }
 }
