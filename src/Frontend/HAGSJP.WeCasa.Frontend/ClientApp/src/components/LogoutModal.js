@@ -12,7 +12,7 @@ const LogoutModal = (props) => {
                closable={false}
                centered="true"
                footer={[
-                   <Button key="cancel" onClick={props.close} type="default" style={Styles.defaultButtonModal}>No, thank you.</Button>,
+                   <Button key="cancel" onClick={props.close} type="default" style={Styles.defaultButtonModal}>No thanks.</Button>,
                    <Button key="logout" onClick={props.confirm} type="primary" style={Styles.primaryButtonModal}>Logout</Button>
                 ]}>
             </Modal>

@@ -12,11 +12,12 @@ body {
 }
 
 .ant-modal-content {
-      height: calc(100vh - 85vh) !important;
+/*      height: calc(100vh - 85vh) !important;*/
+    padding-bottom: 10%;
 }
 
 .ant-modal-title {
-    text-align: center;
+    text-align: left;
     padding-top: 5%;
     padding-bottom: 2%;
 }

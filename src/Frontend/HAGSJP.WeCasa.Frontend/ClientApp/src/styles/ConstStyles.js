@@ -51,7 +51,8 @@ export const primaryButtonModal = {
     fontWeight: 'bold',
     backgroundColor: '#111827',
     color: '#FFFFFF',
-    marginRight: '13%'
+    marginRight: '13%',
+    //marginBottom: '10px'
 }
 
 export const defaultButtonModal = {
@@ -61,11 +62,18 @@ export const defaultButtonModal = {
     borderWidth: 'thin',
     borderColor: '#111827',
     textDecoration: 'none',
-    margin: '2%'
+    margin: '2%',
+    //marginBottom: '10px'
 }
 
 export const defaultImage = {
     borderRadius: '20px'
+}
+
+export const groupIconSelection = {
+    borderRadius: '5%',
+    objectFit: 'cover',
+    margin: '5%'
 }
 
 // Navbar styles 
