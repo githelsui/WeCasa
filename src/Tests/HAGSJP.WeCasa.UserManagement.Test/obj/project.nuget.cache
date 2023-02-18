@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "dgSpecHash": "XaAgGMYvlkCuoUCRL8bIvwcE/INTs0RmD5Ip/y7AmVM9BXBD+L7lreTMSWZfiIKZ2/ym2aS3P8BqKA9uN+lLSw==",
+  "success": true,
+  "projectFilePath": "/Users/githel/Documents/senior_proj/WeCasa/src/Tests/HAGSJP.WeCasa.UserManagement.Test/HAGSJP.WeCasa.UserManagement.Test.csproj",
+  "expectedPackageFiles": [
+    "/Users/githel/.nuget/packages/coverlet.collector/3.2.0/coverlet.collector.3.2.0.nupkg.sha512",
+    "/Users/githel/.nuget/packages/microsoft.codecoverage/17.4.1/microsoft.codecoverage.17.4.1.nupkg.sha512",
+    "/Users/githel/.nuget/packages/microsoft.net.test.sdk/17.4.1/microsoft.net.test.sdk.17.4.1.nupkg.sha512",
+    "/Users/githel/.nuget/packages/microsoft.testplatform.objectmodel/17.4.1/microsoft.testplatform.objectmodel.17.4.1.nupkg.sha512",
+    "/Users/githel/.nuget/packages/microsoft.testplatform.testhost/17.4.1/microsoft.testplatform.testhost.17.4.1.nupkg.sha512",
+    "/Users/githel/.nuget/packages/mstest.testadapter/3.0.2/mstest.testadapter.3.0.2.nupkg.sha512",
+    "/Users/githel/.nuget/packages/mstest.testframework/3.0.2/mstest.testframework.3.0.2.nupkg.sha512",
+    "/Users/githel/.nuget/packages/newtonsoft.json/13.0.1/newtonsoft.json.13.0.1.nupkg.sha512",
+    "/Users/githel/.nuget/packages/nuget.frameworks/5.11.0/nuget.frameworks.5.11.0.nupkg.sha512",
+    "/usr/local/share/dotnet/sdk/NuGetFallbackFolder/system.reflection.metadata/1.6.0/system.reflection.metadata.1.6.0.nupkg.sha512"
+  ],
+  "logs": []
+}

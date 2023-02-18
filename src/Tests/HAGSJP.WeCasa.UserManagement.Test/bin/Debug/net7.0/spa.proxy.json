@@ -1,0 +1,8 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "https://localhost:44411",
+"LaunchCommand": "npm start",
+"WorkingDirectory": "/Users/githel/Documents/senior_proj/WeCasa/src/Frontend/HAGSJP.WeCasa.Frontend/ClientApp/",
+"MaxTimeoutInSeconds": "120"
+}
+}
