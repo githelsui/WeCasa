@@ -8,7 +8,7 @@ using HAGSJP.WeCasa.Models.Security;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
-    public interface IUserManager
+    public interface IGroupManager
     {
         public Result GetGroups(UserAccount userAccount);
         public Result CreateGroup(UserAccount userAccount, Group group);

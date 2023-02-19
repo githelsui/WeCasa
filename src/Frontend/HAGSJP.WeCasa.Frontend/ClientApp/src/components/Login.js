@@ -129,6 +129,10 @@ export const Login = () => {
         //this.forceUpdate();
     }
 
+    setAuth(true)
+    setCurrentUser('test@gmail.com')
+    successLoginView()
+
     return (
         <div id="LoginPage"> 
             <Row gutter={[48, 48]} align="middle">

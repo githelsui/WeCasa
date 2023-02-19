@@ -3,9 +3,9 @@ using HAGSJP.WeCasa.Models.Security;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.sqlDataAccess;
 using System.Net.Mail;
-using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Net;
+    
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {

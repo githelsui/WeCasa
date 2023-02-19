@@ -53,7 +53,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public GroupResult GetGroupList(UserAccount userAccount)
         {
-            _connectionString BuildConnectionString().ConnectionString;
+            _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -65,10 +65,10 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                                     WHERE `username` = @username";
                 var command = connection.CreateCommand();
                 command.CommandText = selectSql;
-                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower));
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
 
                 // Execution of SQL
-                userAccount(var reader = command.ExecuteReader());
+                var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     result.IsSuccessful = true;
@@ -78,21 +78,21 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     // User is not a part of any groups 
                     if (!reader.IsDBNull(0))
                     {
-                        // creating group from reader object
-                        Group group = new Group(reader.getString(0), reader.getString(1), reader.getString(2), reader.getString(4), reader.getDecimal(5));
-                        int[,] features =
-                        {
-                            {reader.GetName(6),reader.GetBinary(6)}, // budget bar
-                            {reader.GetName(7), reader.GetBinary(7)}, // bulletin board
-                            {reader.GetName(8),reader.GetBinary(8)}, // calendar
-                            {reader.GetName(9),reader.GetBinary(9)}, // chore list
-                            {reader.GetName(10),reader.GetBinary(10)}, // grocery list
-                            {reader.GetName(11),reader.GetBinary(11)}, // circular progress bar
-                        };
-                        group.Features = features;
+                        //// creating group from reader object
+                        //Group group = new Group(reader.getString(0), reader.getString(1), reader.getString(2), reader.getString(4), reader.getDecimal(5));
+                        //int[,] features =
+                        //{
+                        //    {reader.GetName(6),reader.GetBinary(6)}, // budget bar
+                        //    {reader.GetName(7), reader.GetBinary(7)}, // bulletin board
+                        //    {reader.GetName(8),reader.GetBinary(8)}, // calendar
+                        //    {reader.GetName(9),reader.GetBinary(9)}, // chore list
+                        //    {reader.GetName(10),reader.GetBinary(10)}, // grocery list
+                        //    {reader.GetName(11),reader.GetBinary(11)}, // circular progress bar
+                        //};
+                        //group.Features = features;
 
-                        // adding list of groups to groups variable
-                        groups.Add(group);
+                        //// adding list of groups to groups variable
+                        //groups.Add(group);
                     }
                     result.ReturnedObject = groups;
                     return result;
