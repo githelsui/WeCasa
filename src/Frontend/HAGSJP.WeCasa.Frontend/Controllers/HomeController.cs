@@ -34,12 +34,12 @@ public class HomeController : Controller
 
     [HttpPost]
     [Route("CreateGroup")]
-    public Result CreateGroup([FromBody] GroupForm form, LoginForm account)
+    public Result CreateGroup([FromBody] GroupForm form)
     {
-        GroupModel group = new Group();
+        GroupModel group = new GroupModel();
         group.GroupId = form.GroupId;
         group.GroupName = form.GroupName;
-        group.Owner = account.Username;
+        group.Owner = form.Owner;
         group.Icon = form.Icon;
         group.Features = form.Features;
         GroupManager gm = new GroupManager();

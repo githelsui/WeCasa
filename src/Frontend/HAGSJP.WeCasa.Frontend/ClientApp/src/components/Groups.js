@@ -45,7 +45,7 @@ export const Groups = () => {
     const displayGroupView = (groupList) => {
         return groupList.map(group => (
             <div key={group.GroupId}>
-                <Col span={10} style={{marginTop:16}}>
+                <Col span={10} style={{marginTop:16, marginLeft:16}}>
                     <Card
                         hoverable
                         style={{ width: 500 }}
@@ -80,7 +80,7 @@ export const Groups = () => {
             </Space>
             <Row gutter={24} style={{ display: "flex"}}>
                 <Col span={24}>
-                    <Card hoverable style={{ marginTop:16, marginLeft:200, marginRight:200, background:"#ececec", fontFamily: 'Mulish'}}>
+                    <Card hoverable style={{ marginTop:16, marginLeft:150, marginRight:150, background:"#ececec", fontFamily: 'Mulish'}}>
                         <Meta
                             onClick={() => setShowModal(true)}
                             avatar={<PlusCircleOutlined />}
