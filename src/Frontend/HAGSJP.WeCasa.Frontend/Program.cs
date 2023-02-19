@@ -6,6 +6,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
+// Add configurations
+builder.Configuration.AddJsonFile("appsettings.json", false, true);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

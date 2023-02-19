@@ -1,11 +1,12 @@
 import React, { Component, useState, useEffect } from 'react';
 import { Collapse, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import LogoutModal from './LogoutModal'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import '../styles/NavMenu.css';
 import axios from 'axios'
-import { notification } from 'antd';
+import { notification, Avatar } from 'antd';
+import { UserOutlined } from '@ant-design/icons'
 import * as Styles from '../styles/ConstStyles.js';
 
 export const Header = () => {
@@ -18,12 +19,13 @@ export const Header = () => {
         setCollapsed(!collapsed);
     }
 
+
     const attemptLogout = () => {
         console.log("Attempting logout...");
         let account = {
             Username: currentUser
         }
-        axios.post('logout/AttemptLogout', account)
+        axios.post('home/AttemptLogout', account)
             .then(res => {
                 console.log(res.data)
                 var isSuccessful = res.data['isSuccessful'];
@@ -32,12 +34,24 @@ export const Header = () => {
                     // return to main page
                     setAuth(false);
                     setCurrentUser(null);
+                    successLogoutView(res.data['message']);
                 } else {
                     failureLogoutView(res.data['message']);
                 }
             })
             .catch((error) => { console.error(error) });
     };
+
+    const successLogoutView = (successMessage) => {
+        // display confirmation message
+        notification.open({
+            message: successMessage,
+            description: '',
+            duration: 10,
+            placement: "topRight",
+        });
+        setShowModal(false);
+    }
 
     const failureLogoutView = (failureMessage) => {
         // Accounts for user failure cases and system errors
@@ -63,7 +77,9 @@ export const Header = () => {
                             </NavItem>
                         </ul>
                         ) : (<UncontrolledDropdown>
-                                <DropdownToggle>Profile</DropdownToggle>
+                            <DropdownToggle id="profile-icon">
+                                <Avatar icon={<UserOutlined />}></Avatar>
+                            </DropdownToggle>
                                 <DropdownMenu>
                                     <DropdownItem disabled>Settings</DropdownItem>
                                     <DropdownItem href="/edit-profile">Edit Profile</DropdownItem>

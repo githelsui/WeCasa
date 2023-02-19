@@ -44,8 +44,36 @@ export const buttonHover = {
     }
 }
 
+export const primaryButtonModal = {
+    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+    fontFamily: 'Mulish',
+    width: '35%',
+    fontWeight: 'bold',
+    backgroundColor: '#111827',
+    color: '#FFFFFF',
+    marginRight: '13%',
+    //marginBottom: '10px'
+}
+
+export const defaultButtonModal = {
+    fontFamily: 'Mulish',
+    fontWeight: 'bold',
+    width: '35%',
+    borderWidth: 'thin',
+    borderColor: '#111827',
+    textDecoration: 'none',
+    margin: '2%',
+    //marginBottom: '10px'
+}
+
 export const defaultImage = {
     borderRadius: '20px'
+}
+
+export const groupIconSelection = {
+    borderRadius: '5%',
+    objectFit: 'cover',
+    margin: '5%'
 }
 
 // Navbar styles 

@@ -28,6 +28,14 @@ namespace HAGSJP.WeCasa.Services.Implementations
             errorLogger = new Logger(dao);
         }
 
+        public Result ValidateName(string name)
+        {
+            var validName = new Result();
+            var checkValidName = new Regex(@"\b([A-ZÀ-ÿ][-,a-z. ']*)+");
+            validName.IsSuccessful = checkValidName.IsMatch(name);
+            return validName;
+        }
+
         // checks whether a new email has the correct characters
         public Result ValidateEmail(string email)
         {
@@ -211,7 +219,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
             if (userPersistResult.IsSuccessful && actual > expected)
             {
-                errorLogger.Log("Account created successfully, but took longer than 5 seconds", LogLevels.Info, "Business", userAccount.Username, new UserOperation(Operations.Registration, 0));
+                errorLogger.Log("Account created successfully, but took longer than 5 seconds", LogLevels.Info, "Business", userAccount.Username, new UserOperation(Operations.Registration, 1));
             }
 
             return userPersistResult;
@@ -249,13 +257,42 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
             if(userPersistResult.IsSuccessful && actual > expected)
             {
-                errorLogger.Log("Account created successfully, but took longer than 5 seconds", LogLevels.Info, "Business", userAccount.Username, new UserOperation(Operations.Registration, 0));
+                errorLogger.Log("Account created successfully, but took longer than 5 seconds", LogLevels.Info, "Business", userAccount.Username, new UserOperation(Operations.Registration, 1));
             }
 
             return userPersistResult;
         }
 
-        public Result UpdateUser(UserProfile userProfile)
+        public Result UpdateFirstName(UserAccount userAccount, string firstName)
+        {
+            string updateSQL = string.Format(@"UPDATE users SET FIRST_NAME = '{0}' WHERE username = '{1}'", firstName, userAccount.Username);
+            return _dao.UpdateUser(userAccount, updateSQL);
+        }
+
+        public Result UpdateLastName(UserAccount userAccount, string lastName)
+        {
+            string updateSQL = string.Format(@"UPDATE users SET LAST_NAME = '{0}' WHERE username = '{1}'", lastName, userAccount.Username);
+            return _dao.UpdateUser(userAccount, updateSQL);
+        }
+
+        public Result UpdateUsername(UserAccount userAccount, string username)
+        {
+            string updateSQL = string.Format(@"UPDATE users SET USERNAME = '{0}' WHERE username = '{1}'", username, userAccount.Username);
+            return _dao.UpdateUser(userAccount, updateSQL);
+        }
+
+        public Result UpdatePassword(UserAccount userAccount, string salt, string password)
+        {
+            string updateSQL = string.Format(@"UPDATE users SET PASSWORD = '{0}', SALT = '{1}' WHERE username = '{2}'", password, salt, userAccount.Username);
+            return _dao.UpdateUser(userAccount, updateSQL);
+        }
+
+        public Result UpdateUserIcon(UserAccount userAccount)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Result UpdatePhoneNumber(UserAccount userAccount)
         {
             throw new NotImplementedException();
         }
@@ -281,6 +318,10 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public Result LogoutUser(UserAccount userAccount)
         {
             Result logoutResult = _dao.UpdateUserAuthentication(userAccount, false);
+            if(logoutResult.IsSuccessful)
+            {
+                logoutResult.Message = "Successfully logged out.";
+            }
             return logoutResult;
         }
 
