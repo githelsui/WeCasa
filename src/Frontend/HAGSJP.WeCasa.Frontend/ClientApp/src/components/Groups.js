@@ -6,7 +6,6 @@ import { PlusCircleOutlined } from '@ant-design/icons'
 import axios from 'axios';
 import * as Styles from '../styles/ConstStyles.js';
 import CreateGroupModal from './CreateGroupModal.js'
-
 const { Meta } = Card;
 
 // FOR TESTING
@@ -34,7 +33,7 @@ export const Groups = () => {
             .then(res => {
                 var isSuccessful = res.data['isSuccessful'];
                 if (isSuccessful) {
-                    // setGroups
+                    // setGroups(res.data)
                     setGroups(data);
                 } else {
                     failureGroupView(res.data['message']);
@@ -69,7 +68,8 @@ export const Groups = () => {
         // display failure to load message
     }
 
-    const attempGroupCreation = () => {
+
+    const attemptGroupCreation = () => {
 
     }
 
@@ -79,18 +79,19 @@ export const Groups = () => {
                 {displayGroupView(data)}
             </Space>
             <Row gutter={24} style={{ display: "flex"}}>
-                <Col span={18}>
-                    <Card hoverable style={{ marginTop:16, background:"#ececec", fontFamily: 'Mulish'}}>
+                <Col span={24}>
+                    <Card hoverable style={{ marginTop:16, marginLeft:200, marginRight:200, background:"#ececec", fontFamily: 'Mulish'}}>
                         <Meta
                             onClick={() => setShowModal(true)}
                             avatar={<PlusCircleOutlined />}
                             title="Create Group"
                             type="inner"
+                            style={{textAlign:"center", display:"flex"}}
                         />
                     </Card>
                 </Col>
             </Row>
-            <CreateGroupModal show={showModal} close={() => setShowModal(false)} confirm={attempGroupCreation} />
+            <CreateGroupModal show={showModal} close={() => setShowModal(false)} confirm={attemptGroupCreation} />
         </div>
     );
 }; 
