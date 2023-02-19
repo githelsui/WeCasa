@@ -31,3 +31,36 @@ body {
     color: white !important;
     border-color: #bfbfbf !important;
 }
+
+.ant-switch-checked {
+    background-color: #000000 !important;
+}
+
+.padding-bottom {
+    padding-bottom: 5%;
+}
+
+.padding-top {
+    padding-top: 8%;
+}
+
+.padding-vertical {
+    padding-bottom: 5%;
+    padding-top: 5%;
+}
+
+.padding {
+    padding: 5%;
+}
+
+.mulish-font {
+    font-family: 'Mulish', sans-serif;
+}
+
+/* Crete Group Modal (CreateGroupModal.js) */
+.group-feature-desc-p {
+    font-size: 12px;
+    font-weight: 300;
+    padding-top: 2%;
+    text-align:center;
+}
