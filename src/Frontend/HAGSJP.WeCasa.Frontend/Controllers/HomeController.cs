@@ -31,4 +31,18 @@ public class HomeController : Controller
         GroupManager gm = new GroupManager();
         return gm.GetGroups(currentUser);
     }
+
+    [HttpPost]
+    [Route("CreateGroup")]
+    public Result CreateGroup([FromBody] GroupForm form, LoginForm account)
+    {
+        GroupModel group = new Group();
+        group.GroupId = form.GroupId;
+        group.GroupName = form.GroupName;
+        group.Owner = account.Username;
+        group.Icon = form.Icon;
+        group.Features = form.Features;
+        GroupManager gm = new GroupManager();
+        return gm.CreateGroup(group);
+    }
 }

@@ -8,11 +8,11 @@ using HAGSJP.WeCasa.Models.Security;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
-    public interface IUserManager
+    public interface IGroupManager
     {
         public Result GetGroups(UserAccount userAccount);
-        public Result CreateGroup(UserAccount userAccount, Group group);
-        public Result DeleteGroup(UserAccount userAccount, Group group);
-        public Result EditGroup(UserAccount userAccount, int groupId, Group newGroup);
+        public Result CreateGroup(UserAccount userAccount, GroupModel group);
+        public Result DeleteGroup(UserAccount userAccount, GroupModel group);
+        public Result EditGroup(UserAccount userAccount, int groupId, GroupModel newGroup);
     }
 }

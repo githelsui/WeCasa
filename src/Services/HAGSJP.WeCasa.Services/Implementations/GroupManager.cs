@@ -51,15 +51,42 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return groupListResult;
             
         }
-        public Result CreateGroup(UserAccount userAccount, Group group)
+        public Result CreateGroup(GroupModel group)
+        {
+            // System log entry recorded if group creation process takes longer than 5 seconds
+            var stopwatch = new Stopwatch();
+            var expected = 5;
+
+            stopwatch.Start();
+            var createGroupResult = new Result();
+
+            createGroupResult = _dao.CreateGroup(group);
+
+            if (createGroupResult.IsSuccessful)
+            {
+                // Logging the group creation
+                successLogger.Log("Group created successfully", LogLevels.Info, "Data Store", group.Owner);
+            }
+            else
+            {
+                // Logging the error
+                errorLogger.Log("Error creating a group", LogLevels.Error, "Data Store", group.Owner);
+            }
+
+            stopwatch.Stop();
+            var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
+            if (createGroupResult.IsSuccessful && actual > expected)
+            {
+                errorLogger.Log("Group created successfully, but took longer than 5 seconds", LogLevels.Info, "Business", group.Owner, new UserOperation(Operations.GroupCreation, 1));
+            }
+
+            return createGroupResult;
+        }
+        public Result DeleteGroup(UserAccount userAccount, GroupModel group)
         {
             throw new NotImplementedException();
         }
-        public Result DeleteGroup(UserAccount userAccount, Group group)
-        {
-            throw new NotImplementedException();
-        }
-        public Result EditGroup(UserAccount userAccount, int groupId, Group newGroup)
+        public Result EditGroup(UserAccount userAccount, int groupId, GroupModel newGroup)
         {
             throw new NotImplementedException();
         }
