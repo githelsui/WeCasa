@@ -10,6 +10,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
 {
     public interface IUserManager
     {
+        public Result ValidateName(string name);
         public Result ValidateEmail(string email);
         public Result ValidatePassword(string Password);
         public bool IsUsernameTaken(string username);
@@ -19,7 +20,12 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public Result RegisterUser(string firstName, string lastName, string email, string password);
             public Result RegisterUser(string email, string password);
         public Result DeleteUser(UserAccount userAccount);
-        public Result UpdateUser(UserProfile userProfile);
+        public Result UpdateFirstName(UserAccount userAccount, string firstName);
+        public Result UpdateLastName(UserAccount userAccount, string lastName);
+        public Result UpdateUsername(UserAccount userAccount, string userName);
+        public Result UpdatePassword(UserAccount userAccount, string salt, string Password);
+        public Result UpdateUserIcon(UserAccount userAccount);
+        public Result UpdatePhoneNumber(UserAccount userAccount);
         public Result LogoutUser(UserAccount userAccount);
         public Result EnableUser(UserAccount userAccount);
         public Result DisableUser(UserAccount userAccount);
