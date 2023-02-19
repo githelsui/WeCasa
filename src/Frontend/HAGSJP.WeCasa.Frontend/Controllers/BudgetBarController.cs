@@ -13,127 +13,151 @@ namespace HAGSJP.WeCasa.Frontend.Controllers;
 [Route("[controller]")]
 public class BudgetBarController : Controller
 {
-    private readonly BudgetBarDAO _budgetBarDao;
     private readonly Logger _logger;
     private readonly BudgetBarManager _budgetBarManager;
 
     public BudgetBarController()
     {
-        _budgetBarDao = new BudgetBarDAO();
         _logger = new Logger(new AccountMariaDAO());
         _budgetBarManager = new BudgetBarManager();
     }
 
+    //     public BudgetBarController(BudgetBarManager budgetBarManager)
+    // {
+    //     _budgetBarDao = new BudgetBarDAO();
+    //     _logger = new Logger(new AccountMariaDAO());
+    //     _budgetBarManager = new BudgetBarManager();
+    // }
+
+    // Add try catch
+
+    // [HttpGet("{username}")]
+    // //public Task<IActionResult> Get([FromRoute]string username)
+    // public IActionResult Get([FromRoute] string groupId)
+    // {
+    //     var tcs = new TaskCompletionSource<IActionResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+    //      try
+    //     {  
+    //         // AuthorizationService auth = new AuthorizationService(new AuthorizationDAO());
+    //         // AccountMariaDAO mariaDAO = new AccountMariaDAO();
+    //         // UserAccount ua = new UserAccount(request.Username);
+    //         GroupDAO groupDao = new GroupDAO();
+    //         // Claim claim = new Claim("Read", "Read files");
+
+    //         // Boolean authorized = auth.ValidateClaim(ua, claim).ReturnedObject != null ? (bool) auth.ValidateClaim(ua, claim).ReturnedObject : false;
+    //         // Boolean authenticated = mariaDAO.ValidateUserInfo(ua).IsAuth;
+    //         // if (authorized && authenticated)
+    //         // {
+    //             _budgetBarManager.RefreshBillList();
+    //             decimal budget = _budgetBarManager.(request.GroupId);
+    //             List<string> usernames = groupDao.GetMembersUsername(request.GroupId);
+    //             Decimal totalSpent = _budgetBarManager.CalculateGroupTotal(usernames);
+    //             Dictionary<string, decimal> totalSpentPerMember = new Dictionary<string, decimal>();
+
+    //             foreach(string user in usernames)
+    //             {
+    //                 totalSpentPerMember.Add(user, _budgetBarManager.CalculateTotal(_budgetBarManager.GetBills(username, 0)));
+    //             }
+
+    //             InitialBudgetBarViewResponse response = new InitialBudgetBarViewResponse{
+    //                 Group = usernames,
+    //                 Budget = budget,
+    //                 GroupTotal = totalSpent,
+    //                 TotalSpentPerMember = totalSpentPerMember
+    //             };
+    //             return Ok(response);
+
+    //             //var response = new HttpRes
+    //             //tcs.SetResult((IActionResult)response)
+    //             //return tcs.Task;
+    //         // }
+    //         // else
+    //         // {
+    //         //     _logger.Log( "Unauthorized Access", LogLevels.Error, "Data Store", request.Username);
+    //         //     return Unauthorized();
+    //         // }
+    //     }
+    //     catch(MySqlException exc)
+    //     {
+    //         _logger.Log( "Error: " + exc.ErrorCode  + "\n" +"Message: " + exc.Message + "\n" + "State: " + exc.SqlState, LogLevels.Error, "Data Store", request.Username);
+    //         return BadRequest();
+    //     }
+    //     catch(Exception exc)
+    //     {
+    //         _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", request.Username);
+    //         return NotFound();
+    //     }
+    // }
+
+
+    // [HttpGet("{username}")]
+    // public Task<IActionResult> Get([FromRoute]string username)
+    // {
+    //     var tcs = new TaskCompletionSource<IActionResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+    //     try
+    //     {   
+    //         tcs.SetResult(Ok(_budgetBarManager.GetInitialBudgetBarVew(username)));
+    //         return tcs.Task;
+    //     }
+    //     catch(MySqlException exc)
+    //     {
+    //         _logger.Log( "Error: " + exc.ErrorCode  + "\n" +"Message: " + exc.Message + "\n" + "State: " + exc.SqlState, LogLevels.Error, "Data Store", username);
+    //         return BadRequest();
+    //     }
+    //     catch(Exception exc)
+    //     {
+    //         _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", username);
+    //         return NotFound();
+    //     }
+    // }
+
     [HttpGet("{username}")]
-    public IActionResult Get([FromRoute]string username)
+    public Task<IActionResult> Get([FromRoute]string username)
     {
-        var request = new {
-                Username = "testacc@gmail.com",
-                GroupId = "some-group-id"
-            };
-         try
-        {  
-            // AuthorizationService auth = new AuthorizationService(new AuthorizationDAO());
-            // AccountMariaDAO mariaDAO = new AccountMariaDAO();
-            UserAccount ua = new UserAccount(request.Username);
-            GroupDAO groupDao = new GroupDAO();
-            Claim claim = new Claim("Read", "Read files");
-
-            // Boolean authorized = auth.ValidateClaim(ua, claim).ReturnedObject != null ? (bool) auth.ValidateClaim(ua, claim).ReturnedObject : false;
-            // Boolean authenticated = mariaDAO.ValidateUserInfo(ua).IsAuth;
-            // if (authorized && authenticated)
-            // {
-                _budgetBarManager.RefreshBillList();
-                decimal budget = _budgetBarManager.GetBudget(request.GroupId);
-                List<string> usernames = groupDao.GetMembersUsername(request.GroupId);
-                Decimal totalSpent = _budgetBarManager.CalculateGroupTotal(usernames);
-                Dictionary<string, decimal> totalSpentPerMember = new Dictionary<string, decimal>();
-
-                foreach(string user in usernames)
-                {
-                    totalSpentPerMember.Add(user, _budgetBarManager.CalculateTotal(_budgetBarManager.GetBills(username, 0)));
-                }
-
-                InitialBudgetBarViewResponse response = new InitialBudgetBarViewResponse{
-                    Group = usernames,
-                    Budget = budget,
-                    GroupTotal = totalSpent,
-                    TotalSpentPerMember = totalSpentPerMember
-                };
-                return Ok(response);
-            // }
-            // else
-            // {
-            //     _logger.Log( "Unauthorized Access", LogLevels.Error, "Data Store", request.Username);
-            //     return Unauthorized();
-            // }
-        }
-        catch(MySqlException exc)
-        {
-            _logger.Log( "Error: " + exc.ErrorCode  + "\n" +"Message: " + exc.Message + "\n" + "State: " + exc.SqlState, LogLevels.Error, "Data Store", request.Username);
-            return BadRequest();
-        }
-        catch(Exception exc)
-        {
-            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", request.Username);
-            return NotFound();
-        }
-    }
-
-
-    [HttpGet("{username}")]
-    public IActionResult GetTable([FromRoute]string username)
-    {
-        var request = new {
-            Username = "testacc@gmail.com",
-            GroupId = "some-group-id"
-        };
-        // AuthorizationService auth = new AuthorizationService(new AuthorizationDAO());
-        // AccountMariaDAO mariaDAO = new AccountMariaDAO();
-        UserAccount ua = new UserAccount(request.Username);
-        GroupDAO groupDao = new GroupDAO();
-        Claim claim = new Claim("Read", "Read files");
+        var tcs = new TaskCompletionSource<IActionResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         try
-        {           
-            // Boolean authorized = auth.ValidateClaim(ua, claim).ReturnedObject != null ? (bool) auth.ValidateClaim(ua, claim).ReturnedObject : false;
-            // Boolean authenticated = mariaDAO.ValidateUserInfo(ua).IsAuth;
-            // if (authorized && authenticated)
-            // {
-                _budgetBarManager.DeleteAllOutdatedBills();
-                List<Bill> activeBills = _budgetBarManager.GetBills(username, 0);
-                List<Bill> deletedBills = _budgetBarManager.GetBills(username, 1);
-                
-                UserTableViewResponse response = new UserTableViewResponse{
-                    Username = username,
-                    ActiveBills = activeBills,
-                    DeletedBills = deletedBills
-                };
-                return Ok(response);
-            // }
-            // else
-            // {
-            //     _logger.Log( "Unauthorized Access", LogLevels.Error, "Data Store", request.Username);
-            //     return Unauthorized();
-            // }
+        {   
+            tcs.SetResult(Ok(_budgetBarManager.GetInitialBudgetBarVew(username)));
+            return tcs.Task;
         }
         catch(MySqlException exc)
         {
-            _logger.Log( "Error: " + exc.ErrorCode  + "\n" +"Message: " + exc.Message + "\n" + "State: " + exc.SqlState, LogLevels.Error, "Data Store", request.Username);
-            return BadRequest();
+             _logger.Log( "Error: " + exc.ErrorCode  + "\n" +"Message: " + exc.Message + "\n" + "State: " + exc.SqlState, LogLevels.Error, "Data Store", username);
+
+            _logger.Log( "Error: " + exc.ErrorCode  + "\n" +"Message: " + exc.Message + "\n" + "State: " + exc.SqlState, LogLevels.Error, "Data Store", username);
+            tcs.SetResult(BadRequest());
+            return tcs.Task;
         }
         catch(Exception exc)
         {
-            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", request.Username);
-            return NotFound();
+            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", username);
+            tcs.SetResult(NotFound());
+            return tcs.Task;
         }
     }
 
-    // TODO: add method for updating group bills, and personal 
     [Route("EditBill")]
     [HttpPut]
-    public IActionResult Put([FromBody] Bill bill)
+    public Task<IActionResult> Put([FromBody] Bill bill)
     {
+        var tcs = new TaskCompletionSource<IActionResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         Result editBillResult = _budgetBarManager.UpdateBill(bill);
+        if (!editBillResult.IsSuccessful)
+        {
+            tcs.SetResult(BadRequest());
+            return tcs.Task;
+        }
+        tcs.SetResult(Ok(true));
+        return tcs.Task;
+    }
+
+    [Route("UpdatePaymentStatus")]
+    [HttpPut]
+    public Task<IActionResult> Put([FromBody] UpdatePaymentStatusRequest request)
+    {
+        var tcs = new TaskCompletionSource<IActionResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        Result editBillResult = _budgetBarManager.UpdatePaymentStatus(request.Username, request.BillId, request.PaymentStatus);
         if (!editBillResult.IsSuccessful)
         {
             return BadRequest();
@@ -145,52 +169,75 @@ public class BudgetBarController : Controller
     [HttpPost]
     public IActionResult Post([FromBody] AddBillRequest request)
     {
-        // TODO: add billid
-        Result insertBillResult = new Result();
-        foreach(string username in request.Usernames)
+        try
         {
-           request.Bill.Username = username;
-           insertBillResult = _budgetBarManager.InsertBill(request.Bill);
-            if (!insertBillResult.IsSuccessful)
-            {
-                return BadRequest();
-            }
+            Boolean result = _budgetBarManager.InsertBills(request.Usernames, request.Bill);
+            return Ok(result);
         }
-        return Ok(true);
+        catch(Exception exc)
+        {
+            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", request.Bill.Username);
+            return NotFound();
+        }
     }
 
     [Route("UpdateBudget")]
     [HttpPut]
     public IActionResult Put([FromBody] UpdateBudgetRequest request)
     {
-        Result editBudgetResult = _budgetBarManager.EditBudget( request.GroupId, request.Amount);
-        if (!editBudgetResult.IsSuccessful)
+        try 
         {
-            return BadRequest();
+            Result editBudgetResult = _budgetBarManager.EditBudget( request.Username, request.Amount);
+            if (!editBudgetResult.IsSuccessful)
+            {
+                return BadRequest();
+            }
+            return Ok(true);
         }
-        return Ok(true);
+        catch(Exception exc)
+        {
+            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", request.Username);
+            return NotFound();
+        }
     }
+
 
     [HttpDelete("Delete")]
     public IActionResult Delete([FromBody] string billId)
     {
-        Result deleteBillResult = _budgetBarManager.DeleteBill(billId, DateTime.Now);
-        if (!deleteBillResult.IsSuccessful)
+        try
         {
-            return BadRequest();
+            Result deleteBillResult = _budgetBarManager.DeleteBill(billId);
+            if (!deleteBillResult.IsSuccessful)
+            {
+                return BadRequest();
+            }
+            return Ok(true);
+          }
+        catch(Exception exc)
+        {
+            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", "Bill Id: " + billId);
+            return NotFound();
         }
-        return Ok(true);
     }
 
     [Route("Restore")]
     [HttpPut]
     public IActionResult Put([FromBody] string billId)
     {
-        Result restoreDeleteBillResult = _budgetBarManager.RestoreDeletedBill(billId);
-        if (!restoreDeleteBillResult.IsSuccessful)
+        try
         {
-            return BadRequest();
+            Result restoreDeleteBillResult = _budgetBarManager.RestoreDeletedBill(billId);
+            if (!restoreDeleteBillResult.IsSuccessful)
+            {
+                return BadRequest();
+            }
+            return Ok(true);
+          }
+        catch(Exception exc)
+        {
+            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", "Bill Id: " + billId);
+            return NotFound();
         }
-        return Ok(true);
     }
 }

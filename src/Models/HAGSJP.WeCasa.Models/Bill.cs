@@ -13,16 +13,16 @@ namespace HAGSJP.WeCasa.Models
        public string BillName { get; set; }
        public string? BillDescription { get; set; }
        public decimal Amount { get; set; }
-       public decimal? PercentageOwed { get; set; }
        public Boolean? PaymentStatus { get; set; }
        public Boolean? IsRepeated { get; set; }
        public Boolean? IsDeleted { get; set; }
        public DateTime? DateDeleted { get; set; }
        public string? PhotoFileName { get; set; }
+       
      [JsonConstructor]
        public Bill(){}
 
-        public Bill(DateTime dateEntered, string billName , string billDescription, decimal amount, decimal percentageOwed, Boolean paymentStatus,Boolean isRepeated, Boolean isDeleted, DateTime dateDeleted, string photoFileName)
+        public Bill(DateTime dateEntered, string billName , string billDescription, decimal amount, Boolean paymentStatus,Boolean isRepeated, Boolean isDeleted, DateTime dateDeleted, string photoFileName)
        {
             Username = "";
             BillId = "";
@@ -30,7 +30,6 @@ namespace HAGSJP.WeCasa.Models
             BillName = billName;
             BillDescription = billDescription;
             Amount = amount;
-            PercentageOwed = percentageOwed;
             PaymentStatus = paymentStatus;
             IsRepeated = isRepeated;
             IsDeleted = isDeleted;
@@ -38,7 +37,7 @@ namespace HAGSJP.WeCasa.Models
             PhotoFileName = photoFileName;
        }
 
-       public Bill(string username, string billId, DateTime dateEntered, string billName , string billDescription, decimal amount, decimal percentageOwed, Boolean paymentStatus,Boolean isRepeated, Boolean isDeleted, DateTime dateDeleted, string photoFileName)
+       public Bill(string username, string billId, DateTime dateEntered, string billName , string billDescription, decimal amount, Boolean paymentStatus,Boolean isRepeated, Boolean isDeleted, DateTime dateDeleted, string photoFileName)
        {
             Username = username;
             BillId = billId;
@@ -46,7 +45,6 @@ namespace HAGSJP.WeCasa.Models
             BillName = billName;
             BillDescription = billDescription;
             Amount = amount;
-            PercentageOwed = percentageOwed;
             PaymentStatus = paymentStatus;
             IsRepeated = isRepeated;
             IsDeleted = isDeleted;

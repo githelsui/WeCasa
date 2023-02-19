@@ -20,7 +20,6 @@ export var Bill = {
     billName: String,
     billDescription: String,
     amount: Number,
-    percentageOwed: Number,
     paymentStatus: Boolean,
     isRepeated: Boolean,
     isDeleted: Boolean,

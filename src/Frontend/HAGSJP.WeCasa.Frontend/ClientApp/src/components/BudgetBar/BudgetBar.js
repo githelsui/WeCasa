@@ -1,7 +1,8 @@
 import React, { useState, Component } from 'react';
 import axios from 'axios';
 import {Bill} from './utils'
-
+import { Table } from 'antd';
+import NavMenu from '../NavMenu';
 
 export class BudgetBar extends Component {
     static displayName = BudgetBar.name;
@@ -9,7 +10,7 @@ export class BudgetBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: "",
+         
             group: [],
             budget: 0,
             groupTotal: 0,
@@ -27,7 +28,6 @@ export class BudgetBar extends Component {
             //     billName: "",
             //     billDescription: "",
             //     amount: 0,
-            //     percentageOwed: 0,
             //     paymentStatus: false,
             //     isRepeated: false,
             //     isDeleted: false,
@@ -41,15 +41,14 @@ export class BudgetBar extends Component {
             //     billName: "",
             //     billDescription: "",
             //     amount: 0,
-            //     percentageOwed: 0,
             //     paymentStatus: false,
             //     isRepeated: false,
             //     isDeleted: false,
             //     dateDeleted: null,
             //     photoFileName: null
             // }],
+          }
         };
-    }
 
     componentDidMount() {
         let username = "Jan";
@@ -60,7 +59,6 @@ export class BudgetBar extends Component {
         //     "BillName": "trash",
         //     "BillDescription": "description",
         //     "Amount": 1000,
-        //     "PercentageOwed": 50,
         //     "PaymentStatus": true,
         //     "IsRepeated": true,
         //     "IsDeleted": false,
@@ -68,19 +66,79 @@ export class BudgetBar extends Component {
         //     "PhotoFileName": "dfafs"
         //    }
         // this.populateInitialView(username);
-        // this.fetchTable(username) 
+        this.fetchTable(username);
     }
 
     render() {
+        const dataSource = [
+            
+            {
+              key: '1',
+              date: this.state.activeBills[0].dateEntered,
+              name: this.state.activeBills[0].billName,
+              age: 32,
+              address: '10 Downing Street',
+            },
+            {
+              key: '2',
+              name: 'John',
+              age: 42,
+              address: '10 Downing Street',
+            },
+          ];
+          
+          const columns = [
+            {
+              title: '',
+              dataIndex: 'name',
+              key: "",
+            },
+            {
+              title: 'Date',
+              dataIndex: 'date',
+              key: 'age',
+            },
+            {
+              title: 'Name',
+              dataIndex: 'billName',
+              key: 'address',
+            },
+            {
+                title: 'Owner',
+                dataIndex: 'username',
+                key: 'age',
+            },
+            {
+              title: 'Description',
+              dataIndex: 'description',
+              key: 'address',
+            },
+            {
+              title: 'Amount',
+              dataIndex: 'amount',
+              key: 'age',
+            },
+            {
+              title: 'Status',
+              dataIndex: 'paymentStatus',
+              key: 'address',
+            },
+            {
+              title: 'Receipt',
+              dataIndex: 'receipt',
+              key: 'address',
+            }
+          ];
         return (
         <div>
-            <h1>Hello, welcome to WeCasa</h1>
+            <NavMenu/>
+            <Table dataSource={dataSource} columns={columns} />;
             { <p>contents budget: {this.state.budget}</p>}
             <p>contents group: {this.state.group.join(", ")}</p>
             <p>contents spent: {this.state.groupTotal}</p>
             <p>contents totalSpentPerMember: {this.state.totalSpentPerMember["jan"]}</p>
             <p>contents activeBills: {this.state.activeBills[0].amount}</p>
-            {/* <p>contents deletedBills: {this.state.deletedBills}</p>  */}
+            <p>contents deletedBills: {this.state.deletedBills[0].amount}</p> 
             <p>contents total for {this.state.username}: {this.state.total}</p> 
             {/* <p>contents result: {String(this.state.result)}</p> */}
         </div>
@@ -89,7 +147,7 @@ export class BudgetBar extends Component {
 
     fetchBudgetBar(username) 
     {
-        axios.get(`budgetbar/${username}`).then((response) => {
+        axios.get(`finances/${username}`).then((response) => {
             var res = response.data
             this.setState({
                             group: res["group"],
@@ -102,7 +160,7 @@ export class BudgetBar extends Component {
 
     fetchTable(username) 
     {
-        axios.get(`budgetbar/${username}`).then((response) => {
+        axios.get(`finances/${username}`).then((response) => {
             var res = response.data
             this.setState({
                             total: res["total"],
@@ -115,7 +173,7 @@ export class BudgetBar extends Component {
 
     persistEditForm(bill) 
     {
-        axios.put(`budgetbar/EditBill`).then(res => {
+        axios.put(`finance/EditBill`).then(res => {
             var isSuccessful = res.data;
             if (isSuccessful) {
 

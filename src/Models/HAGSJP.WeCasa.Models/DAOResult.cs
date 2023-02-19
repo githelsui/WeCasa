@@ -11,11 +11,11 @@ namespace HAGSJP.WeCasa.Models
             if (rows == 1)
             {
                 result.IsSuccessful = true;
-                result.Message = string.Empty;
+                result.Message = "1 entry affected";
                 return result;
             }
             result.IsSuccessful = false;
-            result.Message = $"Rows affected were not 1. It was {rows}";
+            result.Message = $"The number of rows affected were {rows}";
             return result;
         }
 

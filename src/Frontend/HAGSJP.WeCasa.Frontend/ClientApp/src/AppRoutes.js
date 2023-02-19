@@ -26,7 +26,7 @@ const AppRoutes = [
     element: <Login />
    },
    {
-    path: '/budget-bar',
+    path: '/finances',
     element: <BudgetBar />
    }
   // {

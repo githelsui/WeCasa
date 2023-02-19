@@ -55,7 +55,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 }
                 return usernames;
             }
-        }
-        
+        }    
    }
 }

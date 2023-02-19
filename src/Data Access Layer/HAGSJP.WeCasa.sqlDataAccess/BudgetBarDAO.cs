@@ -40,19 +40,18 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     connection.Open();
 
-                    var insertSql = @"INSERT INTO Bills (username, bill_id, date_submitted, bill_description, amount, bill_name, payment_status, percentage_owed, is_repeated, is_deleted, date_deleted, receipt_file_name)
-                                    VALUES (@username, @bill_id, @date_submitted, @bill_description, @amount, @bill_name, @payment_status, @percentage_owed, @is_repeated, @is_deleted, @date_deleted, @receipt_file_name);";
+                    var insertSql = @"INSERT INTO Bills (username, bill_id, date_submitted, bill_description, amount, bill_name, payment_status, is_repeated, is_deleted, date_deleted, receipt_file_name)
+                                    VALUES (@username, @bill_id, @date_submitted, @bill_description, @amount, @bill_name, @payment_status, @is_repeated, @is_deleted, @date_deleted, @receipt_file_name);";
                 
                     var command = connection.CreateCommand();
                     command.CommandText = insertSql;
                     command.Parameters.AddWithValue("@username".ToLower(), bill.Username.ToLower());
                     command.Parameters.AddWithValue("@bill_id", bill.BillId);
-                    command.Parameters.AddWithValue("@date_submitted", bill.DateEntered);
+                    command.Parameters.AddWithValue("@date_submitted", DateTime.Now);
                     command.Parameters.AddWithValue("@bill_description", bill.BillDescription);
                     command.Parameters.AddWithValue("@amount", bill.Amount);
                     command.Parameters.AddWithValue("@bill_name", bill.BillName);
                     command.Parameters.AddWithValue("@payment_status", bill.PaymentStatus);
-                    command.Parameters.AddWithValue("@percentage_owed", bill.PercentageOwed);
                     command.Parameters.AddWithValue("@is_repeated", bill.IsRepeated);
                     command.Parameters.AddWithValue("@is_deleted", bill.IsDeleted);
                     command.Parameters.AddWithValue("@date_deleted", bill.DateDeleted);
@@ -65,11 +64,12 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     PopulateResult(result, sqlex);
                 } 
+                catch (Exception sqlex)
+                {
+                }
                 return result;
             }
         }
-
-        
 
         public DAOResult UpdateBill(Bill bill)
         {    
@@ -87,90 +87,63 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                                                 amount = @amount,
                                                 bill_name = @bill_name,
                                                 payment_status = @payment_status,
-                                                percentage_owed = @percentage_owed,
                                                 is_repeated = @is_repeated,
-                                                is_deleted = @is_deleted,
-                                                date_deleted = @date_deleted,
                                                 receipt_file_name = @receipt_file_name
-                                            WHERE bill_id = @bill_id
-                                            AND username = @username;";
+                                            WHERE bill_id = @bill_id AND username = @username;";
                     var command = connection.CreateCommand();
                     command.CommandText = insertSql;
-                    command.Parameters.AddWithValue("@bill_id", bill.BillId);
                     command.Parameters.AddWithValue("@bill_description", bill.BillDescription);
                     command.Parameters.AddWithValue("@amount", bill.Amount);
                     command.Parameters.AddWithValue("@bill_name", bill.BillName);
                     command.Parameters.AddWithValue("@payment_status", bill.PaymentStatus);
-                    command.Parameters.AddWithValue("@percentage_owed", bill.PercentageOwed);
                     command.Parameters.AddWithValue("@is_repeated", bill.IsRepeated);
-                    command.Parameters.AddWithValue("@is_deleted", bill.IsDeleted);
-                    command.Parameters.AddWithValue("@date_deleted", bill.DateDeleted);
                     command.Parameters.AddWithValue("@receipt_file_name", bill.PhotoFileName);
                     command.Parameters.AddWithValue("@username", bill.Username);
-
+                    command.Parameters.AddWithValue("@bill_id", bill.BillId);
 
                     var rows = (command.ExecuteNonQuery());
                     result = result.ValidateSqlResultMultiple(rows);
-                                }
+                }
                 catch (MySqlException sqlex)
                 {
-
                     PopulateResult(result, sqlex);
                 } 
                 return result;
             }
         }
 
-        // public DAOResult UpdateBill(string username, Boolean paymentStatus, Decimal PercentageOwed)
-        // {    
-        //     var result = new DAOResult();   
-        //     _connectionString = BuildConnectionString().ConnectionString;
-        //     using(var connection = new MySqlConnection(_connectionString))
-        //     {
-        //         try
-        //         {
-        //             connection.Open();
+        public DAOResult UpdatePaymentStatus(string username, string billId, Boolean paymentStatus)
+        {    
+            var result = new DAOResult();   
+            _connectionString = BuildConnectionString().ConnectionString;
+            using(var connection = new MySqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
 
-        //             var insertSql = @"UPDATE Bills 
-        //                                     SET 
-        //                                         bill_description = @bill_description,
-        //                                         amount = @amount,
-        //                                         bill_name = @bill_name,
-        //                                         payment_status = @payment_status,
-        //                                         percentage_owed = @percentage_owed,
-        //                                         is_repeated = @is_repeated,
-        //                                         is_deleted = @is_deleted,
-        //                                         date_deleted = @date_deleted,
-        //                                         receipt_file_name = @receipt_file_name
-        //                                     WHERE bill_id = @bill_id;";
-        //             var command = connection.CreateCommand();
-        //             command.CommandText = insertSql;
-        //             command.Parameters.AddWithValue("@bill_id", bill.BillId);
-        //             command.Parameters.AddWithValue("@bill_description", bill.BillDescription);
-        //             command.Parameters.AddWithValue("@amount", bill.Amount);
-        //             command.Parameters.AddWithValue("@bill_name", bill.BillName);
-        //             command.Parameters.AddWithValue("@payment_status", bill.PaymentStatus);
-        //             command.Parameters.AddWithValue("@percentage_owed", bill.PercentageOwed);
-        //             command.Parameters.AddWithValue("@is_repeated", bill.IsRepeated);
-        //             command.Parameters.AddWithValue("@is_deleted", bill.IsDeleted);
-        //             command.Parameters.AddWithValue("@date_deleted", bill.DateDeleted);
-        //             command.Parameters.AddWithValue("@receipt_file_name", bill.PhotoFileName);
-        //             command.Parameters.AddWithValue("@username", bill.Username);
+                    var insertSql = @"UPDATE Bills 
+                                            SET 
+                                                payment_status = @payment_status
+                                            WHERE bill_id = @bill_id AND username = @username;";
+                    var command = connection.CreateCommand();
+                    command.CommandText = insertSql;
+                    command.Parameters.AddWithValue("@bill_id", billId);
+                    command.Parameters.AddWithValue("@payment_status", paymentStatus);
+                    command.Parameters.AddWithValue("@username", username);
 
-
-        //             var rows = (command.ExecuteNonQuery());
-        //             result = result.ValidateSqlResult(rows);
-        //                         }
-        //         catch (MySqlException sqlex)
-        //         {
-
-        //             PopulateResult(result, sqlex);
-        //         } 
-        //         return result;
-        //     }
-        // }
+                    var rows = (command.ExecuteNonQuery());
+                    result = result.ValidateSqlResult(rows);
+                }
+                catch (MySqlException sqlex)
+                {
+                    PopulateResult(result, sqlex);
+                } 
+                return result;
+            }
+        }
     
-        public DAOResult DeleteBill(string billId, DateTime date)
+        public DAOResult DeleteBill(string billId)
         {
             var result = new DAOResult();
             _connectionString = BuildConnectionString().ConnectionString;
@@ -189,7 +162,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.CommandText = insertSql;
                     command.Parameters.AddWithValue("@bill_id", billId);
                     command.Parameters.AddWithValue("@is_deleted", true);
-                    command.Parameters.AddWithValue("@date_deleted", date);
+                    command.Parameters.AddWithValue("@date_deleted", DateTime.Now);
 
                     var rows = (command.ExecuteNonQuery());
                     result = result.ValidateSqlResultMultiple(rows);
@@ -309,8 +282,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                             activeBill.BillName = reader.GetString(reader.GetOrdinal("bill_name"));
                             activeBill.BillDescription = reader.GetString(reader.GetOrdinal("bill_description"));
                             activeBill.Amount = reader.GetDecimal(reader.GetOrdinal("amount"));
-                            activeBill.PercentageOwed = reader.GetDecimal(reader.GetOrdinal("percentage_owed"));
-                            activeBill.PaymentStatus = reader.GetInt32(reader.GetOrdinal("payment_Status")) == 1 ? true : false;
+                            activeBill.PaymentStatus = reader.GetInt32(reader.GetOrdinal("payment_status")) == 1 ? true : false;
                             activeBill.IsRepeated = reader.GetInt32(reader.GetOrdinal("is_repeated")) == 1 ? true : false;
                             activeBill.IsDeleted = reader.GetInt32(reader.GetOrdinal("is_deleted")) == 1 ? true : false;
                             activeBill.DateDeleted = reader.IsDBNull(reader.GetOrdinal("date_deleted")) ? null : reader.GetDateTime(reader.GetOrdinal("date_deleted"));
@@ -318,12 +290,16 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                             activeBills.Add(activeBill);
                         }
                     }
-                    return activeBills;
+                    throw new Exception("Cannot find item");
                 }
                 catch (MySqlException sqlex)
                 {
                     throw sqlex;
                 } 
+                catch(Exception ex)
+                {
+                    throw ex;
+                }
             }
         }
 
@@ -347,13 +323,17 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         {
                             return reader.GetDecimal(0);
                         }
-                        return -1;
+                        throw new Exception("Cannot find item");
                     }
                 }
                 catch (MySqlException sqlex)
                 {
                     throw sqlex;
                 } 
+                catch(Exception ex)
+                {
+                    throw ex;
+                }
             }
         }
 
