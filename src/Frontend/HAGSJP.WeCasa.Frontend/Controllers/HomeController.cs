@@ -28,6 +28,7 @@ public class HomeController : Controller
     public Result GetGroups([FromBody] LoginForm account)
     {
         UserAccount currentUser = new UserAccount(account.Username);
-
+        GroupManager gm = new GroupManager();
+        return gm.GetGroups(currentUser);
     }
 }

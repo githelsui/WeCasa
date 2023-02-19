@@ -5,7 +5,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import '../styles/NavMenu.css';
 import axios from 'axios'
-import { notification } from 'antd';
+import { notification, Avatar } from 'antd';
+import { UserOutlined } from '@ant-design/icons'
 import * as Styles from '../styles/ConstStyles.js';
 
 export const Header = () => {
@@ -76,7 +77,9 @@ export const Header = () => {
                             </NavItem>
                         </ul>
                         ) : (<UncontrolledDropdown>
-                                <DropdownToggle>Profile</DropdownToggle>
+                            <DropdownToggle id="profile-icon">
+                                <Avatar icon={<UserOutlined />}></Avatar>
+                            </DropdownToggle>
                                 <DropdownMenu>
                                     <DropdownItem disabled>Settings</DropdownItem>
                                     <DropdownItem href="/edit-profile">Edit Profile</DropdownItem>

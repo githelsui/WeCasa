@@ -211,7 +211,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
             if (userPersistResult.IsSuccessful && actual > expected)
             {
-                errorLogger.Log("Account created successfully, but took longer than 5 seconds", LogLevels.Info, "Business", userAccount.Username, new UserOperation(Operations.Registration, 0));
+                errorLogger.Log("Account created successfully, but took longer than 5 seconds", LogLevels.Info, "Business", userAccount.Username, new UserOperation(Operations.Registration, 1));
             }
 
             return userPersistResult;
@@ -249,7 +249,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
             if(userPersistResult.IsSuccessful && actual > expected)
             {
-                errorLogger.Log("Account created successfully, but took longer than 5 seconds", LogLevels.Info, "Business", userAccount.Username, new UserOperation(Operations.Registration, 0));
+                errorLogger.Log("Account created successfully, but took longer than 5 seconds", LogLevels.Info, "Business", userAccount.Username, new UserOperation(Operations.Registration, 1));
             }
 
             return userPersistResult;
