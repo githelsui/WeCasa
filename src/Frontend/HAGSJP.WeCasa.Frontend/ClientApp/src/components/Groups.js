@@ -5,6 +5,8 @@ import { Col, Card, Row, Space, Avatar, Button } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons'
 import axios from 'axios';
 import * as Styles from '../styles/ConstStyles.js';
+import CreateGroupModal from './CreateGroupModal.js'
+
 const { Meta } = Card;
 
 // FOR TESTING
@@ -25,6 +27,7 @@ export const Groups = () => {
     const [loading, setLoading] = useState(true);
     const { auth, currentUser } = useAuth();
     const [groups, setGroups] = useState([]);
+    const [showModal, setShowModal] = useState(false);
 
     const getGroups = () => {
         axios.get('home/GetGroups', currentUser)
@@ -66,6 +69,10 @@ export const Groups = () => {
         // display failure to load message
     }
 
+    const attempGroupCreation = () => {
+
+    }
+
     return (
         <div>
             <Space direction="horizonal" size={32}>
@@ -75,6 +82,7 @@ export const Groups = () => {
                 <Col span={18}>
                     <Card hoverable style={{ marginTop:16, background:"#ececec", fontFamily: 'Mulish'}}>
                         <Meta
+                            onClick={() => setShowModal(true)}
                             avatar={<PlusCircleOutlined />}
                             title="Create Group"
                             type="inner"
@@ -82,6 +90,7 @@ export const Groups = () => {
                     </Card>
                 </Col>
             </Row>
+            <CreateGroupModal show={showModal} close={() => setShowModal(false)} confirm={attempGroupCreation} />
         </div>
     );
 }; 
