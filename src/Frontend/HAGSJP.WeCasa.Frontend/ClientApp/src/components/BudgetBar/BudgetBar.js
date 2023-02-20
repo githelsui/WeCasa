@@ -1,4 +1,4 @@
-import React, { useState, Component, EditButton } from 'react';
+import React, { useAuth, useState, Component, EditButton } from 'react';
 import axios from 'axios';
 import {Bill} from './utils'
 import { Table, Progress, Tabs, Button} from 'antd';
@@ -7,8 +7,12 @@ import {MultiColorProgressBar} from './ProgressBar';
 import BillForm from './BillForm';
 import BudgetForm from './BudgetForm';
 import ButtonIcon from './ButtonIcon';
+import * as Styles from '../../styles/ConstStyles';
 
 export const BudgetBar = (user) => {
+  const [budget, setBudget] = useState(0)
+  // const { auth, currentUser } = useAuth();
+
         // this.state = {
          
         //     group: [],
@@ -118,21 +122,48 @@ export const BudgetBar = (user) => {
         }
       ];
 
+      let request =  {
+          Usernames : ["sam", "man"],
+          Bill : {
+              GroupId: 0,
+              Username: "Jan",
+              BillName: "Trip",
+              BillDescription: "some-description",
+              Amount: 100,
+              PaymentStatus: true,
+              IsRepeated: true,
+              PhotoFileName: "dfafs"
+          }
+   }
+
+   const persistEditForm = (request) =>
+    {
+      axios.put(`finance/EditBill`).then(res => {
+          var isSuccessful = res.data;
+          if (isSuccessful) {
+
+          } else {
+          }
+      })
+      .catch((error) => { console.error(error) });
+    }
+
     return (
       <div>
          <NavMenu/>
          {/* <Button shape="round" size='large' onClick={handleClick}></Button> */}
         <ButtonIcon readings={readings} items={items}/>
-        <BudgetForm/>
-        <p><strong>Total Budget: $5000</strong></p>
-        <Progress percent={50} strokeColor = {color[0]} showInfo={false} strokeWidth="30px"/>
+        <BudgetForm budget={budget} setBudget={setBudget}/>
+         <p><strong>Total Budget: {budget}</strong></p>
+        <Progress percent={50} strokeColor = {color[0]} showInfo={true} strokeWidth="30px"/>
         <MultiColorProgressBar readings={readings}/>
+        {/* <Button style={Styles.primaryButtonModal} onClick={() => { setopen(true);}}>Add Bill</Button> */}
         <BillForm/>
         <Tabs defaultActiveKey="1" items={items}  /> 
         {/* { <p>contents budget: {this.state.budget}</p>} */}
         {/* <p>contents group: {this.state.group.join(", ")}</p>
         <p>contents spent: {this.state.groupTotal}</p> */}
-        {/* <p>contents totalSpentPerMember: {this.state.totalSpentPerMember["jan"]}</p>
+        {/* <p>contents totalSpentPerMember: {this.state.totalSpentPerMember[""jan""]}</p>
         <p>contents activeBills: {this.state.activeBills[0].amount}</p>
         <p>contents deletedBills: {this.state.deletedBills[0].amount}</p> 
         <p>contents total for {this.state.username}: {this.state.total}</p>  */}

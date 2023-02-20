@@ -43,21 +43,19 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     connection.Open();
 
-                    var insertSql = @"INSERT INTO Bills (usernames, group_id date_submitted, bill_description, amount, bill_name, payment_status, is_repeated, is_deleted, date_deleted, receipt_file_name)
-                                    VALUES (@usernames, @group_id, @date_submitted, @bill_description, @amount, @bill_name, @payment_status, @is_repeated, @is_deleted, @date_deleted, @receipt_file_name);";
+                    var insertSql = @"INSERT INTO Bills (usernames, group_id, date_submitted, bill_description, amount, bill_name, payment_status, is_repeated, date_deleted, receipt_file_name)
+                                    VALUES (@usernames, @group_id, @date_submitted, @bill_description, @amount, @bill_name, @payment_status, @is_repeated, @date_deleted, @receipt_file_name);";
                 
                     var command = connection.CreateCommand();
                     command.CommandText = insertSql;
                     command.Parameters.AddWithValue("@usernames", billsJSON);
-                    command.Parameters.AddWithValue("@amount", bill.GroupId);
+                    command.Parameters.AddWithValue("@group_id", bill.GroupId);
                     command.Parameters.AddWithValue("@date_submitted", DateTime.Now);
                     command.Parameters.AddWithValue("@bill_description", bill.BillDescription);
                     command.Parameters.AddWithValue("@amount", bill.Amount);
                     command.Parameters.AddWithValue("@bill_name", bill.BillName);
                     command.Parameters.AddWithValue("@payment_status", bill.PaymentStatus);
                     command.Parameters.AddWithValue("@is_repeated", bill.IsRepeated);
-                    command.Parameters.AddWithValue("@is_deleted", bill.IsDeleted);
-                    command.Parameters.AddWithValue("@date_deleted", bill.DateDeleted);
                     command.Parameters.AddWithValue("@receipt_file_name", bill.PhotoFileName);
 
                     var rows = (command.ExecuteNonQuery());
@@ -66,6 +64,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 catch (MySqlException sqlex)
                 {
                     PopulateResult(result, sqlex);
+                    throw sqlex;
                 } 
                 catch (Exception sqlex)
                 {

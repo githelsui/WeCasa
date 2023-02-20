@@ -33,7 +33,7 @@ namespace HAGSJP.WeCasa.Frontend
     {
         [JsonConstructor]
         public AddBillRequest() {}
-        public List <string> Usernames { get; set; }
+        public List<string> Usernames { get; set; }
         public Bill Bill { get; set; }
     }
 

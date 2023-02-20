@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using HAGSJP.WeCasa.Models.Security;
 
 
 namespace HAGSJP.WeCasa.Models
@@ -8,7 +7,7 @@ namespace HAGSJP.WeCasa.Models
    public class Bill
    {
        public string Username { get; set; }
-       public int BillId { get; set; }
+       public int? BillId { get; set; }
        public int GroupId { get; set; }
        public DateTime? DateEntered { get; set; }
        public string BillName { get; set; }

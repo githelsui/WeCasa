@@ -21,6 +21,8 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return Guid.NewGuid().ToString("N");
         }
 
+
+
         public object GetInitialBudgetBarVew(string username, int groupId)
         {
             AccountMariaDAO dao = new AccountMariaDAO();
@@ -55,6 +57,40 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 GroupTotal = totalSpent,
             };
         }
+
+        // TODO: make view if there is not group id passed in
+        // public object GetInitialBudgetBarVew(string username)
+        // {
+        //     AccountMariaDAO dao = new AccountMariaDAO();
+        //     RefreshBillList(username);
+        //     DeleteAllOutdatedBills(username);
+        //     decimal budget = GetBudget(groupId);
+            
+        //     Dictionary<string, string> names = dao.GetFirstNames(groupId);
+        //     Dictionary<string, BudgetBarUser> budgetBarUsers = new Dictionary<string, BudgetBarUser>();
+        //     foreach(var name in names)
+        //     {
+        //         BudgetBarUser bbUser = new BudgetBarUser(name.Key, name.Value);
+        //         budgetBarUsers.Add(name.Key, bbUser);
+        //     }
+
+        //     List<Bill> bills = GetBills(groupId);
+        //     Decimal totalSpent = 0;
+        //     foreach(Bill bill in bills)
+        //     {
+        //         if (bill.IsDeleted == false)
+        //         {
+        //             budgetBarUsers[bill.Username].ActiveBills.Add(bill);
+        //             budgetBarUsers[bill.Username].TotalSpent += bill.Amount;
+        //             totalSpent += bill.Amount;
+        //         }
+        //         budgetBarUsers[bill.Username].DeletedBills.Add(bill);
+        //     }
+            
+        //     return new {
+        //         budgetBarUser = bbUser;
+        //     };
+        // }
 
         // public object GetTableInformation(string username)
         // {
@@ -98,20 +134,29 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
         public Result InsertBill(List<string> usernames, Bill bill)
         {
+            usernames.Add(bill.Username);
             DAOResult result = _dao.InsertBill(usernames, bill);
-            if (result.IsSuccessful)
+            try
             {
-                _logger.Log("Add bill was successful", LogLevels.Info, "Data Store", bill.Username);
+                    if (result.IsSuccessful)
+                {
+                    _logger.Log("Add bill was successful", LogLevels.Info, "Data Store", bill.Username);
+                }
+                else
+                {
+                    _logger.Log( "Add bill Error: " + result.ErrorStatus  + "\n" +"Message: " + result.Message + "\n" + "State: " + result.SqlState, LogLevels.Error, "Data Store", bill.Username);
+                }
             }
-            else
-            {
-                _logger.Log( "Add bill Error: " + result.ErrorStatus  + "\n" +"Message: " + result.Message + "\n" + "State: " + result.SqlState, LogLevels.Error, "Data Store", bill.Username);
-            }
+            catch (MySqlException sqlex)
+                {
+                    _logger.Log( "Add bill Error: "  + "\n" +"Message: " + sqlex.Message + "\n" + "State: " + sqlex.SqlState, LogLevels.Error, "Data Store", bill.Username);
+                }
             return result;
         }
 
          public Result UpdateBill(Bill bill)
         {
+             _logger.Log("Updateeeeeee", LogLevels.Info, "Data Store", bill.Username);
             DAOResult result = _dao.UpdateBill(bill);
             if (result.IsSuccessful)
             {

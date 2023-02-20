@@ -171,7 +171,6 @@ public class BudgetBarController : Controller
     {
         try
         {
-
             Result result = _budgetBarManager.InsertBill(request.Usernames, request.Bill);
             return Ok(result.IsSuccessful);
         }
@@ -191,6 +190,7 @@ public class BudgetBarController : Controller
             Result editBudgetResult = _budgetBarManager.EditBudget(request.GroupId, request.Amount);
             if (!editBudgetResult.IsSuccessful)
             {
+                _logger.Log( "Update Budget Error Message: ", LogLevels.Error, "Data Store", "GroupID: " + request.GroupId);
                 return BadRequest();
             }
             return Ok(true);

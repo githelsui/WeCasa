@@ -26,18 +26,18 @@ const fetchBudgetBar = (username)  =>
 //     }
 
 
-//     persistEditForm(bill) 
-//     {
-//         axios.put(`finance/EditBill`).then(res => {
-//             var isSuccessful = res.data;
-//             if (isSuccessful) {
+    persistEditForm(bill) 
+    {
+        axios.put(`finance/EditBill`).then(res => {
+            var isSuccessful = res.data;
+            if (isSuccessful) {
 
-//             } else {
-//             }
-//         })
-//         .catch((error) => { console.error(error) });
-//     }
-// }
+            } else {
+            }
+        })
+        .catch((error) => { console.error(error) });
+    }
+}
 
 // const submitLoginForm = (values) => {
 //     setInputFailures(false);
