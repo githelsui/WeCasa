@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Net;
 using System;
 using System.Collections;
+using Microsoft.AspNetCore.Identity;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
@@ -30,28 +31,13 @@ namespace HAGSJP.WeCasa.Services.Implementations
             errorLogger = new Logger(dao);
         }
 
-        public Result GetGroups(UserAccount userAccount)
+        public GroupResult GetGroups(UserAccount userAccount)
         {
-            // System log entry recorded if fetching groups takes longer than 5 seconds
-            var stopwatch = new Stopwatch();
-            var expected = 5;
-
-            stopwatch.Start();
-            var groupListResult = _dao.GetGroupList(userAccount);
-
-            if (!groupListResult.IsSuccessful)
-            {
-                errorLogger.Log(groupListResult.Message, LogLevels.Error, "Data Store", userAccount.Username);
-            }
-            stopwatch.Stop();
-            var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
-            if (groupListResult.IsSuccessful && actual > expected)
-            {
-                errorLogger.Log("List of groups retrieved successfully, but took longer than 5 seconds", LogLevels.Info, "Business", userAccount.Username);
-            }
-
-            return groupListResult;
-
+            var result = new GroupResult();
+            var groups = _dao.GetGroupList(userAccount).Groups;
+            var groupsArr = groups.ToArray();
+            result.ReturnedObject = groupsArr;
+            return result;
         }
         public Result CreateGroup(GroupModel group)
         {

@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from './AuthContext';
 import { Col, Card, Row, Space, Avatar, Button, notification } from 'antd';
@@ -9,53 +9,31 @@ import CreateGroupModal from './CreateGroupModal.js';
 import NavMenu from './NavMenu';
 const { Meta } = Card;
 
-// FOR TESTING
-const data = [
-    {
-        GroupId: 1,
-        GroupName: "Group1",
-        Icon: "#0256D4",
-        Features: ["Budget Bar"]
-    },
-    {
-        GroupId: 2,
-        GroupName: "OtherGroup",
-        Icon: "#668D6A",
-        Features: ["all"]
-    }
-]
-
 const maxConfiguredFeatures = 6;
 
 export const Groups = () => {
     const [loading, setLoading] = useState(true);
-    const { auth, currentUser } = useAuth();
+    const { currentUser } = useAuth();
     const [currentGroup, setCurrentGroup] = useState(null);
     const [groups, setGroups] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
 
+    useEffect(() => { getGroups(); }, []);
+
     const getGroups = () => {
         let account = {
             Username: currentUser
         }
-        axios.get('home/GetGroups', account)
+        axios.post('home/GetGroups', account)
             .then(res => {
-                var isSuccessful = res.data['isSuccessful'];
-                if (isSuccessful) {
-                    setGroups(res.data)
-                    displayGroupView();
-                    // setGroups(data); // FOR TESTING
-                } else {
-                    failureGroupView(res.data['message']);
-                }
+                setGroups(res.data['returnedObject']);
             })
             .catch((error) => { console.error(error) });
-    }
+        }
 
     const attemptGroupCreation = (groupConfig) => {
         // Adding features as strings to a list if they are checked in the modal
-
         let features = [];
         if (groupConfig.budgetBar) features.push("Budget Bar");
         if (groupConfig.bulletinBoard) features.push("Bulletin Board");
@@ -85,20 +63,29 @@ export const Groups = () => {
             .catch((error => { console.error(error) }));
     }
 
+    const viewGroup = (group) => {
+        setCurrentGroup(group);
+    }
+
+    const editGroup = (group) => {
+        setCurrentGroup(group);
+        navigate('/group-settings');
+    }
+
     const displayGroupView = () => {
         return groups.map(group => (
-            <div key={group.GroupId}>
+            <div key={group.groupId}>
                 <Col span={10} style={{marginTop:16, marginLeft:16}}>
                     <Card
                         hoverable
                         style={{ width: 500 }}
                         actions={[
-                            <Button key="view" type="primary" style={Styles.primaryButtonModal}>View</Button>,
-                            <Button key="settings" type="default" style={Styles.defaultButtonModal}>Settings</Button>
+                            <Button key="view" type="primary" onClick={() => viewGroup(group)} style={Styles.primaryButtonModal}>View</Button>,
+                            <Button key="settings" type="default" onClick={() => editGroup(group)} style={Styles.defaultButtonModal}>Settings</Button>
                         ]}>
                         <Meta
-                            avatar={<Avatar style={{ backgroundColor: "var(group.Icon)" }} />}
-                            title={group.GroupName}
+                            avatar={<Avatar style={{ "backgroundColor": group.icon }} />}
+                            title={group.groupName}
                             type="inner"
                         />
                     </Card>
@@ -121,7 +108,7 @@ export const Groups = () => {
         <div>
             {(currentGroup == null) ?
                 (<div><Space direction="horizonal" size={32}>
-                    {getGroups()}
+                    {displayGroupView()}
                 </Space>
                     <Row gutter={24} style={{ display: "flex" }}>
                         <Col span={24}>
