@@ -25,6 +25,15 @@ public class HomeController : Controller
     }
 
     [HttpPost]
+    [Route("ValidateUser")]
+    public Result ValidateUser([FromBody] LoginForm account)
+    {
+        var gm = new GroupManager();
+        var result = gm.ValidateGroupMemberInvitation(account.Username);
+        return result;
+    }
+
+    [HttpPost]
     [Route("GetGroups")]
     public GroupResult GetGroups([FromBody] LoginForm account)
     {
@@ -49,11 +58,13 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    [Route("ValidateUser")]
-    public Result ValidateUser([FromBody] LoginForm account)
+    [Route("NewGroupAddMembers")]
+    public Result NewGroupAddMembers([FromBody] GroupMemberForm form)
     {
+        GroupModel group = new GroupModel();
+        group.GroupId = form.GroupId;
         var gm = new GroupManager();
-        var result = gm.ValidateGroupMemberInvitation(account.Username);
+        var result = gm.AddGroupMembers(group, form.GroupMembers);
         return result;
     }
 }

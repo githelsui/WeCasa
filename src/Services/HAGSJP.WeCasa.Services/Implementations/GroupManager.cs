@@ -89,12 +89,27 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var groupMembersList = new List<UserProfile>();
             foreach (string username in enumerable)
             {
+                Console.Write("Username = " + username);
                 var userAccount = new UserAccount(username);
                 var userProfile = userManager.GetUserProfile(userAccount);
                 groupMembersList.Add((UserProfile)userProfile.ReturnedObject);
             }
             var groupMemberArr = groupMembersList.ToArray();
             result.ReturnedObject = groupMemberArr;
+            return result;
+        }
+
+        public Result AddGroupMembers(GroupModel group, string[] groupMembers)
+        {
+            var result = new Result();
+            for(var i = 0; i < groupMembers.Length; i++)
+            {
+                result = AddGroupMember(group, groupMembers[i]);
+                if(!result.IsSuccessful)
+                {
+                    return result;
+                }
+            }
             return result;
         }
 

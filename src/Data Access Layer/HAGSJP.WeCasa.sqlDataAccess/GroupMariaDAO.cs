@@ -109,8 +109,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                                         @group_name, 
                                         @features
                                      ); 
-                                        SELECT CAST(scope_identity() AS int
-                                     );";
+                                     SELECT LAST_INSERT_ID();";
 
                 var insertUserGroupSql = @"INSERT INTO `UserGroups` (
                                             `group_id`, 
@@ -130,9 +129,9 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 // Execution of first SQL query
                 // Storing auto-incremented group_id from insertion into Groups table
-                int groupId = (int)command.ExecuteScalar();
+                var groupId = (command.ExecuteScalar());
 
-                if (autoGroupId != null)
+                if (groupId != null)
                 {
                     // Execution of second SQL query
                     command.CommandText = insertUserGroupSql;
@@ -140,7 +139,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     var userGroupInsertRows = command.ExecuteNonQuery();
                     var userGroupResult = ValidateSqlStatement(userGroupInsertRows);
                     result.IsSuccessful = true;
-                    group.GroupId = Convert.ToInt32(autoGroupId);
+                    group.GroupId = Convert.ToInt32(groupId);
                     result.ReturnedObject = group;
                 }
                 // Group could not be created and could not retrieve group_id primary key

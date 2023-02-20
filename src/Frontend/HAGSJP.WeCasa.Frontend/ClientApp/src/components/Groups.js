@@ -57,9 +57,7 @@ export const Groups = () => {
                 var isSuccessful = res.data['isSuccessful'];
                 var groupId = createdGroup['groupId']
                 if (isSuccessful) {
-                    setCurrentGroup(createdGroup);
-                    inviteGroupMembers(groupId);
-                    navigate('/group-settings', { state: createdGroup });
+                    inviteGroupMembers(createdGroup);
                 } else {
                     failureGroupView(res.data['message']);
                 }
@@ -73,22 +71,33 @@ export const Groups = () => {
 
     const editGroup = (group) => {
         setCurrentGroup(group);
-        navigate('/group-settings');
+        navigate('/group-settings', { state: group });
+    }
+
     const handleGroupMembersChange = (membersList) => {
         let memberCopy = getRoommatesCopy(membersList)
         setInvitedRoommates(memberCopy)
     }
 
-    const inviteGroupMembers = (groupId) => {
+    const inviteGroupMembers = (group) => {
         console.log(invitedRoommates)
 
         let groupMemberForm = {
-            GroupId: groupId,
-            GroupMembers: setInvitedRoommates
+            GroupId: group['groupId'],
+            GroupMembers: invitedRoommates
         }
 
-        //TODO: Call POST request home/NewGroupAddMembers
-            // return Result -> nav to /group-settings
+        axios.post('home/NewGroupAddMembers', groupMemberForm)
+            .then(res => {
+                var isSuccessful = res.data['isSuccessful'];
+                if (isSuccessful) {
+                    setCurrentGroup(group);
+                    navigate('/group-settings', { state: group });
+                } else {
+                    failureGroupView(res.data['message']);
+                }
+            })
+            .catch((error => { console.error(error) }));
     }
 
     const getRoommatesCopy = (original) => {
