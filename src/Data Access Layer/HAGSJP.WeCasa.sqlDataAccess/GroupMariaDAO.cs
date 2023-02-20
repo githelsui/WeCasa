@@ -6,6 +6,7 @@ using System.Text.Json;
 using Azure;
 using System.Data;
 using System.Reflection.PortableExecutable;
+using System.Data.SqlTypes;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
@@ -119,6 +120,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             {
                 connection.Open();
                 var result = new Result();
+                int autoGroupId = 0;
 
                 // Insert SQL statements
                 var insertGroupSql = @"INSERT INTO `Groups` (
@@ -155,7 +157,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 var groupInsertRows = (command.ExecuteNonQuery());
                 result = ValidateSqlStatement(groupInsertRows);
 
-                if(result.IsSuccessful)
+                if (result.IsSuccessful)
                 {
                     // Execution of second SQL query
                     command.CommandText = insertUserGroupSql;
@@ -175,7 +177,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 var result = new Result();
 
                 // Insert SQL statement
-                var insertSql = @"INSERT INTO `UserGroup` (
+                var insertSql = @"INSERT INTO `UserGroups` (
                                     `group_id`, 
                                     `username`
                                   )
@@ -205,7 +207,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 var result = new Result();
 
                 // Deletion SQL statement
-                var insertSql = @"DELETE FROM `UserGroup`
+                var insertSql = @"DELETE FROM `UserGroups`
                                   WHERE `group_id` = @group_id 
                                   AND `username` = @username;";
 
@@ -231,7 +233,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 var result = new GroupResult();
 
                 // Select SQL statement
-                var insertSql = @"SELECT * FROM `UserGroup`
+                var insertSql = @"SELECT * FROM `UserGroups`
                                     WHERE `username` = @username
                                     AND `group_id` = @group_id;";
 
@@ -266,11 +268,11 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 var result = new GroupResult();
 
                 // Select SQL statement
-                var insertSql = @"SELECT * FROM `UserGroup`
+                var deleteSql = @"SELECT * FROM `UserGroups`
                                     WHERE `group_id` = @group_id;";
 
                 var command = connection.CreateCommand();
-                command.CommandText = insertSql;
+                command.CommandText = deleteSql;
                 command.Parameters.AddWithValue("@group_id", group.GroupId);
 
                 // Execution of SQL
@@ -282,6 +284,39 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 }
                 var groupMemberArr = groupMembers.ToArray();
                 result.ReturnedObject = groupMemberArr;
+                return result;
+            }
+        }
+
+        public Result DeleteGroup(GroupModel group)
+        {
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new Result();
+
+                // Deletion SQL statement
+                var deleteSqlGroup = @"DELETE FROM `Groups`
+                                  WHERE `group_id` = @group_id;";
+
+                var deleteSqlUserGroup = @"DELETE FROM `UserGroups`
+                                  WHERE `group_id` = @group_id;";
+
+                var command = connection.CreateCommand();
+                command.CommandText = deleteSqlGroup;
+                command.Parameters.AddWithValue("@group_id", group.GroupId);
+
+                // Execution of SQL
+                var rows = (command.ExecuteNonQuery());
+                result = ValidateSqlStatement(rows);
+                if (result.IsSuccessful)
+                {
+                    command.CommandText = deleteSqlUserGroup;
+                    command.Parameters.AddWithValue("@group_id", group.GroupId);
+                    rows = (command.ExecuteNonQuery());
+                    result = ValidateSqlStatement(rows);
+                }
                 return result;
             }
         }

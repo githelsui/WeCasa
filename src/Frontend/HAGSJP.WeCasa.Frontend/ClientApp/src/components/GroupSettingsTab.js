@@ -25,6 +25,7 @@ export const GroupSettingsTab = (props) => {
     const [roommate, setRoommate] = useState("");
     const [invitedRoommates, setInvitedRoommates] = useState([])
     const [noInvitations, setNoInvitations] = useState(true);
+    const currentGroup = props.group
 
     const updateFeatureSection = () => {
         var features = props.group.Features

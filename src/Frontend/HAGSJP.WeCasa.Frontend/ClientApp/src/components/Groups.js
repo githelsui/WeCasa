@@ -77,7 +77,7 @@ export const Groups = () => {
                 var isSuccessful = res.data['isSuccessful'];
                 if (isSuccessful) {
                     setCurrentGroup(group);
-                    navigate('/group-settings');
+                    navigate('/group-settings', { state: group });
                 } else {
                     failureGroupView(res.data['message']);
                 }
