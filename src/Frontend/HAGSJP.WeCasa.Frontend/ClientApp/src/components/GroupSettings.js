@@ -33,11 +33,6 @@ export const GroupSettings = (props) => {
         Features: ["Budget Bar"]
     }
 
-    //useEffect(() => {
-    //    setCurrentGroup(tempGroup)
-    //}, []);
-    //setCurrentGroup(tempGroup)
-
     return (
         <div className="group-settings-page padding">
             <div className="group-settings-header padding-vertical">
@@ -51,7 +46,7 @@ export const GroupSettings = (props) => {
                 </Row>
             </div>
 
-            <Tabs defaultActiveKey="2" onChange={tabItemClick}>
+            <Tabs defaultActiveKey="2" onChange={tabItemClick} destroyInactiveTabPane>
                 <TabPane tab="Group Members" key="1"><GroupMembersTab group={tempGroup} refresh={refreshGroupMembers} /></TabPane>
                 <TabPane tab="Settings" key="2"><GroupSettingsTab group={tempGroup} /></TabPane>
             </Tabs>

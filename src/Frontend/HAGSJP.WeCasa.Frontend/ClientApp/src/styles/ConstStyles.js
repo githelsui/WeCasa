@@ -122,3 +122,14 @@ export const removeGroupMemberButton = {
     textDecoration: 'none',
     margin: '2%',
 }
+
+export const deleteButtonModal = {
+    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+    fontFamily: 'Mulish',
+    width: '35%',
+    fontWeight: 'bold',
+    backgroundColor: '#bd0d25',
+    color: '#FFFFFF',
+    marginRight: '12%',
+    marginTop: -10
+}

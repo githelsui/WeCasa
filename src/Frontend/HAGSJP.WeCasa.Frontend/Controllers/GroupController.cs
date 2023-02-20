@@ -47,6 +47,13 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
             var result = groupManager.GetGroupMembers(groupModel);
             return result;
         }
+
+        [HttpPost]
+        [Route("DeleteGroup")]
+        public Result DeleteGroup([FromBody] GroupMemberForm groupForm)
+        {
+            return new Result();
+        }
     }
 }
 
