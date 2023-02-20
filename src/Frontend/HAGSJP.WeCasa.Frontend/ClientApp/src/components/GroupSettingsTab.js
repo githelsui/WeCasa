@@ -1,14 +1,85 @@
 ﻿import React, { Component, useState } from 'react';
-import { Modal, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Switch } from 'antd';
+import { Modal, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Switch, notification } from 'antd';
 import * as Styles from '../styles/ConstStyles.js';
 import '../styles/System.css';
 import '../index.css';
 import defaultImage from '../assets/defaultimgs/wecasatemp.jpg';
+import * as ValidationFuncs from '../scripts/InputValidation.js';
 
 export const GroupSettingsTab = (props) => {
+
     //Development Only:
     const tempFeatureDesc = "DESCRIPTION: Lorem ipsum dolor sit amet consectetur. In non proin et interdum at. Vel mi praesent tincidunt tincidunt odio at mauris nisl cras."
+
     const [newIcon, setNewIcon] = useState(null);
+    const [featureSwitches, setFeatures] = useState([]);
+    const [roommate, setRoommate] = useState("");
+    const [invitedRoommates, setInvitedRoommates] = useState([])
+    const [noInvitations, setNoInvitations] = useState(true);
+
+    const updateFeatureSection = () => {
+        var features = props.group.Features
+        const tempFeatures = [false, false, false, false, false, false]
+        for (let i = 0; i < features.length; i++) {
+            let feature = features[i];
+            if (feature == "all") 
+                tempFeatures = [true, true, true, true, true, true]
+            if (feature == "Budget Bar")
+                tempFeatures[0] = true
+            if (feature == "Bulletin Board")
+                tempFeatures[1] = true
+            if (feature == "Calendar")
+                tempFeatures[2] = true
+            if (feature == "Chore List")
+                tempFeatures[3] = true
+            if (feature == "Grocery List")
+                tempFeatures[4] = true
+            if (feature == "Circular Progress Bar")
+                tempFeatures[5] = true
+        }
+        setFeatures(tempFeatures)
+        console.log(features)
+    };
+
+    const inviteRoommate = () => {
+        var emailCheck = ValidationFuncs.validateEmail(roommate)
+        let notifMsg = ''
+        if (emailCheck && roommate != '') {
+            notifMsg = "Invite Sent to " + roommate;
+            //call web api method
+            addGroupMember(roommate)
+        } else {
+            notifMsg = "Invalid email. Invitation cannot be sent."
+        }
+        notification.open({
+            message: notifMsg,
+            description: '',
+            duration: 5,
+            placement: "topRight",
+        });
+    };
+
+    const addGroupMember = (username) => {
+        // Development Only
+        let tempRoommates = invitedRoommates
+        tempRoommates.push(username)
+        setInvitedRoommates(tempRoommates)
+        console.log(tempRoommates)
+        if (tempRoommates.length > 0) {
+            setNoInvitations(false)
+        } else {
+            setNoInvitations(true)
+        }
+    }
+
+    const validateEmail = (rule, value, callback) => {
+        var ruleResult = ValidationFuncs.validateEmail(value)
+        if (ruleResult.isSuccessful) {
+            callback();
+        } else {
+            callback(ruleResult.message);
+        }
+    };
 
     return (
         <div className="group-settings-tab padding">
@@ -31,14 +102,27 @@ export const GroupSettingsTab = (props) => {
                 <h5 className="padding-top mulish-font">Invite roommates</h5>
                 <Row gutter={[24, 24]}>
                     <Col span={18} className="invite-group-members">
-                        <Form.Item name="memberUsername">
-                            <Input style={Styles.inputFieldStyle} placeholder="Roommate Email/Username" />
+                        <Form.Item name="memberUsername" hasFeedback rules={[{ validator: validateEmail }]}>
+                            <Input style={Styles.inputFieldStyle} placeholder="Roommate Email/Username" value={roommate} onChange={(e) => { setRoommate(e.target.value) }} />
                         </Form.Item>
                     </Col>
                     <Col span={6} className="invite-group-members-btn">
-                        <Button style={Styles.primaryButtonStyleNoMargins} type="primary" htmlType="submit">Invite</Button>
+                        <Button style={Styles.primaryButtonStyleNoMargins} type="primary" onClick={inviteRoommate}>Invite</Button>
                     </Col>
                 </Row>
+
+                <div className="pending-invitations-section padding-vertical">
+                    <h5 className="mulish-font">Pending invitations</h5>
+                    <div>
+                        {
+                            (noInvitations) ?
+                            (<p>No pending invitations sent.</p>) :
+                            (<div>
+                                {invitedRoommates.map((member) => <p>{member}</p>)}
+                            </div>)
+                        }
+                    </div>
+                </div>
 
                 <h5 className="mulish-font">Customize group features</h5>
                 <div className="group-feature-row">
