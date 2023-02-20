@@ -3,6 +3,8 @@ import { FetchData } from "./components/FetchData";
 import { Registration } from "./components/Registration";
 import { Login } from "./components/Login";
 import { BudgetBar } from "./components/BudgetBar/BudgetBar";
+import { GroupSettings } from "./components/GroupSettings";
+
 
 const AppRoutes = [
   {
@@ -28,7 +30,11 @@ const AppRoutes = [
    {
     path: '/finances',
     element: <BudgetBar />
-   }
+   },
+    {
+        path: '/group-settings',
+        element: <GroupSettings />
+    }
   // {
   //   path: '/',
   //   element: <Home />

@@ -9,7 +9,8 @@ const context = [
     "/registration",
     "/login",
     "/budgetbar",
-    "/logout"
+    "/logout",
+    "/group-settings"
 ];
 
 const onError = (err, req, resp, target) => {

@@ -14,5 +14,6 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public Result CreateGroup(GroupModel group);
         public Result DeleteGroup(UserAccount userAccount, GroupModel group);
         public Result EditGroup(UserAccount userAccount, int groupId, GroupModel newGroup);
+        public Result AddGroupMember(GroupModel group, string newGroupMember);
     }
 }

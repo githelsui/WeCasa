@@ -61,8 +61,10 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 // Select SQL statement
                 var selectSql = @"SELECT *
-                                    FROM `Groups` 
-                                    WHERE `username` = @username";
+                                    FROM `Groups`
+                                 INNER JOIN `UserGroups` 
+                                    ON `Groups`.`group_id` = `UserGroups`.`group_id`
+                                 WHERE `UserGroups`.`username` = @username";
                 var command = connection.CreateCommand();
                 command.CommandText = selectSql;
                 command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
@@ -79,27 +81,27 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     if (!reader.IsDBNull(0))
                     {
                         // creating group from reader object
-                        GroupModel group = new GroupModel(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(4), reader.GetDecimal(5));
+                        GroupModel group = new GroupModel(
+                            reader.GetInt32(reader.GetOrdinal("group_id")),
+                            reader.GetString(reader.GetOrdinal("owner")),
+                            reader.GetString(reader.GetOrdinal("group_name")),
+                            reader.GetString(reader.GetOrdinal("icon"))
+                        );
 
                         List<string> features = new List<string>();
-                        string featuresJSON = reader.GetString(6);
-                        // defaulted to all features turned on 
-                        if (featuresJSON == "all")
-                        {
-                            // add all features to list
-                        } else
-                        {
-                            // Deserializing json list of features
-                            features = JsonSerializer.Deserialize<List<string>>(featuresJSON);
-                        }
-                        
+                        string featuresJSON = reader.GetString(reader.GetOrdinal("features"));
+                        // Deserializing json list of features
+                        features = JsonSerializer.Deserialize<List<string>>(featuresJSON);
+
                         group.Features = features;
+                        group.Budget = reader.IsDBNull(reader.GetOrdinal("budget")) ? null : reader.GetDecimal(reader.GetOrdinal("budget")); ;
 
                         // adding list of groups to groups variable
                         groups.Add(group);
                     }
+                    
                     // returning the list of groups in our result
-                    result.ReturnedObject = groups;
+                    result.Groups = groups;
                     return result;
                 }
                 connection.Close();
@@ -118,33 +120,74 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 connection.Open();
                 var result = new Result();
 
+                // Insert SQL statements
+                var insertGroupSql = @"INSERT INTO `Groups` (
+                                        `group_id`, 
+                                        `owner`, 
+                                        `group_name`, 
+                                        `features`
+                                      )
+                                      VALUES (
+                                        @group_id, 
+                                        @owner, 
+                                        @group_name, 
+                                        @features
+                                     );";
+
+                var insertUserGroupSql = @"INSERT INTO `UserGroups` (
+                                            `group_id`, 
+                                            `username`
+                                          )
+                                          VALUES (
+                                            @group_id, 
+                                            @owner 
+                                         );";
+
+                var command = connection.CreateCommand();
+                command.CommandText = insertGroupSql;
+                command.Parameters.AddWithValue("@group_id", group.GroupId);
+                command.Parameters.AddWithValue("@owner".ToLower(), group.Owner.ToLower());
+                command.Parameters.AddWithValue("@group_name".ToLower(), group.GroupName.ToLower());
+                string featuresJSON = JsonSerializer.Serialize(group.Features);
+                command.Parameters.AddWithValue("@features", featuresJSON);
+
+                // Execution of first SQL query
+                var groupInsertRows = (command.ExecuteNonQuery());
+                result = ValidateSqlStatement(groupInsertRows);
+
+                if(result.IsSuccessful)
+                {
+                    // Execution of second SQL query
+                    command.CommandText = insertUserGroupSql;
+                    var userGroupInsertRows = command.ExecuteNonQuery();
+                    result = ValidateSqlStatement(userGroupInsertRows);
+                }
+                return result;
+            }
+        }
+
+        public Result AddGroupMember(GroupModel group, string newGroupMember)
+        {
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new Result();
+
                 // Insert SQL statement
-                var insertSql = @"INSERT INTO `Groups` (
+                var insertSql = @"INSERT INTO `UserGroup` (
                                     `group_id`, 
-                                    `owner`, 
-                                    `group_name`, 
-                                    `username`, 
-                                    `budget`, 
-                                    `features`
+                                    `username`
                                   )
                                   VALUES (
                                     @group_id, 
-                                    @owner, 
-                                    @group_name, 
-                                    @username, 
-                                    @budget, 
-                                    @features
+                                    @username
                                  );";
 
                 var command = connection.CreateCommand();
                 command.CommandText = insertSql;
                 command.Parameters.AddWithValue("@group_id", group.GroupId);
-                command.Parameters.AddWithValue("@owner".ToLower(), group.Owner.ToLower());
-                command.Parameters.AddWithValue("@group_name".ToLower(), group.GroupName.ToLower());
-                command.Parameters.AddWithValue("@username".ToLower(), group.Owner.ToLower());
-                command.Parameters.AddWithValue("@budget", group.Budget);
-                string featuresJSON = JsonSerializer.Serialize(group.Features);
-                command.Parameters.AddWithValue("@features", featuresJSON);
+                command.Parameters.AddWithValue("@username".ToLower(), newGroupMember.ToLower());
 
                 // Execution of SQL
                 var rows = (command.ExecuteNonQuery());
@@ -153,7 +196,48 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
-        public async Task<Result> LogData(Log log)
+        //User already exists in group
+        public GroupResult FindGroupMember(GroupModel group, string groupMember)
+        {
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new GroupResult();
+
+                // Insert SQL statement
+                var insertSql = @"SELECT * FROM `UserGroup`
+                                    WHERE `username` = @username
+                                    AND `group_id` = @group_id;";
+
+                var command = connection.CreateCommand();
+                command.CommandText = insertSql;
+                command.Parameters.AddWithValue("@group_id", group.GroupId);
+                command.Parameters.AddWithValue("@username".ToLower(), groupMember.ToLower());
+
+                // Execution of SQL
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        result.ReturnedObject = true;
+                    }
+                    // User not found
+                    else
+                    {
+                        result.ReturnedObject = false;
+                    }
+                }
+                return result;
+            }
+        }
+
+        public Result GetGroupMembers(GroupModel group)
+        {
+            return new Result();
+        }
+
+            public async Task<Result> LogData(Log log)
         {
 
             _connectionString = BuildConnectionString().ConnectionString;

@@ -90,5 +90,64 @@ namespace HAGSJP.WeCasa.Services.Implementations
         {
             throw new NotImplementedException();
         }
+
+        public Result AddGroupMember(GroupModel group, string newGroupMember)
+        {
+            var userManager = new UserManager();
+            var result = new Result();
+
+            // check if valid email
+            var emailValidation = userManager.ValidateEmail(newGroupMember);
+            if (!emailValidation.IsSuccessful)
+            {
+                return emailValidation;
+            }
+
+            // check if account exists
+            var existingAcc = userManager.IsUsernameTaken(newGroupMember);
+            if (!existingAcc)
+            {
+                result.IsSuccessful = false;
+                result.Message = "Cannot add a user that does not exist.";
+                return result;
+            }
+
+            //check if newGroupMember is not owner of group
+            //TODO: GroupModel should always have group.Owner attached when calling GetGroups from fontend
+            if(group.Owner != null)
+            {
+                if (group.Owner.Equals(newGroupMember))
+                {
+                    result.IsSuccessful = false;
+                    result.Message = "Cannot add a user who already belongs to the group.";
+                    return result;
+                }
+            }
+
+            //heck if newGroupMember already belongs in current group
+            var userInGroup = _dao.FindGroupMember(group, newGroupMember);
+            if ((bool)userInGroup.ReturnedObject)
+            {
+                result.IsSuccessful = false;
+                result.Message = "Cannot add a user who already belongs to the group.";
+                return result;
+            }
+
+            //if all validations pass -> dao.AddGroupMember(group, newGroupMember)
+            result = _dao.AddGroupMember(group, newGroupMember);
+
+            if (result.IsSuccessful)
+            {
+                // Logging the group creation
+                successLogger.Log("Group member added successfully", LogLevels.Info, "Data Store", group.Owner);
+            }
+            else
+            {
+                // Logging the error
+                errorLogger.Log("Error adding a group member", LogLevels.Error, "Data Store", group.Owner);
+            }
+
+            return result;
+        }
     }
 }

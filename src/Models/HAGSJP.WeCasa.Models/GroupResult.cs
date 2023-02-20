@@ -7,10 +7,13 @@ namespace HAGSJP.WeCasa.Models
     {
         public Object? ReturnedObject { get; set; }
 
+        public List<GroupModel> Groups { get; set; }
+
         public GroupResult() { }
 
-        public GroupResult(HttpStatusCode errorStatus, string? message)
-        { 
+        public GroupResult(List<GroupModel> groups, HttpStatusCode errorStatus, string? message)
+        {
+            this.Groups = groups;
             this.ErrorStatus = errorStatus;
             this.Message = message;
         }
@@ -21,7 +24,8 @@ namespace HAGSJP.WeCasa.Models
                 return false;
             var result1 = (GroupResult)result;
             return (ErrorStatus == result1.ErrorStatus)
-                    && (Message == result1.Message);
+                    && (Message == result1.Message)
+                    && (Groups == result1.Groups);
         }
         public static bool operator !=(GroupResult result1, GroupResult result2)        
         {

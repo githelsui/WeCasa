@@ -27,6 +27,16 @@ export const primaryButtonStyle = {
     marginTop: -10
 }
 
+export const deleteButtonStyle = {
+    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+    fontFamily: 'Mulish',
+    width: '100%',
+    fontWeight: 'bold',
+    backgroundColor: '#bd0d25',
+    color: '#FFFFFF',
+    marginTop: -10
+}
+
 export const defaultButtonStyle = {
     fontFamily: 'Mulish',
     fontWeight: 'bold',
@@ -79,3 +89,24 @@ export const groupIconSelection = {
 // Navbar styles 
 export const originalHeaderStyle = 'navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3'
 export const defaultHeaderStyle = 'navbar-expand-sm navbar-toggleable-sm border-bottom ng-white mb-3'
+
+// Create Group Modal (CreateGroupModal.js)
+export const primaryButtonStyleNoMargins = {
+    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+    fontFamily: 'Mulish',
+    width: '100%',
+    fontWeight: 'bold',
+    backgroundColor: '#111827',
+    color: '#FFFFFF'
+}
+
+// Overrides styling for Row antd component
+export const groupFeatureContainer = {
+    backgroundColor: '#ECECEC',
+    paddingTop: '4%',
+    paddingBottom: '3%',
+    paddingLeft: '6%',
+    paddingRight: '0%',
+    marginTop: '1%',
+    borderRadius: '50px'
+}
