@@ -15,6 +15,7 @@ export const Groups = () => {
     const [loading, setLoading] = useState(true);
     const { currentUser } = useAuth();
     const [currentGroup, setCurrentGroup] = useState(null);
+    const [invitedRoommates, setInvitedRoommates] = useState([])
     const [groups, setGroups] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
@@ -52,10 +53,13 @@ export const Groups = () => {
         console.log(group);
         axios.post('home/CreateGroup', group)
             .then(res => {
+                var createdGroup = res.data['returnedObject']
                 var isSuccessful = res.data['isSuccessful'];
+                var groupId = createdGroup['groupId']
                 if (isSuccessful) {
-                    setCurrentGroup(group);
-                    navigate('/group-settings', { state: group });
+                    setCurrentGroup(createdGroup);
+                    inviteGroupMembers(groupId);
+                    navigate('/group-settings', { state: createdGroup });
                 } else {
                     failureGroupView(res.data['message']);
                 }
@@ -70,6 +74,29 @@ export const Groups = () => {
     const editGroup = (group) => {
         setCurrentGroup(group);
         navigate('/group-settings');
+    const handleGroupMembersChange = (membersList) => {
+        let memberCopy = getRoommatesCopy(membersList)
+        setInvitedRoommates(memberCopy)
+    }
+
+    const inviteGroupMembers = (groupId) => {
+        console.log(invitedRoommates)
+
+        let groupMemberForm = {
+            GroupId: groupId,
+            GroupMembers: setInvitedRoommates
+        }
+
+        //TODO: Call POST request home/NewGroupAddMembers
+            // return Result -> nav to /group-settings
+    }
+
+    const getRoommatesCopy = (original) => {
+        let copy = []
+        for (let i = 0; i < original.length; i++) {
+            copy.push(original[i])
+        }
+        return copy
     }
 
     const displayGroupView = () => {
@@ -123,7 +150,7 @@ export const Groups = () => {
                             </Card>
                         </Col>
                     </Row>
-                    <CreateGroupModal show={showModal} close={() => setShowModal(false)} confirm={attemptGroupCreation} reject={failureGroupView} user={currentUser} />
+                    <CreateGroupModal show={showModal} close={() => setShowModal(false)} confirm={attemptGroupCreation} reject={failureGroupView} user={currentUser} onInvitationListUpdated={handleGroupMembersChange}/>
                 </div>) : (
                 <div>
                     <NavMenu />

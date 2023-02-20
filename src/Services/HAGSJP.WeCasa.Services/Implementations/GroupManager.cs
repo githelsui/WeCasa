@@ -39,14 +39,14 @@ namespace HAGSJP.WeCasa.Services.Implementations
             result.ReturnedObject = groupsArr;
             return result;
         }
-        public Result CreateGroup(GroupModel group)
+        public GroupResult CreateGroup(GroupModel group)
         {
             // System log entry recorded if group creation process takes longer than 5 seconds
             var stopwatch = new Stopwatch();
             var expected = 5;
 
             stopwatch.Start();
-            var createGroupResult = new Result();
+            var createGroupResult = new GroupResult();
 
             createGroupResult = _dao.CreateGroup(group);
 
@@ -193,6 +193,30 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 errorLogger.Log("Error adding a removing member", LogLevels.Error, "Data Store", group.Owner);
             }
 
+            return result;
+        }
+
+        public Result ValidateGroupMemberInvitation(string newGroupMember)
+        {
+            var userManager = new UserManager();
+            var result = new Result();
+
+            // check if valid email
+            var emailValidation = userManager.ValidateEmail(newGroupMember);
+            if (!emailValidation.IsSuccessful)
+            {
+                return emailValidation;
+            }
+
+            // check if account exists
+            var existingAcc = userManager.IsUsernameTaken(newGroupMember);
+            if (!existingAcc)
+            {
+                result.IsSuccessful = false;
+                result.Message = "Cannot add a user that does not exist.";
+                return result;
+            }
+            result.IsSuccessful = true;
             return result;
         }
     }

@@ -37,6 +37,7 @@ const groupData = {
 
 export const GroupMembersTab = (props) => {
     const [membersList, setMembersList] = useState([]);
+    const currentGroup = props.group
 
     const getFullName = (first, last) => {
         return first + ' ' + last
@@ -44,7 +45,7 @@ export const GroupMembersTab = (props) => {
 
     const fetchMemberList = () => {
         let groupMemberForm = {
-            GroupId: groupData.GroupId,
+            GroupId: currentGroup['groupId'],
             GroupMember: ''
         }
 
@@ -61,7 +62,7 @@ export const GroupMembersTab = (props) => {
     const removeRoommate = (username) => {
         console.log('remove ' + username)
         let groupMemberForm = {
-            GroupId: groupData.GroupId,
+            GroupId: currentGroup['groupId'],
             GroupMember: username
         }
 

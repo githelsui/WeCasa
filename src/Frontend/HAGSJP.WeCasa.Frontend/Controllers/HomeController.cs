@@ -36,7 +36,7 @@ public class HomeController : Controller
 
     [HttpPost]
     [Route("CreateGroup")]
-    public Result CreateGroup([FromBody] GroupForm form)
+    public GroupResult CreateGroup([FromBody] GroupForm form)
     {
         GroupModel group = new GroupModel();
         group.GroupId = form.GroupId;
@@ -46,5 +46,14 @@ public class HomeController : Controller
         group.Features = form.Features;
         GroupManager gm = new GroupManager();
         return gm.CreateGroup(group);
+    }
+
+    [HttpPost]
+    [Route("ValidateUser")]
+    public Result ValidateUser([FromBody] LoginForm account)
+    {
+        var gm = new GroupManager();
+        var result = gm.ValidateGroupMemberInvitation(account.Username);
+        return result;
     }
 }
