@@ -36,12 +36,16 @@ export const Groups = () => {
     const navigate = useNavigate();
 
     const getGroups = () => {
-        axios.get('home/GetGroups', currentUser)
+        let account = {
+            Username: currentUser
+        }
+        axios.get('home/GetGroups', account)
             .then(res => {
                 var isSuccessful = res.data['isSuccessful'];
                 if (isSuccessful) {
-                    // setGroups(res.data)
-                    setGroups(data);
+                    setGroups(res.data)
+                    displayGroupView();
+                    // setGroups(data); // FOR TESTING
                 } else {
                     failureGroupView(res.data['message']);
                 }
@@ -49,8 +53,40 @@ export const Groups = () => {
             .catch((error) => { console.error(error) });
     }
 
-    const displayGroupView = (groupList) => {
-        return groupList.map(group => (
+    const attemptGroupCreation = (groupConfig) => {
+        // Adding features as strings to a list if they are checked in the modal
+
+        let features = [];
+        if (groupConfig.budgetBar) features.push("Budget Bar");
+        if (groupConfig.bulletinBoard) features.push("Bulletin Board");
+        if (groupConfig.calendar) features.push("Calendar");
+        if (groupConfig.choreList) features.push("Chore List");
+        if (groupConfig.groceryList) features.push("Grocery List");
+        if (groupConfig.circularProgressBar) features.push("Circular Progress Bar");
+        if (features.length == maxConfiguredFeatures) features = ['all'];
+
+        let group = {
+            GroupName: groupConfig.groupName,
+            Owner: currentUser,
+            Icon: (groupConfig.icon == null) ? "#668D6A" : groupConfig.icon,
+            Features: features
+        }
+        console.log(group);
+        axios.post('home/CreateGroup', group)
+            .then(res => {
+                var isSuccessful = res.data['isSuccessful'];
+                if (isSuccessful) {
+                    setCurrentGroup(group);
+                    navigate('/group-settings');
+                } else {
+                    failureGroupView(res.data['message']);
+                }
+            })
+            .catch((error => { console.error(error) }));
+    }
+
+    const displayGroupView = () => {
+        return groups.map(group => (
             <div key={group.GroupId}>
                 <Col span={10} style={{marginTop:16, marginLeft:16}}>
                     <Card
@@ -81,43 +117,11 @@ export const Groups = () => {
         });
     }
 
-
-    const attemptGroupCreation = (groupConfig) => {
-        // Adding features as strings to a list if they are checked in the modal
-
-        let features = [];
-        if (groupConfig.budgetBar) features.push("Budget Bar");
-        if (groupConfig.bulletinBoard) features.push("Bulletin Board");
-        if (groupConfig.calendar) features.push("Calendar");
-        if (groupConfig.choreList) features.push("Chore List");
-        if (groupConfig.groceryList) features.push("Grocery List");
-        if (groupConfig.circularProgressBar) features.push("Circular Progress Bar");
-        if (features.length == maxConfiguredFeatures) features = ['all'];
-
-        let group = {
-            GroupName: groupConfig.groupName,
-            Owner: currentUser,
-            Icon: (groupConfig.icon == null) ? "#668D6A" : groupConfig.icon,
-            Features: features
-        }
-        console.log(group);
-        axios.post('home/CreateGroup', group)
-            .then(res => {
-                var isSuccessful = res.data['isSuccessful'];
-                if (isSuccessful) {
-                    setCurrentGroup(group);
-                } else {
-                    failureGroupView(res.data['message']);
-                }
-            })
-            .catch((error => { console.error(error) }));
-    }
-
     return (
         <div>
             {(currentGroup == null) ?
                 (<div><Space direction="horizonal" size={32}>
-                    {displayGroupView(data)}
+                    {getGroups()}
                 </Space>
                     <Row gutter={24} style={{ display: "flex" }}>
                         <Col span={24}>

@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace HAGSJP.WeCasa.Models
 {
@@ -11,6 +12,15 @@ namespace HAGSJP.WeCasa.Models
             Owner = owner;
             GroupName = name;
             Icon = icon;
+        }
+
+        public GroupModel(int id, string owner, string name, string icon, decimal budget)
+        {
+            GroupId = id;
+            Owner = owner;
+            GroupName = name;
+            Icon = icon;
+            Budget = budget;
         }
 
         public GroupModel(int id, string owner, string name, string icon, List<string> features)
