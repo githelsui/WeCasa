@@ -43,7 +43,6 @@ export const GroupMembersTab = (props) => {
     }
 
     const fetchMemberList = () => {
-        //call web api endpoint
         let groupMemberForm = {
             GroupId: groupData.GroupId,
             GroupMember: ''
@@ -59,8 +58,37 @@ export const GroupMembersTab = (props) => {
             .catch((error => { console.error(error) }));
     }
 
+    const removeRoommate = (username) => {
+        console.log('remove ' + username)
+        let groupMemberForm = {
+            GroupId: groupData.GroupId,
+            GroupMember: username
+        }
+
+        axios.post('group-settings/RemoveGroupMembers', groupMemberForm)
+            .then(res => {
+                console.log(res.data)
+                var isSuccessful = res.data['isSuccessful'];
+                if (isSuccessful) {
+                    fetchMemberList();
+                    toast(res.data['message'])
+                } else {
+                    toast('Try again', res.data['message'])
+                }
+            })
+            .catch((error => { console.error(error) }));
+    }
+
+    const toast = (title, desc = '') => {
+        notification.open({
+            message: title,
+            description: desc,
+            duration: 5,
+            placement: "topRight",
+        });
+    }
+
     useEffect(() => {
-        //setMembersList(data)
         fetchMemberList()
     }, [])
 
@@ -78,7 +106,9 @@ export const GroupMembersTab = (props) => {
                                 title={getFullName(item.firstName, item.lastName)}
                                 description={item.username}
                             />
-                            <Button onClick={props.close} type="default" style={Styles.removeGroupMemberButton}>X  Remove Member</Button>
+                            <Button onClick={(e) => {
+                                removeRoommate(item.username)
+                            }} type="default" style={Styles.removeGroupMemberButton}>X  Remove Member</Button>
                         </Skeleton>
                     </List.Item>
                 )}

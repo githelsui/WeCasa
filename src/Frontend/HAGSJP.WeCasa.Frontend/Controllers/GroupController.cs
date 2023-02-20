@@ -30,7 +30,11 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         [Route("RemoveGroupMembers")]
         public Result RemoveGroupMembers([FromBody] GroupMemberForm groupForm)
         {
-            return new Result();
+            var groupMember = groupForm.GroupMember;
+            var groupModel = new GroupModel();
+            groupModel.GroupId = groupForm.GroupId;
+            var groupManager = new GroupManager();
+            return groupManager.RemoveGroupMember(groupModel, groupMember);
         }
 
         [HttpPost]

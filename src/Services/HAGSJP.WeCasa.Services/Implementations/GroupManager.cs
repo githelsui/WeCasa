@@ -51,7 +51,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             }
 
             return groupListResult;
-            
+
         }
         public Result CreateGroup(GroupModel group)
         {
@@ -135,7 +135,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
             //check if newGroupMember is not owner of group
             //TODO: GroupModel should always have group.Owner attached when calling GetGroups from fontend
-            if(group.Owner != null)
+            if (group.Owner != null)
             {
                 if (group.Owner.Equals(newGroupMember))
                 {
@@ -145,7 +145,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 }
             }
 
-            //heck if newGroupMember already belongs in current group
+            //check if newGroupMember already belongs in current group
             var userInGroup = _dao.FindGroupMember(group, newGroupMember);
             if ((bool)userInGroup.ReturnedObject)
             {
@@ -166,6 +166,45 @@ namespace HAGSJP.WeCasa.Services.Implementations
             {
                 // Logging the error
                 errorLogger.Log("Error adding a group member", LogLevels.Error, "Data Store", group.Owner);
+            }
+
+            return result;
+        }
+
+        public Result RemoveGroupMember(GroupModel group, string groupMember)
+        {
+            var userManager = new UserManager();
+            var result = new Result();
+
+            // check if valid email
+            var emailValidation = userManager.ValidateEmail(groupMember);
+            if (!emailValidation.IsSuccessful)
+            {
+                return emailValidation;
+            }
+
+            // check if account exists
+            var existingAcc = userManager.IsUsernameTaken(groupMember);
+            if (!existingAcc)
+            {
+                result.IsSuccessful = false;
+                result.Message = "Cannot remove a user that does not exist.";
+                return result;
+            }
+
+            result = _dao.RemoveGroupMember(group, groupMember);
+
+            if (result.IsSuccessful)
+            {
+                result.Message = "Successfully removed " + groupMember + " from the group.";
+                // Logging the group creation
+                successLogger.Log("Group member removed successfully", LogLevels.Info, "Data Store", group.Owner);
+            }
+            else
+            {
+                result.Message = "Error removing " + groupMember + " from the group.";
+                // Logging the error
+                errorLogger.Log("Error adding a removing member", LogLevels.Error, "Data Store", group.Owner);
             }
 
             return result;

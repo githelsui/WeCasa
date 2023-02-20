@@ -196,6 +196,31 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
+        public Result RemoveGroupMember(GroupModel group, string groupMember)
+        {
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new Result();
+
+                // Deletion SQL statement
+                var insertSql = @"DELETE FROM `UserGroup`
+                                  WHERE `group_id` = @group_id 
+                                  AND `username` = @username;";
+
+                var command = connection.CreateCommand();
+                command.CommandText = insertSql;
+                command.Parameters.AddWithValue("@group_id", group.GroupId);
+                command.Parameters.AddWithValue("@username".ToLower(), groupMember.ToLower());
+
+                // Execution of SQL
+                var rows = (command.ExecuteNonQuery());
+                result = ValidateSqlStatement(rows);
+                return result;
+            }
+        }
+
         //User already exists in group
         public GroupResult FindGroupMember(GroupModel group, string groupMember)
         {

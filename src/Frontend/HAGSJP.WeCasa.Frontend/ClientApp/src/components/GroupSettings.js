@@ -11,9 +11,18 @@ const TabPane = Tabs.TabPane;
 export const GroupSettings = (props) => {
     const [newIcon, setNewIcon] = useState(null);
     const [currentGroup, setCurrentGroup] = useState(null);
+    const [refreshGroupMembers, setRefreshGroupMembers] = useState(false)
+    const [refreshSettings, setRefreshSettings] = useState(true)
 
     const tabItemClick = (key) => {
         console.log('tab click', key);
+        if (key == 1) {
+            setRefreshGroupMembers(true)
+            setRefreshSettings(false)
+        } else {
+            setRefreshGroupMembers(false)
+            setRefreshSettings(true)
+        }
     };
 
     //Development Only:
@@ -43,7 +52,7 @@ export const GroupSettings = (props) => {
             </div>
 
             <Tabs defaultActiveKey="2" onChange={tabItemClick}>
-                <TabPane tab="Group Members" key="1"><GroupMembersTab group={tempGroup} /></TabPane>
+                <TabPane tab="Group Members" key="1"><GroupMembersTab group={tempGroup} refresh={refreshGroupMembers} /></TabPane>
                 <TabPane tab="Settings" key="2"><GroupSettingsTab group={tempGroup} /></TabPane>
             </Tabs>
 
