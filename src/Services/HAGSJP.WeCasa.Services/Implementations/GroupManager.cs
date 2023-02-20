@@ -53,14 +53,14 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return groupListResult;
 
         }
-        public Result CreateGroup(GroupModel group)
+        public GroupResult CreateGroup(GroupModel group)
         {
             // System log entry recorded if group creation process takes longer than 5 seconds
             var stopwatch = new Stopwatch();
             var expected = 5;
 
             stopwatch.Start();
-            var createGroupResult = new Result();
+            var createGroupResult = new GroupResult();
 
             createGroupResult = _dao.CreateGroup(group);
 

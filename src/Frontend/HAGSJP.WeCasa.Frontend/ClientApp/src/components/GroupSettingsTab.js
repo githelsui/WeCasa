@@ -28,7 +28,7 @@ export const GroupSettingsTab = (props) => {
     const currentGroup = props.group
 
     const updateFeatureSection = () => {
-        var features = props.group.Features
+        var features = currentGroup['Features']
         const tempFeatures = [false, false, false, false, false, false]
         for (let i = 0; i < features.length; i++) {
             let feature = features[i];
@@ -66,7 +66,7 @@ export const GroupSettingsTab = (props) => {
 
     const addGroupMember = (username) => {
         let groupMemberForm = {
-            GroupId: group.GroupId,
+            GroupId: currentGroup['groupId'],
             GroupMember: username
         }
 
@@ -97,7 +97,7 @@ export const GroupSettingsTab = (props) => {
         setShowModal(false)
 
         let groupMemberForm = {
-            GroupId: group.GroupId,
+            GroupId: currentGroup['groupId'],
             GroupMember: ''
         }
 

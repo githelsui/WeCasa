@@ -74,10 +74,11 @@ export const Groups = () => {
         console.log(group);
         axios.post('home/CreateGroup', group)
             .then(res => {
+                var createdGroup = res.data['returnedObject']
                 var isSuccessful = res.data['isSuccessful'];
                 if (isSuccessful) {
-                    setCurrentGroup(group);
-                    navigate('/group-settings', { state: group });
+                    setCurrentGroup(createdGroup);
+                    navigate('/group-settings', { state: createdGroup });
                 } else {
                     failureGroupView(res.data['message']);
                 }

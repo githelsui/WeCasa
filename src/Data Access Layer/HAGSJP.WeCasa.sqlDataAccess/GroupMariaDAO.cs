@@ -113,14 +113,13 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
-        public Result CreateGroup(GroupModel group)
+        public GroupResult CreateGroup(GroupModel group)
         {
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
-                var result = new Result();
-                int autoGroupId = 0;
+                var result = new GroupResult();
 
                 // Insert SQL statements
                 var insertGroupSql = @"INSERT INTO `Groups` (
@@ -134,7 +133,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                                         @owner, 
                                         @group_name, 
                                         @features
-                                     );";
+                                     );
+                                     SELECT LAST_INSERT_ID();";
 
                 var insertUserGroupSql = @"INSERT INTO `UserGroups` (
                                             `group_id`, 
@@ -154,15 +154,26 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 command.Parameters.AddWithValue("@features", featuresJSON);
 
                 // Execution of first SQL query
-                var groupInsertRows = (command.ExecuteNonQuery());
-                result = ValidateSqlStatement(groupInsertRows);
+                var autoGroupId = (command.ExecuteScalar()); //Retrieves auto_incremented primary key from database of newly created row
+                Console.Write("hello");
+                Console.Write(autoGroupId);
+                //result = ValidateSqlStatement(groupInsertRows);
 
-                if (result.IsSuccessful)
+                if (autoGroupId != null)
                 {
                     // Execution of second SQL query
                     command.CommandText = insertUserGroupSql;
                     var userGroupInsertRows = command.ExecuteNonQuery();
-                    result = ValidateSqlStatement(userGroupInsertRows);
+                    var userGroupResult = ValidateSqlStatement(userGroupInsertRows);
+                    result.IsSuccessful = true;
+                    group.GroupId = Convert.ToInt32(autoGroupId);
+                    result.ReturnedObject = group;
+                }
+                // Group could not be created and could not retrieve group_id primary key
+                else
+                {
+                    result.IsSuccessful = false;
+                    result.Message = "Failure creating group.";
                 }
                 return result;
             }

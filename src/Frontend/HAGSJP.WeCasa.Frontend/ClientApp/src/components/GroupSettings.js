@@ -13,6 +13,7 @@ export const GroupSettings = (props) => {
     const [newIcon, setNewIcon] = useState(null);
     const [refreshGroupMembers, setRefreshGroupMembers] = useState(false)
     const [refreshSettings, setRefreshSettings] = useState(true)
+    //const [group, setGroup] = useState(null)
     const location = useLocation();
     let currentGroup = location.state;
 
@@ -35,12 +36,6 @@ export const GroupSettings = (props) => {
         Features: ["Budget Bar"]
     }
 
-    console.log(currentGroup)
-
-    useEffect(() => {
-        //fetchMemberList()
-    }, [])
-
     return (
         <div className="group-settings-page padding">
             <div className="group-settings-header padding-vertical">
@@ -49,19 +44,15 @@ export const GroupSettings = (props) => {
                         <Image style={Styles.groupIconSelection} src={defaultImage} preview={false} height="80px" width="80px" />
                     </Col>
                     <Col span={8} className="group-name">
-                        <h2 className="padding-bottom mulish-font"><b>{currentGroup.GroupName}</b></h2>
+                        <h2 className="padding-bottom mulish-font"><b>{currentGroup['groupName']}</b></h2>
                     </Col>
                 </Row>
             </div>
 
             <Tabs defaultActiveKey="2" onChange={tabItemClick} destroyInactiveTabPane>
-                <TabPane tab="Group Members" key="1"><GroupMembersTab group={currentGroup} refresh={refreshGroupMembers} /></TabPane>
+                <TabPane tab="Group Members" key="1"><GroupMembersTab group={currentGroup} /></TabPane>
                 <TabPane tab="Settings" key="2"><GroupSettingsTab group={currentGroup} /></TabPane>
-            </Tabs>
-
-
-           
-        </div>
+            </Tabs>  </div>
         );
 };
 

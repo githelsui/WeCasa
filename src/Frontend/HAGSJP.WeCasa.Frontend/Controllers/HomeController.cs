@@ -34,7 +34,7 @@ public class HomeController : Controller
 
     [HttpPost]
     [Route("CreateGroup")]
-    public Result CreateGroup([FromBody] GroupForm form)
+    public GroupResult CreateGroup([FromBody] GroupForm form)
     {
         GroupModel group = new GroupModel();
         group.GroupId = form.GroupId;
