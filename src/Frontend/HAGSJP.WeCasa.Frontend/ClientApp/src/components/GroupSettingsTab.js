@@ -6,9 +6,35 @@ import '../index.css';
 import defaultImage from '../assets/defaultimgs/wecasatemp.jpg';
 
 export const GroupSettingsTab = (props) => {
+
     //Development Only:
     const tempFeatureDesc = "DESCRIPTION: Lorem ipsum dolor sit amet consectetur. In non proin et interdum at. Vel mi praesent tincidunt tincidunt odio at mauris nisl cras."
     const [newIcon, setNewIcon] = useState(null);
+    const [featureSwitches, setFeatures] = useState([]);
+
+    const updateFeatureSection = () => {
+        var features = props.group.Features
+        const tempFeatures = [false, false, false, false, false, false]
+        for (let i = 0; i < features.length; i++) {
+            let feature = features[i];
+            if (feature == "all") 
+                tempFeatures = [true, true, true, true, true, true]
+            if (feature == "Budget Bar")
+                tempFeatures[0] = true
+            if (feature == "Bulletin Board")
+                tempFeatures[1] = true
+            if (feature == "Calendar")
+                tempFeatures[2] = true
+            if (feature == "Chore List")
+                tempFeatures[3] = true
+            if (feature == "Grocery List")
+                tempFeatures[4] = true
+            if (feature == "Circular Progress Bar")
+                tempFeatures[5] = true
+        }
+        setFeatures(tempFeatures)
+        console.log(features)
+    };
 
     return (
         <div className="group-settings-tab padding">
