@@ -52,18 +52,17 @@ namespace HAGSJP.WeCasa.UserManagement.Test
             var userManager = new UserManager();
             var systemUnderTest = new GroupManager();
             var testGroup = new GroupModel();
-            var groupOwner = new UserAccount("createnewgroup4@gmail.com");
             testGroup.GroupName = "New Group";
             testGroup.Owner = "createnewgroup3@gmail.com";
             testGroup.Features = new List<string> { "all" };
             testGroup.Icon = "#668D6A";
             testGroup.GroupId = 80;
-            userManager.RegisterUser("first", "last", "createnewgroup4@gmail.com", "P@ssw0rd");
+            userManager.RegisterUser("first", "last", "createnewgroup3@gmail.com", "P@ssw0rd");
             systemUnderTest.CreateGroup(testGroup);
 
             // Act
             stopwatch.Start();
-            var testResult = systemUnderTest.DeleteGroup(groupOwner, testGroup);
+            var testResult = systemUnderTest.DeleteGroup(testGroup);
             stopwatch.Stop();
 
             // turn ms to seconds

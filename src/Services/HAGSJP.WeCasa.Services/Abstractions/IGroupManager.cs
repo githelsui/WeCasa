@@ -12,7 +12,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
     {
         public GroupResult GetGroups(UserAccount userAccount);
         public GroupResult CreateGroup(GroupModel group);
-        public Result DeleteGroup(UserAccount userAccount, GroupModel group);
+        public Result DeleteGroup(GroupModel group);
         public Result EditGroup(UserAccount userAccount, int groupId, GroupModel newGroup);
         public Result AddGroupMember(GroupModel group, string newGroupMember);
         public GroupResult GetGroupMembers(GroupModel group);

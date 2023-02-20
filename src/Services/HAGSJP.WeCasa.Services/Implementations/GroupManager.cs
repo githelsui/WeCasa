@@ -70,7 +70,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
             return createGroupResult;
         }
-        public Result DeleteGroup(UserAccount userAccount, GroupModel group)
+        public Result DeleteGroup(GroupModel group)
         {
             // System log entry recorded if group creation process takes longer than 5 seconds
             var stopwatch = new Stopwatch();
@@ -79,18 +79,11 @@ namespace HAGSJP.WeCasa.Services.Implementations
             stopwatch.Start();
             var deleteGroupResult = new Result();
 
-            if(!userAccount.Username.Equals(group.Owner))
-            {
-                deleteGroupResult.IsSuccessful = false;
-                deleteGroupResult.Message = "Only the owner can delete this group.";
-                return deleteGroupResult;
-            }
-
             deleteGroupResult = _dao.DeleteGroup(group);
 
             if (deleteGroupResult.IsSuccessful)
             {
-                // Logging the group creation
+                // Logging the group deletion
                 successLogger.Log("Group deleted successfully", LogLevels.Info, "Data Store", group.Owner);
             }
             else
