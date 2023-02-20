@@ -45,4 +45,13 @@ public class HomeController : Controller
         GroupManager gm = new GroupManager();
         return gm.CreateGroup(group);
     }
+
+    [HttpPost]
+    [Route("ValidateUser")]
+    public Result ValidateUser([FromBody] LoginForm account)
+    {
+        var gm = new GroupManager();
+        var result = gm.ValidateGroupMemberInvitation(account.Username);
+        return result;
+    }
 }

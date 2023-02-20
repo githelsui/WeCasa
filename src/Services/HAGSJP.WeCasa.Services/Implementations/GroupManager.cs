@@ -209,5 +209,29 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
             return result;
         }
+
+        public Result ValidateGroupMemberInvitation(string newGroupMember)
+        {
+            var userManager = new UserManager();
+            var result = new Result();
+
+            // check if valid email
+            var emailValidation = userManager.ValidateEmail(newGroupMember);
+            if (!emailValidation.IsSuccessful)
+            {
+                return emailValidation;
+            }
+
+            // check if account exists
+            var existingAcc = userManager.IsUsernameTaken(newGroupMember);
+            if (!existingAcc)
+            {
+                result.IsSuccessful = false;
+                result.Message = "Cannot add a user that does not exist.";
+                return result;
+            }
+            result.IsSuccessful = true;
+            return result;
+        }
     }
 }

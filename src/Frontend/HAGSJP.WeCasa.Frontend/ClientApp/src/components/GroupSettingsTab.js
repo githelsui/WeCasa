@@ -80,10 +80,10 @@ export const GroupSettingsTab = (props) => {
                     console.log(tempRoommates)
                     if (tempRoommates.length > 0) {
                         setNoInvitations(false)
-                        setInvitedRoommates(tempRoommates)
                     } else {
                         setNoInvitations(true)
                     }
+                    setInvitedRoommates(tempRoommates)
                     toast(("Successfully invited group member " + groupMemberForm.GroupMember))
                     this.forceUpdate()
                 } else {
@@ -119,7 +119,7 @@ export const GroupSettingsTab = (props) => {
             message: title,
             description: desc,
             duration: 5,
-            placement: "topRight",
+            placement: 'bottom',
         });
     }
 

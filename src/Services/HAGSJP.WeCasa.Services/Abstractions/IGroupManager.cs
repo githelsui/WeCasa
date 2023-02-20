@@ -17,5 +17,6 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public Result AddGroupMember(GroupModel group, string newGroupMember);
         public GroupResult GetGroupMembers(GroupModel group);
         public Result RemoveGroupMember(GroupModel group, string groupMember);
+        public Result ValidateGroupMemberInvitation(string newGroupMember);
     }
 }
