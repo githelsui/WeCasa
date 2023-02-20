@@ -84,13 +84,14 @@ export const Groups = () => {
 
     const attemptGroupCreation = (groupConfig) => {
         // Adding features as strings to a list if they are checked in the modal
+
         let features = [];
-        if (groupConfig.budgetBar.checked) features.push("Budget Bar");
-        if (groupConfig.bulletinBoard.checked) features.push("Bulletin Board");
-        if (groupConfig.calendar.checked) features.push("Calendar");
-        if (groupConfig.choreList.checked) features.push("Chore List");
-        if (groupConfig.groceryList.checked) features.push("Grocery List");
-        if (groupConfig.circularProgressBar.checked) features.push("Circular Progress Bar");
+        if (groupConfig.budgetBar) features.push("Budget Bar");
+        if (groupConfig.bulletinBoard) features.push("Bulletin Board");
+        if (groupConfig.calendar) features.push("Calendar");
+        if (groupConfig.choreList) features.push("Chore List");
+        if (groupConfig.groceryList) features.push("Grocery List");
+        if (groupConfig.circularProgressBar) features.push("Circular Progress Bar");
         if (features.length == maxConfiguredFeatures) features = ['all'];
 
         let group = {

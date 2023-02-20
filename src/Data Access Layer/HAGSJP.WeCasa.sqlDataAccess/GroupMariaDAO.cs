@@ -123,14 +123,12 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                                     `group_id`, 
                                     `owner`, 
                                     `group_name`, 
-                                    `username`, 
                                     `features`
                                   )
                                   VALUES (
                                     @group_id, 
                                     @owner, 
                                     @group_name, 
-                                    @username, 
                                     @features
                                  );";
 
@@ -139,7 +137,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 command.Parameters.AddWithValue("@group_id", group.GroupId);
                 command.Parameters.AddWithValue("@owner".ToLower(), group.Owner.ToLower());
                 command.Parameters.AddWithValue("@group_name".ToLower(), group.GroupName.ToLower());
-                command.Parameters.AddWithValue("@username".ToLower(), group.Owner.ToLower());
                 string featuresJSON = JsonSerializer.Serialize(group.Features);
                 command.Parameters.AddWithValue("@features", featuresJSON);
 
