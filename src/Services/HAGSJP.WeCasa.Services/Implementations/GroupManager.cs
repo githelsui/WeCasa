@@ -112,7 +112,26 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 return result;
             }
 
-            //TODO: check if newGroupMember is not owner of group
+            //check if newGroupMember is not owner of group
+            //TODO: GroupModel should always have group.Owner attached when calling GetGroups from fontend
+            if(group.Owner != null)
+            {
+                if (group.Owner.Equals(newGroupMember))
+                {
+                    result.IsSuccessful = false;
+                    result.Message = "Cannot add a user who already belongs to the group.";
+                    return result;
+                }
+            }
+
+            //heck if newGroupMember already belongs in current group
+            var userInGroup = _dao.FindGroupMember(group, newGroupMember);
+            if ((bool)userInGroup.ReturnedObject)
+            {
+                result.IsSuccessful = false;
+                result.Message = "Cannot add a user who already belongs to the group.";
+                return result;
+            }
 
             //if all validations pass -> dao.AddGroupMember(group, newGroupMember)
             result = _dao.AddGroupMember(group, newGroupMember);

@@ -196,6 +196,47 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
+        //User already exists in group
+        public GroupResult FindGroupMember(GroupModel group, string groupMember)
+        {
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new GroupResult();
+
+                // Insert SQL statement
+                var insertSql = @"SELECT * FROM `UserGroup`
+                                    WHERE `username` = @username
+                                    AND `group_id` = @group_id;";
+
+                var command = connection.CreateCommand();
+                command.CommandText = insertSql;
+                command.Parameters.AddWithValue("@group_id", group.GroupId);
+                command.Parameters.AddWithValue("@username".ToLower(), groupMember.ToLower());
+
+                // Execution of SQL
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        result.ReturnedObject = true;
+                    }
+                    // User not found
+                    else
+                    {
+                        result.ReturnedObject = false;
+                    }
+                }
+                return result;
+            }
+        }
+
+        public Result GetGroupMembers(GroupModel group)
+        {
+            return new Result();
+        }
+
             public async Task<Result> LogData(Log log)
         {
 
