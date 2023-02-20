@@ -45,4 +45,13 @@ namespace HAGSJP.WeCasa.Frontend
         public int GroupId { get; set; }
         public decimal Amount { get; set; }
     }
+
+    [Serializable]
+    public class GetRequest
+    {
+        [JsonConstructor]
+        public GetRequest() {}
+        public string Username { get; set; }
+        public int GroupId { get; set; }
+    }
 }

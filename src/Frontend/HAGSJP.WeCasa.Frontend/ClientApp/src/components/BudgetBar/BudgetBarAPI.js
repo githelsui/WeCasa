@@ -1,15 +1,17 @@
-//     fetchBudgetBar(username) 
-//     {
-//         axios.get(`finances/${username}`).then((response) => {
-//             var res = response.data
-//             this.setState({
-//                             group: res["group"],
-//                             budget: res["budget"],
-//                             groupTotal: res["groupTotal"],
-//                             totalSpentPerMember: res["totalSpentPerMember"]
-//             });
-//         });
-//     }
+import axios from 'axios';
+
+const fetchBudgetBar = (username)  =>
+{
+    axios.get(`finances/${username}`).then((response) => {
+        var res = response.data
+        this.setState({
+                        group: res["group"],
+                        budget: res["budget"],
+                        groupTotal: res["groupTotal"],
+                        totalSpentPerMember: res["totalSpentPerMember"]
+        });
+    });
+}
     
 //     fetchTable(username) 
 //     {

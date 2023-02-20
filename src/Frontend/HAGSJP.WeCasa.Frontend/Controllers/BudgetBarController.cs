@@ -111,26 +111,26 @@ public class BudgetBarController : Controller
     //     }
     // }
 
-    [HttpGet("{username}")]
-    public Task<IActionResult> Get([FromRoute]string username, int groupId)
+    [HttpGet("{GetRequest}")]
+    public Task<IActionResult> Get([FromRoute]GetRequest request)
     {
         var tcs = new TaskCompletionSource<IActionResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         try
         {   
-            tcs.SetResult(Ok(_budgetBarManager.GetInitialBudgetBarVew(username, groupId)));
+            tcs.SetResult(Ok(_budgetBarManager.GetInitialBudgetBarVew(request.Username, request.GroupId)));
             return tcs.Task;
         }
         catch(MySqlException exc)
         {
-             _logger.Log( "Error: " + exc.ErrorCode  + "\n" +"Message: " + exc.Message + "\n" + "State: " + exc.SqlState, LogLevels.Error, "Data Store", username);
+             _logger.Log( "Error: " + exc.ErrorCode  + "\n" +"Message: " + exc.Message + "\n" + "State: " + exc.SqlState, LogLevels.Error, "Data Store", request.Username);
 
-            _logger.Log( "Error: " + exc.ErrorCode  + "\n" +"Message: " + exc.Message + "\n" + "State: " + exc.SqlState, LogLevels.Error, "Data Store", username);
+            _logger.Log( "Error: " + exc.ErrorCode  + "\n" +"Message: " + exc.Message + "\n" + "State: " + exc.SqlState, LogLevels.Error, "Data Store", request.Username);
             tcs.SetResult(BadRequest());
             return tcs.Task;
         }
         catch(Exception exc)
         {
-            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", username);
+            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", request.Username);
             tcs.SetResult(NotFound());
             return tcs.Task;
         }

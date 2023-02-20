@@ -8,19 +8,12 @@ import BillForm from './BillForm';
 import BudgetForm from './BudgetForm';
 import ButtonIcon from './ButtonIcon';
 
-export const BudgetBar = () => {
+export const BudgetBar = (user) => {
         // this.state = {
          
         //     group: [],
         //     budget: 0,
-        //     groupTotal: 0,
-        //     totalSpentPerMember: [{
-        //       username: "",
-        //       total: 0
-        //     }],
-        //     total: 0,
-        //     activeBills: [Bill],
-        //     deletedBills: [Bill]
+        //     groupTotal: 0
         //   }
       const color = [
         '#7e7e7e', '#a88e7a', '#e5e3d7', '#cbc3ba', '#a88e7a', '#a6a998', '#d9c2b0'
@@ -52,7 +45,7 @@ export const BudgetBar = () => {
         {
           key: '1',
           date: 0,//this.state.activeBills[0].dateEntered,
-          name: "ong",//this.state.activeBills[0].billName,
+          name: "",//this.state.activeBills[0].billName,
           age: 32,
           address: '10 Downing Street',
         },
@@ -63,6 +56,11 @@ export const BudgetBar = () => {
           address: '10 Downing Street',
         },
       ];
+
+      const handleClick = () => {
+        dataSource[0].name = "RICKKKKK"
+        
+      }
       
       const columns = [
         {
@@ -116,14 +114,15 @@ export const BudgetBar = () => {
         {
           key: '2',
           label: <b>History</b>,
-          children: 'History Table',
+          children: <Table dataSource={dataSource} columns={columns} />,
         }
       ];
 
     return (
       <div>
-        <NavMenu/>
-        <ButtonIcon readings={readings}/>
+         <NavMenu/>
+         {/* <Button shape="round" size='large' onClick={handleClick}></Button> */}
+        <ButtonIcon readings={readings} items={items}/>
         <BudgetForm/>
         <p><strong>Total Budget: $5000</strong></p>
         <Progress percent={50} strokeColor = {color[0]} showInfo={false} strokeWidth="30px"/>

@@ -17,10 +17,14 @@ export const ButtonIcon = (props) => {
         }
       ];
 
+      const handleClick = () => {
+        alert("I am an alert box!");
+      }
+
   	let buttons = parent.readings && parent.readings.length && parent.readings.map(function(item, i) {
 		return (
-			<div className="button" style={{'color': item.color}}  key={i}>
-				<Button shape="round" style={{ background: item.color }} size='large' ></Button>
+			<div className="buttons" style={{'color': item.color}}  key={i}>
+				<Button shape="round" style={{ background: item.color }} size='large' onClick={handleClick}></Button>
 			</div>
 		)
   	}, this);

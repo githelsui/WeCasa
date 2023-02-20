@@ -8,7 +8,8 @@ namespace HAGSJP.WeCasa.Models
    public class Bill
    {
        public string Username { get; set; }
-       public string BillId { get; set; }
+       public int BillId { get; set; }
+       public int GroupId { get; set; }
        public DateTime? DateEntered { get; set; }
        public string BillName { get; set; }
        public string? BillDescription { get; set; }
@@ -25,7 +26,6 @@ namespace HAGSJP.WeCasa.Models
         public Bill(DateTime dateEntered, string billName , string billDescription, decimal amount, Boolean paymentStatus,Boolean isRepeated, Boolean isDeleted, DateTime dateDeleted, string photoFileName)
        {
             Username = "";
-            BillId = "";
             DateEntered = dateEntered;
             BillName = billName;
             BillDescription = billDescription;
@@ -37,7 +37,7 @@ namespace HAGSJP.WeCasa.Models
             PhotoFileName = photoFileName;
        }
 
-       public Bill(string username, string billId, DateTime dateEntered, string billName , string billDescription, decimal amount, Boolean paymentStatus,Boolean isRepeated, Boolean isDeleted, DateTime dateDeleted, string photoFileName)
+       public Bill(string username, int billId, DateTime dateEntered, string billName , string billDescription, decimal amount, Boolean paymentStatus,Boolean isRepeated, Boolean isDeleted, DateTime dateDeleted, string photoFileName)
        {
             Username = username;
             BillId = billId;
