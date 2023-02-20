@@ -12,21 +12,22 @@ namespace HAGSJP.WeCasa.Models
             GroupName = name;
             Icon = icon;
         }
-        public GroupModel(int id, string owner, string name, string icon, decimal budget)
+
+        public GroupModel(int id, string owner, string name, string icon, List<string> features)
         {
             GroupId = id;
             Owner = owner;
             GroupName = name;
             Icon = icon;
-            Budget = budget;
+            Features = features;
         }
-  
+
         // System Assigned Key (SAK) -- primary key
         public int GroupId { get; set; }
         public string Owner { get; set; }
         public string GroupName { get; set; }
         public string Icon { get; set; }
-        public decimal Budget { get; set; }
+        public decimal? Budget { get; set; }
 
         public List<string>? Features { get; set; }
         
