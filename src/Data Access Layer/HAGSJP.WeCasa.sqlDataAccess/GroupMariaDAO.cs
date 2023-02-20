@@ -205,7 +205,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 connection.Open();
                 var result = new GroupResult();
 
-                // Insert SQL statement
+                // Select SQL statement
                 var insertSql = @"SELECT * FROM `UserGroup`
                                     WHERE `username` = @username
                                     AND `group_id` = @group_id;";
@@ -222,7 +222,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     {
                         result.ReturnedObject = true;
                     }
-                    // User not found
+                    // User not found in group
                     else
                     {
                         result.ReturnedObject = false;
@@ -232,9 +232,33 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
-        public Result GetGroupMembers(GroupModel group)
+        public GroupResult GetGroupMembers(GroupModel group)
         {
-            return new Result();
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new GroupResult();
+
+                // Select SQL statement
+                var insertSql = @"SELECT * FROM `UserGroup`
+                                    WHERE `group_id` = @group_id;";
+
+                var command = connection.CreateCommand();
+                command.CommandText = insertSql;
+                command.Parameters.AddWithValue("@group_id", group.GroupId);
+
+                // Execution of SQL
+                var groupMembers = new List<string>();
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    groupMembers.Add(reader.GetString(reader.GetOrdinal("username")));
+                }
+                var groupMemberArr = groupMembers.ToArray();
+                result.ReturnedObject = groupMemberArr;
+                return result;
+            }
         }
 
             public async Task<Result> LogData(Log log)

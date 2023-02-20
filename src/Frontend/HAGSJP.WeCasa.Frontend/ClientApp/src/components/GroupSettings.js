@@ -4,6 +4,7 @@ import * as Styles from '../styles/ConstStyles.js';
 import '../styles/System.css';
 import '../index.css';
 import GroupSettingsTab from './GroupSettingsTab'
+import GroupMembersTab from './GroupMembersTab'
 import defaultImage from '../assets/defaultimgs/wecasatemp.jpg';
 const TabPane = Tabs.TabPane;
 
@@ -42,7 +43,7 @@ export const GroupSettings = (props) => {
             </div>
 
             <Tabs defaultActiveKey="2" onChange={tabItemClick}>
-                <TabPane tab="Group Members" key="1">contents</TabPane>
+                <TabPane tab="Group Members" key="1"><GroupMembersTab group={tempGroup} /></TabPane>
                 <TabPane tab="Settings" key="2"><GroupSettingsTab group={tempGroup} /></TabPane>
             </Tabs>
 

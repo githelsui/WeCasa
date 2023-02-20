@@ -110,3 +110,15 @@ export const groupFeatureContainer = {
     marginTop: '1%',
     borderRadius: '50px'
 }
+
+export const removeGroupMemberButton = {
+    backgroundColor: '#9A9A9A',
+    color: '#FFFFFF',
+    fontFamily: 'Mulish',
+    fontWeight: 'bold',
+    width: '30%',
+    borderWidth: 'thin',
+    borderColor: '#9A9A9A',
+    textDecoration: 'none',
+    margin: '2%',
+}

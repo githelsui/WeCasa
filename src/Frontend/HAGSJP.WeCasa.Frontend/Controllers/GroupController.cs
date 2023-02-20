@@ -32,6 +32,17 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         {
             return new Result();
         }
+
+        [HttpPost]
+        [Route("GetGroupMembers")]
+        public GroupResult GetGroupMembers([FromBody] GroupMemberForm groupForm)
+        {
+            var groupModel = new GroupModel();
+            groupModel.GroupId = groupForm.GroupId;
+            var groupManager = new GroupManager();
+            var result = groupManager.GetGroupMembers(groupModel);
+            return result;
+        }
     }
 }
 

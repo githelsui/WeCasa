@@ -6,6 +6,8 @@ using System.Net.Mail;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Net;
+using System;
+using System.Collections;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
@@ -89,6 +91,25 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public Result EditGroup(UserAccount userAccount, int groupId, GroupModel newGroup)
         {
             throw new NotImplementedException();
+        }
+
+        public GroupResult GetGroupMembers(GroupModel group)
+        {
+            var userManager = new UserManager();
+            var result = new GroupResult();
+
+            var usernamesList = (_dao.GetGroupMembers(group).ReturnedObject);
+            IEnumerable enumerable = usernamesList as IEnumerable;
+            var groupMembersList = new List<UserProfile>();
+            foreach (string username in enumerable)
+            {
+                var userAccount = new UserAccount(username);
+                var userProfile = userManager.GetUserProfile(userAccount);
+                groupMembersList.Add((UserProfile)userProfile.ReturnedObject);
+            }
+            var groupMemberArr = groupMembersList.ToArray();
+            result.ReturnedObject = groupMemberArr;
+            return result;
         }
 
         public Result AddGroupMember(GroupModel group, string newGroupMember)
