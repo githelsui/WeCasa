@@ -72,7 +72,41 @@ namespace HAGSJP.WeCasa.Services.Implementations
         }
         public Result DeleteGroup(UserAccount userAccount, GroupModel group)
         {
-            throw new NotImplementedException();
+            // System log entry recorded if group creation process takes longer than 5 seconds
+            var stopwatch = new Stopwatch();
+            var expected = 5;
+
+            stopwatch.Start();
+            var deleteGroupResult = new Result();
+
+            if(!userAccount.Username.Equals(group.Owner))
+            {
+                deleteGroupResult.IsSuccessful = false;
+                deleteGroupResult.Message = "Only the owner can delete this group.";
+                return deleteGroupResult;
+            }
+
+            deleteGroupResult = _dao.DeleteGroup(group);
+
+            if (deleteGroupResult.IsSuccessful)
+            {
+                // Logging the group creation
+                successLogger.Log("Group deleted successfully", LogLevels.Info, "Data Store", group.Owner);
+            }
+            else
+            {
+                // Logging the error
+                errorLogger.Log("Error deleting a group", LogLevels.Error, "Data Store", group.Owner);
+            }
+
+            stopwatch.Stop();
+            var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
+            if (deleteGroupResult.IsSuccessful && actual > expected)
+            {
+                errorLogger.Log("Group deleted successfully, but took longer than 5 seconds", LogLevels.Info, "Business", group.Owner, new UserOperation(Operations.GroupCreation, 1));
+            }
+
+            return deleteGroupResult;
         }
         public Result EditGroup(UserAccount userAccount, int groupId, GroupModel newGroup)
         {
@@ -118,20 +152,10 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var userManager = new UserManager();
             var result = new Result();
 
-            // check if valid email
-            var emailValidation = userManager.ValidateEmail(newGroupMember);
-            if (!emailValidation.IsSuccessful)
+            var groupMemberValid = ValidateGroupMemberInvitation(newGroupMember);
+            if (!groupMemberValid.IsSuccessful)
             {
-                return emailValidation;
-            }
-
-            // check if account exists
-            var existingAcc = userManager.IsUsernameTaken(newGroupMember);
-            if (!existingAcc)
-            {
-                result.IsSuccessful = false;
-                result.Message = "Cannot add a user that does not exist.";
-                return result;
+                return groupMemberValid;
             }
 
             //check if newGroupMember is not owner of group
@@ -177,20 +201,10 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var userManager = new UserManager();
             var result = new Result();
 
-            // check if valid email
-            var emailValidation = userManager.ValidateEmail(groupMember);
-            if (!emailValidation.IsSuccessful)
+            var groupMemberValid = ValidateGroupMemberInvitation(groupMember);
+            if (!groupMemberValid.IsSuccessful)
             {
-                return emailValidation;
-            }
-
-            // check if account exists
-            var existingAcc = userManager.IsUsernameTaken(groupMember);
-            if (!existingAcc)
-            {
-                result.IsSuccessful = false;
-                result.Message = "Cannot remove a user that does not exist.";
-                return result;
+                return groupMemberValid;
             }
 
             result = _dao.RemoveGroupMember(group, groupMember);

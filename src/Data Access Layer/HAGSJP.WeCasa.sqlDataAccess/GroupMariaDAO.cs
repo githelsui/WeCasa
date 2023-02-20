@@ -297,7 +297,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 if (result.IsSuccessful)
                 {
                     command.CommandText = deleteSqlUserGroup;
-                    command.Parameters.AddWithValue("@group_id", group.GroupId);
                     rows = (command.ExecuteNonQuery());
                     result = ValidateSqlStatement(rows);
                 }
