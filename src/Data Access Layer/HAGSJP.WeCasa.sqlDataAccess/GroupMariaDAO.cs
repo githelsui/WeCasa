@@ -72,43 +72,20 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 // Execution of SQL
                 var reader = command.ExecuteReader();
+                List<GroupModel> groups = new List<GroupModel>();
                 while (reader.Read())
                 {
-                    result.IsSuccessful = true;
-                    result.Message = string.Empty;
-                    List<GroupModel> groups = new List<GroupModel>();
-
-                    // User is not a part of any groups 
-                    if (!reader.IsDBNull(0))
-                    {
-                        // creating group from reader object
-                        GroupModel group = new GroupModel(
-                            reader.GetInt32(reader.GetOrdinal("group_id")),
-                            reader.GetString(reader.GetOrdinal("owner")),
-                            reader.GetString(reader.GetOrdinal("group_name")),
-                            reader.GetString(reader.GetOrdinal("icon"))
-                        );
-
-                        List<string> features = new List<string>();
-                        string featuresJSON = reader.GetString(reader.GetOrdinal("features"));
-                        // Deserializing json list of features
-                        features = JsonSerializer.Deserialize<List<string>>(featuresJSON);
-
-                        group.Features = features;
-                        group.Budget = reader.IsDBNull(reader.GetOrdinal("budget")) ? null : reader.GetDecimal(reader.GetOrdinal("budget")); ;
-
-                        // adding list of groups to groups variable
-                        groups.Add(group);
-                    }
-                    
-                    // returning the list of groups in our result
-                    result.Groups = groups;
-                    return result;
+                    groups.Add(new GroupModel(
+                        reader.GetInt32(reader.GetOrdinal("group_id")),
+                        reader.GetString(reader.GetOrdinal("owner")),
+                        reader.GetString(reader.GetOrdinal("group_name")),
+                        reader.GetString(reader.GetOrdinal("icon")),
+                        JsonSerializer.Deserialize<List<string>>(reader.GetString(reader.GetOrdinal("features")))
+                    ));
                 }
                 connection.Close();
-
-                result.IsSuccessful = false;
-                result.Message = "An error occurred when fetching groups from the database :(";
+                result.Groups = groups;
+                result.IsSuccessful = true;
                 return result;
             }
         }
@@ -123,18 +100,17 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 // Insert SQL statements
                 var insertGroupSql = @"INSERT INTO `Groups` (
-                                        `group_id`, 
                                         `owner`, 
                                         `group_name`, 
                                         `features`
                                       )
                                       VALUES (
-                                        @group_id, 
                                         @owner, 
                                         @group_name, 
                                         @features
-                                     );
-                                     SELECT LAST_INSERT_ID();";
+                                     ); 
+                                        SELECT CAST(scope_identity() AS int
+                                     );";
 
                 var insertUserGroupSql = @"INSERT INTO `UserGroups` (
                                             `group_id`, 
@@ -147,22 +123,20 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 var command = connection.CreateCommand();
                 command.CommandText = insertGroupSql;
-                command.Parameters.AddWithValue("@group_id", group.GroupId);
                 command.Parameters.AddWithValue("@owner".ToLower(), group.Owner.ToLower());
                 command.Parameters.AddWithValue("@group_name".ToLower(), group.GroupName.ToLower());
                 string featuresJSON = JsonSerializer.Serialize(group.Features);
                 command.Parameters.AddWithValue("@features", featuresJSON);
 
                 // Execution of first SQL query
-                var autoGroupId = (command.ExecuteScalar()); //Retrieves auto_incremented primary key from database of newly created row
-                Console.Write("hello");
-                Console.Write(autoGroupId);
-                //result = ValidateSqlStatement(groupInsertRows);
+                // Storing auto-incremented group_id from insertion into Groups table
+                int groupId = (int)command.ExecuteScalar();
 
                 if (autoGroupId != null)
                 {
                     // Execution of second SQL query
                     command.CommandText = insertUserGroupSql;
+                    command.Parameters.AddWithValue("@group_id", groupId);
                     var userGroupInsertRows = command.ExecuteNonQuery();
                     var userGroupResult = ValidateSqlStatement(userGroupInsertRows);
                     result.IsSuccessful = true;
@@ -332,7 +306,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
-            public async Task<Result> LogData(Log log)
+        public async Task<Result> LogData(Log log)
         {
 
             _connectionString = BuildConnectionString().ConnectionString;
