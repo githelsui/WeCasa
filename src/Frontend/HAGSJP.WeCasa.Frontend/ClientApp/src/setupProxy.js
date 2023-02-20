@@ -30,5 +30,9 @@ module.exports = function (app) {
     }
   });
 
+  module.exports = {
+    devtool: "source-map",
+}
+
   app.use(appProxy);
 };

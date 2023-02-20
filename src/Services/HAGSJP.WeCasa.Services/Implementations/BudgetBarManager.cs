@@ -21,33 +21,38 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return Guid.NewGuid().ToString("N");
         }
 
-        public object GetInitialBudgetBarVew(string username)
+        public object GetInitialBudgetBarVew(string username, int groupId)
         {
-            GroupDAO groupDao = new GroupDAO();
-
+            AccountMariaDAO dao = new AccountMariaDAO();
             RefreshBillList(username);
             DeleteAllOutdatedBills(username);
-
-            decimal budget = GetBudget(username);
-            List<string> usernames = groupDao.GetMembersUsername(username);
-            Decimal totalSpent = CalculateGroupTotal(usernames);
-
-            Dictionary<string, decimal> totalSpentPerMember = new Dictionary<string, decimal>();
-            foreach(string user in usernames)
+            decimal budget = GetBudget(groupId);
+            
+            Dictionary<string, string> names = dao.GetFirstNames(groupId);
+            Dictionary<string, BudgetBarUser> budgetBarUsers = new Dictionary<string, BudgetBarUser>();
+            foreach(var name in names)
             {
-                totalSpentPerMember.Add(user, CalculateTotal(GetBills(username, 0)));
+                BudgetBarUser bbUser = new BudgetBarUser(name.Key, name.Value);
+                budgetBarUsers.Add(name.Key, bbUser);
             }
 
-            Dictionary<string, List<Bill>> activeBills = GetAllBills(usernames, 0);
-            Dictionary<string, List<Bill>> deletedBills = GetAllBills(usernames, 1);
+            List<Bill> bills = GetBills(groupId);
+            Decimal totalSpent = 0;
+            foreach(Bill bill in bills)
+            {
+                if (bill.IsDeleted == false)
+                {
+                    budgetBarUsers[bill.Username].ActiveBills.Add(bill);
+                    budgetBarUsers[bill.Username].TotalSpent += bill.Amount;
+                    totalSpent += bill.Amount;
+                }
+                budgetBarUsers[bill.Username].DeletedBills.Add(bill);
+            }
             
             return new {
-                Group = usernames,
+                Group = budgetBarUsers.Values.ToList(),
                 Budget = budget,
                 GroupTotal = totalSpent,
-                TotalSpentPerMember = totalSpentPerMember,
-                ActiveBills = activeBills,
-                DeletedBills = deletedBills
             };
         }
 
@@ -67,21 +72,6 @@ namespace HAGSJP.WeCasa.Services.Implementations
         //     };
         // }
 
-        public Boolean InsertBills(List<string> usernames, Bill bill)
-        {
-            bill.BillId = generateID();
-            Result insertBillResult = new Result();
-            foreach(string username in usernames)
-            {
-                bill.Username = username;
-                insertBillResult = InsertBill(bill);
-                if (!insertBillResult.IsSuccessful)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
         public Result DeleteAllOutdatedBills(string username)
         {
             Result deleteOldBillsResult = _dao.DeleteAllOutdatedBills();
@@ -106,9 +96,9 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return refreshBillsResult;
         }
 
-        public Result InsertBill(Bill bill)
+        public Result InsertBill(List<string> usernames, Bill bill)
         {
-            DAOResult result = _dao.InsertBill(bill);
+            DAOResult result = _dao.InsertBill(usernames, bill);
             if (result.IsSuccessful)
             {
                 _logger.Log("Add bill was successful", LogLevels.Info, "Data Store", bill.Username);
@@ -125,7 +115,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             DAOResult result = _dao.UpdateBill(bill);
             if (result.IsSuccessful)
             {
-                _logger.Log("Edit bill was successful", LogLevels.Info, "Data Store", bill.Username, new UserOperation(Operations.BudgetBar, 1));
+                _logger.Log("Edit bill was successful", LogLevels.Info, "Data Store", bill.Username);
             }
             else
             {
@@ -134,50 +124,47 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return result;
         }
 
-        public decimal GetBudget(string username)
+        public decimal GetBudget(int groupId)
         {
             try
             {
-                GroupDAO groupDao = new GroupDAO();
-                decimal result = _dao.GetBudget(groupDao.GetGroupId(username));
-                _logger.Log("Get budget was successful", LogLevels.Info, "Data Store", username, new UserOperation(Operations.BudgetBar, 1));
+                decimal result = _dao.GetBudget(groupId);
                 return result;
             }
              catch(MySqlException exc)
             {
+                _logger.Log( "Error: " + exc.ErrorCode  + "\n" +"Message: " + exc.Message + "\n" + "State: " + exc.SqlState, LogLevels.Error, "Data Store", "Group ID: " + groupId);
                 throw exc;
             }
         }
 
-        public Result EditBudget(string username, decimal amount)
+        public Result EditBudget(int groupId, decimal amount)
         {
-            GroupDAO groupDao = new GroupDAO();
-            DAOResult result = _dao.EditBudget(groupDao.GetGroupId(username), amount);
+            DAOResult result = _dao.EditBudget(groupId, amount);
             if (result.IsSuccessful)
             {
-                _logger.Log("Edit budget was successful", LogLevels.Info, "Data Store", username);
+                _logger.Log("Edit budget was successful", LogLevels.Info, "Data Store", "Group Id" + groupId);
             }
             else
             {
-                _logger.Log( "Edit budget Error: " + result.ErrorStatus  + "\n" +"Message: " + result.Message + "\n" + "State: " + result.SqlState, LogLevels.Error, "Data Store", username);
+                _logger.Log( "Edit budget Error: " + result.ErrorStatus  + "\n" +"Message: " + result.Message + "\n" + "State: " + result.SqlState, LogLevels.Error, "Data Store", "Group ID: " + groupId);
             }
             return result;
         }
 
-        public Result UpdatePaymentStatus(string username, string billId, Boolean paymentStatus)
-        {
-            GroupDAO groupDao = new GroupDAO();
-            DAOResult result = _dao.UpdatePaymentStatus(username, billId, paymentStatus);
-            if (result.IsSuccessful)
-            {
-                _logger.Log("Update Payment Status was successful", LogLevels.Info, "Data Store", username);
-            }
-            else
-            {
-                _logger.Log( "Update Payment Status Error: " + result.ErrorStatus  + "\n" +"Message: " + result.Message + "\n" + "State: " + result.SqlState, LogLevels.Error, "Data Store", username);
-            }
-            return result;
-        }
+        // public Result UpdatePaymentStatus(string username, string billId, Boolean paymentStatus)
+        // {
+        //     DAOResult result = _dao.UpdatePaymentStatus(username, billId, paymentStatus);
+        //     if (result.IsSuccessful)
+        //     {
+        //         _logger.Log("Update Payment Status was successful", LogLevels.Info, "Data Store", username);
+        //     }
+        //     else
+        //     {
+        //         _logger.Log( "Update Payment Status Error: " + result.ErrorStatus  + "\n" +"Message: " + result.Message + "\n" + "State: " + result.SqlState, LogLevels.Error, "Data Store", username);
+        //     }
+        //     return result;
+        // }
 
         public Result DeleteBill(string billId)
         {
@@ -208,12 +195,13 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return result;
         }
 
-        public decimal CalculateGroupTotal(Dictionary<string, decimal> activeBills) 
+        public decimal CalculateGroupTotal(List<Bill> activeBill) 
         {
             Decimal totalSpent = 0;
-            foreach(Bill bill in activeBills)
+            Dictionary<string, decimal> totalsByBillId= new Dictionary<string, decimal>();
+            foreach(Bill bill in activeBill)
             {
-                totalSpentGroup += bill.Amount;
+                totalSpent += bill.Amount;
             }
             return totalSpent;
         }
@@ -228,38 +216,38 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return total;
         }
 
-        public List<Bill> GetBills(string username, int isDeleted)
+        public List<Bill> GetBills(int groupId)
         {
             try
             {
-                List<Bill> bills = _dao.GetBills(username, isDeleted);
+                List<Bill> bills = _dao.GetBills(groupId);
                 return bills;
             }
             catch(MySqlException exc)
             {
-                _logger.Log( "Error: " + exc.ErrorCode  + "\n" +"Message: " + exc.Message + "\n" + "State: " + exc.SqlState, LogLevels.Error, "Data Store", username);
+                _logger.Log( "Error: " + exc.ErrorCode  + "\n" +"Message: " + exc.Message + "\n" + "State: " + exc.SqlState, LogLevels.Error, "Data Store", "Group ID: " + groupId);
                 throw exc;
             }
         }
 
-        public Dictionary<string, List<Bill>> GetAllBills(List<string> usernames, int isDeleted)
-        {
-            try
-            {
-                Dictionary<string, List<Bill>> allBills = new Dictionary<string, List<Bill>>();
-                BudgetBarDAO dao = new BudgetBarDAO();
-                foreach(string username in usernames)
-                {
-                    List<Bill> bills = dao.GetBills(username, isDeleted);
-                    allBills.Add(username, bills);
-                }
-                return allBills;
-            }
-            catch(MySqlException exc)
-            {
-                throw exc;
-            }
-        }
+        // public Dictionary<string, List<Bill>> GetAllBills(List<string> usernames, int isActive)
+        // {
+        //     try
+        //     {
+        //         Dictionary<string, List<Bill>> allBills = new Dictionary<string, List<Bill>>();
+        //         BudgetBarDAO dao = new BudgetBarDAO();
+        //         foreach(string username in usernames)
+        //         {
+        //             List<Bill> bills = dao.GetBills(username, isActive);
+        //             allBills.Add(username, bills);
+        //         }
+        //         return allBills;
+        //     }
+        //     catch(MySqlException exc)
+        //     {
+        //         throw exc;
+        //     }
+        // }
 
         // public Dictionary<string, List<Bill>> SortBillsByUsername(List<Bill> bills, List<string> usernames)
         // {

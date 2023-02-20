@@ -7,8 +7,7 @@ namespace HAGSJP.WeCasa.Models
         Registration,
         Logout,
         GroupCreation,
-        BudgetBar,
-        GroupCreation
+        BudgetBar
     }
 }
 

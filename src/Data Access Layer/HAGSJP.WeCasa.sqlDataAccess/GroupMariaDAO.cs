@@ -50,7 +50,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
             return result;
         }
-
+        
         public GroupResult GetGroupList(UserAccount userAccount)
         {
             _connectionString = BuildConnectionString().ConnectionString;

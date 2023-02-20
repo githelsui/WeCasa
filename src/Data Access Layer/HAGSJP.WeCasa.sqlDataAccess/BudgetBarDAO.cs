@@ -1,3 +1,4 @@
+using System.Text.Json;
 using HAGSJP.WeCasa.Models;
 using MySqlConnector;
 namespace HAGSJP.WeCasa.sqlDataAccess
@@ -30,9 +31,11 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             return result;
         }
 
-        public DAOResult InsertBill(Bill bill)
+        public DAOResult InsertBill(List<string> usernames, Bill bill)
         {       
             var result = new DAOResult();
+            string billsJSON = JsonSerializer.Serialize(usernames);
+
             _connectionString = BuildConnectionString().ConnectionString;
             using(var connection = new MySqlConnection(_connectionString))
             {
@@ -40,12 +43,12 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     connection.Open();
 
-                    var insertSql = @"INSERT INTO Bills (username, bill_id, date_submitted, bill_description, amount, bill_name, payment_status, is_repeated, is_deleted, date_deleted, receipt_file_name)
-                                    VALUES (@username, @bill_id, @date_submitted, @bill_description, @amount, @bill_name, @payment_status, @is_repeated, @is_deleted, @date_deleted, @receipt_file_name);";
+                    var insertSql = @"INSERT INTO Bills (usernames, bill_id, date_submitted, bill_description, amount, bill_name, payment_status, is_repeated, is_deleted, date_deleted, receipt_file_name)
+                                    VALUES (@usernames, @bill_id, @date_submitted, @bill_description, @amount, @bill_name, @payment_status, @is_repeated, @is_deleted, @date_deleted, @receipt_file_name);";
                 
                     var command = connection.CreateCommand();
                     command.CommandText = insertSql;
-                    command.Parameters.AddWithValue("@username".ToLower(), bill.Username.ToLower());
+                    command.Parameters.AddWithValue("@usernames", billsJSON);
                     command.Parameters.AddWithValue("@bill_id", bill.BillId);
                     command.Parameters.AddWithValue("@date_submitted", DateTime.Now);
                     command.Parameters.AddWithValue("@bill_description", bill.BillDescription);
@@ -253,7 +256,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
        }
 
-        public List<Bill> GetBills(string username, int isDeleted)
+        public List<Bill> GetBills(int groupId)
         {
             _connectionString = BuildConnectionString().ConnectionString;
             using(var connection = new MySqlConnection(_connectionString))
@@ -261,34 +264,33 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 try
                 {
                     connection.Open();
-                    List<Bill> activeBills = new List<Bill>();
+                    List<Bill> bills = new List<Bill>();
 
                     var insertSql = @"SELECT * from BILLS 
-                                            WHERE is_deleted = @isDeleted
-                                            AND username = @username;";
+                                            WHERE group_id = @groupId;";
                     var command = connection.CreateCommand();
                     command.CommandText = insertSql;
-                    command.Parameters.AddWithValue("@isDeleted", isDeleted);
-                    command.Parameters.AddWithValue("@username".ToLower(), username.ToLower());
+                    command.Parameters.AddWithValue("@groupId", groupId);
 
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            Bill activeBill = new Bill();
-                            activeBill.Username = reader.GetString(reader.GetOrdinal("username"));
-                            activeBill.BillId = reader.GetString(reader.GetOrdinal("bill_id"));
-                            activeBill.DateEntered = reader.GetDateTime(reader.GetOrdinal("date_submitted"));
-                            activeBill.BillName = reader.GetString(reader.GetOrdinal("bill_name"));
-                            activeBill.BillDescription = reader.GetString(reader.GetOrdinal("bill_description"));
-                            activeBill.Amount = reader.GetDecimal(reader.GetOrdinal("amount"));
-                            activeBill.PaymentStatus = reader.GetInt32(reader.GetOrdinal("payment_status")) == 1 ? true : false;
-                            activeBill.IsRepeated = reader.GetInt32(reader.GetOrdinal("is_repeated")) == 1 ? true : false;
-                            activeBill.IsDeleted = reader.GetInt32(reader.GetOrdinal("is_deleted")) == 1 ? true : false;
-                            activeBill.DateDeleted = reader.IsDBNull(reader.GetOrdinal("date_deleted")) ? null : reader.GetDateTime(reader.GetOrdinal("date_deleted"));
-                            activeBill.PhotoFileName = reader.GetString(reader.GetOrdinal("receipt_file_name"));
-                            activeBills.Add(activeBill);
+                            Bill bill = new Bill();
+                            bill.Username = reader.GetString(reader.GetOrdinal("username"));
+                            bill.BillId = reader.GetString(reader.GetOrdinal("bill_id"));
+                            bill.DateEntered = reader.GetDateTime(reader.GetOrdinal("date_submitted"));
+                            bill.BillName = reader.GetString(reader.GetOrdinal("bill_name"));
+                            bill.BillDescription = reader.GetString(reader.GetOrdinal("bill_description"));
+                            bill.Amount = reader.GetDecimal(reader.GetOrdinal("amount"));
+                            bill.PaymentStatus = reader.GetInt32(reader.GetOrdinal("payment_status")) == 1 ? true : false;
+                            bill.IsRepeated = reader.GetInt32(reader.GetOrdinal("is_repeated")) == 1 ? true : false;
+                            bill.IsDeleted = reader.GetInt32(reader.GetOrdinal("is_deleted")) == 1 ? true : false;
+                            bill.DateDeleted = reader.IsDBNull(reader.GetOrdinal("date_deleted")) ? null : reader.GetDateTime(reader.GetOrdinal("date_deleted"));
+                            bill.PhotoFileName = reader.GetString(reader.GetOrdinal("receipt_file_name"));
+                            bills.Add(bill);
                         }
+                        return bills;
                     }
                     throw new Exception("Cannot find item");
                 }
@@ -303,7 +305,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
-        public decimal GetBudget(string groupId)
+        public decimal GetBudget(int groupId)
         {
             _connectionString = BuildConnectionString().ConnectionString;
             using(var connection = new MySqlConnection(_connectionString))
@@ -316,7 +318,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                                         WHERE group_id = @groupId;";
                     var command = connection.CreateCommand();
                     command.CommandText = insertSql;
-                    command.Parameters.AddWithValue("@groupId".ToLower(), groupId.ToLower());
+                    command.Parameters.AddWithValue("@groupId", groupId);
                     using (var reader = command.ExecuteReader())
                     {
                         if (reader.Read())
@@ -337,7 +339,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
-        public DAOResult EditBudget(string groupID, decimal amount)
+        public DAOResult EditBudget(int groupID, decimal amount)
         {
             var result = new DAOResult();
             _connectionString = BuildConnectionString().ConnectionString;

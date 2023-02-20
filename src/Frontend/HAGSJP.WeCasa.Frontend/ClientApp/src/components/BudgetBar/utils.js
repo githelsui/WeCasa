@@ -26,3 +26,5 @@ export var Bill = {
     dateDeleted: Date,
     photoFileName: String
 }
+
+

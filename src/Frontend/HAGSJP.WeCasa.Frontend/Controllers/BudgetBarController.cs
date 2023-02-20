@@ -112,12 +112,12 @@ public class BudgetBarController : Controller
     // }
 
     [HttpGet("{username}")]
-    public Task<IActionResult> Get([FromRoute]string username)
+    public Task<IActionResult> Get([FromRoute]string username, int groupId)
     {
         var tcs = new TaskCompletionSource<IActionResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         try
         {   
-            tcs.SetResult(Ok(_budgetBarManager.GetInitialBudgetBarVew(username)));
+            tcs.SetResult(Ok(_budgetBarManager.GetInitialBudgetBarVew(username, groupId)));
             return tcs.Task;
         }
         catch(MySqlException exc)
@@ -151,19 +151,19 @@ public class BudgetBarController : Controller
         return tcs.Task;
     }
 
-    [Route("UpdatePaymentStatus")]
-    [HttpPut]
-    public Task<IActionResult> Put([FromBody] UpdatePaymentStatusRequest request)
-    {
-        var tcs = new TaskCompletionSource<IActionResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+    // [Route("UpdatePaymentStatus")]
+    // [HttpPut]
+    // public Task<IActionResult> Put([FromBody] UpdatePaymentStatusRequest request)
+    // {
+    //     var tcs = new TaskCompletionSource<IActionResult>(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        Result editBillResult = _budgetBarManager.UpdatePaymentStatus(request.Username, request.BillId, request.PaymentStatus);
-        if (!editBillResult.IsSuccessful)
-        {
-            return BadRequest();
-        }
-        return Ok(true);
-    }
+    //     Result editBillResult = _budgetBarManager.UpdatePaymentStatus(request.Username, request.BillId, request.PaymentStatus);
+    //     if (!editBillResult.IsSuccessful)
+    //     {
+    //         return BadRequest();
+    //     }
+    //     return Ok(true);
+    // }
 
     [Route("AddBill")]
     [HttpPost]
@@ -171,8 +171,9 @@ public class BudgetBarController : Controller
     {
         try
         {
-            Boolean result = _budgetBarManager.InsertBills(request.Usernames, request.Bill);
-            return Ok(result);
+
+            Result result = _budgetBarManager.InsertBill(request.Usernames, request.Bill);
+            return Ok(result.IsSuccessful);
         }
         catch(Exception exc)
         {
@@ -187,7 +188,7 @@ public class BudgetBarController : Controller
     {
         try 
         {
-            Result editBudgetResult = _budgetBarManager.EditBudget( request.Username, request.Amount);
+            Result editBudgetResult = _budgetBarManager.EditBudget(request.GroupId, request.Amount);
             if (!editBudgetResult.IsSuccessful)
             {
                 return BadRequest();
@@ -196,7 +197,7 @@ public class BudgetBarController : Controller
         }
         catch(Exception exc)
         {
-            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", request.Username);
+            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", "GroupID: " + request.GroupId);
             return NotFound();
         }
     }

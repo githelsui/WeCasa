@@ -20,7 +20,7 @@ export const NavMenu = ()  => {
                             <NavLink tag={Link} className="text-dark" to="/calendar">Calendar</NavLink>
                         </NavItem>
                         <NavItem>
-                            <NavLink tag={Link} className="text-dark" to="/finanaces">Finances</NavLink>
+                            <NavLink tag={Link} className="text-dark" to="/finances">Finances</NavLink>
                         </NavItem>
                         <NavItem>
                             <NavLink tag={Link} className="text-dark" to="/group">Group Members</NavLink>

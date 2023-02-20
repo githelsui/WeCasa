@@ -1,217 +1,143 @@
-import React, { useState, Component } from 'react';
+import React, { useState, Component, EditButton } from 'react';
 import axios from 'axios';
 import {Bill} from './utils'
-import { Table } from 'antd';
+import { Table, Progress, Tabs, Button} from 'antd';
 import NavMenu from '../NavMenu';
+import {MultiColorProgressBar} from './ProgressBar';
+import BillForm from './BillForm';
+import BudgetForm from './BudgetForm';
+import ButtonIcon from './ButtonIcon';
 
-export class BudgetBar extends Component {
-    static displayName = BudgetBar.name;
-
-    constructor(props) {
-        super(props);
-        this.state = {
+export const BudgetBar = () => {
+        // this.state = {
          
-            group: [],
-            budget: 0,
-            groupTotal: 0,
-            totalSpentPerMember: [{
-              username: "",
-              total: 0
-            }],
-            total: 0,
-            activeBills: [Bill],
-            deletedBills: [Bill]
-            // activeBills: [{
-            //     username: "",
-            //     billId: "",
-            //     dateEntered: null,
-            //     billName: "",
-            //     billDescription: "",
-            //     amount: 0,
-            //     paymentStatus: false,
-            //     isRepeated: false,
-            //     isDeleted: false,
-            //     dateDeleted: null,
-            //     photoFileName: null
-            // }],
-            // deletedBills: [{
-            //     username: "",
-            //     billId: "",
-            //     dateEntered: null,
-            //     billName: "",
-            //     billDescription: "",
-            //     amount: 0,
-            //     paymentStatus: false,
-            //     isRepeated: false,
-            //     isDeleted: false,
-            //     dateDeleted: null,
-            //     photoFileName: null
-            // }],
-          }
-        };
+        //     group: [],
+        //     budget: 0,
+        //     groupTotal: 0,
+        //     totalSpentPerMember: [{
+        //       username: "",
+        //       total: 0
+        //     }],
+        //     total: 0,
+        //     activeBills: [Bill],
+        //     deletedBills: [Bill]
+        //   }
+      const color = [
+        '#7e7e7e', '#a88e7a', '#e5e3d7', '#cbc3ba', '#a88e7a', '#a6a998', '#d9c2b0'
+      ]
+        
+      let readings = [
+      {
+        name: 'Apples',
+        value: 60,
+        color: color[0]
+      },
+      {
+        name: 'Blueberries',
+        value: 7,
+        color: color[1]
+      },
+      {
+        name: 'Guavas',
+        value: 23,
+        color: color[2]
+      },
+      {
+        name: 'Grapes',
+        value: 10,
+        color: color[3]
+      }
+      ]
+      const dataSource = [
+        {
+          key: '1',
+          date: 0,//this.state.activeBills[0].dateEntered,
+          name: "ong",//this.state.activeBills[0].billName,
+          age: 32,
+          address: '10 Downing Street',
+        },
+        {
+          key: '2',
+          name: 'John',
+          age: 42,
+          address: '10 Downing Street',
+        },
+      ];
+      
+      const columns = [
+        {
+          title: '',
+          dataIndex: 'name',
+          key: '',
+        },
+        {
+          title: 'Date',
+          dataIndex: 'date',
+          key: 'age',
+        },
+        {
+          title: 'Name',
+          dataIndex: 'billName',
+          key: 'address',
+        },
+        {
+            title: 'Owner',
+            dataIndex: 'username',
+            key: 'age',
+        },
+        {
+          title: 'Description',
+          dataIndex: 'description',
+          key: 'address',
+        },
+        {
+          title: 'Amount',
+          dataIndex: 'amount',
+          key: 'age',
+        },
+        {
+          title: 'Status',
+          dataIndex: 'paymentStatus',
+          key: 'address',
+        },
+        {
+          title: 'Receipt',
+          dataIndex: 'receipt',
+          key: 'address',
+        }
+      ];
 
-    componentDidMount() {
-        let username = "Jan";
-        // {
-        //     "Username": "Jan",
-        //     "BillId": "12345",
-        //     "dateEntered": "2019-01-06T17:16:40",
-        //     "BillName": "trash",
-        //     "BillDescription": "description",
-        //     "Amount": 1000,
-        //     "PaymentStatus": true,
-        //     "IsRepeated": true,
-        //     "IsDeleted": false,
-        //     "dateDeleted": null,
-        //     "PhotoFileName": "dfafs"
-        //    }
-        // this.populateInitialView(username);
-        this.fetchTable(username);
-    }
+      const items = [
+        {
+          key: '1',
+          label:  <b>Current</b>,
+          children: <Table dataSource={dataSource} columns={columns} />,
+        },
+        {
+          key: '2',
+          label: <b>History</b>,
+          children: 'History Table',
+        }
+      ];
 
-    render() {
-        const dataSource = [
-            
-            {
-              key: '1',
-              date: this.state.activeBills[0].dateEntered,
-              name: this.state.activeBills[0].billName,
-              age: 32,
-              address: '10 Downing Street',
-            },
-            {
-              key: '2',
-              name: 'John',
-              age: 42,
-              address: '10 Downing Street',
-            },
-          ];
-          
-          const columns = [
-            {
-              title: '',
-              dataIndex: 'name',
-              key: "",
-            },
-            {
-              title: 'Date',
-              dataIndex: 'date',
-              key: 'age',
-            },
-            {
-              title: 'Name',
-              dataIndex: 'billName',
-              key: 'address',
-            },
-            {
-                title: 'Owner',
-                dataIndex: 'username',
-                key: 'age',
-            },
-            {
-              title: 'Description',
-              dataIndex: 'description',
-              key: 'address',
-            },
-            {
-              title: 'Amount',
-              dataIndex: 'amount',
-              key: 'age',
-            },
-            {
-              title: 'Status',
-              dataIndex: 'paymentStatus',
-              key: 'address',
-            },
-            {
-              title: 'Receipt',
-              dataIndex: 'receipt',
-              key: 'address',
-            }
-          ];
-        return (
-        <div>
-            <NavMenu/>
-            <Table dataSource={dataSource} columns={columns} />;
-            { <p>contents budget: {this.state.budget}</p>}
-            <p>contents group: {this.state.group.join(", ")}</p>
-            <p>contents spent: {this.state.groupTotal}</p>
-            <p>contents totalSpentPerMember: {this.state.totalSpentPerMember["jan"]}</p>
-            <p>contents activeBills: {this.state.activeBills[0].amount}</p>
-            <p>contents deletedBills: {this.state.deletedBills[0].amount}</p> 
-            <p>contents total for {this.state.username}: {this.state.total}</p> 
-            {/* <p>contents result: {String(this.state.result)}</p> */}
-        </div>
-        );
-    }
-
-    fetchBudgetBar(username) 
-    {
-        axios.get(`finances/${username}`).then((response) => {
-            var res = response.data
-            this.setState({
-                            group: res["group"],
-                            budget: res["budget"],
-                            groupTotal: res["groupTotal"],
-                            totalSpentPerMember: res["totalSpentPerMember"]
-            });
-        });
-    }
-
-    fetchTable(username) 
-    {
-        axios.get(`finances/${username}`).then((response) => {
-            var res = response.data
-            this.setState({
-                            total: res["total"],
-                            activeBills: res["activeBills"],
-                            deletedBills: res["deletedBills"]
-            });
-        });
-    }
-
-
-    persistEditForm(bill) 
-    {
-        axios.put(`finance/EditBill`).then(res => {
-            var isSuccessful = res.data;
-            if (isSuccessful) {
-
-            } else {
-            }
-        })
-        .catch((error) => { console.error(error) });
-    }
+    return (
+      <div>
+        <NavMenu/>
+        <ButtonIcon readings={readings}/>
+        <BudgetForm/>
+        <p><strong>Total Budget: $5000</strong></p>
+        <Progress percent={50} strokeColor = {color[0]} showInfo={false} strokeWidth="30px"/>
+        <MultiColorProgressBar readings={readings}/>
+        <BillForm/>
+        <Tabs defaultActiveKey="1" items={items}  /> 
+        {/* { <p>contents budget: {this.state.budget}</p>} */}
+        {/* <p>contents group: {this.state.group.join(", ")}</p>
+        <p>contents spent: {this.state.groupTotal}</p> */}
+        {/* <p>contents totalSpentPerMember: {this.state.totalSpentPerMember["jan"]}</p>
+        <p>contents activeBills: {this.state.activeBills[0].amount}</p>
+        <p>contents deletedBills: {this.state.deletedBills[0].amount}</p> 
+        <p>contents total for {this.state.username}: {this.state.total}</p>  */}
+        {/* <p>contents result: {String(this.state.result)}</p> */}
+    </div>
+    );
 }
-
-// const submitLoginForm = (values) => {
-//     setInputFailures(false);
-//     var failureMessage = '';
-
-//     let billForm = {
-//         Name: values.name,
-//         Description: values.description,
-//         Amount: values.amount,
-//         RepeatMonthly: values.repeatMonthly,
-//         IsPaid: values.isPaid,
-//         Payees: values.Payees,
-//         fileName: values.fileName
-//     };
-
-//     // -- Client-side Input Validation
-
-//     // Blank User Inputs
-//     for (let key in billForm) {
-//         if (userAccount[key] == null) {
-//             setInputFailures(true);
-//             failureMessage = 'Empty fields are not accepted.'
-//             break;
-//         }
-//     }
-
-//     if (!inputFailures) {
-//         attemptInitialLogin(userAccount)
-//     } else {
-//         failureLoginView(failureMessage);
-//     }
-// };
