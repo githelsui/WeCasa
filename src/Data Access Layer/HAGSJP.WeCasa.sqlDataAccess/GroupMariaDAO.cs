@@ -166,7 +166,37 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
-        public async Task<Result> LogData(Log log)
+        public Result AddGroupMember(GroupModel group, string newGroupMember)
+        {
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new Result();
+
+                // Insert SQL statement
+                var insertSql = @"INSERT INTO `UserGroup` (
+                                    `group_id`, 
+                                    `username`
+                                  )
+                                  VALUES (
+                                    @group_id, 
+                                    @username
+                                 );";
+
+                var command = connection.CreateCommand();
+                command.CommandText = insertSql;
+                command.Parameters.AddWithValue("@group_id", group.GroupId);
+                command.Parameters.AddWithValue("@username".ToLower(), newGroupMember.ToLower());
+
+                // Execution of SQL
+                var rows = (command.ExecuteNonQuery());
+                result = ValidateSqlStatement(rows);
+                return result;
+            }
+        }
+
+            public async Task<Result> LogData(Log log)
         {
 
             _connectionString = BuildConnectionString().ConnectionString;

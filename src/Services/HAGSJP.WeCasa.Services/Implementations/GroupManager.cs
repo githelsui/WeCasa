@@ -90,5 +90,45 @@ namespace HAGSJP.WeCasa.Services.Implementations
         {
             throw new NotImplementedException();
         }
+
+        public Result AddGroupMember(GroupModel group, string newGroupMember)
+        {
+            var userManager = new UserManager();
+            var result = new Result();
+
+            // check if valid email
+            var emailValidation = userManager.ValidateEmail(newGroupMember);
+            if (!emailValidation.IsSuccessful)
+            {
+                return emailValidation;
+            }
+
+            // check if account exists
+            var existingAcc = userManager.IsUsernameTaken(newGroupMember);
+            if (!existingAcc)
+            {
+                result.IsSuccessful = false;
+                result.Message = "Cannot add a user that does not exist.";
+                return result;
+            }
+
+            //TODO: check if newGroupMember is not owner of group
+
+            //if all validations pass -> dao.AddGroupMember(group, newGroupMember)
+            result = _dao.AddGroupMember(group, newGroupMember);
+
+            if (result.IsSuccessful)
+            {
+                // Logging the group creation
+                successLogger.Log("Group member added successfully", LogLevels.Info, "Data Store", group.Owner);
+            }
+            else
+            {
+                // Logging the error
+                errorLogger.Log("Error adding a group member", LogLevels.Error, "Data Store", group.Owner);
+            }
+
+            return result;
+        }
     }
 }

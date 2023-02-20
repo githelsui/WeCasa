@@ -3,12 +3,19 @@ import { Modal, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Swi
 import * as Styles from '../styles/ConstStyles.js';
 import '../styles/System.css';
 import '../index.css';
+import axios from 'axios';
 import defaultImage from '../assets/defaultimgs/wecasatemp.jpg';
 import * as ValidationFuncs from '../scripts/InputValidation.js';
 
 export const GroupSettingsTab = (props) => {
 
     //Development Only:
+    const group = {
+        GroupId: 1,
+        GroupName: "Group1",
+        Icon: "#0256D4",
+        Features: ["Budget Bar"]
+    }
     const tempFeatureDesc = "DESCRIPTION: Lorem ipsum dolor sit amet consectetur. In non proin et interdum at. Vel mi praesent tincidunt tincidunt odio at mauris nisl cras."
 
     const [newIcon, setNewIcon] = useState(null);
@@ -42,34 +49,64 @@ export const GroupSettingsTab = (props) => {
     };
 
     const inviteRoommate = () => {
-        var emailCheck = ValidationFuncs.validateEmail(roommate)
-        let notifMsg = ''
-        if (emailCheck && roommate != '') {
-            notifMsg = "Invite Sent to " + roommate;
+        if (roommate == '') {
+            notification.open({
+                message: "Please enter a username",
+                duration: 5,
+                placement: "topRight",
+            });
+        } else {
             //call web api method
             addGroupMember(roommate)
-        } else {
-            notifMsg = "Invalid email. Invitation cannot be sent."
         }
-        notification.open({
-            message: notifMsg,
-            description: '',
-            duration: 5,
-            placement: "topRight",
-        });
     };
 
     const addGroupMember = (username) => {
-        // Development Only
-        let tempRoommates = invitedRoommates
-        tempRoommates.push(username)
-        setInvitedRoommates(tempRoommates)
-        console.log(tempRoommates)
-        if (tempRoommates.length > 0) {
-            setNoInvitations(false)
-        } else {
-            setNoInvitations(true)
+        let groupMemberForm = {
+            GroupId: group.GroupId,
+            GroupMember: username
         }
+
+        axios.post('group-settings/AddGroupMembers', groupMemberForm)
+            .then(res => {
+                var isSuccessful = res.data['isSuccessful'];
+                if (isSuccessful) {
+                    console.log("Successfully invited group member.")
+                    let tempRoommates = invitedRoommates
+                    tempRoommates.push(username)
+                    console.log(tempRoommates)
+                    if (tempRoommates.length > 0) {
+                        setNoInvitations(false)
+                        setInvitedRoommates(tempRoommates)
+                    } else {
+                        setNoInvitations(true)
+                    }
+                    successToast("Successfully invited group member " + groupMemberForm.GroupMember)
+                    this.forceUpdate()
+                } else {
+                    failureToast(res.data['message']);
+                }
+            })
+            .catch((error => { console.error(error) }));
+    }
+
+    const successToast = (successMessage) => {
+        notification.open({
+            message: successMessage,
+            duration: 5,
+            placement: "topRight",
+        });
+    }
+
+    const failureToast = (failureMessage) => {
+        // Accounts for user failure cases and system errors
+        console.log("User Failure Cases")
+        notification.open({
+            message: "Try again.",
+            description: failureMessage,
+            duration: 5,
+            placement: "topRight",
+        });
     }
 
     const validateEmail = (rule, value, callback) => {

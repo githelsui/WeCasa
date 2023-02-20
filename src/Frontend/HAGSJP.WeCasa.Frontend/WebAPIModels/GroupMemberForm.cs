@@ -7,5 +7,5 @@ public class GroupMemberForm
     public GroupMemberForm() { }
 
     public int GroupId { get; set; }
-    public List<string> GroupMembers { get; set; }
+    public string GroupMember { get; set; }
 }
