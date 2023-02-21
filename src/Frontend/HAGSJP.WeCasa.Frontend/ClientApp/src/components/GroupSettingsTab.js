@@ -1,7 +1,8 @@
 ﻿import React, { Component, useState } from 'react';
 import { Modal, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Switch, notification } from 'antd';
 import * as Styles from '../styles/ConstStyles.js';
-import GroupDeletionModal from './GroupDeletionModal.js'
+import GroupDeletionModal from './GroupDeletionModal.js';
+import { useAuth } from './AuthContext.js';
 import '../styles/System.css';
 import '../index.css';
 import axios from 'axios';
@@ -25,10 +26,11 @@ export const GroupSettingsTab = (props) => {
     const [roommate, setRoommate] = useState("");
     const [invitedRoommates, setInvitedRoommates] = useState([])
     const [noInvitations, setNoInvitations] = useState(true);
-    const currentGroup = props.group
+    const { currentUser } = useAuth();
+    const [currentGroup, setCurrentGroup] = useState(props.group);
 
     const updateFeatureSection = () => {
-        var features = currentGroup['Features']
+        var features = currentGroup['Features'];
         const tempFeatures = [false, false, false, false, false, false]
         for (let i = 0; i < features.length; i++) {
             let feature = features[i];
@@ -66,7 +68,7 @@ export const GroupSettingsTab = (props) => {
 
     const addGroupMember = (username) => {
         let groupMemberForm = {
-            GroupId: currentGroup['groupId'],
+            GroupId: currentGroup['GroupId'],
             GroupMember: username
         }
 
@@ -97,8 +99,8 @@ export const GroupSettingsTab = (props) => {
         setShowModal(false)
 
         let groupMemberForm = {
-            GroupId: currentGroup['groupId'],
-            GroupMember: ''
+            GroupId: currentGroup['GroupId'],
+            GroupMember: currentUser
         }
 
         axios.post('group-settings/DeleteGroup', groupMemberForm)
@@ -138,7 +140,7 @@ export const GroupSettingsTab = (props) => {
             <h4 className="padding-bottom mulish-font"><b>Group Settings</b></h4>
 
 
-            <Form id="groupCreationForm">
+            <Form id="groupSettingsForm">
                 <Row gutter={[24, 24]} align="middle">
                     <Col span={6} className="group-icon-selection">
                         <Image style={Styles.groupIconSelection} src={defaultImage} preview={false} height="120px" width="120px" />
@@ -243,17 +245,14 @@ export const GroupSettingsTab = (props) => {
                         </Col>
                     </Row>
                     <p className="group-feature-desc-p">{tempFeatureDesc}</p>
-
-                    <div className="group-deletion-section padding-vertical">
-                        <h5 className="mulish-font">Group deletion</h5>
-                        <p className="group-feature-desc-p">Are you sure you want to delete this group?</p>
+                </div>
+                {(currentUser == currentGroup['Owner']) ?
+                    (<div className="group-deletion-section padding-vertical">
                         <Button type="primary" style={Styles.deleteButtonStyle} onClick={() => setShowModal(true)}>Delete Group</Button>
                         <GroupDeletionModal show={showModal} close={() => setShowModal(false)} confirm={deleteGroup} />
-
-                    </div>
-
-                    <Button key="create" type="primary" htmlType="submit" style={Styles.primaryButtonStyle}>Save</Button>
-                </div>
+                    </div>) : <div></div>
+                    }
+                    <Button key="create" type="primary" htmlType="submit" style={Styles.saveButtonStyle}>Save</Button>
             </Form>
         </div>
     );

@@ -30,11 +30,31 @@ export const primaryButtonStyle = {
 export const deleteButtonStyle = {
     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
     fontFamily: 'Mulish',
-    width: '100%',
+    width: '50%',
     fontWeight: 'bold',
     backgroundColor: '#bd0d25',
     color: '#FFFFFF',
-    marginTop: -10
+    marginTop: -10,
+    marginLeft: 200,
+    marginRight: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative'
+}
+
+export const saveButtonStyle = {
+    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+    fontFamily: 'Mulish',
+    width: '50%',
+    fontWeight: 'bold',
+    backgroundColor: '#111827',
+    color: '#FFFFFF',
+    marginTop: -10,
+    marginLeft: 200,
+    marginRight: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative'
 }
 
 export const defaultButtonStyle = {

@@ -1,23 +1,33 @@
-import React, { Component } from 'react';
-import { Navigate, useLocation } from 'react-router-dom'
+import React, { Component, useState, useEffect } from 'react';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from './AuthContext';
 import { Modal, notification } from 'antd';
 import { Groups } from './Groups.js'
+import { NavMenu } from './NavMenu.js'
 import axios from 'axios';
 import * as Styles from '../styles/ConstStyles.js';
 
 export const Home = () => {
     const { auth, currentUser } = useAuth();
+    const [currentGroup, setCurrentGroup] = useState(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!auth) navigate('/login');
+        }, []);
+
+
+    const updateGroup = (newGroup) => {
+        setCurrentGroup(newGroup);
+    }
+
 
     return (
         <div>
-            {(!auth) ?
-                (<Navigate to='/login'></Navigate>)
-                : (
-                    <div>
-                        <div><h2 align={"center"}>Home</h2></div>
-                        <Groups />
-                    </div>)}
+            {(auth && !currentGroup==null) ?
+                (<div>
+                    <NavMenu />
+                </div>) : (<Groups user={currentUser} selected={updateGroup} />)}
         </div>
     );
 }; 

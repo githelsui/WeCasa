@@ -13,9 +13,8 @@ export const GroupSettings = (props) => {
     const [newIcon, setNewIcon] = useState(null);
     const [refreshGroupMembers, setRefreshGroupMembers] = useState(false)
     const [refreshSettings, setRefreshSettings] = useState(true)
-    //const [group, setGroup] = useState(null)
     const location = useLocation();
-    let currentGroup = location.state;
+    let group = location.state;
 
     const tabItemClick = (key) => {
         console.log('tab click', key);
@@ -44,14 +43,14 @@ export const GroupSettings = (props) => {
                         <Image style={Styles.groupIconSelection} src={defaultImage} preview={false} height="80px" width="80px" />
                     </Col>
                     <Col span={8} className="group-name">
-                        <h2 className="padding-bottom mulish-font"><b>{currentGroup['groupName']}</b></h2>
+                        <h2 className="padding-bottom mulish-font"><b>{group.groupName}</b></h2>
                     </Col>
                 </Row>
             </div>
 
             <Tabs defaultActiveKey="2" onChange={tabItemClick} destroyInactiveTabPane>
-                <TabPane tab="Group Members" key="1"><GroupMembersTab group={currentGroup} /></TabPane>
-                <TabPane tab="Settings" key="2"><GroupSettingsTab group={currentGroup} /></TabPane>
+                <TabPane tab="Group Members" key="1"><GroupMembersTab group={group} /></TabPane>
+                <TabPane tab="Settings" key="2"><GroupSettingsTab group={group} /></TabPane>
             </Tabs>  </div>
         );
 };

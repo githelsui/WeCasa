@@ -11,10 +11,10 @@ const { Meta } = Card;
 
 const maxConfiguredFeatures = 6;
 
-export const Groups = () => {
+export const Groups = (props) => {
     const [loading, setLoading] = useState(true);
     const { currentUser } = useAuth();
-    const [currentGroup, setCurrentGroup] = useState(null);
+    const { currentGroup, setCurrentGroup } = useState(null);
     const [invitedRoommates, setInvitedRoommates] = useState([])
     const [groups, setGroups] = useState([]);
     const [showModal, setShowModal] = useState(false);
@@ -50,7 +50,6 @@ export const Groups = () => {
             Icon: (groupConfig.icon == null) ? "#668D6A" : groupConfig.icon,
             Features: features
         }
-        console.log(group);
         axios.post('home/CreateGroup', group)
             .then(res => {
                 var createdGroup = res.data['returnedObject']
@@ -65,12 +64,11 @@ export const Groups = () => {
             .catch((error => { console.error(error) }));
     }
 
-    const viewGroup = (group) => {
+    const editGroup = (group) => {
         setCurrentGroup(group);
     }
 
-    const editGroup = (group) => {
-        setCurrentGroup(group);
+    const groupSettings = (group) => {
         navigate('/group-settings', { state: group });
     }
 
@@ -116,8 +114,8 @@ export const Groups = () => {
                         hoverable
                         style={{ width: 500 }}
                         actions={[
-                            <Button key="view" type="primary" onClick={() => viewGroup(group)} style={Styles.primaryButtonModal}>View</Button>,
-                            <Button key="settings" type="default" onClick={() => editGroup(group)} style={Styles.defaultButtonModal}>Settings</Button>
+                            <Button key="view" type="primary" onClick={() => groupSettings(group)} style={Styles.primaryButtonModal}>View</Button>,
+                            <Button key="settings" type="default" onClick={() => groupSettings(group)} style={Styles.defaultButtonModal}>Settings</Button>
                         ]}>
                         <Meta
                             avatar={<Avatar style={{ "backgroundColor": group.icon }} />}
@@ -142,10 +140,9 @@ export const Groups = () => {
 
     return (
         <div>
-            {(currentGroup == null) ?
-                (<div><Space direction="horizonal" size={32}>
+             <div><Space direction="horizonal" size={32}>
                     {displayGroupView()}
-                </Space>
+                  </Space>
                     <Row gutter={24} style={{ display: "flex" }}>
                         <Col span={24}>
                             <Card hoverable style={{ marginTop: 16, marginLeft: 150, marginRight: 150, background: "#ececec", fontFamily: 'Mulish' }}>
@@ -160,10 +157,7 @@ export const Groups = () => {
                         </Col>
                     </Row>
                     <CreateGroupModal show={showModal} close={() => setShowModal(false)} confirm={attemptGroupCreation} reject={failureGroupView} user={currentUser} onInvitationListUpdated={handleGroupMembersChange}/>
-                </div>) : (
-                <div>
-                    <NavMenu />
-                </div>)}
+              </div>
         </div>
     );
 }; 

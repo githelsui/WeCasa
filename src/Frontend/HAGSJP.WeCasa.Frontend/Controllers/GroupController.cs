@@ -52,7 +52,11 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         [Route("DeleteGroup")]
         public Result DeleteGroup([FromBody] GroupMemberForm groupForm)
         {
-            return new Result();
+            var group = new GroupModel();
+            group.GroupId = groupForm.GroupId;
+            var groupManager = new GroupManager();
+            var result = groupManager.DeleteGroup(group);
+            return result;
         }
     }
 }

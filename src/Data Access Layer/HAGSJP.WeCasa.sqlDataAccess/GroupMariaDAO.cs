@@ -102,11 +102,13 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 var insertGroupSql = @"INSERT INTO `Groups` (
                                         `owner`, 
                                         `group_name`, 
+                                        `icon`,
                                         `features`
                                       )
                                       VALUES (
                                         @owner, 
                                         @group_name, 
+                                        @icon,
                                         @features
                                      ); 
                                      SELECT LAST_INSERT_ID();";
@@ -124,29 +126,28 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 command.CommandText = insertGroupSql;
                 command.Parameters.AddWithValue("@owner".ToLower(), group.Owner.ToLower());
                 command.Parameters.AddWithValue("@group_name".ToLower(), group.GroupName.ToLower());
+                command.Parameters.AddWithValue("@icon".ToLower(), group.Icon.ToLower());
                 string featuresJSON = JsonSerializer.Serialize(group.Features);
                 command.Parameters.AddWithValue("@features", featuresJSON);
 
                 // Execution of first SQL query
                 // Storing auto-incremented group_id from insertion into Groups table
-                var groupId = (command.ExecuteScalar());
+                int groupId = (int)command.ExecuteScalar();
 
-                if (groupId != null)
+                // Group could not be created and could not retrieve group_id primary key
+                if (groupId == 0)
+                {
+                    result.IsSuccessful = false;
+                    result.Message = "Failure creating group.";
+                }
+                else
                 {
                     // Execution of second SQL query
                     command.CommandText = insertUserGroupSql;
                     command.Parameters.AddWithValue("@group_id", groupId);
                     var userGroupInsertRows = command.ExecuteNonQuery();
-                    var userGroupResult = ValidateSqlStatement(userGroupInsertRows);
-                    result.IsSuccessful = true;
-                    group.GroupId = Convert.ToInt32(groupId);
+                    result.IsSuccessful = ValidateSqlStatement(userGroupInsertRows).IsSuccessful;
                     result.ReturnedObject = group;
-                }
-                // Group could not be created and could not retrieve group_id primary key
-                else
-                {
-                    result.IsSuccessful = false;
-                    result.Message = "Failure creating group.";
                 }
                 return result;
             }
