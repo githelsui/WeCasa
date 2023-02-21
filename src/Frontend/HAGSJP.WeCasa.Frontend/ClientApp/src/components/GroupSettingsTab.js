@@ -68,9 +68,11 @@ export const GroupSettingsTab = (props) => {
 
     const addGroupMember = (username) => {
         let groupMemberForm = {
-            GroupId: currentGroup['GroupId'],
+            GroupId: currentGroup['groupId'],
             GroupMember: username
         }
+
+        console.log('GROUP ID: ' + currentGroup['groupId'])
 
         axios.post('group-settings/AddGroupMembers', groupMemberForm)
             .then(res => {
@@ -99,7 +101,7 @@ export const GroupSettingsTab = (props) => {
         setShowModal(false)
 
         let groupMemberForm = {
-            GroupId: currentGroup['GroupId'],
+            GroupId: currentGroup['groupId'],
             GroupMember: currentUser
         }
 
