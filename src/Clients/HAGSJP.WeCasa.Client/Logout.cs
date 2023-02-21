@@ -6,10 +6,15 @@ namespace HAGSJP.WeCasa.Client
 {
 	public class Logout
 	{
+        private UserManager _um;
+
+        public Logout()
+        {
+            _um = new UserManager();
+        }
         public Result LogoutUser(UserAccount userAccount)
         {
-            UserManager userManager = new UserManager();
-            return userManager.LogoutUser(userAccount);
+            return _um.LogoutUser(userAccount);
         }
     }
 }

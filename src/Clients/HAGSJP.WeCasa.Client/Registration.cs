@@ -12,6 +12,35 @@ namespace HAGSJP.WeCasa.Client
 {
     public class RegistrationClient
     {
+        private UserManager _um;
+
+        public RegistrationClient()
+        {
+            _um = new UserManager();
+        }
+
+        // Used in Web API
+        public Result Register(string firstName, string lastName, string email, string password)
+        {
+            var registerResult = new Result();
+
+            // Input Validation
+            var emailTaken = _um.IsUsernameTaken(email);
+            var validateEmail = _um.ValidateEmail(email);
+            var validatePassword = _um.ValidatePassword(password);
+
+            if (!emailTaken && validateEmail.IsSuccessful && validatePassword.IsSuccessful)
+            {
+                registerResult = _um.RegisterUser(firstName, lastName, email, password);
+            } else
+            {
+                var emailTakenMessage = emailTaken ? "An account already exists with this email." : "";
+                registerResult.Message = validateEmail.Message + "\n" + validatePassword.Message + "\n" + emailTakenMessage;
+                registerResult.IsSuccessful = false;
+            }
+            return registerResult;
+        }
+
         public Result Register(string email, string password, UserManager um)
         {
             var registerResult = new Result();

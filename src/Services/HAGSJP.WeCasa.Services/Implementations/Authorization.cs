@@ -125,6 +125,22 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return result;
         }
 
+        public AuthResult ValidateClaim(List<Claim> claims, Claim targetClaim) {
+            AuthResult result = new AuthResult();
+            foreach (Claim claim in claims)
+            {
+                if (targetClaim.ClaimType.Equals(claim.ClaimType) && targetClaim.ClaimValue.Equals(claim.ClaimValue))
+                {
+                    result.ReturnedObject = true;
+                    result.IsSuccessful = true;
+                    return result;
+                }
+            }
+            result.ReturnedObject = false;
+            result.IsSuccessful = true;
+            result.Message = "Unauthorized access";
+            return result;
+        }
         public AuthResult ValidateActiveUser(UserAccount ua)
         {
             var result = new AuthResult();

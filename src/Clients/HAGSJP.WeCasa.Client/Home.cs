@@ -14,16 +14,22 @@ namespace HAGSJP.WeCasa.Client
             while (menu != false)
             {
                 Console.WriteLine("\n\nHome Page");
-                Console.WriteLine("(1) Logout");
-                Console.WriteLine("(2) Exit Home Page");
+                Console.WriteLine("(1) Account Settings");
+                Console.WriteLine("(2) Logout");
+                Console.WriteLine("(3) Exit Home Page");
                 switch (Console.ReadLine())
-                {
-                    case "1":
+                {   
+                    case "1": 
+                        // Going to Account Settings Page
+                        AccountSettings ac = new AccountSettings();
+                        ac.AccountSettingsPage(userAccount);
+                        break;
+                    case "2":
                         Logout logout = new Logout();
                         var logoutRes = logout.LogoutUser(userAccount);
                         if (logoutRes.IsSuccessful)
                         {
-                            Console.Write("Successfully logged " + userAccount.Username + " out.\n\n");
+                            Console.Write(logoutRes.Message);
                             mainMenu.OpenMenu();
                         }
                         else // User is unable to logout
@@ -31,7 +37,7 @@ namespace HAGSJP.WeCasa.Client
                             Console.Write(logoutRes.Message + "\n\n");
                         }
                         break;
-                    case "2":
+                    case "3":
                         menu = false;
                         mainMenu.OpenMenu();
                         break;

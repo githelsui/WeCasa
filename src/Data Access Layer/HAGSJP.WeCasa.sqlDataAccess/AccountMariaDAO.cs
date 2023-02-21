@@ -4,7 +4,8 @@ using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
 using HAGSJP.WeCasa.Models.Security;
 using System.Text.Json;
 using Azure;
-
+using System.Data;
+using System.Reflection.PortableExecutable;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
@@ -59,10 +60,14 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 var result = new Result();
 
                 // Insert SQL statement
-                var insertSql = @"INSERT INTO `Users` (`username`, `password`, `is_enabled`, `is_admin`, `claims`, `salt`) values (@username, @password, 1, 0, @claims, @salt);";
+                var insertSql = @"INSERT INTO `Users` (`first_name`, `last_name`, `username`, `password`, `is_enabled`, `is_admin`, `claims`, `salt`) values (@first_name, @last_name, @username, @password, 1, 0, @claims, @salt);";
 
                 var command = connection.CreateCommand();
                 command.CommandText = insertSql;
+                var firstNameVal = String.IsNullOrEmpty(userAccount.FirstName) ? String.Empty : userAccount.FirstName;
+                var lastNameVal = String.IsNullOrEmpty(userAccount.LastName) ? String.Empty : userAccount.LastName;
+                command.Parameters.AddWithValue("@first_name".ToLower(), firstNameVal.ToLower());
+                command.Parameters.AddWithValue("@last_name".ToLower(), lastNameVal.ToLower());
                 command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
                 command.Parameters.AddWithValue("@password", password);
                 command.Parameters.AddWithValue("@salt", salt);
@@ -70,6 +75,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 // Initial claims when new user is first registered
                 List<Claim> initialClaims = new List<Claim>
                 {
+                    new Claim("Account", "Delete Account"),
                     new Claim("Functionality", "Edit event"),
                     new Claim("Read", "Read files"),
                     new Claim("Write", "Edit note"),
@@ -113,6 +119,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         result.IsEnabled = reader.GetInt32(reader.GetOrdinal("is_enabled")) == 1 ? true : false;
                         result.ReturnedObject = reader.GetString(reader.GetOrdinal("password"));
                         result.Salt = reader.GetString(reader.GetOrdinal("salt"));
+                        result.OTPCode = reader.IsDBNull(reader.GetOrdinal("otp_code")) ? String.Empty : reader.GetString(reader.GetOrdinal("otp_code"));
                     }
                     // User not found
                     else
@@ -414,6 +421,138 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     logs.Add(new Log(message, logLevel, category, timestamp, username, operation));
                 }
                 return logs;
+            }
+        }
+    
+        public Result DeleteUser(UserAccount userAccount)
+        {
+            _connectionString = BuildConnectionString().ConnectionString;
+            using(var connection = new MySqlConnection(_connectionString)) 
+            {
+                connection.Open();
+                var result = new Result();
+
+                // Select SQL statement
+                var selectSql = @"DELETE FROM `Users` 
+                                    WHERE `Username` = @username";
+
+                var command = connection.CreateCommand();
+                command.CommandText = selectSql;
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
+
+                // Execution of SQL
+                var rows = (command.ExecuteNonQuery());
+                result = ValidateSqlStatement(rows);
+                connection.Close();
+                return result;
+            }
+        }
+
+        public Result UpdateUser(UserAccount userAccount, string updateSQL)
+        {
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new Result();
+
+                var command = connection.CreateCommand();
+                command.CommandText = updateSQL;
+
+                // Execution of SQL
+                var rows = (command.ExecuteNonQuery());
+                result = ValidateSqlStatement(rows);
+                connection.Close();
+                return result;
+            }
+        }
+
+        public AuthResult GetUserProfile(UserAccount userAccount)
+        {
+            AuthResult result = new AuthResult();
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                // Select SQL statement
+                var selectSql = @"SELECT  * 
+                                    FROM  `Users` 
+                                    WHERE `username` = @username";
+
+                var command = connection.CreateCommand();
+                command.CommandText = selectSql;
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
+
+                // Execution of SQL
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        UserProfile userProfile = new UserProfile();
+                        userProfile.Username = userAccount.Username;
+                        userProfile.FirstName = reader.GetString(reader.GetOrdinal("first_name"));
+                        userProfile.LastName = reader.GetString(reader.GetOrdinal("last_name"));
+                        //TODO: Include UserProfile.Icon
+                        result.ErrorStatus = System.Net.HttpStatusCode.Found;
+                        result.Message = "User information was found";
+                        result.IsSuccessful = true;
+                        result.ReturnedObject = userProfile;
+                        return result;
+                    }
+                    else
+                    {
+                        result.ErrorStatus = System.Net.HttpStatusCode.NotFound;
+                        result.Message = "User information was not found";
+                        result.IsSuccessful = false;
+                        return result;
+                    }
+                }
+            }
+        }
+
+        public AuthResult PopulateUserStatus(UserAccount userAccount)
+        {
+            AuthResult populateResult= new AuthResult();
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                // Select SQL statement
+                var selectSql = @"SELECT  * 
+                                    FROM  `Users` 
+                                    WHERE `username` = @username";
+
+                var command = connection.CreateCommand();
+                command.CommandText = selectSql;
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
+
+                // Execution of SQL
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        bool isAuth = reader.GetInt32(reader.GetOrdinal("is_auth")) == 1 ? true : false;
+                        bool isEnabled = reader.GetInt32(reader.GetOrdinal("is_enabled")) == 1 ? true : false;
+                        string password = reader.GetString(reader.GetOrdinal("password"));
+                        bool isAdmin = reader.GetInt32(reader.GetOrdinal("is_admin")) == 1 ? true : false;
+                        List<Claim>? claims = JsonSerializer.Deserialize<List<Claim>>(reader.GetString(reader.GetOrdinal("claims")));
+                        UserStatus userstatus = new UserStatus(userAccount.Username, userAccount.Password, userAccount.UserAccountId, isEnabled, isAuth, isAdmin, claims);
+                        populateResult.ErrorStatus = System.Net.HttpStatusCode.Found;
+                        populateResult.Message = "User information was found";
+                        populateResult.IsSuccessful = true;
+                        populateResult.ReturnedObject = userstatus;
+                        return populateResult;
+                    }
+                    else 
+                    {
+                        populateResult.ErrorStatus = System.Net.HttpStatusCode.NotFound;
+                        populateResult.Message = "User information was not found";
+                        populateResult.IsSuccessful = false;
+                        return populateResult;
+                    }
+                }
             }
         }
     }

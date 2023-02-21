@@ -7,6 +7,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
     {
         public Result VerifyOTPassword(string email, string code);
         public AuthResult VerifyEncryptedPasswords(UserAccount userAccount);
+        public Result AuthenticateUser(UserAccount userAccount, OTP submittedOTP);
         public Result AuthenticateUser(UserAccount userAccount, OTP userOtp, OTP otp);
         public Boolean IsAccountEnabled(UserAccount userAccount);
         public Result ResetAuthenticationAttempts(UserAccount userAccount);

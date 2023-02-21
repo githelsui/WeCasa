@@ -1,16 +1,11 @@
 ﻿using HAGSJP.WeCasa.Models.Security;
 using HAGSJP.WeCasa.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using HAGSJP.WeCasa.Logging.Implementations;
 using HAGSJP.WeCasa.sqlDataAccess; 
 using System.Net;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Security.Cryptography;
+using static System.Net.WebRequestMethods;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
@@ -101,6 +96,18 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 errorLogger.Log("Error updating one-time code", LogLevels.Error, "Data Store", userAccount.Username);
             }
             return result;
+        }
+
+        // Used in front-end views
+        public Result AuthenticateUser(UserAccount userAccount, OTP submittedOTP)
+        {
+            var authRes = _dao.ValidateUserInfo(userAccount);
+            if (authRes.ExistingAcc)
+            {
+                OTP fetchedOTP = new OTP(userAccount.Username, authRes.OTPCode);
+                return AuthenticateUser(userAccount, submittedOTP, fetchedOTP);
+            }
+            return authRes;
         }
 
         public Result AuthenticateUser(UserAccount userAccount, OTP userOtp, OTP otp)

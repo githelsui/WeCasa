@@ -5,7 +5,8 @@ namespace HAGSJP.WeCasa.Models
     {
         Login,
         Registration,
-        Logout
+        Logout,
+        GroupCreation
     }
 }
 

@@ -2,17 +2,10 @@
 using HAGSJP.WeCasa.Models.Security;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.sqlDataAccess;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Mail;
-using System.Security.Principal;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
 using System.Diagnostics;
-using HAGSJP.WeCasa.Logging.Abstractions;
+using System.Net;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
@@ -33,6 +26,14 @@ namespace HAGSJP.WeCasa.Services.Implementations
             _dao = dao;
             successLogger = new Logger(dao);
             errorLogger = new Logger(dao);
+        }
+
+        public Result ValidateName(string name)
+        {
+            var validName = new Result();
+            var checkValidName = new Regex(@"\b([A-ZÀ-ÿ][-,a-z. ']*)+");
+            validName.IsSuccessful = checkValidName.IsMatch(name);
+            return validName;
         }
 
         // checks whether a new email has the correct characters
@@ -180,6 +181,55 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return confirmPassword;
         }
 
+        public UserStatus PopulateUserStatus(UserAccount userAccount)
+        {
+            AuthResult populateResult = _dao.PopulateUserStatus(userAccount);
+            return (UserStatus) populateResult.ReturnedObject;
+        }
+
+        public AuthResult GetUserProfile(UserAccount userAccount)
+        {
+            return _dao.GetUserProfile(userAccount);
+        }
+
+            public Result RegisterUser(string firstName, string lastName, string email, string password)
+        {
+            // System log entry recorded if registration process takes longer than 5 seconds
+            var stopwatch = new Stopwatch();
+            var expected = 5;
+
+            stopwatch.Start();
+            var userPersistResult = new Result();
+            UserAccount userAccount = new UserAccount(firstName, lastName, email);
+
+            // Password encryption
+            HashSaltSecurity hashService = new HashSaltSecurity();
+            string salt = BitConverter.ToString(hashService.GenerateSalt(password));
+            string encryptedPass = hashService.GetHashSaltCredentials(password, salt);
+            userAccount.Salt = salt;
+            userPersistResult = _dao.PersistUser(userAccount, encryptedPass, salt);
+
+            if (userPersistResult.IsSuccessful)
+            {
+                // Logging the registration
+                successLogger.Log("Account created successfully", LogLevels.Info, "Data Store", userAccount.Username);
+            }
+            else
+            {
+                // Logging the error
+                errorLogger.Log("Error creating an account", LogLevels.Error, "Data Store", userAccount.Username);
+            }
+
+            stopwatch.Stop();
+            var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
+            if (userPersistResult.IsSuccessful && actual > expected)
+            {
+                errorLogger.Log("Account created successfully, but took longer than 5 seconds", LogLevels.Info, "Business", userAccount.Username, new UserOperation(Operations.Registration, 1));
+            }
+
+            return userPersistResult;
+        }
+
         public Result RegisterUser(string email, string password)
         {
             // System log entry recorded if registration process takes longer than 5 seconds
@@ -194,6 +244,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             HashSaltSecurity hashService = new HashSaltSecurity();
             string salt = BitConverter.ToString(hashService.GenerateSalt(password));
             string encryptedPass = hashService.GetHashSaltCredentials(password, salt);
+            userAccount.Salt = salt;
             userPersistResult = _dao.PersistUser(userAccount, encryptedPass, salt);
 
             if (userPersistResult.IsSuccessful)
@@ -211,37 +262,72 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
             if(userPersistResult.IsSuccessful && actual > expected)
             {
-                errorLogger.Log("Account created successfully, but took longer than 5 seconds", LogLevels.Info, "Business", userAccount.Username, new UserOperation(Operations.Registration, 0));
+                errorLogger.Log("Account created successfully, but took longer than 5 seconds", LogLevels.Info, "Business", userAccount.Username, new UserOperation(Operations.Registration, 1));
             }
 
             return userPersistResult;
         }
 
-        public Result UpdateUser(UserProfile userProfile)
+        public Result UpdateFirstName(UserAccount userAccount, string firstName)
+        {
+            string updateSQL = string.Format(@"UPDATE users SET FIRST_NAME = '{0}' WHERE username = '{1}'", firstName, userAccount.Username);
+            return _dao.UpdateUser(userAccount, updateSQL);
+        }
+
+        public Result UpdateLastName(UserAccount userAccount, string lastName)
+        {
+            string updateSQL = string.Format(@"UPDATE users SET LAST_NAME = '{0}' WHERE username = '{1}'", lastName, userAccount.Username);
+            return _dao.UpdateUser(userAccount, updateSQL);
+        }
+
+        public Result UpdateUsername(UserAccount userAccount, string username)
+        {
+            string updateSQL = string.Format(@"UPDATE users SET USERNAME = '{0}' WHERE username = '{1}'", username, userAccount.Username);
+            return _dao.UpdateUser(userAccount, updateSQL);
+        }
+
+        public Result UpdatePassword(UserAccount userAccount, string salt, string password)
+        {
+            string updateSQL = string.Format(@"UPDATE users SET PASSWORD = '{0}', SALT = '{1}' WHERE username = '{2}'", password, salt, userAccount.Username);
+            return _dao.UpdateUser(userAccount, updateSQL);
+        }
+
+        public Result UpdateUserIcon(UserAccount userAccount)
         {
             throw new NotImplementedException();
         }
 
-        public Result DeleteUser()
+        public Result UpdatePhoneNumber(UserAccount userAccount)
         {
             throw new NotImplementedException();
+        }
+
+        public Result DeleteUser(UserAccount userAccount)
+        {
+            Result deleteUserResult = _dao.DeleteUser(userAccount);
+            if (deleteUserResult.IsSuccessful) {
+                successLogger.Log("Account Deletion Successful", LogLevels.Info, "Data Store", userAccount.Username);
+                deleteUserResult.Message = "Account Deletion Successful";
+                deleteUserResult.ErrorStatus = HttpStatusCode.OK;
+                return deleteUserResult;
+            }
+            else
+            {
+                errorLogger.Log("Account Deletion Unsuccessful", LogLevels.Error, "Data Store", userAccount.Username);
+                deleteUserResult.Message = "Account Deletion Unsuccessful";
+                deleteUserResult.ErrorStatus = HttpStatusCode.NotFound;
+                return deleteUserResult;
+            } 
         }
 
         public Result LogoutUser(UserAccount userAccount)
         {
-            var userInfoResult = _dao.ValidateUserInfo(userAccount);
-            // User is in authenticated session
-            if (userInfoResult.IsAuth == true)
+            Result logoutResult = _dao.UpdateUserAuthentication(userAccount, false);
+            if(logoutResult.IsSuccessful)
             {
-                Result logoutResult = _dao.UpdateUserAuthentication(userAccount, false);
-                return logoutResult;
+                logoutResult.Message = "Successfully logged out.";
             }
-            else // User is in authenticated session
-            {
-                userInfoResult.IsSuccessful = false;
-                userInfoResult.Message = "Unable to log out of an account that is not authenticated.";
-                return userInfoResult;
-            }
+            return logoutResult;
         }
 
         public Result EnableUser(UserAccount userAccount)

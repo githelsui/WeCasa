@@ -1,0 +1,15 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Mulish&display=swap');
+
+body {
+    font-family: 'Mulish', sans-serif;
+}
+
+.modalStyle .ant-modal-header {
+    border-radius: 20px 20px 0 0;
+}
+
+#profile-icon{
+    color:white !important;
+    background-color:white;
+    border:none;
+}
