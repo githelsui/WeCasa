@@ -12,7 +12,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AuthController : Controller
+public class LoginController : Controller
 {
 
     [HttpPost]

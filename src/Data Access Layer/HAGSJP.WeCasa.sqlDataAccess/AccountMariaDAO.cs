@@ -447,7 +447,70 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 return result;
             }
         }
-    
+
+        public Result UpdateUser(UserAccount userAccount, string updateSQL)
+        {
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new Result();
+
+                var command = connection.CreateCommand();
+                command.CommandText = updateSQL;
+
+                // Execution of SQL
+                var rows = (command.ExecuteNonQuery());
+                result = ValidateSqlStatement(rows);
+                connection.Close();
+                return result;
+            }
+        }
+
+        public AuthResult GetUserProfile(UserAccount userAccount)
+        {
+            AuthResult result = new AuthResult();
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                // Select SQL statement
+                var selectSql = @"SELECT  * 
+                                    FROM  `Users` 
+                                    WHERE `username` = @username";
+
+                var command = connection.CreateCommand();
+                command.CommandText = selectSql;
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
+
+                // Execution of SQL
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        UserProfile userProfile = new UserProfile();
+                        userProfile.Username = userAccount.Username;
+                        userProfile.FirstName = reader.GetString(reader.GetOrdinal("first_name"));
+                        userProfile.LastName = reader.GetString(reader.GetOrdinal("last_name"));
+                        //TODO: Include UserProfile.Icon
+                        result.ErrorStatus = System.Net.HttpStatusCode.Found;
+                        result.Message = "User information was found";
+                        result.IsSuccessful = true;
+                        result.ReturnedObject = userProfile;
+                        return result;
+                    }
+                    else
+                    {
+                        result.ErrorStatus = System.Net.HttpStatusCode.NotFound;
+                        result.Message = "User information was not found";
+                        result.IsSuccessful = false;
+                        return result;
+                    }
+                }
+            }
+        }
+
         public AuthResult PopulateUserStatus(UserAccount userAccount)
         {
             AuthResult populateResult= new AuthResult();

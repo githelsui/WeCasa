@@ -49,13 +49,28 @@ namespace HAGSJP.WeCasa.Authentication.Test
         [TestMethod]
         public void ShouldRedirectToHomePage()
         {
-                
+            // Arrange
+            // Act
+            // Assert
         }
 
         [TestMethod]
         public void ShouldDisplayConfirmationMessage()
         {
-            
+            // Arrange
+            Result expected = new Result();
+            expected.IsSuccessful = true;
+            expected.Message = "Successfully logged out.";
+            var systemUnderTest = new Logout();
+            UserAccount testUser = new UserAccount("InitialDataAuthLogout@gmail.com", "P@ssw0rd!");
+
+            // Act
+            var actual = systemUnderTest.LogoutUser(testUser);
+
+            // Assert 
+            Assert.IsNotNull(actual);
+            Assert.IsTrue(actual.IsSuccessful == expected.IsSuccessful);
+            Assert.IsTrue(actual.Message == expected.Message);
         }
     }
 }

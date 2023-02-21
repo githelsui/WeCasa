@@ -1,56 +1,35 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useEffect } from 'react';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from './AuthContext';
 import { Modal, notification } from 'antd';
+import { Groups } from './Groups.js'
+import { NavMenu } from './NavMenu.js'
 import axios from 'axios';
+import * as Styles from '../styles/ConstStyles.js';
 
-export class Home extends Component {
-    static displayName = Home.name;
+export const Home = () => {
+    const { auth, currentUser } = useAuth();
+    const [currentGroup, setCurrentGroup] = useState(null);
+    const navigate = useNavigate();
 
-    constructor(props) {
-        super(props);
+    useEffect(() => {
+        if (!auth) navigate('/login');
+        }, []);
 
-        this.state = {
-            logoutResults: false,
-            account: '',
-        };
+
+    const updateGroup = (newGroup) => {
+        setCurrentGroup(newGroup);
     }
 
 
-    static attemptLogout() {
-        console.log("Attempting logout...");
-        axios.post('logout/AttemptLogout', this.props.account)
-            .then(res => {
-                console.log(res.data)
-                var isSuccessful = res.data['isSuccessful'];
-                if (isSuccessful) {
-                    this.state.logoutResults = true;
-                    // return to main page
-                    this.props.history.push('/');
-                } else {
-                    this.failureLogoutView(res.data['message']);
-                }
-            }) 
-            .catch((error) => { console.error(error) });
-    };
-
-    failureLogoutView = (failureMessage) => {
-        // Accounts for user failure cases and system errors
-        this.state.logoutResults = false;
-        notification.open({
-            message: "Try again.",
-            description: failureMessage,
-            duration: 10,
-            placement: "topRight",
-        });
-    }
-
-  render() {
     return (
-      <div>
-        <h1>Hello, welcome to WeCasa</h1>
-            <p>Username</p>
-      </div>
+        <div>
+            {(auth && !currentGroup==null) ?
+                (<div>
+                    <NavMenu />
+                </div>) : (<Groups user={currentUser} selected={updateGroup} />)}
+        </div>
     );
-  }
-} 
+}; 
 
 export default Home;

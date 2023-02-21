@@ -13,3 +13,6 @@ obj/
 # Visual Studio generated files
 .vs
 .vscode
+
+node_modules/
+package-lock.json
