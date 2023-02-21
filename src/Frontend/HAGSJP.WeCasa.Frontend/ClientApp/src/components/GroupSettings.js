@@ -43,7 +43,7 @@ export const GroupSettings = (props) => {
                         <Image style={Styles.groupIconSelection} src={defaultImage} preview={false} height="80px" width="80px" />
                     </Col>
                     <Col span={8} className="group-name">
-                        <h2 className="padding-bottom mulish-font"><b>{group.groupName}</b></h2>
+                        <h2 className="padding-bottom mulish-font"><b>{group["groupName"]}</b></h2>
                     </Col>
                 </Row>
             </div>

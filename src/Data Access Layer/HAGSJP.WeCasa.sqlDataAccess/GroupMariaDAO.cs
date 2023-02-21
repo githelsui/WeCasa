@@ -146,6 +146,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.CommandText = insertUserGroupSql;
                     command.Parameters.AddWithValue("@group_id", Convert.ToInt32(groupId));
                     var userGroupInsertRows = command.ExecuteNonQuery();
+                    group.GroupId = Convert.ToInt32(groupId);
                     result.IsSuccessful = ValidateSqlStatement(userGroupInsertRows).IsSuccessful;
                     result.ReturnedObject = group;
                 }

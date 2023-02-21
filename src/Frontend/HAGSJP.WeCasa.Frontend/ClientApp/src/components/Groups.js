@@ -56,7 +56,8 @@ export const Groups = (props) => {
                 var isSuccessful = res.data['isSuccessful'];
                 var groupId = createdGroup['groupId']
                 if (isSuccessful) {
-                    inviteGroupMembers(createdGroup);
+                    setCurrentGroup(createdGroup);
+                    navigate('/group-settings', { state: createdGroup });
                 } else {
                     failureGroupView(res.data['message']);
                 }

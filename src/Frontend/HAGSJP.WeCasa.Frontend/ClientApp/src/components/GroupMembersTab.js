@@ -53,10 +53,21 @@ export const GroupMembersTab = (props) => {
             .then(res => {
                 console.log(res.data)
                 var memberArrRes = res.data['returnedObject']
+                var copyArr = cleanArrayCopy(memberArrRes)
                 console.log(memberArrRes)
-                setMembersList(memberArrRes)
+                setMembersList(copyArr)
             })
             .catch((error => { console.error(error) }));
+    }
+
+    const cleanArrayCopy = (array) => {
+        let copy = []
+        for (let i = 0; i < array.length; i++) {
+            if (array[i] != null) {
+                copy.push(array[i])
+            }
+        }
+        return copy
     }
 
     const removeRoommate = (username) => {
@@ -92,6 +103,8 @@ export const GroupMembersTab = (props) => {
     useEffect(() => {
         fetchMemberList()
     }, [])
+
+    console.log(currentGroup)
 
     return (
         <div className="group-members-tab padding">

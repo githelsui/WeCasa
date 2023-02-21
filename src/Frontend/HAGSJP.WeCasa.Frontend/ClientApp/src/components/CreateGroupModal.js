@@ -100,27 +100,6 @@ const CreateGroupModal = (props) => {
                     </Col>
                 </Row>
 
-                <h5 className="padding-top mulish-font">Invite roommates</h5>
-                <Row gutter={[24, 24]}>
-                        <Col span={18} className="invite-group-members">
-                            <Form.Item name="memberUsername" hasFeedback rules={[{ validator: validateEmail }]}>
-                                <Input style={Styles.inputFieldStyle} placeholder="Roommate Email/Username" value={roommate} onChange={(e) => { setRoommate(e.target.value) }} />
-                            </Form.Item>
-                        </Col>
-                        <Col span={6} className="invite-group-members-btn">
-                            <Button style={Styles.primaryButtonStyleNoMargins} type="primary" onClick={inviteRoommate}>Invite</Button>
-                        </Col>
-                </Row>
-
-                <div>
-                   {
-                    (noInvitations) ? (<div></div>):
-                        (<div className = "pending-invitations-section padding-vertical">
-                            <h5 className = "mulish-font">Users to invite upon creation</h5>
-                                    <div>{invitedRoommates.map((member) => <p>{member}</p>)}</div>
-                        </div>)
-                   }
-                </div>
 
                 <h5 className="mulish-font">Customize group features</h5>
                     <div className="group-feature-row">
