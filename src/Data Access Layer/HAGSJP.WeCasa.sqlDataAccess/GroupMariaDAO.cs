@@ -132,10 +132,10 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 // Execution of first SQL query
                 // Storing auto-incremented group_id from insertion into Groups table
-                int groupId = (int)command.ExecuteScalar();
+                var groupId = command.ExecuteScalar();
 
                 // Group could not be created and could not retrieve group_id primary key
-                if (groupId == 0)
+                if (groupId == null)
                 {
                     result.IsSuccessful = false;
                     result.Message = "Failure creating group.";
@@ -144,7 +144,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     // Execution of second SQL query
                     command.CommandText = insertUserGroupSql;
-                    command.Parameters.AddWithValue("@group_id", groupId);
+                    command.Parameters.AddWithValue("@group_id", Convert.ToInt32(groupId));
                     var userGroupInsertRows = command.ExecuteNonQuery();
                     result.IsSuccessful = ValidateSqlStatement(userGroupInsertRows).IsSuccessful;
                     result.ReturnedObject = group;

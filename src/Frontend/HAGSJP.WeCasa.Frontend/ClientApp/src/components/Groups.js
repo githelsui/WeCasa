@@ -14,7 +14,7 @@ const maxConfiguredFeatures = 6;
 export const Groups = (props) => {
     const [loading, setLoading] = useState(true);
     const { currentUser } = useAuth();
-    const { currentGroup, setCurrentGroup } = useState(null);
+    const [currentGroup, setCurrentGroup] = useState(null);
     const [invitedRoommates, setInvitedRoommates] = useState([])
     const [groups, setGroups] = useState([]);
     const [showModal, setShowModal] = useState(false);
