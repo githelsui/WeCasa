@@ -10,60 +10,39 @@ import {
   Select,
   Upload,
   Modal,
-  Input
+  Input,
+  EditOutlined
 } from 'antd';
 import axios from 'axios';
 import * as Styles from '../../styles/ConstStyles';
 
 const { Option } = Select;
 
-export const BillForm = () => {
+export const BillForm = (flow) => {
 
   const [form] = Form.useForm();
   const [members, setMembers] = useState([]);
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const [amount, setAmount] = useState(0);
   const [paymentStatus, setPaymentStatus] = useState(false);
   const [isRepeated, setIsRepeated] = useState(false);
-  const [photoFileName, setPhotoFileName] = useState("");
+  const [photoFileName, setPhotoFileName] = useState('');
+  const [open, setopen] = useState(true);
 
-  const [open, setopen] = useState(false);
+  const formItemLayout = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 14 },
+  }
 
-    const onCreate = (values) => {
-      console.log('Received values of form: ', values);
-      setopen(false);
-    };
-
-    const formItemLayout = {
-      labelCol: { span: 6 },
-      wrapperCol: { span: 14 },
-    };
-
+    // Flow: 1
     const persistAddForm = () =>
     {
-      // let request =  {
-      //   Usernames : members,
-      //   Bill : {
-      //       Username: "Jan",
-      //       BillId: 13243,
-      //       GroupId: 123456,
-      //       DateEntered: Date.UTC,
-      //       BillName: name,
-      //       BillDescription: description,
-      //       Amount: amount,
-      //       PaymentStatus: paymentStatus,
-      //       IsRepeated: isRepeated,
-      //       IsDeleted: 0,
-      //       DateDeleted: Date.UTC,
-      //       PhotoFileName: photoFileName
-      //   }
-      // }  
-
+      // TEST DATA
       let request =  {
-        Usernames : members,
-        Bill : {
-            Username: "Jan",
+        Bill :{            
+            Usernames : members,
+            Owner: 'Jan',
             BillId: 13243,
             GroupId: 123456,
             BillName: name,
@@ -74,44 +53,39 @@ export const BillForm = () => {
             PhotoFileName: photoFileName
         }
       } 
-      
-      console.log(request);
 
-      axios.post(`budgetbar/AddBill`, request).then(res => {
-          var isSuccessful = res.data;
-          if (isSuccessful) {
-            console.log(res);
-          } else {
-            console.log(res);
-          }
+      axios.post('budgetbar/AddBill', request).then(res => {
+          var response = res.data;
+            console.log(response);
       })
-      .catch((error) => { console.error(error) });
+      .catch((error => { console.error(error) }));
       setopen(false);
-    }
+    };
 
-    // const BillModal = () => {
-    //     const [open, setopen] = useState(false);
+    // Flow: 2
+    const persistEditForm = () =>
+    {
+      // TEST DATA
+      let request =  {
+        Bill : {
+            Usernames : members,
+            BillId: 13243,
+            BillName: name,
+            BillDescription: description,
+            Amount: amount,
+            PaymentStatus: paymentStatus,
+            IsRepeated: isRepeated,
+            PhotoFileName: photoFileName
+        }
+      } 
 
-    //     const onCreate = (values) => {
-    //       console.log('Received values of form: ', values);
-    //       setopen(false);
-    //     };
-      
-    //     return (
-    //       <div>
-    //         <Button
-    //           style={Styles.primaryButtonModal}
-    //           onClick={() => { setopen(true);}}>
-    //           Add Bill
-    //         </Button>
-    //         <BillForm
-    //           open={open}
-    //           onCreate={onCreate}
-    //           onCancel={() => {setopen(false);}}
-    //         />
-    //       </div>
-    //     );
-    //   };
+      axios.put('budgetbar/EditBill', request).then(res => {
+          var response = res.data;
+            console.log(response);
+      })
+      .catch((error => { console.error(error) }));
+      setopen(false);
+    };
 
     const normFile = (e) => {
       console.log('Upload event:', e);
@@ -121,69 +95,64 @@ export const BillForm = () => {
       return e?.fileList;
     }
     
-
     return (
       <div>
-        <Button style={Styles.primaryButtonModal} onClick={() => { setopen(true);}}> Add Bill</Button>
-        <Modal 
+      {/* <Button style={Styles.primaryButtonModal} onClick={() => { setopen(true);}}>Add Bill</Button> */}
+        <Modal
             open={open}
             title="Add Bill"
             okText="Save"
             cancelText="Cancel"
             onCancel={() => {setopen(false);}}
-            onOk={() => {setopen(false);}}>
-            <Form name="billForm" {...formItemLayout}  onFinish={() => persistAddForm()}>
-                <Form.Item name="name" label="Name"
-                rules={[
-                    {
-                    required: true,
-                    message: 'Please input Name!',
-                    },
-                ]}>
-                <Input onChange={e => setName(e.target.value)}/>
+            onOk={() => {setopen(false);}}
+            footer={[
+              <Button key="submit" style={Styles.primaryButtonModal} type="primary" onClick={() => {persistAddForm()}}>Save</Button>,
+              <Button key="cancel" style={Styles.defaultButtonModal} type="default" onClick={() => setopen(false)}>Cancel</Button>
+            ]}>
+            <Form name="billForm" {...formItemLayout} >
+                <Form.Item name="name" label=" Bill Name" onChange={value => setName(value)}
+                  rules={[
+                      {
+                      required: true,
+                      message: 'Please input a bill name!',
+                      },
+                  ]}>
+                  <Input/>
                 </Form.Item>
 
-                <Form.Item name="description" label="Description">
-                    <Input onChange={value => setDescription(value)}/>
+                <Form.Item name="description" label="Description" onChange={value => setDescription(value)}>
+                  <Input />
                 </Form.Item> 
 
-                <Form.Item name="amount" label="Amount"
-                    rules={[
-                        {
-                        required: true,
-                        message: 'Please input Name!',
-                        },
-                    ]}>
-                    <InputNumber min={0} max={1000000000} onChange={value => setAmount(value)}/>
+                <Form.Item name="input-number" label="Amount">
+                  <InputNumber min={0} max={1000000000} onChange={value => setAmount(value)}/>
                 </Form.Item>
 
                 <Form.Item name="isRepeated" label="Repeat" valuePropName="checked">
-                    <Checkbox value="M" style={{ lineHeight: '32px' }} onChange={value => setIsRepeated(value)}>
-                    Monthly
-                    </Checkbox>
+                  <Checkbox value="M" style={{ lineHeight: '32px' }} onChange={() => setIsRepeated(true)}>Monthly</Checkbox>
                 </Form.Item>
 
                 <Form.Item name="members" label="Members">
-                <Select mode="multiple" >
-                    <Option value="red" onChange={value => members.push(value)}>Red</Option>
+                  <Select mode="multiple" onChange={e => setMembers(e)}>
+
+                    <Option value="red">Red</Option>
                     <Option value="green">Green</Option>
                     <Option value="blue">Blue</Option>
                 </Select>
                 </Form.Item>
 
                 <Form.Item name="paymentStatus" label="Radio.Button"
-                rules={[{ required: true, message: 'Please pick an item!' }]}
-                >
+                  rules={[{ required: true, message: 'Please pick an item!' }]}>
                 <Radio.Group>
-                    <Radio.Button value="a" onChange={value => setPaymentStatus(true)}>PAID</Radio.Button>
-                    <Radio.Button value="b" onChange={value => setPaymentStatus(false)}>UNPAID</Radio.Button>
+                    <Radio.Button value="a" onChange={() => setPaymentStatus(true)}>PAID</Radio.Button>
+                    <Radio.Button value="b" onChange={() => setPaymentStatus(false)}>UNPAID</Radio.Button>
                 </Radio.Group>
                 </Form.Item>
 
                 <Form.Item label="Receipt">
-                <Form.Item name="receiptFile" valuePropName="fileList" getValueFromEvent={normFile} noStyle>
-                    <Upload.Dragger name="files" action="/upload.do" onChange={value => setPhotoFileName(value)}>
-                    <p className="ant-upload-drag-icon">
+                <Form.Item name="dragger" valuePropName="fileList" getValueFromEvent={normFile} noStyle>
+                    <Upload.Dragger name="files" action="/upload.do" onChange={(value) => setPhotoFileName(value)}>
+                      <p className="ant-upload-drag-icon" >
                         <InboxOutlined />
                     </p>
                     <p className="ant-upload-text">Upload new image</p>
@@ -197,8 +166,8 @@ export const BillForm = () => {
         </Modal>
       </div>
     );
-}
-      
+};
+
 
   
 export default BillForm;

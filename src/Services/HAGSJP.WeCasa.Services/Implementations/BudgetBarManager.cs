@@ -23,32 +23,45 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
 
 
-        public object GetInitialBudgetBarVew(string username, int groupId)
+
+
+        public object GetInitialBudgetBarVew(int groupId)
         {
             AccountMariaDAO dao = new AccountMariaDAO();
-            RefreshBillList(username);
-            DeleteAllOutdatedBills(username);
+            // RefreshBillList(username);
+            // DeleteAllOutdatedBills(username);
+            _logger.Log("Add bill was successful" + groupId, LogLevels.Info, "Data Store", "bill.Username");
             decimal budget = GetBudget(groupId);
-            
+            _logger.Log("BUDGET " + budget, LogLevels.Info, "Data Store", "bill.Username");
             Dictionary<string, string> names = dao.GetFirstNames(groupId);
+            _logger.Log("girst names dsfa", LogLevels.Info, "Data Store", "bill.Username");
             Dictionary<string, BudgetBarUser> budgetBarUsers = new Dictionary<string, BudgetBarUser>();
             foreach(var name in names)
             {
                 BudgetBarUser bbUser = new BudgetBarUser(name.Key, name.Value);
                 budgetBarUsers.Add(name.Key, bbUser);
+                _logger.Log("girst names " + name.Key, LogLevels.Info, "Data Store", "bill.Username");
             }
-
+                _logger.Log("Add " + budget, LogLevels.Info, "Data Store", "bill.Username");
             List<Bill> bills = GetBills(groupId);
+             _logger.Log("Get BILLS " + budget, LogLevels.Info, "Data Store", "bill.Username");
             Decimal totalSpent = 0;
             foreach(Bill bill in bills)
             {
+                _logger.Log("BEfoRE ADDDDD BILLS " + totalSpent, LogLevels.Info, "Data Store", "bill.Username");
                 if (bill.IsDeleted == false)
                 {
-                    budgetBarUsers[bill.Username].ActiveBills.Add(bill);
-                    budgetBarUsers[bill.Username].TotalSpent += bill.Amount;
+                    _logger.Log("ADDDDDDDDD BILLS 1 " + totalSpent, LogLevels.Info, "Data Store", "bill.Username");
+
+                    budgetBarUsers[bill.Owner].ActiveBills.Add(bill);
+                    _logger.Log("ADDDDDDDDD BILLS 2 " + totalSpent, LogLevels.Info, "Data Store", "bill.Username");
+
+                    budgetBarUsers[bill.Owner].TotalSpent += bill.Amount;
                     totalSpent += bill.Amount;
+                    _logger.Log("ADDDDDDDDD BILLS 3 " + totalSpent, LogLevels.Info, "Data Store", "bill.Username");
                 }
-                budgetBarUsers[bill.Username].DeletedBills.Add(bill);
+                _logger.Log("DELETE BILLS " + totalSpent, LogLevels.Info, "Data Store", "bill.Username");
+                budgetBarUsers[bill.Owner].DeletedBills.Add(bill);
             }
             
             return new {
@@ -132,25 +145,17 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return refreshBillsResult;
         }
 
-        public Result InsertBill(List<string> usernames, Bill bill)
+        public Result InsertBill( Bill bill)
         {
-            usernames.Add(bill.Username);
-            DAOResult result = _dao.InsertBill(usernames, bill);
-            try
+            DAOResult result = _dao.InsertBill(bill);
+            if (result.IsSuccessful)
             {
-                    if (result.IsSuccessful)
-                {
-                    _logger.Log("Add bill was successful", LogLevels.Info, "Data Store", bill.Username);
-                }
-                else
-                {
-                    _logger.Log( "Add bill Error: " + result.ErrorStatus  + "\n" +"Message: " + result.Message + "\n" + "State: " + result.SqlState, LogLevels.Error, "Data Store", bill.Username);
-                }
+                _logger.Log("Add bill was successful", LogLevels.Info, "Data Store", bill.Owner);
             }
-            catch (MySqlException sqlex)
-                {
-                    _logger.Log( "Add bill Error: "  + "\n" +"Message: " + sqlex.Message + "\n" + "State: " + sqlex.SqlState, LogLevels.Error, "Data Store", bill.Username);
-                }
+            else
+            {
+                _logger.Log( "Add bill Error: " + result.ErrorStatus  + "\n" +"Message: " + result.Message + "\n" + "State: " + result.SqlState, LogLevels.Error, "Data Store", bill.Owner);
+            }
             return result;
         }
 
@@ -160,11 +165,11 @@ namespace HAGSJP.WeCasa.Services.Implementations
             DAOResult result = _dao.UpdateBill(bill);
             if (result.IsSuccessful)
             {
-                _logger.Log("Edit bill was successful", LogLevels.Info, "Data Store", bill.Username);
+                _logger.Log("Edit bill was successful", LogLevels.Info, "Data Store", bill.Owner);
             }
             else
             {
-                _logger.Log( "Edit bill Error: " + result.ErrorStatus  + "\n" +"Message: " + result.Message + "\n" + "State: " + result.SqlState, LogLevels.Error, "Data Store", bill.Username);
+                _logger.Log( "Edit bill Error: " + result.ErrorStatus  + "\n" +"Message: " + result.Message + "\n" + "State: " + result.SqlState, LogLevels.Error, "Data Store", bill.Owner);
             }
             return result;
         }

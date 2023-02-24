@@ -111,26 +111,29 @@ public class BudgetBarController : Controller
     //     }
     // }
 
-    [HttpGet("{GetRequest}")]
-    public Task<IActionResult> Get([FromRoute]GetRequest request)
+    [HttpGet("{groupId}")]
+    public Task<IActionResult> Get([FromRoute]int groupId)
     {
+        Logger lo = new Logger(new GroupMariaDAO());
+        lo.Log( "GET VIEW "+ groupId, LogLevels.Error, "Data Store", "");
         var tcs = new TaskCompletionSource<IActionResult>(TaskCreationOptions.RunContinuationsAsynchronously);
         try
-        {   
-            tcs.SetResult(Ok(_budgetBarManager.GetInitialBudgetBarVew(request.Username, request.GroupId)));
+        {           lo.Log( "GET VIEW2", LogLevels.Error, "Data Store", "");
+
+            tcs.SetResult(Ok(_budgetBarManager.GetInitialBudgetBarVew(groupId)));
+                    lo.Log( "GET VIEW3", LogLevels.Error, "Data Store", "");
+
             return tcs.Task;
         }
         catch(MySqlException exc)
         {
-             _logger.Log( "Error: " + exc.ErrorCode  + "\n" +"Message: " + exc.Message + "\n" + "State: " + exc.SqlState, LogLevels.Error, "Data Store", request.Username);
-
-            _logger.Log( "Error: " + exc.ErrorCode  + "\n" +"Message: " + exc.Message + "\n" + "State: " + exc.SqlState, LogLevels.Error, "Data Store", request.Username);
+            _logger.Log( "Error: " + exc.ErrorCode  + "\n" +"Message: " + exc.Message + "\n" + "State: " + exc.SqlState, LogLevels.Error, "Data Store", "Group ID: " + groupId);
             tcs.SetResult(BadRequest());
             return tcs.Task;
         }
         catch(Exception exc)
         {
-            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", request.Username);
+            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", "Group ID: " + groupId);
             tcs.SetResult(NotFound());
             return tcs.Task;
         }
@@ -167,16 +170,19 @@ public class BudgetBarController : Controller
 
     [Route("AddBill")]
     [HttpPost]
-    public IActionResult Post([FromBody] AddBillRequest request)
+    public IActionResult Post([FromBody] Bill bill)
     {
+        Logger lo = new Logger(new GroupMariaDAO());
+        lo.Log( "ADD BILL", LogLevels.Error, "Data Store", bill.Owner);
         try
         {
-            Result result = _budgetBarManager.InsertBill(request.Usernames, request.Bill);
+            lo.Log( "ADD 2", LogLevels.Error, "Data Store", bill.Owner);
+            Result result = _budgetBarManager.InsertBill(bill);
             return Ok(result.IsSuccessful);
         }
         catch(Exception exc)
         {
-            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", request.Bill.Username);
+            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", bill.Owner);
             return NotFound();
         }
     }
@@ -185,8 +191,11 @@ public class BudgetBarController : Controller
     [HttpPut]
     public IActionResult Put([FromBody] UpdateBudgetRequest request)
     {
-        try 
+        Logger lo = new Logger(new GroupMariaDAO());
+        lo.Log( "UPDATE BILL", LogLevels.Error, "Data Store", "");
+        try
         {
+            lo.Log( "UPDATE 2", LogLevels.Error, "Data Store","" );
             Result editBudgetResult = _budgetBarManager.EditBudget(request.GroupId, request.Amount);
             if (!editBudgetResult.IsSuccessful)
             {

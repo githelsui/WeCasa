@@ -31,10 +31,10 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             return result;
         }
 
-        public DAOResult InsertBill(List<string> usernames, Bill bill)
+        public DAOResult InsertBill(Bill bill)
         {       
             var result = new DAOResult();
-            string billsJSON = JsonSerializer.Serialize(usernames);
+            string billsJSON = JsonSerializer.Serialize(bill.Usernames);
 
             _connectionString = BuildConnectionString().ConnectionString;
             using(var connection = new MySqlConnection(_connectionString))
@@ -43,12 +43,13 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     connection.Open();
 
-                    var insertSql = @"INSERT INTO Bills (usernames, group_id, date_submitted, bill_description, amount, bill_name, payment_status, is_repeated, date_deleted, receipt_file_name)
-                                    VALUES (@usernames, @group_id, @date_submitted, @bill_description, @amount, @bill_name, @payment_status, @is_repeated, @date_deleted, @receipt_file_name);";
+                    var insertSql = @"INSERT INTO Bills (usernames, owner, group_id, date_submitted, bill_description, amount, bill_name, payment_status, is_repeated, receipt_file_name)
+                                    VALUES (@usernames, @owner, @group_id, @date_submitted, @bill_description, @amount, @bill_name, @payment_status, @is_repeated, @receipt_file_name);";
                 
                     var command = connection.CreateCommand();
                     command.CommandText = insertSql;
                     command.Parameters.AddWithValue("@usernames", billsJSON);
+                    command.Parameters.AddWithValue("@owner", bill.Owner);
                     command.Parameters.AddWithValue("@group_id", bill.GroupId);
                     command.Parameters.AddWithValue("@date_submitted", DateTime.Now);
                     command.Parameters.AddWithValue("@bill_description", bill.BillDescription);
@@ -68,6 +69,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 } 
                 catch (Exception sqlex)
                 {
+                    throw sqlex;
                 }
                 return result;
             }
@@ -75,7 +77,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public DAOResult UpdateBill(Bill bill)
         {    
-            var result = new DAOResult();   
+            var result = new DAOResult();
+            string billsJSON = JsonSerializer.Serialize(bill.Usernames);
             _connectionString = BuildConnectionString().ConnectionString;
             using(var connection = new MySqlConnection(_connectionString))
             {
@@ -87,6 +90,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                                             SET 
                                                 bill_description = @bill_description,
                                                 amount = @amount,
+                                                usernames = @usernames,
                                                 bill_name = @bill_name,
                                                 payment_status = @payment_status,
                                                 is_repeated = @is_repeated,
@@ -100,7 +104,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@payment_status", bill.PaymentStatus);
                     command.Parameters.AddWithValue("@is_repeated", bill.IsRepeated);
                     command.Parameters.AddWithValue("@receipt_file_name", bill.PhotoFileName);
-                    command.Parameters.AddWithValue("@username", bill.Username);
+                    command.Parameters.AddWithValue("@usernames", billsJSON);
+                    command.Parameters.AddWithValue("@bill_id", bill.BillId);
 
                     var rows = (command.ExecuteNonQuery());
                     result = result.ValidateSqlResultMultiple(rows);
@@ -108,7 +113,12 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 catch (MySqlException sqlex)
                 {
                     PopulateResult(result, sqlex);
+                    throw sqlex;
                 } 
+                catch (Exception sqlex)
+                {
+                    throw sqlex;
+                }
                 return result;
             }
         }
@@ -275,8 +285,10 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         while (reader.Read())
                         {
                             Bill bill = new Bill();
-                            bill.Username = reader.GetString(reader.GetOrdinal("username"));
+                            List<string>? usernames = JsonSerializer.Deserialize<List<string>>(reader.GetString(reader.GetOrdinal("usernames")));
+                            bill.Usernames = usernames == null? usernames : new List<string>();
                             bill.BillId = reader.GetInt32(reader.GetOrdinal("bill_id"));
+                            bill.Owner = reader.GetString(reader.GetOrdinal("owner"));
                             bill.GroupId = reader.GetInt32(reader.GetOrdinal("group_id"));
                             bill.DateEntered = reader.GetDateTime(reader.GetOrdinal("date_submitted"));
                             bill.BillName = reader.GetString(reader.GetOrdinal("bill_name"));
@@ -291,7 +303,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         }
                         return bills;
                     }
-                    throw new Exception("Cannot find item");
+                    throw new Exception("Cannot find item for get bills");
                 }
                 catch (MySqlException sqlex)
                 {
@@ -313,7 +325,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     connection.Open();
 
-                    var insertSql = @"SELECT group_budget from GROUPS
+                    var insertSql = @"SELECT * from GROUPS
                                         WHERE group_id = @groupId;";
                     var command = connection.CreateCommand();
                     command.CommandText = insertSql;
@@ -322,15 +334,15 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     {
                         if (reader.Read())
                         {
-                            return reader.GetDecimal(0);
+                            return reader.GetDecimal(reader.GetOrdinal("group_budget")); 
                         }
-                        throw new Exception("Cannot find item");
+                        // else
+                        // {
+                        //     throw new Exception("Cannot find item for get budget");
+                        // }
+                        return -1; 
                     }
                 }
-                catch (MySqlException sqlex)
-                {
-                    throw sqlex;
-                } 
                 catch(Exception ex)
                 {
                     throw ex;

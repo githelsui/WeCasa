@@ -11,8 +11,9 @@ import axios from 'axios';
 
 
 const BudgetForm = ({budget, setBudget}) => {
+    const groupId = 123456 // TEST DATA
     const [open, setopen] = useState(false);
-    // const [amount, setAmount] = useState(0)
+    const [tempBudget, setTempBudget] = useState(0);
   
     const onCreate = (values) => {
       console.log('Received values of form: ', values);
@@ -35,24 +36,19 @@ const BudgetForm = ({budget, setBudget}) => {
             });
     }
 
-    const submitBudget = (value) => 
-    {
-        let request = {
-          GroupId: 12334,
-          Amount: value.budget
-        }
+    const updateBudget = () => {
+      let request = {
+          GroupId: groupId,
+          Amount: tempBudget
+      }
 
-        console.log(request);
-        axios.put(`budgetbar/UpdateBudget`, request).then(res => {
-            var isSuccessful = res.data;
-            if (isSuccessful) {
-              console.log("Updated Budget!")
-            } else {
-              console.log("Updated Budget Failed!")
-            }
-        })
-        .catch((error) => { console.error(error) });
-        setopen(false);
+      axios.put('budgetbar/UpdateBudget', request).then(res => {
+          var response = res.data;
+            console.log(response);
+      })
+      .catch((error => { console.error(error) }));
+      setopen(false);
+      setBudget(tempBudget)
     }
   
     return (
@@ -66,13 +62,14 @@ const BudgetForm = ({budget, setBudget}) => {
                 open={open}
                 title="Update Monthly Budget"
                 footer={[
-                    <Button key="save" onClick={(values) => submitBudget(values)} type="default" style={Styles.defaultButtonModal}>Save</Button>,
+                    <Button key="save" type="default" style={Styles.defaultButtonModal} onClick={()=>updateBudget()}>Save</Button>,
                     <Button key="cancel" onClick={onCancel} type="primary" style={Styles.primaryButtonModal}>Cancel</Button>
                  ]}>
-                <Form.Item name="amount">
-                    {/* <InputNumber min={0} max={1000000000} placeholder="0" onChange={value => setBudget(value)} type="text" value={budget}/> */}
-                    <InputNumber min={0} max={1000000000} placeholder="0" onChange={value => setBudget(value)} type="text" value={budget}/>
+                <Form>
+                <Form.Item name="input-number">
+                    <InputNumber min={0} max={1000000000} onChange={(value)=>setTempBudget(value)}/>
                 </Form.Item>
+                </Form>
             </Modal>
       </div>
     )

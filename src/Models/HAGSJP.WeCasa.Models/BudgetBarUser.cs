@@ -10,16 +10,13 @@ namespace HAGSJP.WeCasa.Models
         public List<Bill> ActiveBills { get; set; }
         public List<Bill> DeletedBills { get; set; }
 
-        public BudgetBarUser()
-        {
-            ActiveBills = new List<Bill>();
-            DeletedBills = new List<Bill>();
-        }
-
         public BudgetBarUser(string username, string firstName)
         {
             Username = username;
             FirstName = firstName;
+            TotalSpent = 0;
+            ActiveBills = new List<Bill>();
+            DeletedBills = new List<Bill>();
         }
     }
 }

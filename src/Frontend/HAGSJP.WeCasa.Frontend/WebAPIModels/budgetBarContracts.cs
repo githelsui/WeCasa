@@ -27,16 +27,6 @@ namespace HAGSJP.WeCasa.Frontend
     //     public Dictionary<string, List<Bill>> DeletedBills { get; set; }
     // }
 
-
-    [Serializable]
-    public class AddBillRequest
-    {
-        [JsonConstructor]
-        public AddBillRequest() {}
-        public List<string> Usernames { get; set; }
-        public Bill Bill { get; set; }
-    }
-
     [Serializable]
     public class UpdateBudgetRequest
     {
