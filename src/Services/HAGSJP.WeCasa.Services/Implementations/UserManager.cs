@@ -187,7 +187,12 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return (UserStatus) populateResult.ReturnedObject;
         }
 
-        public Result RegisterUser(string firstName, string lastName, string email, string password)
+        public AuthResult GetUserProfile(UserAccount userAccount)
+        {
+            return _dao.GetUserProfile(userAccount);
+        }
+
+            public Result RegisterUser(string firstName, string lastName, string email, string password)
         {
             // System log entry recorded if registration process takes longer than 5 seconds
             var stopwatch = new Stopwatch();

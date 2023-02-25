@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using HAGSJP.WeCasa.Services.Implementations;
 using HAGSJP.WeCasa.Client;
 using HAGSJP.WeCasa.Models;
+using MySqlConnector;
 using HAGSJP.WeCasa.Models.Security;
 
 namespace HAGSJP.WeCasa.Frontend.Controllers;
@@ -23,18 +24,28 @@ public class HomeController : Controller
         return logout.LogoutUser(currentUser);
     }
 
-    [HttpGet]
+    [HttpPost]
+    [Route("ValidateUser")]
+    public Result ValidateUser([FromBody] LoginForm account)
+    {
+        var gm = new GroupManager();
+        var result = gm.ValidateGroupMemberInvitation(account.Username);
+        return result;
+    }
+
+    [HttpPost]
     [Route("GetGroups")]
-    public Result GetGroups([FromBody] LoginForm account)
+    public GroupResult GetGroups([FromBody] LoginForm account)
     {
         UserAccount currentUser = new UserAccount(account.Username);
         GroupManager gm = new GroupManager();
-        return gm.GetGroups(currentUser);
+        var result = gm.GetGroups(currentUser);
+        return result;
     }
 
     [HttpPost]
     [Route("CreateGroup")]
-    public Result CreateGroup([FromBody] GroupForm form)
+    public GroupResult CreateGroup([FromBody] GroupForm form)
     {
         GroupModel group = new GroupModel();
         group.GroupId = form.GroupId;
@@ -44,5 +55,16 @@ public class HomeController : Controller
         group.Features = form.Features;
         GroupManager gm = new GroupManager();
         return gm.CreateGroup(group);
+    }
+
+    [HttpPost]
+    [Route("NewGroupAddMembers")]
+    public Result NewGroupAddMembers([FromBody] GroupMemberForm form)
+    {
+        GroupModel group = new GroupModel();
+        group.GroupId = form.GroupId;
+        var gm = new GroupManager();
+        var result = gm.AddGroupMembers(group, form.GroupMembers);
+        return result;
     }
 }

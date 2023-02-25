@@ -6,16 +6,16 @@ namespace HAGSJP.WeCasa.Models
     public class GroupResult : Result
     {
         public Object? ReturnedObject { get; set; }
-
         public List<GroupModel> Groups { get; set; }
 
         public GroupResult() { }
 
-        public GroupResult(List<GroupModel> groups, HttpStatusCode errorStatus, string? message)
+        public GroupResult(List<GroupModel> groups, bool isSuccessful, HttpStatusCode errorStatus, string? message)
         {
-            this.Groups = groups;
+            this.IsSuccessful = isSuccessful;
             this.ErrorStatus = errorStatus;
             this.Message = message;
+            this.Groups = groups;
         }
 
         public new bool Equals(GroupResult result)

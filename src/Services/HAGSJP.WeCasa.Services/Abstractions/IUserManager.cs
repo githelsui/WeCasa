@@ -17,8 +17,9 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public OTP GenerateOTPassword(UserAccount userAccount);
         public string ConfirmPassword(string password);
         public UserStatus PopulateUserStatus(UserAccount userAccount);
+        public AuthResult GetUserProfile(UserAccount userAccount);
         public Result RegisterUser(string firstName, string lastName, string email, string password);
-            public Result RegisterUser(string email, string password);
+        public Result RegisterUser(string email, string password);
         public Result DeleteUser(UserAccount userAccount);
         public Result UpdateFirstName(UserAccount userAccount, string firstName);
         public Result UpdateLastName(UserAccount userAccount, string lastName);

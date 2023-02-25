@@ -467,32 +467,49 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
-        public Dictionary<string, string> GetFirstNames(int groupId)
+        public AuthResult GetUserProfile(UserAccount userAccount)
         {
-           _connectionString = BuildConnectionString().ConnectionString;
-            using(var connection = new MySqlConnection(_connectionString))
+            AuthResult result = new AuthResult();
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
-                Dictionary<string, string> groupMembers = new Dictionary<string, string>();
 
-                var insertSql = @"SELECT * from USERS 
-                                        WHERE group_id = @groupId;";
+                // Select SQL statement
+                var selectSql = @"SELECT  * 
+                                    FROM  `Users` 
+                                    WHERE `username` = @username";
+
                 var command = connection.CreateCommand();
-                command.CommandText = insertSql;
-                command.Parameters.AddWithValue("@groupId", groupId);
+                command.CommandText = selectSql;
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
 
+                // Execution of SQL
                 using (var reader = command.ExecuteReader())
                 {
-                    while (reader.Read())
+                    if (reader.Read())
                     {
-                        string username = reader.GetString(reader.GetOrdinal("username"));
-                        string firstName = reader.GetString(reader.GetOrdinal("first_name"));
-                        groupMembers.Add(username, firstName);
+                        UserProfile userProfile = new UserProfile();
+                        userProfile.Username = userAccount.Username;
+                        userProfile.FirstName = reader.GetString(reader.GetOrdinal("first_name"));
+                        userProfile.LastName = reader.GetString(reader.GetOrdinal("last_name"));
+                        //TODO: Include UserProfile.Icon
+                        result.ErrorStatus = System.Net.HttpStatusCode.Found;
+                        result.Message = "User information was found";
+                        result.IsSuccessful = true;
+                        result.ReturnedObject = userProfile;
+                        return result;
+                    }
+                    else
+                    {
+                        result.ErrorStatus = System.Net.HttpStatusCode.NotFound;
+                        result.Message = "User information was not found";
+                        result.IsSuccessful = false;
+                        return result;
                     }
                 }
-                return groupMembers;
             }
-        } 
+        }
 
         public AuthResult PopulateUserStatus(UserAccount userAccount)
         {

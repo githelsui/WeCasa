@@ -17,7 +17,7 @@ body {
 }
 
 .ant-modal-title {
-    text-align: left;
+    text-align: center;
     padding-top: 5%;
     padding-bottom: 2%;
 }
@@ -34,6 +34,20 @@ body {
 
 .ant-switch-checked {
     background-color: #000000 !important;
+}
+
+.ant-tabs {
+    font-family: 'Mulish', sans-serif !important;
+}
+
+.ant-tabs-ink-bar {
+    height: 10px;
+    background: black !important;
+}
+
+.ant-tabs-tab-btn {
+    color: black !important;
+    font-size: 130%;
 }
 
 .padding-bottom {

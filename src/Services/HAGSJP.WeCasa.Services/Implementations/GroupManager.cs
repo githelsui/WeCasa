@@ -6,6 +6,9 @@ using System.Net.Mail;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Net;
+using System;
+using System.Collections;
+using Microsoft.AspNetCore.Identity;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
@@ -28,37 +31,22 @@ namespace HAGSJP.WeCasa.Services.Implementations
             errorLogger = new Logger(dao);
         }
 
-        public Result GetGroups(UserAccount userAccount)
+        public GroupResult GetGroups(UserAccount userAccount)
         {
-            // System log entry recorded if fetching groups takes longer than 5 seconds
-            var stopwatch = new Stopwatch();
-            var expected = 5;
-
-            stopwatch.Start();
-            var groupListResult = _dao.GetGroupList(userAccount);
-
-            if (!groupListResult.IsSuccessful)
-            {
-                errorLogger.Log(groupListResult.Message, LogLevels.Error, "Data Store", userAccount.Username);
-            }
-            stopwatch.Stop();
-            var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
-            if (groupListResult.IsSuccessful && actual > expected)
-            {
-                errorLogger.Log("List of groups retrieved successfully, but took longer than 5 seconds", LogLevels.Info, "Business", userAccount.Username);
-            }
-
-            return groupListResult;
-            
+            var result = new GroupResult();
+            var groups = _dao.GetGroupList(userAccount).Groups;
+            var groupsArr = groups.ToArray();
+            result.ReturnedObject = groupsArr;
+            return result;
         }
-        public Result CreateGroup(GroupModel group)
+        public GroupResult CreateGroup(GroupModel group)
         {
             // System log entry recorded if group creation process takes longer than 5 seconds
             var stopwatch = new Stopwatch();
             var expected = 5;
 
             stopwatch.Start();
-            var createGroupResult = new Result();
+            var createGroupResult = new GroupResult();
 
             createGroupResult = _dao.CreateGroup(group);
 
@@ -82,13 +70,176 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
             return createGroupResult;
         }
-        public Result DeleteGroup(UserAccount userAccount, GroupModel group)
+        public Result DeleteGroup(GroupModel group)
         {
-            throw new NotImplementedException();
+            // System log entry recorded if group creation process takes longer than 5 seconds
+            var stopwatch = new Stopwatch();
+            var expected = 5;
+
+            stopwatch.Start();
+            var deleteGroupResult = new Result();
+
+            deleteGroupResult = _dao.DeleteGroup(group);
+
+            if (deleteGroupResult.IsSuccessful)
+            {
+                // Logging the group deletion
+                successLogger.Log("Group deleted successfully", LogLevels.Info, "Data Store", group.Owner);
+            }
+            else
+            {
+                // Logging the error
+                errorLogger.Log("Error deleting a group", LogLevels.Error, "Data Store", group.Owner);
+            }
+
+            stopwatch.Stop();
+            var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
+            if (deleteGroupResult.IsSuccessful && actual > expected)
+            {
+                errorLogger.Log("Group deleted successfully, but took longer than 5 seconds", LogLevels.Info, "Business", group.Owner, new UserOperation(Operations.GroupCreation, 1));
+            }
+
+            return deleteGroupResult;
         }
         public Result EditGroup(UserAccount userAccount, int groupId, GroupModel newGroup)
         {
             throw new NotImplementedException();
+        }
+
+        public GroupResult GetGroupMembers(GroupModel group)
+        {
+            var userManager = new UserManager();
+            var result = new GroupResult();
+
+            var usernamesList = (_dao.GetGroupMembers(group).ReturnedObject);
+            IEnumerable enumerable = usernamesList as IEnumerable;
+            var groupMembersList = new List<UserProfile>();
+            foreach (string username in enumerable)
+            {
+                Console.Write("Username = " + username);
+                var userAccount = new UserAccount(username);
+                var userProfile = userManager.GetUserProfile(userAccount);
+                groupMembersList.Add((UserProfile)userProfile.ReturnedObject);
+            }
+            var groupMemberArr = groupMembersList.ToArray();
+            result.ReturnedObject = groupMemberArr;
+            return result;
+        }
+
+        public Result AddGroupMembers(GroupModel group, string[] groupMembers)
+        {
+            var result = new Result();
+            for(var i = 0; i < groupMembers.Length; i++)
+            {
+                result = AddGroupMember(group, groupMembers[i]);
+                if(!result.IsSuccessful)
+                {
+                    return result;
+                }
+            }
+            return result;
+        }
+
+        public Result AddGroupMember(GroupModel group, string newGroupMember)
+        {
+            var userManager = new UserManager();
+            var result = new Result();
+
+            var groupMemberValid = ValidateGroupMemberInvitation(newGroupMember);
+            if (!groupMemberValid.IsSuccessful)
+            {
+                return groupMemberValid;
+            }
+
+            //check if newGroupMember is not owner of group
+            //TODO: GroupModel should always have group.Owner attached when calling GetGroups from fontend
+            if (group.Owner != null)
+            {
+                if (group.Owner.Equals(newGroupMember))
+                {
+                    result.IsSuccessful = false;
+                    result.Message = "Cannot add a user who already belongs to the group.";
+                    return result;
+                }
+            }
+
+            //check if newGroupMember already belongs in current group
+            var userInGroup = _dao.FindGroupMember(group, newGroupMember);
+            if ((bool)userInGroup.ReturnedObject)
+            {
+                result.IsSuccessful = false;
+                result.Message = "Cannot add a user who already belongs to the group.";
+                return result;
+            }
+
+            //if all validations pass -> dao.AddGroupMember(group, newGroupMember)
+            result = _dao.AddGroupMember(group, newGroupMember);
+
+            if (result.IsSuccessful)
+            {
+                // Logging the group creation
+                successLogger.Log("Group member added successfully", LogLevels.Info, "Data Store", group.Owner);
+            }
+            else
+            {
+                // Logging the error
+                errorLogger.Log("Error adding a group member", LogLevels.Error, "Data Store", group.Owner);
+            }
+
+            return result;
+        }
+
+        public Result RemoveGroupMember(GroupModel group, string groupMember)
+        {
+            var userManager = new UserManager();
+            var result = new Result();
+
+            var groupMemberValid = ValidateGroupMemberInvitation(groupMember);
+            if (!groupMemberValid.IsSuccessful)
+            {
+                return groupMemberValid;
+            }
+
+            result = _dao.RemoveGroupMember(group, groupMember);
+
+            if (result.IsSuccessful)
+            {
+                result.Message = "Successfully removed " + groupMember + " from the group.";
+                // Logging the group creation
+                successLogger.Log("Group member removed successfully", LogLevels.Info, "Data Store", group.Owner);
+            }
+            else
+            {
+                result.Message = "Error removing " + groupMember + " from the group.";
+                // Logging the error
+                errorLogger.Log("Error adding a removing member", LogLevels.Error, "Data Store", group.Owner);
+            }
+
+            return result;
+        }
+
+        public Result ValidateGroupMemberInvitation(string newGroupMember)
+        {
+            var userManager = new UserManager();
+            var result = new Result();
+
+            // check if valid email
+            var emailValidation = userManager.ValidateEmail(newGroupMember);
+            if (!emailValidation.IsSuccessful)
+            {
+                return emailValidation;
+            }
+
+            // check if account exists
+            var existingAcc = userManager.IsUsernameTaken(newGroupMember);
+            if (!existingAcc)
+            {
+                result.IsSuccessful = false;
+                result.Message = "Cannot add a user that does not exist.";
+                return result;
+            }
+            result.IsSuccessful = true;
+            return result;
         }
 
         public Result AddGroupMember(GroupModel group, string newGroupMember)

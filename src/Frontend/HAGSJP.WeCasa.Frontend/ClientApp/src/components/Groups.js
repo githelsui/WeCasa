@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from './AuthContext';
 import { Col, Card, Row, Space, Avatar, Button, notification } from 'antd';
@@ -9,53 +9,32 @@ import CreateGroupModal from './CreateGroupModal.js';
 import NavMenu from './NavMenu';
 const { Meta } = Card;
 
-// FOR TESTING
-const data = [
-    {
-        GroupId: 1,
-        GroupName: "Group1",
-        Icon: "#0256D4",
-        Features: ["Budget Bar"]
-    },
-    {
-        GroupId: 2,
-        GroupName: "OtherGroup",
-        Icon: "#668D6A",
-        Features: ["all"]
-    }
-]
-
 const maxConfiguredFeatures = 6;
 
-export const Groups = () => {
+export const Groups = (props) => {
     const [loading, setLoading] = useState(true);
-    const { auth, currentUser } = useAuth();
+    const { currentUser } = useAuth();
     const [currentGroup, setCurrentGroup] = useState(null);
+    const [invitedRoommates, setInvitedRoommates] = useState([])
     const [groups, setGroups] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => { getGroups(); }, []);
 
     const getGroups = () => {
         let account = {
             Username: currentUser
         }
-        axios.get('home/GetGroups', account)
+        axios.post('home/GetGroups', account)
             .then(res => {
-                var isSuccessful = res.data['isSuccessful'];
-                if (isSuccessful) {
-                    setGroups(res.data)
-                    displayGroupView();
-                    // setGroups(data); // FOR TESTING
-                } else {
-                    failureGroupView(res.data['message']);
-                }
+                setGroups(res.data['returnedObject']);
             })
             .catch((error) => { console.error(error) });
-    }
+        }
 
     const attemptGroupCreation = (groupConfig) => {
         // Adding features as strings to a list if they are checked in the modal
-
         let features = [];
         if (groupConfig.budgetBar) features.push("Budget Bar");
         if (groupConfig.bulletinBoard) features.push("Bulletin Board");
@@ -71,13 +50,14 @@ export const Groups = () => {
             Icon: (groupConfig.icon == null) ? "#668D6A" : groupConfig.icon,
             Features: features
         }
-        console.log(group);
         axios.post('home/CreateGroup', group)
             .then(res => {
+                var createdGroup = res.data['returnedObject']
                 var isSuccessful = res.data['isSuccessful'];
+                var groupId = createdGroup['groupId']
                 if (isSuccessful) {
-                    setCurrentGroup(group);
-                    navigate('/group-settings');
+                    setCurrentGroup(createdGroup);
+                    navigate('/group-settings', { state: createdGroup });
                 } else {
                     failureGroupView(res.data['message']);
                 }
@@ -85,20 +65,62 @@ export const Groups = () => {
             .catch((error => { console.error(error) }));
     }
 
+    const editGroup = (group) => {
+        setCurrentGroup(group);
+    }
+
+    const groupSettings = (group) => {
+        navigate('/group-settings', { state: group });
+    }
+
+    const handleGroupMembersChange = (membersList) => {
+        let memberCopy = getRoommatesCopy(membersList)
+        setInvitedRoommates(memberCopy)
+    }
+
+    const inviteGroupMembers = (group) => {
+        console.log(invitedRoommates)
+
+        let groupMemberForm = {
+            GroupId: group['groupId'],
+            GroupMembers: invitedRoommates
+        }
+
+        axios.post('home/NewGroupAddMembers', groupMemberForm)
+            .then(res => {
+                var isSuccessful = res.data['isSuccessful'];
+                if (isSuccessful) {
+                    setCurrentGroup(group);
+                    navigate('/group-settings', { state: group });
+                } else {
+                    failureGroupView(res.data['message']);
+                }
+            })
+            .catch((error => { console.error(error) }));
+    }
+
+    const getRoommatesCopy = (original) => {
+        let copy = []
+        for (let i = 0; i < original.length; i++) {
+            copy.push(original[i])
+        }
+        return copy
+    }
+
     const displayGroupView = () => {
         return groups.map(group => (
-            <div key={group.GroupId}>
+            <div key={group.groupId}>
                 <Col span={10} style={{marginTop:16, marginLeft:16}}>
                     <Card
                         hoverable
                         style={{ width: 500 }}
                         actions={[
-                            <Button key="view" type="primary" style={Styles.primaryButtonModal}>View</Button>,
-                            <Button key="settings" type="default" style={Styles.defaultButtonModal}>Settings</Button>
+                            <Button key="view" type="primary" onClick={() => groupSettings(group)} style={Styles.primaryButtonModal}>View</Button>,
+                            <Button key="settings" type="default" onClick={() => groupSettings(group)} style={Styles.defaultButtonModal}>Settings</Button>
                         ]}>
                         <Meta
-                            avatar={<Avatar style={{ backgroundColor: "var(group.Icon)" }} />}
-                            title={group.GroupName}
+                            avatar={<Avatar style={{ "backgroundColor": group.icon }} />}
+                            title={group.groupName}
                             type="inner"
                         />
                     </Card>
@@ -119,10 +141,9 @@ export const Groups = () => {
 
     return (
         <div>
-            {(currentGroup == null) ?
-                (<div><Space direction="horizonal" size={32}>
-                    {getGroups()}
-                </Space>
+             <div><Space direction="horizonal" size={32}>
+                    {displayGroupView()}
+                  </Space>
                     <Row gutter={24} style={{ display: "flex" }}>
                         <Col span={24}>
                             <Card hoverable style={{ marginTop: 16, marginLeft: 150, marginRight: 150, background: "#ececec", fontFamily: 'Mulish' }}>
@@ -136,11 +157,8 @@ export const Groups = () => {
                             </Card>
                         </Col>
                     </Row>
-                    <CreateGroupModal show={showModal} close={() => setShowModal(false)} confirm={attemptGroupCreation} reject={failureGroupView} user={currentUser} />
-                </div>) : (
-                <div>
-                    <NavMenu />
-                </div>)}
+                    <CreateGroupModal show={showModal} close={() => setShowModal(false)} confirm={attemptGroupCreation} reject={failureGroupView} user={currentUser} onInvitationListUpdated={handleGroupMembersChange}/>
+              </div>
         </div>
     );
 }; 

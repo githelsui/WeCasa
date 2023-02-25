@@ -1,6 +1,8 @@
 ﻿import React, { Component, useState } from 'react';
 import { Modal, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Switch, notification } from 'antd';
 import * as Styles from '../styles/ConstStyles.js';
+import GroupDeletionModal from './GroupDeletionModal.js';
+import { useAuth } from './AuthContext.js';
 import '../styles/System.css';
 import '../index.css';
 import axios from 'axios';
@@ -18,14 +20,17 @@ export const GroupSettingsTab = (props) => {
     }
     const tempFeatureDesc = "DESCRIPTION: Lorem ipsum dolor sit amet consectetur. In non proin et interdum at. Vel mi praesent tincidunt tincidunt odio at mauris nisl cras."
 
+    const [showModal, setShowModal] = useState(false);
     const [newIcon, setNewIcon] = useState(null);
     const [featureSwitches, setFeatures] = useState([]);
     const [roommate, setRoommate] = useState("");
     const [invitedRoommates, setInvitedRoommates] = useState([])
     const [noInvitations, setNoInvitations] = useState(true);
+    const { currentUser } = useAuth();
+    const [currentGroup, setCurrentGroup] = useState(props.group);
 
     const updateFeatureSection = () => {
-        var features = props.group.Features
+        var features = currentGroup['Features'];
         const tempFeatures = [false, false, false, false, false, false]
         for (let i = 0; i < features.length; i++) {
             let feature = features[i];
@@ -63,9 +68,11 @@ export const GroupSettingsTab = (props) => {
 
     const addGroupMember = (username) => {
         let groupMemberForm = {
-            GroupId: group.GroupId,
+            GroupId: currentGroup['groupId'],
             GroupMember: username
         }
+
+        console.log('GROUP ID: ' + currentGroup['groupId'])
 
         axios.post('group-settings/AddGroupMembers', groupMemberForm)
             .then(res => {
@@ -77,35 +84,46 @@ export const GroupSettingsTab = (props) => {
                     console.log(tempRoommates)
                     if (tempRoommates.length > 0) {
                         setNoInvitations(false)
-                        setInvitedRoommates(tempRoommates)
                     } else {
                         setNoInvitations(true)
                     }
-                    successToast("Successfully invited group member " + groupMemberForm.GroupMember)
+                    setInvitedRoommates(tempRoommates)
+                    toast(("Successfully invited group member " + groupMemberForm.GroupMember))
                     this.forceUpdate()
                 } else {
-                    failureToast(res.data['message']);
+                    toast('Try again', res.data['message']);
                 }
             })
             .catch((error => { console.error(error) }));
     }
 
-    const successToast = (successMessage) => {
-        notification.open({
-            message: successMessage,
-            duration: 5,
-            placement: "topRight",
-        });
+    const deleteGroup = () => {
+        setShowModal(false)
+
+        let groupMemberForm = {
+            GroupId: currentGroup['groupId'],
+            GroupMember: currentUser
+        }
+
+        axios.post('group-settings/DeleteGroup', groupMemberForm)
+            .then(res => {
+                var isSuccessful = res.data['isSuccessful'];
+                if (isSuccessful) {
+                    console.log("Successfully deleted group.")
+                    toast("Successfully deleted group.")
+                } else {
+                    toast('Error deleting group.', res.data['message']);
+                }
+            })
+            .catch((error => { console.error(error) }));
     }
 
-    const failureToast = (failureMessage) => {
-        // Accounts for user failure cases and system errors
-        console.log("User Failure Cases")
+    const toast = (title, desc = '') => {
         notification.open({
-            message: "Try again.",
-            description: failureMessage,
+            message: title,
+            description: desc,
             duration: 5,
-            placement: "topRight",
+            placement: 'bottom',
         });
     }
 
@@ -124,7 +142,7 @@ export const GroupSettingsTab = (props) => {
             <h4 className="padding-bottom mulish-font"><b>Group Settings</b></h4>
 
 
-            <Form id="groupCreationForm">
+            <Form id="groupSettingsForm">
                 <Row gutter={[24, 24]} align="middle">
                     <Col span={6} className="group-icon-selection">
                         <Image style={Styles.groupIconSelection} src={defaultImage} preview={false} height="120px" width="120px" />
@@ -229,15 +247,14 @@ export const GroupSettingsTab = (props) => {
                         </Col>
                     </Row>
                     <p className="group-feature-desc-p">{tempFeatureDesc}</p>
-
-                    <div className="group-deletion-section padding-vertical">
-                        <h5 className="mulish-font">Group deletion</h5>
-                        <p className="group-feature-desc-p">Are you sure you want to delete this group?</p>
-                        <Button key="create" type="primary" htmlType="submit" style={Styles.deleteButtonStyle}>Delete Group</Button>
-                    </div>
-
-                    <Button key="create" type="primary" htmlType="submit" style={Styles.primaryButtonStyle}>Save</Button>
                 </div>
+                {(currentUser == currentGroup['Owner']) ?
+                    (<div className="group-deletion-section padding-vertical">
+                        <Button type="primary" style={Styles.deleteButtonStyle} onClick={() => setShowModal(true)}>Delete Group</Button>
+                        <GroupDeletionModal show={showModal} close={() => setShowModal(false)} confirm={deleteGroup} />
+                    </div>) : <div></div>
+                    }
+                    <Button key="create" type="primary" htmlType="submit" style={Styles.saveButtonStyle}>Save</Button>
             </Form>
         </div>
     );
