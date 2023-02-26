@@ -161,7 +161,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
          public Result UpdateBill(Bill bill)
         {
-             _logger.Log("Updateeeeeee", LogLevels.Info, "Data Store", bill.Username);
+             _logger.Log("Updateeeeeee", LogLevels.Info, "Data Store", bill.Owner);
             DAOResult result = _dao.UpdateBill(bill);
             if (result.IsSuccessful)
             {

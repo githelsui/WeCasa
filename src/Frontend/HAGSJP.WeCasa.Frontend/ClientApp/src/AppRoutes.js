@@ -1,5 +1,6 @@
 import { Counter } from "./components/Counter";
 import { FetchData } from "./components/FetchData";
+import { Home } from "./components/Home";
 import { Registration } from "./components/Registration";
 import { Login } from "./components/Login";
 import { BudgetBar } from "./components/BudgetBar/BudgetBar";
@@ -26,23 +27,23 @@ const AppRoutes = [
   {
     path: '/login',
     element: <Login />
-   },
-   {
+  },
+  {
+    path: '/',
+    element: <Home />
+  },
+  {
+    path: '/home',
+    element: <Home />
+  },
+  {
+      path: '/group-settings',
+      element: <GroupSettings />
+  },
+  {
     path: '/finances',
     element: <BudgetBar />
-   },
-    {
-        path: '/group-settings',
-        element: <GroupSettings />
     }
-  // {
-  //   path: '/',
-  //   element: <Home />
-  // },
-  // {
-  //   path: '/home',
-  //   element: <Home />
-  // }
 ];
 
 export default AppRoutes;

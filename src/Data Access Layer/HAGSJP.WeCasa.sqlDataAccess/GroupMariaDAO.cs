@@ -182,7 +182,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                                          );";
 
                 var command = connection.CreateCommand();
-                command.CommandText = insertGroupSql;
+                command.CommandText = insertUserGroupSql;
                 command.Parameters.AddWithValue("@group_id", group.GroupId);
                 command.Parameters.AddWithValue("@username".ToLower(), newGroupMember.ToLower());
 

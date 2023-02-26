@@ -112,9 +112,11 @@ export const BudgetBar = (user) => {
   {
      axios.get(`budgetbar/${groupId}`).then((response) => { 
        var res = response.data
-       var activeB = []
-       var deletedB = []
+      //  var activeB = []
+      //  var deletedB = []
        res["group"].forEach(function (item) {
+        var activeB = []
+        var deletedB = []
         item.activeBills.forEach(function(bill) {
           activeB.push({
             usernames: bill.usernames,
@@ -150,24 +152,22 @@ export const BudgetBar = (user) => {
           })
         })
         setBudgetBarUsers(prevState => [{
-            username: item.username,
-            firstName: item.firstName,
-            totalSpent: item.totalSpent,
-            activeBills: activeB,
-            deletedBills: deletedB
-          }, ...prevState])
-
-          activeB = []
-          deletedB = []
+          username: item.username,
+          firstName: item.firstName,
+          totalSpent: item.totalSpent,
+          activeBills: activeB,
+          deletedBills: deletedB
+        }, ...prevState])
       })
        setBudget(res["budget"])
        setGroupTotal(res["groupTotal"])
      })
      .catch((error => { console.error(error) }));
+     console.log(budgetBarUsers[1].activeBills)
   }
 
    const populateTables = (bills) => {
-    for (let i = 0; i < this.state.maxData; i++) {
+    for (let i = 0; i < bills.length; i++) {
       let bill = {
         key: i,
         date: bills[i].dateEntered,
@@ -177,7 +177,7 @@ export const BudgetBar = (user) => {
         amount: bills[i].amount,
         paymentStatus: bills[i].paymentStatus
       }
-      setDataSource(dataSource.push(bill))
+      // setDataSource(prevState => [bill, ...prevState])
     }
    }
 
@@ -220,6 +220,8 @@ export const BudgetBar = (user) => {
       .catch((error) => { console.error(error) });
     }
 
+    useEffect(() => { console.log(budgetBarUsers[1].activeBill)}, [budgetBarUsers])
+
     return (
       <div>
         {/* {getBudgetBarData()} */}
@@ -233,8 +235,11 @@ export const BudgetBar = (user) => {
         <MultiColorProgressBar readings={readings}/>
         <Button style={Styles.primaryButtonModal} onClick={()=>setShowBillForm(!showBillForm)}>Add Bill</Button>
         {showBillForm && (<BillForm/>)}
-        {console.log(budgetBarUsers[1].activeBills)}
-        {/* {populateTables(budgetBarUsers[0].activeBills)} */}
+        {/* {console.log(budgetBarUsers[0].username)} */}
+
+        {/* { {console.log(budgetBarUsers.useState())} */}
+        {budgetBarUsers[1].activeBills? console.log(budgetBarUsers[1].activeBills): null} 
+        {/* {(budgetBarUsers.length === 0) ? populateTables(budgetBarUsers[0].activeBills) : null} */}
         <Tabs defaultActiveKey="1" items={items}/> 
     </div>
     );
