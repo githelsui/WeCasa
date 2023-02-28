@@ -28,13 +28,12 @@ export const primaryButtonStyle = {
 }
 
 export const deleteButtonStyle = {
-    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
     fontFamily: 'Mulish',
     width: '50%',
     fontWeight: 'bold',
-    backgroundColor: '#bd0d25',
-    color: '#FFFFFF',
-    marginTop: -10,
+    backgroundColor: 'white',
+    borderColor: '#111827',
+    color: '#bd0d25',
     marginLeft: 200,
     marginRight: 200,
     justifyContent: 'center',
@@ -43,7 +42,6 @@ export const deleteButtonStyle = {
 }
 
 export const saveButtonStyle = {
-    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
     fontFamily: 'Mulish',
     width: '50%',
     fontWeight: 'bold',
