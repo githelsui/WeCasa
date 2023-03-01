@@ -247,17 +247,16 @@ export const GroupSettingsTab = (props) => {
                 </div>
                     <div className="save-group-settings padding-vertical">
                         <Button key="create" type="primary" htmlType="submit" style={Styles.saveButtonStyle}>Save</Button>
-                    </div>
-                    {(currentUser == currentGroup['Owner']) ?
-                    (<div className="group-deletion-section">
-                        <Button type="primary" style={Styles.deleteButtonStyle} onClick={() => setShowModal(true)}>Delete Group</Button>
-                        <GroupDeletionModal show={showModal} close={() => setShowModal(false)} confirm={deleteGroup} />
-                    </div>) :
-                    (<div className="leave-group-section">
-                        <Button type="primary" style={Styles.deleteButtonStyle} onClick={() => setShowModal(true)}>Leave Group</Button>
-                        <GroupDeletionModal show={showModal} close={() => setShowModal(false)} confirm={leaveGroup} />
-                    </div>)
-                    }
+                </div>
+                <div className="group-deletion-section">
+                    {(currentUser == currentGroup["owner"]) ?
+                    (<div><Button type="primary" style={Styles.deleteButtonStyle} onClick={() => setShowModal(true)}>Delete Group</Button>
+                        <GroupDeletionModal show={showModal} close={() => setShowModal(false)} confirm={deleteGroup} /></div>
+                    ) :
+                    (<div><Button type="primary" style={Styles.deleteButtonStyle} onClick={() => setShowModal(true)}>Leave Group</Button>
+                        <GroupDeletionModal show={showModal} close={() => setShowModal(false)} confirm={leaveGroup} /></div>
+                    )}
+                </div>
             </Form>
         </div>
     );

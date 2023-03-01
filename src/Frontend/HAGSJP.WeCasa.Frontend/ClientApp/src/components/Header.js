@@ -10,7 +10,7 @@ import { UserOutlined } from '@ant-design/icons'
 import * as Styles from '../styles/ConstStyles.js';
 
 export const Header = () => {
-    const { setAuth, auth, setCurrentUser, currentUser } = useAuth();
+    const { setAuth, auth, setCurrentUser, currentUser, setCurrentGroup } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [collapsed, setCollapsed] = useState(true);
     const [logoutResults, setLogoutResults] = useState(false);
@@ -67,7 +67,10 @@ export const Header = () => {
     return (
         <header>
             <Navbar className={Styles.defaultHeaderStyle} container light>
-                <NavbarBrand tag={Link} to="/">WeCasa</NavbarBrand>
+                {(auth) ?
+                    (<NavbarBrand tag={Link} to="/home" onClick={() => setCurrentGroup(null) }>WeCasa</NavbarBrand>)
+                    : (<NavbarBrand tag={Link} to="/">WeCasa</NavbarBrand>)
+                }
                 <NavbarToggler onClick={toggleHeader} className="mr-2" />
                 <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!collapsed} navbar>
                     {(!auth) ?

@@ -26,29 +26,16 @@ html {
 
 ul.horizonal-list {
     display: inline-block;
-    margin: 0;
+    margin-right: 0;
+    margin-left: 0;
     padding: 0;
     *display: inline;
 }
 
 ul.horizonal-list li {
     float: left;
-    padding: 2px 20px;
+    padding: 5px 40px;
 }
-
-    ul.horizonal-list li:hover {
-        background-color: lightgray;
-        font-weight: bold;
-        border-radius: 50px;
-        background-size: 200% 100%;
-    }
-
-li.selected {
-    color: #ffffff;
-    background: rgb(35, 35, 35, 0.05);
-    font-weight: bold;
-}
-ul { cursor: pointer }
 
 .box-shadow {
   box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);

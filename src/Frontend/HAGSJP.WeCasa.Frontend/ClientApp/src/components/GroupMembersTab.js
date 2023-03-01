@@ -128,7 +128,7 @@ export const GroupMembersTab = (props) => {
                                 title={getFullName(item.firstName, item.lastName)}
                                 description={item.username}
                             />
-                            {currentUser == currentGroup["owner"] ? (
+                            {currentUser == currentGroup["owner"] && currentGroup["owner"] != item.username ? (
                                 <Button onClick={(e) => {
                                     removeRoommate(item.username)
                                 }} type="default" style={Styles.removeGroupMemberButton}>X  Remove Member</Button>)
