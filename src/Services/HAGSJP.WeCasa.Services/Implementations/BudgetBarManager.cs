@@ -21,11 +21,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return Guid.NewGuid().ToString("N");
         }
 
-
-
-
-
-        public object GetInitialBudgetBarVew(int groupId)
+        public object GetInitialBudgetBarVew(string username, int groupId)
         {
             AccountMariaDAO dao = new AccountMariaDAO();
             // RefreshBillList(username);
