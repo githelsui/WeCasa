@@ -23,18 +23,25 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
         public object GetInitialBudgetBarVew(int groupId)
         {
+            Logger lo = new Logger(new GroupMariaDAO());
             AccountMariaDAO dao = new AccountMariaDAO();
             // RefreshBillList(username);
             // DeleteAllOutdatedBills(username);
+            lo.Log( "1 "+ groupId, LogLevels.Error, "Data Store", "");
             decimal budget = GetBudget(groupId);
+            lo.Log( "2 "+ groupId, LogLevels.Error, "Data Store", "");
             Dictionary<string, string> names = dao.GetFirstNames(groupId);
+            lo.Log( "3 "+ groupId, LogLevels.Error, "Data Store", "");
             Dictionary<string, BudgetBarUser> budgetBarUsers = new Dictionary<string, BudgetBarUser>();
             foreach(var name in names)
             {
                 BudgetBarUser bbUser = new BudgetBarUser(name.Key, name.Value);
+                lo.Log( "4 "+ groupId, LogLevels.Error, "Data Store", "");
                 budgetBarUsers.Add(name.Key, bbUser);
             }
+            lo.Log( "5 "+ groupId, LogLevels.Error, "Data Store", "");
             List<Bill> bills = GetBills(groupId);
+             lo.Log( "6 "+ groupId, LogLevels.Error, "Data Store", "");
             List<int> activeBillIds = new List<int>();
             List<int> deletedBillIds = new List<int>();
             Decimal totalSpent = 0;
@@ -42,21 +49,21 @@ namespace HAGSJP.WeCasa.Services.Implementations
             {
                 if (bill.IsDeleted == false)
                 {
-                    activeBillIds.Add(bill.BillId) ;
+                    // activeBillIds.Add(bill.BillId) ;
                     budgetBarUsers[bill.Owner].ActiveBills.Add(bill);
                     budgetBarUsers[bill.Owner].TotalSpent += bill.Amount;
                     totalSpent += bill.Amount;
                 }
                 else 
                 {
-                    deletedBillIds.Add(bill.BillId) ;
+                    // deletedBillIds.Add(bill.BillId) ;
                     budgetBarUsers[bill.Owner].DeletedBills.Add(bill);
                 }
             }
             
             return new {
-                ActiveBillIds = activeBillIds,
-                DeletedBillIds = deletedBillIds,
+                // ActiveBillIds = activeBillIds,
+                // DeletedBillIds = deletedBillIds,
                 Group = budgetBarUsers.Values.ToList(),
                 Budget = budget,
                 GroupTotal = totalSpent,
@@ -139,7 +146,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
         public Result InsertBill( Bill bill)
         {
-            DAOResult result = _dao.InseπrtBill(bill);
+            DAOResult result = _dao.InsertBill(bill);
             if (result.IsSuccessful)
             {
                 _logger.Log("Add bill was successful", LogLevels.Info, "Data Store", bill.Owner);

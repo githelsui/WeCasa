@@ -55,9 +55,9 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@bill_description", bill.BillDescription);
                     command.Parameters.AddWithValue("@amount", bill.Amount);
                     command.Parameters.AddWithValue("@bill_name", bill.BillName);
-                    command.Parameters.AddWithValue("@payment_status", bill.PaymentStatus);
-                    command.Parameters.AddWithValue("@is_repeated", bill.IsRepeated);
-                    command.Parameters.AddWithValue("@receipt_file_name", bill.PhotoFileName);
+                    command.Parameters.AddWithValue("@payment_status", bill.PaymentStatus == null? bill.PaymentStatus : false);
+                    command.Parameters.AddWithValue("@is_repeated", bill.IsRepeated == null ? bill.IsRepeated : false);
+                    command.Parameters.AddWithValue("@receipt_file_name", bill.PhotoFileName == null ? bill.PhotoFileName : "");
 
                     var rows = (command.ExecuteNonQuery());
                     result = result.ValidateSqlResult(rows);
@@ -286,7 +286,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         {
                             Bill bill = new Bill();
                             List<string>? usernames = JsonSerializer.Deserialize<List<string>>(reader.GetString(reader.GetOrdinal("usernames")));
-                            bill.Usernames = usernames == null? usernames : new List<string>();
+                            bill.Usernames = usernames == null ? new List<string>() : usernames;
                             bill.BillId = reader.GetInt32(reader.GetOrdinal("bill_id"));
                             bill.Owner = reader.GetString(reader.GetOrdinal("owner"));
                             bill.GroupId = reader.GetInt32(reader.GetOrdinal("group_id"));
@@ -298,7 +298,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                             bill.IsRepeated = reader.GetInt32(reader.GetOrdinal("is_repeated")) == 1 ? true : false;
                             bill.IsDeleted = reader.GetInt32(reader.GetOrdinal("is_deleted")) == 1 ? true : false;
                             bill.DateDeleted = reader.IsDBNull(reader.GetOrdinal("date_deleted")) ? null : reader.GetDateTime(reader.GetOrdinal("date_deleted"));
-                            bill.PhotoFileName = reader.GetString(reader.GetOrdinal("receipt_file_name"));
+                            bill.PhotoFileName = reader.IsDBNull(reader.GetOrdinal("receipt_file_name")) ? "" : reader.GetString(reader.GetOrdinal("receipt_file_name"));
                             bills.Add(bill);
                         }
                         return bills;

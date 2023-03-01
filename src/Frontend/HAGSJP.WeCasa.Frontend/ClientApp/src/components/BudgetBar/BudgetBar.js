@@ -138,28 +138,31 @@ export const BudgetBar = (user) => {
      axios.get(`budgetbar/${groupId}`).then((response) => { 
         var res = response.data
         res["group"].forEach(function (item) {
-        setUsers(map => new Map(map.set(item.username, item)))
-        // console.log("ITEMM", item.activeBills)
-        // setActiveBillIds(map => new Map(map.set(item.username, item.active)))
-        // console.log("ITEMM", item)
-        // setDeletedBillIds(map => new Map(map.set(item.username, item.deletedBillIds)))
-        item.activeBills.forEach(function (bill) {
-          let date = new Date(bill.dateEntered);
-          let formattedDate = date.getMonth() + "/" + date.getDay() + "/" + date.getFullYear();
-          console.log("ITEM ACTIV", item.activeBills)
-          setActiveBills(map => new Map(map.set(bill.billId, {...bill, dateEntered: formattedDate})))
-            if(item.activeBills.Usernames) {
-              item.activeBills.Usernames.forEach(function (username) {
-                setActiveBillIds(map => new Map(map.set(username, bill.billId)))
+          let newMap = users
+          newMap.set(item.username, item)
+          setUsers(newMap)
+            item.activeBills.forEach(function (bill) {
+              let newMap = activeBills
+              let date = new Date(bill.dateEntered);
+              let formattedDate = date.getMonth() + "/" + date.getDay() + "/" + date.getFullYear();
+              newMap.set(bill.billId, {...bill, dateEntered: formattedDate})
+              setActiveBills(newMap)
+              bill.usernames.forEach(function (username) {
+                  let prevIds = activeBillIds.get(username) ? activeBillIds[username] : []
+                  prevIds.push(bill.billId)
+                  setActiveBillIds(map => new Map(map.set(username, prevIds)))
               })
-            }
-          })
-          item.deletedBills.forEach(function (bill) {
-            let date = new Date(bill.dateEntered);
-            let formattedDate = date.getMonth() + "/" + date.getDay() + "/" + date.getFullYear();
-            setDeletedBills(map => new Map(map.set(bill.billId, {...bill, dateEntered: formattedDate})))
-          })
+            })
+            // console.log(activeBillIds)
+            item.deletedBills.forEach(function (bill) {
+              let date = new Date(bill.dateEntered);
+              let formattedDate = date.getMonth() + "/" + date.getDay() + "/" + date.getFullYear();
+              setDeletedBills(map => new Map(map.set(bill.billId, {...bill, dateEntered: formattedDate})))
+            })
         })
+        console.log("USer", users)
+        console.log("USer", users["captain@gmail.com"])
+      // console.log("ACtive", activeBills)
       setBudget(res["budget"])
       setGroupTotal(res["groupTotal"])
       setGet(true)
