@@ -10,8 +10,7 @@ import {
   Select,
   Upload,
   Modal,
-  Input,
-  EditOutlined
+  Input
 } from 'antd';
 import axios from 'axios';
 import * as Styles from '../../styles/ConstStyles';
@@ -39,10 +38,9 @@ export const BillForm = (flow) => {
     const persistAddForm = () =>
     {
       // TEST DATA
-      let request =  {
-        Bill :{            
+      let request =  {          
             Usernames : members,
-            Owner: 'Jan',
+            Owner: 'frost@gmail.com',
             BillId: 13243,
             GroupId: 123456,
             BillName: name,
@@ -51,9 +49,8 @@ export const BillForm = (flow) => {
             PaymentStatus: paymentStatus,
             IsRepeated: isRepeated,
             PhotoFileName: photoFileName
-        }
-      } 
-
+      }  
+       console.log(request)
       axios.post('budgetbar/AddBill', request).then(res => {
           var response = res.data;
             console.log(response);
@@ -70,8 +67,8 @@ export const BillForm = (flow) => {
         Bill : {
             Usernames : members,
             BillId: 13243,
-            BillName: name,
-            BillDescription: description,
+            BillName: 'name',
+            BillDescription: 'description',
             Amount: amount,
             PaymentStatus: paymentStatus,
             IsRepeated: isRepeated,
@@ -110,18 +107,18 @@ export const BillForm = (flow) => {
               <Button key="cancel" style={Styles.defaultButtonModal} type="default" onClick={() => setopen(false)}>Cancel</Button>
             ]}>
             <Form name="billForm" {...formItemLayout} >
-                <Form.Item name="name" label=" Bill Name" onChange={value => setName(value)}
+                <Form.Item name="name" label=" Bill Name" 
                   rules={[
                       {
                       required: true,
                       message: 'Please input a bill name!',
                       },
                   ]}>
-                  <Input/>
+                  <Input onChange={e => setName(e.target.value)}/>
                 </Form.Item>
 
-                <Form.Item name="description" label="Description" onChange={value => setDescription(value)}>
-                  <Input />
+                <Form.Item name="description" label="Description">
+                  <Input onChange={e => setDescription(e.target.value)}/>
                 </Form.Item> 
 
                 <Form.Item name="input-number" label="Amount">
@@ -134,10 +131,9 @@ export const BillForm = (flow) => {
 
                 <Form.Item name="members" label="Members">
                   <Select mode="multiple" onChange={e => setMembers(e)}>
-
-                    <Option value="red">Red</Option>
-                    <Option value="green">Green</Option>
-                    <Option value="blue">Blue</Option>
+                    <Option value="captain@gmail.com" >captain@gmail.com</Option>
+                    <Option value="wendy@gmail.com">wendy@gmail.com</Option>
+                    <Option value="strange@gmail.com">strange@gmail.com</Option>
                 </Select>
                 </Form.Item>
 
@@ -159,9 +155,6 @@ export const BillForm = (flow) => {
                     </Upload.Dragger>
                 </Form.Item>
                 </Form.Item>
-                <Button style={Styles.primaryButtonStyle} type="default" htmlType="submit" onClick={(value) => {persistAddForm(value)}}>Save</Button>
-                {/* <Button style={Styles.primaryButtonStyle} type="default" htmlType="cancel" onClick={setopen(false)}>Cancel</Button> */}
-
             </Form>
         </Modal>
       </div>

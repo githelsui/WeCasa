@@ -334,7 +334,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     {
                         if (reader.Read())
                         {
-                            return reader.GetDecimal(reader.GetOrdinal("group_budget")); 
+                            return reader.GetDecimal(reader.GetOrdinal("budget")); 
                         }
                         // else
                         // {
@@ -362,7 +362,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                     var insertSql = @"UPDATE GROUPS 
                                             SET 
-                                                group_budget = @amount
+                                                budget = @amount
                                             WHERE group_id = @groupID;";
                     var command = connection.CreateCommand();
                     command.CommandText = insertSql;
