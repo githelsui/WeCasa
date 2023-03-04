@@ -14,6 +14,7 @@ export const Header = () => {
     const [showModal, setShowModal] = useState(false);
     const [collapsed, setCollapsed] = useState(true);
     const [logoutResults, setLogoutResults] = useState(false);
+    const navigate = useNavigate();
 
     const toggleHeader = () => {
         setCollapsed(!collapsed);
@@ -23,7 +24,7 @@ export const Header = () => {
     const attemptLogout = () => {
         console.log("Attempting logout...");
         let account = {
-            Username: currentUser
+            Username: currentUser['username']
         }
         axios.post('home/AttemptLogout', account)
             .then(res => {
@@ -67,9 +68,9 @@ export const Header = () => {
     return (
         <header>
             <Navbar className={Styles.defaultHeaderStyle} container light>
-                {(auth) ?
-                    (<NavbarBrand tag={Link} to="/home" onClick={() => setCurrentGroup(null) }>WeCasa</NavbarBrand>)
-                    : (<NavbarBrand tag={Link} to="/">WeCasa</NavbarBrand>)
+                {(!auth) ?
+                    (<NavbarBrand tag={Link} to="/">WeCasa</NavbarBrand>)
+                    : (<NavbarBrand tag={Link} to="/home" onClick={() => setCurrentGroup(null)}>WeCasa</NavbarBrand>)
                 }
                 <NavbarToggler onClick={toggleHeader} className="mr-2" />
                 <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!collapsed} navbar>
@@ -85,9 +86,9 @@ export const Header = () => {
                             </DropdownToggle>
                                 <DropdownMenu>
                                     <DropdownItem disabled>Settings</DropdownItem>
-                                    <DropdownItem href="/edit-profile">Edit Profile</DropdownItem>
-                                    <DropdownItem href="/settings">Account Settings</DropdownItem>
-                                    <DropdownItem href="/feedback">Help</DropdownItem>
+                                    <DropdownItem onClick={() => navigate('/edit-profile')}>Edit Profile</DropdownItem>
+                                    <DropdownItem onClick={() => navigate('/account-settings')}>Account Settings</DropdownItem>
+                                    <DropdownItem onClick={() => navigate('/feedback')}>Help</DropdownItem>
                                     <DropdownItem onClick={() => setShowModal(true)}>Logout</DropdownItem>
                                     <LogoutModal show={showModal} close={() => setShowModal(false)} confirm={attemptLogout} />
                                 </DropdownMenu>

@@ -4,6 +4,7 @@ import { Home } from "./components/Home";
 import { Registration } from "./components/Registration";
 import { Login } from "./components/Login";
 import { GroupSettings } from "./components/GroupSettings";
+import { AccountSettings } from "./components/AccountSettings";
 
 
 const AppRoutes = [
@@ -38,6 +39,10 @@ const AppRoutes = [
     {
         path: '/group-settings',
         element: <GroupSettings />
+    },
+    {
+        path: '/account-settings',
+        element: <AccountSettings />
     }
 ];
 

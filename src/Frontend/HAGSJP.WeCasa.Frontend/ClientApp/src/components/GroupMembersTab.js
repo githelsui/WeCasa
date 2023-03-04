@@ -106,7 +106,7 @@ export const GroupMembersTab = (props) => {
 
     return (
         <div className="group-members-tab">
-            {currentUser == currentGroup["owner"] ? (
+            {currentUser["username"] == currentGroup["owner"] ? (
                 <Row gutter={24} style={{ display: "flex", alignItems: "right", justifyContent: "right" }}>
                     <Col span={8}>
                         <Button type="primary" style={Styles.primaryButtonStyle}>Invite roommates</Button>
@@ -128,7 +128,7 @@ export const GroupMembersTab = (props) => {
                                 title={getFullName(item.firstName, item.lastName)}
                                 description={item.username}
                             />
-                            {currentUser == currentGroup["owner"] && currentGroup["owner"] != item.username ? (
+                            {currentUser["username"] == currentGroup["owner"] && currentGroup["owner"] != item.username ? (
                                 <Button onClick={(e) => {
                                     removeRoommate(item.username)
                                 }} type="default" style={Styles.removeGroupMemberButton}>X  Remove Member</Button>)

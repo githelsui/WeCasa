@@ -101,7 +101,7 @@ export const GroupSettingsTab = (props) => {
 
         let groupMemberForm = {
             GroupId: currentGroup['groupId'],
-            GroupMember: currentUser
+            GroupMember: currentUser['username']
         }
 
         axios.post('group-settings/DeleteGroup', groupMemberForm)
@@ -122,7 +122,7 @@ export const GroupSettingsTab = (props) => {
 
         let groupMemberForm = {
             GroupId: currentGroup['groupId'],
-            GroupMember: currentUser
+            GroupMember: currentUser['username']
         }
 
         axios.post('group-settings/LeaveGroup', groupMemberForm)
@@ -249,7 +249,7 @@ export const GroupSettingsTab = (props) => {
                         <Button key="create" type="primary" htmlType="submit" style={Styles.saveButtonStyle}>Save</Button>
                 </div>
                 <div className="group-deletion-section">
-                    {(currentUser == currentGroup["owner"]) ?
+                    {(currentUser["username"] == currentGroup["owner"]) ?
                     (<div><Button type="primary" style={Styles.deleteButtonStyle} onClick={() => setShowModal(true)}>Delete Group</Button>
                         <GroupDeletionModal show={showModal} close={() => setShowModal(false)} confirm={deleteGroup} /></div>
                     ) :

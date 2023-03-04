@@ -161,6 +161,14 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         {
                             result.IsSuccessful = true;
                             result.HasValidOTP = true;
+                            // returning authenticated user info
+                            UserProfile userProfile = new UserProfile();
+                            userProfile.Username = userAccount.Username;
+                            userProfile.FirstName = reader.GetString(reader.GetOrdinal("first_name"));
+                            userProfile.LastName = reader.GetString(reader.GetOrdinal("last_name"));
+                            userProfile.Image = reader.GetInt32(reader.GetOrdinal("image"));
+                            result.ErrorStatus = System.Net.HttpStatusCode.Found;
+                            result.ReturnedObject = userProfile;
                         }
                         else
                         {
@@ -493,7 +501,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         userProfile.Username = userAccount.Username;
                         userProfile.FirstName = reader.GetString(reader.GetOrdinal("first_name"));
                         userProfile.LastName = reader.GetString(reader.GetOrdinal("last_name"));
-                        //TODO: Include UserProfile.Icon
+                        userProfile.Image = reader.GetInt32(reader.GetOrdinal("image"));
                         result.ErrorStatus = System.Net.HttpStatusCode.Found;
                         result.Message = "User information was found";
                         result.IsSuccessful = true;

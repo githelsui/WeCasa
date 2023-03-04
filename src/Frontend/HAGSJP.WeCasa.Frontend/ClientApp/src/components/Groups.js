@@ -23,7 +23,7 @@ export const Groups = () => {
 
     const getGroups = () => {
         let account = {
-            Username: currentUser
+            Username: currentUser['username']
         }
         axios.post('home/GetGroups', account)
             .then(res => {
@@ -45,7 +45,7 @@ export const Groups = () => {
 
         let newGroup = {
             GroupName: groupConfig.groupName,
-            Owner: currentUser,
+            Owner: currentUser['username'],
             Icon: (groupConfig.icon == null) ? "#668D6A" : groupConfig.icon,
             Features: features
         }
