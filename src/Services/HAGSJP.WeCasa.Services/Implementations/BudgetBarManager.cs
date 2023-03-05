@@ -32,39 +32,34 @@ namespace HAGSJP.WeCasa.Services.Implementations
             lo.Log( "2 "+ groupId, LogLevels.Error, "Data Store", "");
             Dictionary<string, string> names = dao.GetFirstNames(groupId);
             lo.Log( "3 "+ groupId, LogLevels.Error, "Data Store", "");
-            Dictionary<string, BudgetBarUser> budgetBarUsers = new Dictionary<string, BudgetBarUser>();
+            List<BudgetBarUser> budgetBarUsers = new List<BudgetBarUser>();
             foreach(var name in names)
             {
                 BudgetBarUser bbUser = new BudgetBarUser(name.Key, name.Value);
                 lo.Log( "4 "+ groupId, LogLevels.Error, "Data Store", "");
-                budgetBarUsers.Add(name.Key, bbUser);
+                budgetBarUsers.Add(bbUser);
             }
-            lo.Log( "5 "+ groupId, LogLevels.Error, "Data Store", "");
             List<Bill> bills = GetBills(groupId);
-             lo.Log( "6 "+ groupId, LogLevels.Error, "Data Store", "");
-            List<int> activeBillIds = new List<int>();
-            List<int> deletedBillIds = new List<int>();
+            List<Bill> activeBills = new List<Bill>();
+            List<Bill> deletedBills = new List<Bill>();
             Decimal totalSpent = 0;
             foreach(Bill bill in bills)
             {
                 if (bill.IsDeleted == false)
                 {
-                    // activeBillIds.Add(bill.BillId) ;
-                    budgetBarUsers[bill.Owner].ActiveBills.Add(bill);
-                    budgetBarUsers[bill.Owner].TotalSpent += bill.Amount;
+                    activeBills.Add(bill);
                     totalSpent += bill.Amount;
                 }
                 else 
                 {
-                    // deletedBillIds.Add(bill.BillId) ;
-                    budgetBarUsers[bill.Owner].DeletedBills.Add(bill);
+                    deletedBills.Add(bill);
                 }
             }
             
             return new {
-                // ActiveBillIds = activeBillIds,
-                // DeletedBillIds = deletedBillIds,
-                Group = budgetBarUsers.Values.ToList(),
+                ActiveBills = activeBills,
+                DeletedBills = deletedBills,
+                Group = budgetBarUsers,
                 Budget = budget,
                 GroupTotal = totalSpent,
             };

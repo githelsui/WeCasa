@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component, EditButton, onClose } from 'react';
+import React, { useState, useEffect, Component, EditButton, onClose, useLayoutEffect } from 'react';
 import axios from 'axios';
 import { Table, Progress, Tabs, Button, Avatar} from 'antd';
 import NavMenu from '../NavMenu';
@@ -30,22 +30,22 @@ export const BudgetBar = (user) => {
   const groupId = 123456; //TEST DATA
   const [GET, setGet] = useState();
   const [showBillForm, setShowBillForm] = useState(false);
+  const [showCurrentTable, setShowCurrentTable] = useState(false);
+  const [showHistoryTable, setShowHistoryTable] = useState(false);
+
   const [billStatus, setBillStatus] = useState(false);
   const [budget, setBudget] = useState(0)
   const [groupTotal, setGroupTotal] = useState(0)
+  const [userTotal, setUserTotal] = useState(new Map())
   // const [budgetBarUsers, setBudgetBarUsers] = useState([...{Username:"", firstName: "", totalSpent: 0, activeBills: [Bill], deletedBills: [Bill]}])
-  // const [users, setUsers] = useState([{
-  //   username : {
-  //     firstName: "",
-  //     totalSpent: 0,
-  //     billIds: []
-  //     }
-  // }])
   const [users, setUsers] = useState(new Map())
+  // const [users, setUsers] = useState(new Map())
   const [activeBills, setActiveBills] = useState(new Map())
   const [deletedBills, setDeletedBills] = useState(new Map())
   const [activeBillIds, setActiveBillIds] = useState(new Map())
   const [deletedBillIds, setDeletedBillIds] = useState(new Map())
+
+
 
 
   const [dataSource, setDataSource] = useState([])
@@ -137,32 +137,42 @@ export const BudgetBar = (user) => {
   useEffect(() => {
      axios.get(`budgetbar/${groupId}`).then((response) => { 
         var res = response.data
+        let newMap = new Map();
         res["group"].forEach(function (item) {
-          let newMap = users
-          newMap.set(item.username, item)
+          newMap = users
+          newMap.set(item.username, item.firstName)
           setUsers(newMap)
-            item.activeBills.forEach(function (bill) {
-              let newMap = activeBills
-              let date = new Date(bill.dateEntered);
-              let formattedDate = date.getMonth() + "/" + date.getDay() + "/" + date.getFullYear();
-              newMap.set(bill.billId, {...bill, dateEntered: formattedDate})
-              setActiveBills(newMap)
-              bill.usernames.forEach(function (username) {
-                  let prevIds = activeBillIds.get(username) ? activeBillIds[username] : []
-                  prevIds.push(bill.billId)
-                  setActiveBillIds(map => new Map(map.set(username, prevIds)))
-              })
-            })
-            // console.log(activeBillIds)
-            item.deletedBills.forEach(function (bill) {
-              let date = new Date(bill.dateEntered);
-              let formattedDate = date.getMonth() + "/" + date.getDay() + "/" + date.getFullYear();
-              setDeletedBills(map => new Map(map.set(bill.billId, {...bill, dateEntered: formattedDate})))
-            })
         })
-        console.log("USer", users)
-        console.log("USer", users["captain@gmail.com"])
-      // console.log("ACtive", activeBills)
+        res["deletedBills"].forEach(function (bill) {
+          newMap = deletedBills
+          let date = new Date(bill.dateEntered);
+          let formattedDate = date.getMonth() + "/" + date.getDay() + "/" + date.getFullYear();
+          newMap.set(bill.billId, {...bill, dateEntered: formattedDate})
+          setDeletedBills(newMap)
+          bill.usernames.forEach(function (username) {
+              let prevIds = deletedBillIds.has(username) ? deletedBillIds.get(username) : []
+              prevIds.push(bill.billId)
+              setDeletedBillIds(map => new Map(map.set(username, prevIds)))
+          })
+        })
+        res["activeBills"].forEach(function (bill) {
+          newMap = activeBills
+          let date = new Date(bill.dateEntered);
+          let formattedDate = date.getMonth() + "/" + date.getDay() + "/" + date.getFullYear();
+          newMap.set(bill.billId, {...bill, dateEntered: formattedDate})
+          setActiveBills(newMap)
+          bill.usernames.forEach(function (username) {
+            let prevIds = activeBillIds.has(username) ? activeBillIds.get(username) : []
+            if (!prevIds.includes(bill.billId)) prevIds.push(bill.billId)
+            newMap = activeBillIds
+            newMap.set(username, prevIds)
+            setActiveBillIds(newMap)
+
+            newMap = userTotal
+            newMap.set(username, (userTotal.has(username)? userTotal.get(username) : 0) + (bill.amount/bill.usernames.length))
+            setUserTotal(newMap)
+          })
+        })
       setBudget(res["budget"])
       setGroupTotal(res["groupTotal"])
       setGet(true)
@@ -170,83 +180,7 @@ export const BudgetBar = (user) => {
   }).catch((error => { console.error(error) }));
   }, []);
 
-  // const getBudgetBarData = ()  =>
-  // {
-  //    axios.get(`budgetbar/${groupId}`).then((response) => { 
-  //      var res = response.data
-  //     //  var activeB = []
-  //     //  var deletedB = []
-  //      res["group"].forEach(function (item) {
-  //       var activeB = []
-  //       var deletedB = []
-  //       item.activeBills.forEach(function(bill) {
-  //         activeB.push({
-  //           usernames: bill.usernames,
-  //           owner: bill.owner,
-  //           billName: bill.billName,
-  //           groupid: bill.groupId,
-  //           amount: bill.amount,
-  //           billId: bill.billId,
-  //           dateEntered: bill.dateEntered,
-  //           billDescription: bill.billDescription,
-  //           paymentStatus: bill.paymentStatus,
-  //           isRepeated: bill.isRepeated,
-  //           isDeleted: bill.isDeleted,
-  //           dateDeleted: bill.dateDeleted,
-  //           photoFileName: bill.photoFileName
-  //         })
-  //       })
-  //       item.deletedBills.forEach(function(bill) {
-  //         deletedB.push({
-  //           usernames: bill.usernames,
-  //           owner: bill.owner,
-  //           billName: bill.billName,
-  //           groupid: bill.groupId,
-  //           amount: bill.amount,
-  //           billId: bill.billId,
-  //           dateEntered: bill.dateEntered,
-  //           billDescription: bill.billDescription,
-  //           paymentStatus: bill.paymentStatus,
-  //           isRepeated: bill.isRepeated,
-  //           isDeleted: bill.isDeleted,
-  //           dateDeleted: bill.dateDeleted,
-  //           photoFileName: bill.photoFileName
-  //         })
-  //       })
-  //       setBudgetBarUsers(prevState => [{
-  //         username: item.username,
-  //         firstName: item.firstName,
-  //         totalSpent: item.totalSpent,
-  //         activeBills: activeB,
-  //         deletedBills: deletedB
-  //       }, ...prevState])
-  //     })
-  //      setBudget(res["budget"])
-  //      setGroupTotal(res["groupTotal"])
-  //    })
-  //    .catch((error => { console.error(error) }));
-  //   //  console.log(budgetBarUsers[1].activeBills)
-  // }
 
-   const populateTables =  (billIds, bills) => {
-    console.log('populate')
-    let billList = []
-    billIds.forEach(billId => {
-      setDataSource(prevState => [...prevState, {
-        billId: billId,
-        date: bills.get(billId).dateEntered,
-        billName: bills.get(billId).billName,
-        owner: users.get(bills.get(billId).owner).firstName,
-        description: bills.get(billId).description,
-        amount: bills.get(billId).amount,
-        paymentStatus: bills.get(billId).paymentStatus ? 'PAID' : 'UNPAID',
-        receipt: bills.get(billId).receipt
-      }])
-    })
-    console.log(billList)
-    setDataSource(prevState => [...prevState, billList])
-    setBillStatus(false)
-   };
 
       let request =  {
           Usernames : ["sam", "man"],
@@ -277,16 +211,43 @@ export const BudgetBar = (user) => {
     const onChange = (key) => {
       switch(key) {
         case 'current':
-          console.log(activeBillIds)
-          if(activeBillIds.size > 0 && activeBills.size > 0) populateTables(activeBillIds, activeBills)
+          setShowCurrentTable(true)
           break
         case 'history':
-          if (billStatus) populateTables([12357], deletedBills)
+          setShowHistoryTable(true)
           break
         default:
           break
       }
     };
+
+    // useEffect(()=>{ if (activeBillIds.size > 0 && activeBills.size > 0) populateTables(activeBillIds, activeBills)}, [activeBillIds, activeBills, populateTables])
+
+    const populateTables =  (billIds, bills) => {
+      // {console.log("delete", deletedBills)}
+      // {console.log("user ", users)}
+      // {console.log("total ", userTotal)}
+      // {console.log("active ID ", activeBillIds)}
+      if (billIds>0 && bills>0) {
+        console.log('populate')
+        let billList = [] 
+        billIds.forEach(billId => {
+          setDataSource(prevState => [...prevState, {
+            billId: billId,
+            date: bills.get(billId).dateEntered,
+            billName: bills.get(billId).billName,
+            owner: users.get(bills.get(billId).owner).firstName,
+            description: bills.get(billId).description,
+            amount: bills.get(billId).amount,
+            paymentStatus: bills.get(billId).paymentStatus ? 'PAID' : 'UNPAID',
+            receipt: bills.get(billId).receipt
+          }])
+        })
+        console.log(billList)
+        setDataSource(prevState => [...prevState, billList])
+        setBillStatus(false)
+      }
+     };
 
     return (
       <div>
@@ -299,6 +260,12 @@ export const BudgetBar = (user) => {
          {/* {(billStatus) ? populateTables([12357], deletedBills): null} */}
         {/* {console.log(users["frost@gmail.com"].activeBillIds)} */}
          {/* <Button shape="round" size='large' onClick={handleClick}></Button> */}
+        {console.log("ACtive", activeBills)}
+      {console.log("delete", deletedBills)}
+      {console.log("user ", users)}
+      {console.log("total ", userTotal)}
+      {console.log("active ID ", activeBillIds)}
+      {populateTables(activeBillIds, activeBills)}
         <ButtonIcon readings={readings} items={tabs}/>
         <BudgetForm budget={budget} setBudget={setBudget}/>
         <p><strong>Total Budget: ${budget}</strong></p>
