@@ -131,12 +131,12 @@ export const Login = () => {
 
     // DELETE ME
     // for dev purposes lol
-   /* setAuth(true);
+    /*setAuth(true);
     const tempUser = {
-        FirstName: "allison",
-        LastName: "test",
-        Username: "test123@gmail.com",
-        Image: 1
+        firstName: "allison",
+        lastName: "test",
+        username: "test123@gmail.com",
+        image: 0
     }
     setCurrentUser(tempUser);
     successLoginView();*/
