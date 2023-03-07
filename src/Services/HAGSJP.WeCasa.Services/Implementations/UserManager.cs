@@ -6,6 +6,7 @@ using System.Net.Mail;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Net;
+using System.Text.Json;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
@@ -286,9 +287,14 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return _dao.UpdateUser(userAccount, updateSQL);
         }
 
-        public Result UpdatePassword(UserAccount userAccount, string salt, string password)
+        public Result UpdatePassword(UserAccount userAccount, string password)
         {
-            string updateSQL = string.Format(@"UPDATE users SET PASSWORD = '{0}', SALT = '{1}' WHERE username = '{2}'", password, salt, userAccount.Username);
+            HashSaltSecurity hashService = new HashSaltSecurity();
+            string salt = BitConverter.ToString(hashService.GenerateSalt(password));
+            string encryptedPass = hashService.GetHashSaltCredentials(password, salt);
+            userAccount.Salt = salt;
+
+            string updateSQL = string.Format(@"UPDATE users SET PASSWORD = '{0}', SALT = '{1}' WHERE username = '{2}'", encryptedPass, salt, userAccount.Username);
             return _dao.UpdateUser(userAccount, updateSQL);
         }
 
@@ -300,6 +306,12 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public Result UpdatePhoneNumber(UserAccount userAccount)
         {
             throw new NotImplementedException();
+        }
+
+        public Result UpdateNotifications(UserAccount userAccount)
+        {
+            string updateSQL = string.Format(@"UPDATE users SET NOTIFICATIONS = '{0}' WHERE username = '{1}'", JsonSerializer.Serialize(userAccount.Notifications), userAccount.Username);
+            return _dao.UpdateUser(userAccount, updateSQL);
         }
 
         public Result DeleteUser(UserAccount userAccount)

@@ -136,7 +136,8 @@ export const Login = () => {
         firstName: "allison",
         lastName: "test",
         username: "test123@gmail.com",
-        image: 0
+        image: 1,
+        notifications: ["email", "sms"]
     }
     setCurrentUser(tempUser);
     successLoginView();*/

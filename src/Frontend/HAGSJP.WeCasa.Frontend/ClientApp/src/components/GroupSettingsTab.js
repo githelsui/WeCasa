@@ -138,6 +138,10 @@ export const GroupSettingsTab = (props) => {
             .catch((error => { console.error(error) }));
     }
 
+    const submitGroupSettings = (values) => {
+
+    }
+
     const toast = (title, desc = '') => {
         notification.open({
             message: title,
@@ -159,7 +163,7 @@ export const GroupSettingsTab = (props) => {
     return (
         <div className="group-settings-tab padding">
 
-            <Form id="groupSettingsForm">
+            <Form id="groupSettingsForm" onFinish={(values) => submitGroupSettings(values)}>
                 <Row gutter={[24, 24]} align="middle">
                     <Col span={8} className="group-icon-selection">
                         <Image style={{
