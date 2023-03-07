@@ -27,28 +27,29 @@ namespace HAGSJP.WeCasa.Services.Implementations
             AccountMariaDAO dao = new AccountMariaDAO();
             // RefreshBillList(username);
             // DeleteAllOutdatedBills(username);
-            lo.Log( "1 "+ groupId, LogLevels.Error, "Data Store", "");
             decimal budget = GetBudget(groupId);
-            lo.Log( "2 "+ groupId, LogLevels.Error, "Data Store", "");
             Dictionary<string, string> names = dao.GetFirstNames(groupId);
-            lo.Log( "3 "+ groupId, LogLevels.Error, "Data Store", "");
             List<BudgetBarUser> budgetBarUsers = new List<BudgetBarUser>();
+            Dictionary<string, decimal> userTotals = new Dictionary<string, decimal>();
+            Decimal totalSpent = 0;
             foreach(var name in names)
             {
                 BudgetBarUser bbUser = new BudgetBarUser(name.Key, name.Value);
-                lo.Log( "4 "+ groupId, LogLevels.Error, "Data Store", "");
                 budgetBarUsers.Add(bbUser);
+                userTotals.Add(name.Key, 0);
             }
             List<Bill> bills = GetBills(groupId);
             List<Bill> activeBills = new List<Bill>();
             List<Bill> deletedBills = new List<Bill>();
-            Decimal totalSpent = 0;
             foreach(Bill bill in bills)
             {
                 if (bill.IsDeleted == false)
                 {
                     activeBills.Add(bill);
                     totalSpent += bill.Amount;
+                    foreach(var user in bill.Usernames) {
+                        userTotals[user] += bill.Amount/(bill.Usernames.Count);
+                    }
                 }
                 else 
                 {
@@ -62,6 +63,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 Group = budgetBarUsers,
                 Budget = budget,
                 GroupTotal = totalSpent,
+                UserTotals = userTotals
             };
         }
 
@@ -210,7 +212,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         //     return result;
         // }
 
-        public Result DeleteBill(string billId)
+        public Result DeleteBill(int billId)
         {
 
             DAOResult result = _dao.DeleteBill(billId);
@@ -225,7 +227,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return result;
         }
 
-        public Result RestoreDeletedBill(string billId)
+        public Result RestoreDeletedBill(int billId)
         {
             DAOResult result = _dao.RestoreDeletedBill(billId);
             if (result.IsSuccessful)

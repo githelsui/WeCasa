@@ -52,9 +52,9 @@ const BudgetForm = ({budget, setBudget}) => {
     }
   
     return (
-        <div>
+        <div style={Styles.body}>
              <Button
-                style={Styles.defaultButtonModal }
+                style={Styles.addBudgetButton }
                 onClick={() => { setopen(true);}}>
                 Update Budget
             </Button>

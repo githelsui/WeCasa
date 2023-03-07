@@ -39,7 +39,7 @@ export const BillForm = (flow) => {
     {
       // TEST DATA
       let request =  {          
-            Usernames : members,
+            Usernames: members,
             Owner: 'frost@gmail.com',
             BillId: 13243,
             GroupId: 123456,

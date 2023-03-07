@@ -212,8 +212,8 @@ public class BudgetBarController : Controller
     }
 
 
-    [HttpDelete("Delete")]
-    public IActionResult Delete([FromBody] string billId)
+    [HttpDelete("Delete/{billId}")]
+    public IActionResult Delete([FromRoute] int billId)
     {
         try
         {
@@ -231,9 +231,8 @@ public class BudgetBarController : Controller
         }
     }
 
-    [Route("Restore")]
-    [HttpPut]
-    public IActionResult Put([FromBody] string billId)
+    [HttpPut("Restore/{billId}")]
+    public IActionResult Put([FromRoute] int billId)
     {
         try
         {

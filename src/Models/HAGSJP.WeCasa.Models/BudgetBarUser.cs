@@ -6,7 +6,7 @@ namespace HAGSJP.WeCasa.Models
     {
         public string Username { get; set; }
         public string FirstName { get; set; }
-        // public decimal TotalSpent { get; set; }
+        public decimal TotalSpent { get; set; }
         // public List<Bill> ActiveBills { get; set; }
         // public List<Bill> DeletedBills { get; set; }
 

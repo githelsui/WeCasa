@@ -154,7 +154,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         //     }
         // }
     
-        public DAOResult DeleteBill(string billId)
+        public DAOResult DeleteBill(int billId)
         {
             var result = new DAOResult();
             _connectionString = BuildConnectionString().ConnectionString;
@@ -186,7 +186,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
-        public DAOResult RestoreDeletedBill(string billId)
+        public DAOResult RestoreDeletedBill(int billId)
         {
             var result = new DAOResult();
             _connectionString = BuildConnectionString().ConnectionString;
