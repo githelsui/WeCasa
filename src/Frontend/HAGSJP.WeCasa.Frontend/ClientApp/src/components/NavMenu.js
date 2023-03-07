@@ -1,28 +1,49 @@
 ﻿import React, { useState } from 'react';
-import { Collapse, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
-import { Link } from 'react-router-dom';
+import { Collapse, Navbar, NavbarBrand, NavbarToggler } from 'reactstrap';
+import { NavLink, Link } from 'react-router-dom';
 import '../styles/NavMenu.css';
 import * as Styles from '../styles/ConstStyles.js';
 
 export const NavMenu = () => {
-    const [isActive, setActive] = useState(null);
     return (
         <header>
             <div className="menu-outer">
                 <div className="table">
                     <ul className="navbar-nav flex-grow horizonal-list">
-                        <NavItem>
-                            <NavLink tag={Link} className="text-dark" to="/bulletin">Bulletin Board</NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink tag={Link} className="text-dark" to="/calendar">Calendar</NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink tag={Link} className="text-dark" to="/finanaces">Finances</NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink tag={Link} className="text-dark" to="/group-settings">Group Members</NavLink>
-                        </NavItem>
+                        <li>
+                            <NavLink tag={Link}
+                                style={({ isActive }) => ({
+                                    ...Styles.navLink,
+                                    ...(isActive ? Styles.activeStyle : null)
+                                })}
+                                to="/bulletin">Bulletin Board
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink tag={Link}
+                                style={({ isActive }) => ({
+                                    ...Styles.navLink,
+                                    ...(isActive ? Styles.activeStyle : null)
+                                })}
+                                to="/calendar">Calendar</NavLink>
+                        </li>
+                        <li>
+                            <NavLink tag={Link}
+                                style={({ isActive }) => ({
+                                    ...Styles.navLink,
+                                    ...(isActive ? Styles.activeStyle : null)
+                                })}
+                                to="/finanaces">Finances</NavLink>
+                        </li>
+                        <li>
+                            <NavLink
+                                tag={Link}
+                                style={({ isActive }) => ({
+                                    ...Styles.navLink,
+                                    ...(isActive ? Styles.activeStyle : null)
+                                })}
+                                to="/group-settings">Group Members</NavLink>
+                        </li>
                     </ul>
                 </div>
             </div>

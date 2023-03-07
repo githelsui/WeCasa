@@ -11,10 +11,9 @@ const { Meta } = Card;
 
 const maxConfiguredFeatures = 6;
 
-export const Groups = (props) => {
+export const Groups = () => {
     const [loading, setLoading] = useState(true);
-    const { currentUser } = useAuth();
-    const [currentGroup, setCurrentGroup] = useState(null);
+    const { currentUser, currentGroup, setCurrentGroup } = useAuth();
     const [invitedRoommates, setInvitedRoommates] = useState([])
     const [groups, setGroups] = useState([]);
     const [showModal, setShowModal] = useState(false);
@@ -24,7 +23,7 @@ export const Groups = (props) => {
 
     const getGroups = () => {
         let account = {
-            Username: currentUser
+            Username: currentUser['username']
         }
         axios.post('home/GetGroups', account)
             .then(res => {
@@ -44,20 +43,20 @@ export const Groups = (props) => {
         if (groupConfig.circularProgressBar) features.push("Circular Progress Bar");
         if (features.length == maxConfiguredFeatures) features = ['all'];
 
-        let group = {
+        let newGroup = {
             GroupName: groupConfig.groupName,
-            Owner: currentUser,
+            Owner: currentUser['username'],
             Icon: (groupConfig.icon == null) ? "#668D6A" : groupConfig.icon,
             Features: features
         }
-        axios.post('home/CreateGroup', group)
+        axios.post('home/CreateGroup', newGroup)
             .then(res => {
                 var createdGroup = res.data['returnedObject']
                 var isSuccessful = res.data['isSuccessful'];
                 var groupId = createdGroup['groupId']
                 if (isSuccessful) {
                     setCurrentGroup(createdGroup);
-                    navigate('/group-settings', { state: createdGroup });
+                    navigate('/group-settings');
                 } else {
                     failureGroupView(res.data['message']);
                 }
@@ -65,12 +64,9 @@ export const Groups = (props) => {
             .catch((error => { console.error(error) }));
     }
 
-    const editGroup = (group) => {
-        setCurrentGroup(group);
-    }
-
-    const groupSettings = (group) => {
-        navigate('/group-settings', { state: group });
+    const groupSettings = (selectedGroup) => {
+        setCurrentGroup(selectedGroup)
+        navigate('/group-settings');
     }
 
     const handleGroupMembersChange = (membersList) => {
@@ -78,11 +74,11 @@ export const Groups = (props) => {
         setInvitedRoommates(memberCopy)
     }
 
-    const inviteGroupMembers = (group) => {
+    const inviteGroupMembers = () => {
         console.log(invitedRoommates)
 
         let groupMemberForm = {
-            GroupId: group['groupId'],
+            GroupId: currentGroup['groupId'],
             GroupMembers: invitedRoommates
         }
 
@@ -90,8 +86,7 @@ export const Groups = (props) => {
             .then(res => {
                 var isSuccessful = res.data['isSuccessful'];
                 if (isSuccessful) {
-                    setCurrentGroup(group);
-                    navigate('/group-settings', { state: group });
+                    navigate('/group-settings');
                 } else {
                     failureGroupView(res.data['message']);
                 }
