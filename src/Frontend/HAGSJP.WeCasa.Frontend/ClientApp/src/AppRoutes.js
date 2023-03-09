@@ -5,6 +5,7 @@ import { Registration } from "./components/Registration";
 import { Login } from "./components/Login";
 import { GroupSettings } from "./components/GroupSettings";
 import { AccountSettings } from "./components/AccountSettings";
+import { Files } from "./components/Files";
 
 
 const AppRoutes = [
@@ -43,6 +44,10 @@ const AppRoutes = [
     {
         path: '/account-settings',
         element: <AccountSettings />
+    },
+    {
+        path: '/files',
+        element: <Files />
     }
 ];
 

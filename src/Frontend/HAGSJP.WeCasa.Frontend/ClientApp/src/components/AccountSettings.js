@@ -27,7 +27,7 @@ export const AccountSettings = () => {
     const navigate = useNavigate();
     const images = [image1, image2, image3, image4, image5, image6];
 
-    useEffect(() => { setCurrentSetting('Update Email'); }, []);
+    useEffect(() => { setCurrentSetting('Update Email'); setCurrentGroup(null); }, []);
 
     const validateEmail = (value, callback) => {
         if (value != undefined && value != null) {
@@ -147,7 +147,6 @@ export const AccountSettings = () => {
                 if (isSuccessful) {
                     // Resetting auth context
                     setCurrentUser(null);
-                    setCurrentGroup(null);
                     // Navigating back to registration
                     successAccountSettingsView(res.data['message']);
                     navigate('/');
