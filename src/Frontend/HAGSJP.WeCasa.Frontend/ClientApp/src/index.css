@@ -71,6 +71,14 @@ body {
     font-family: 'Mulish', sans-serif;
 }
 
+.thin-font {
+    font-weight:100;
+}
+
+.bold-font {
+    font-weight: bolder;
+}
+
 /* Crete Group Modal (CreateGroupModal.js) */
 .group-feature-desc-p {
     font-size: 12px;

@@ -6,6 +6,7 @@ import { Login } from "./components/Login";
 import { GroupSettings } from "./components/GroupSettings";
 import { AccountSettings } from "./components/AccountSettings";
 import { Files } from "./components/Files";
+import { FileView } from "./components/FileView";
 
 
 const AppRoutes = [
@@ -37,18 +38,22 @@ const AppRoutes = [
     path: '/home',
     element: <Home />
   },
-    {
-        path: '/group-settings',
-        element: <GroupSettings />
-    },
-    {
-        path: '/account-settings',
-        element: <AccountSettings />
-    },
-    {
-        path: '/files',
-        element: <Files />
-    }
+  {
+    path: '/group-settings',
+    element: <GroupSettings />
+  },
+  {
+    path: '/account-settings',
+    element: <AccountSettings />
+  },
+  {
+    path: '/files',
+    element: <Files />
+  },
+  {
+    path: '/file-view-development',
+    element: <FileView />
+  }
 ];
 
 export default AppRoutes;
