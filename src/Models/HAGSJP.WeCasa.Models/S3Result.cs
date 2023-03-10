@@ -3,9 +3,9 @@ namespace HAGSJP.WeCasa.Models
 {
     public class S3Result : Result
     {
-        public List<FileModel> Files;
+        public List<FileModel> Files { get; set; }
 
-        public Object? ReturnedObject;
+        public Object? ReturnedObject { get; set; }
 
         public S3Result() { }
 
