@@ -11,6 +11,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="AWSSDK.S3" Version="3.7.103.22" />
+		<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
 		<PackageReference Include="MySqlConnector" Version="2.2.2" />
 	</ItemGroup>

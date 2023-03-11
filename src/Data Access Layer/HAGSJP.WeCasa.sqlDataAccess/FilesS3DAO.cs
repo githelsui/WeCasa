@@ -4,7 +4,6 @@ using Amazon.S3.Model;
 using Azure;
 using HAGSJP.WeCasa.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Identity.Client;
 using MySqlConnector;
 using System;
@@ -78,9 +77,10 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     };
                     var getDataResponse = await _client.GetObjectAsync(getObjectRequest);
 
-                    using (var streamReader = new StreamReader(getDataResponse.ResponseStream))
+                    using (var memoryStream = new MemoryStream())
                     {
-                        var s3ObjData = await streamReader.ReadToEndAsync();
+                        await getDataResponse.ResponseStream.CopyToAsync(memoryStream);
+                        var s3ObjData = memoryStream.ToArray();
                         s3Objects.Add(new S3ObjectModel(
                             s3Obj.Key.ToString(),
                             s3ObjData,

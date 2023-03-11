@@ -11,8 +11,6 @@ import NavMenu from './NavMenu';
 const { Meta } = Card;
 const TabPane = Tabs.TabPane;
 
-
-
 export const Files = () => {
     const { currentUser, currentGroup } = useAuth();
     const [files, setFiles] = useState([]);
@@ -38,10 +36,28 @@ export const Files = () => {
     const getFiles = () => {
         axios.get('files/GetGroupFiles')
             .then(res => {
-                console.log(res.data);
-                setFiles(res.data['returnedObject']);
+                var fileContents = []
+                fileContents = res.data['returnedObject'].map(file => {
+                    const binaryData = atob(file['data']);
+                    const arrayBuffer = new ArrayBuffer(binaryData.length);
+                    const uint8Array = new Uint8Array(arrayBuffer);
+                    for (let i = 0; i < binaryData.length; i++) {
+                        uint8Array[i] = binaryData.charCodeAt(i);
+                    }
+                    const blob = new Blob([uint8Array], { type: 'image/jpg' })
+                    return {
+                        ...file,
+                        data: binaryData,
+                        url: URL.createObjectURL(blob)
+                    }
+                });
+                console.log(fileContents);
+                setFiles(fileContents);
             })
-            .catch((error) => { console.error(error) });
+            .catch((error) => {
+                console.error(error)
+                // failure file display view
+            });
     }
 
     const attemptFileUpload = () => {
@@ -60,16 +76,12 @@ export const Files = () => {
                     <Col span={10} style={{ marginTop: 16, marginLeft: 16 }}>
                         <Card
                             hoverable
-                            style={{ width: 200, height: 200 }}
+                            style={{ width: 200 }}
                             cover={
                                 <Image
-                                    style={{
-                                        borderRadius: '5%',
-                                        display: 'flex',
-                                        margin: '5%',
-                                    }}
-                                    src={image2}
-                                    preview={false} height="120px" width="120px" />}>
+                                    src={file.url}
+                                    onError={() => console.error(`Error loading image ${file.url}`)}
+                                    preview={false}/>}>
                             <Meta title={file.fileName}
                                 type="inner"
                                 style={{ textAlign: "center", display: "flex" }} />

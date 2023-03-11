@@ -11,7 +11,7 @@ namespace HAGSJP.WeCasa.Models
         {
             FileName = fileName;
         }
-        public S3ObjectModel(string fileName, string data, string size, DateTime lastUpdated)
+        public S3ObjectModel(string fileName, byte[] data, string size, DateTime lastUpdated)
         {
             FileName = fileName;
             Data = data;
@@ -20,8 +20,8 @@ namespace HAGSJP.WeCasa.Models
         }
 
         public string FileName { get; set; }
-        public string Data { get; set; }
-        public string? PresignedUrl { get; set; }
+        public byte[] Data { get; set; }
+        public string? Url { get; set; }
         public string? Owner { get; set; }
         public string? ContentType { get; set; }
         public string? Size { get; set; }
