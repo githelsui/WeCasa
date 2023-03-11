@@ -64,6 +64,19 @@ export const defaultButtonStyle = {
     textDecoration: 'none'
 }
 
+export const fileButtonStyle = {
+    fontFamily: 'Mulish',
+    fontWeight: 'bold',
+    display: 'inline-flex',
+    alignItems: 'center',
+    borderWidth: 'thin',
+    borderColor: '#111827',
+    backgroundColor: 'white',
+    textDecoration: 'none',
+    marginLeft: 30,
+    marginTop: 80,
+}
+
 export const buttonHover = {
     components: {
         Button: {

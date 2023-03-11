@@ -19,6 +19,15 @@ namespace HAGSJP.WeCasa.Models
             LastUpdated = lastUpdated;
         }
 
+        public S3ObjectModel(string fileName, byte[] data, string type, string size, DateTime lastUpdated)
+        {
+            FileName = fileName;
+            Data = data;
+            ContentType = type;
+            Size = size;
+            LastUpdated = lastUpdated;
+        }
+
         public string FileName { get; set; }
         public byte[] Data { get; set; }
         public string? Url { get; set; }

@@ -17,6 +17,28 @@ export const FileView = (props) => {
     const images = [image1, image2, image3, image4, image5, image6];
     const file = props.file;
 
+    // Source: https://javascript.info/date
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const month = date.toLocaleString('default', { month: 'long' });
+        const day = date.getDate();
+        const year = date.getFullYear();
+        const time = date.toLocaleString('en-US', {
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true
+        });
+        return `${month} ${day}, ${year} ${time}`;
+    }
+
+    const formatFileType = (fileType) => {
+        if (fileType != null) {
+            return fileType.slice(1).toUpperCase();
+        } else {
+            return '';
+        }
+    }
+
     const deleteFile = () => {
         alert('delete')
         let fileForm = {
@@ -77,7 +99,7 @@ export const FileView = (props) => {
 
                 <Row gutter={[24, 24]} align="top">
                     <Col span={16} className="file-object">
-                        <Image  src={defaultImage} preview={false} />
+                        <Image src={file.url} preview={false} />
                     </Col>
                     <Col span={6}>
                         <div className="file-info-section">
@@ -98,10 +120,10 @@ export const FileView = (props) => {
                             </Row> 
                             
                             <h6 style={{ color: "gray" }} className="mulish-font bold-font padding-top">Last updated</h6>
-                            <p className="mulish-font">"file.lastUpdated"</p>
+                            <p className="mulish-font">{formatDate(file.lastUpdated)}</p>
 
                             <h6 style={{ color: "gray" }} className="mulish-font bold-font padding-top">File type</h6>
-                            <p className="mulish-font">{file.type}</p>
+                            <p className="mulish-font">{formatFileType(file.contentType)}</p>
 
                             <h6 style={{ color: "gray" }} className="mulish-font bold-font padding-top">File size</h6>
                             <p className="mulish-font">{file.size}</p>

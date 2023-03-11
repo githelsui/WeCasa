@@ -81,9 +81,11 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     {
                         await getDataResponse.ResponseStream.CopyToAsync(memoryStream);
                         var s3ObjData = memoryStream.ToArray();
+                        var fileExtension = Path.GetExtension(s3Obj.Key);
                         s3Objects.Add(new S3ObjectModel(
                             s3Obj.Key.ToString(),
                             s3ObjData,
+                            fileExtension,
                             ConvertS3ObjectSize(s3Obj.Size),
                             s3Obj.LastModified
                         ));

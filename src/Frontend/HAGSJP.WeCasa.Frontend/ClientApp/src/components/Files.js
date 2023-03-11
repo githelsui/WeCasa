@@ -1,7 +1,7 @@
 import React, { Component, useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from './AuthContext';
-import { Col, Card, Row, Space, Avatar, Button, Image, Tabs, notification } from 'antd';
+import { Col, Card, Row, Space, ConfigProvider, Button, Image, Tabs, notification } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons'
 import axios from 'axios';
 import * as Styles from '../styles/ConstStyles.js';
@@ -12,7 +12,7 @@ const { Meta } = Card;
 const TabPane = Tabs.TabPane;
 
 export const Files = () => {
-    const { currentUser, currentGroup } = useAuth();
+    const { auth, currentGroup } = useAuth();
     const [files, setFiles] = useState([]);
     const [selectedFile, setSelectedFile] = useState('');
     const [showFile, setShowFile] = useState(false);
@@ -33,6 +33,25 @@ export const Files = () => {
         }
     };
 
+    const getBlobType = (fileType) => {
+        var blobType = '';
+        switch (fileType) {
+            case '.jpg' || '.png' || '.gif':
+                blobType = `image/${fileType}`;
+            case '.txt':
+                blobType = 'text/plain';
+            case '.html':
+                blobType = 'text/html';
+            case '.pdf':
+                blobType = 'application/pdf';
+            case '.doc':
+                blobType = 'application/msword';
+            case '.docx':
+                blobType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        }
+        return blobType;
+    }
+
     const getFiles = () => {
         axios.get('files/GetGroupFiles')
             .then(res => {
@@ -44,14 +63,13 @@ export const Files = () => {
                     for (let i = 0; i < binaryData.length; i++) {
                         uint8Array[i] = binaryData.charCodeAt(i);
                     }
-                    const blob = new Blob([uint8Array], { type: 'image/jpg' })
+                    const blob = new Blob([uint8Array], { type: getBlobType(file.contentType) })
                     return {
                         ...file,
                         data: binaryData,
                         url: URL.createObjectURL(blob)
                     }
                 });
-                console.log(fileContents);
                 setFiles(fileContents);
             })
             .catch((error) => {
@@ -76,7 +94,7 @@ export const Files = () => {
                     <Col span={10} style={{ marginTop: 16, marginLeft: 16 }}>
                         <Card
                             hoverable
-                            style={{ width: 200 }}
+                            style={{ width: 150 }}
                             cover={
                                 <Image
                                     src={file.url}
@@ -110,11 +128,22 @@ export const Files = () => {
         <div>
             <div>
                 <Tabs defaultActiveKey="1" onChange={tabItemClick} destroyInactiveTabPane>
-                    <TabPane tab="Group Files" key="1"><Space direction="horizonal" size={32}>{displayFileView()}</Space></TabPane>
+                    <TabPane tab="Group Files" key="1">
+                        <Space direction="horizonal" size={32}>
+                            {displayFileView()}
+                            <Button
+                                style={Styles.fileButtonStyle}
+                                shape="round"
+                                icon={<PlusCircleOutlined />}
+                                size={'large'}
+                                onClick={() => attemptFileUpload()}>
+                                Add file
+                            </Button>
+                        </Space>
+                    </TabPane>
                     <TabPane tab="Deleted Files" key="2">{displayDeletedFiles()}</TabPane>
                 </Tabs>
-                <FileView show={showFile} close={() => setShowFile(false)} file={selectedFile}/>
-
+                <FileView show={showFile} close={() => setShowFile(false)} file={selectedFile} />
             </div>
         </div>
     );
