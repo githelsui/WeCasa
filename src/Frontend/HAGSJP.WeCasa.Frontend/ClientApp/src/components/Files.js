@@ -1,10 +1,12 @@
 import React, { Component, useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from './AuthContext';
-import { Col, Card, Row, Space, Avatar, Button, Tabs, notification } from 'antd';
+import { Col, Card, Row, Space, Avatar, Button, Image, Tabs, notification } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons'
 import axios from 'axios';
 import * as Styles from '../styles/ConstStyles.js';
+import { FileView } from './FileView.js';
+import image2 from '../assets/profileimgs/2.jpg';
 import NavMenu from './NavMenu';
 const { Meta } = Card;
 const TabPane = Tabs.TabPane;
@@ -12,9 +14,10 @@ const TabPane = Tabs.TabPane;
 
 
 export const Files = () => {
-    const [loading, setLoading] = useState(true);
     const { currentUser, currentGroup } = useAuth();
     const [files, setFiles] = useState([]);
+    const [selectedFile, setSelectedFile] = useState('');
+    const [showFile, setShowFile] = useState(false);
     const [refreshSettings, setRefreshSettings] = useState(true);
     const [refreshFiles, setRefreshFiles] = useState(true);
     const navigate = useNavigate();
@@ -36,7 +39,7 @@ export const Files = () => {
         axios.get('files/GetGroupFiles')
             .then(res => {
                 console.log(res.data);
-                //setFiles(res.data['returnedObject']);
+                setFiles(res.data['returnedObject']);
             })
             .catch((error) => { console.error(error) });
     }
@@ -45,16 +48,37 @@ export const Files = () => {
 
     }
 
-    const displayFileView = () => {
-        return files.map(file => (
-            <div key={file.fileId}>
-                <Col span={10} style={{ marginTop: 16, marginLeft: 16 }}>
-                    <Card>
+    const selectFile = (file) => {
+        setSelectedFile(file);
+        setShowFile(true);
+    }
 
-                    </Card>
-                </Col>
-            </div>
-        ));
+    const displayFileView = () => {
+        var fileList = files.map(function (file, index) {
+            return (
+                <div key={index} onClick={() => selectFile(file)}>
+                    <Col span={10} style={{ marginTop: 16, marginLeft: 16 }}>
+                        <Card
+                            hoverable
+                            style={{ width: 200, height: 200 }}
+                            cover={
+                                <Image
+                                    style={{
+                                        borderRadius: '5%',
+                                        display: 'flex',
+                                        margin: '5%',
+                                    }}
+                                    src={image2}
+                                    preview={false} height="120px" width="120px" />}>
+                            <Meta title={file.fileName}
+                                type="inner"
+                                style={{ textAlign: "center", display: "flex" }} />
+                        </Card>
+                    </Col>
+                </div>
+            );
+        });
+        return fileList;
     }
 
     const displayDeletedFiles = () => {
@@ -74,9 +98,10 @@ export const Files = () => {
         <div>
             <div>
                 <Tabs defaultActiveKey="1" onChange={tabItemClick} destroyInactiveTabPane>
-                    <TabPane tab="Group Files" key="1">{displayFileView()}</TabPane>
+                    <TabPane tab="Group Files" key="1"><Space direction="horizonal" size={32}>{displayFileView()}</Space></TabPane>
                     <TabPane tab="Deleted Files" key="2">{displayDeletedFiles()}</TabPane>
                 </Tabs>
+                <FileView show={showFile} close={() => setShowFile(false)} file={selectedFile}/>
 
             </div>
         </div>

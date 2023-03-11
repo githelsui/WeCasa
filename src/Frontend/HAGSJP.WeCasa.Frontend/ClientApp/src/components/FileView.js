@@ -15,11 +15,12 @@ import image6 from '../assets/profileimgs/6.jpg';
 
 export const FileView = (props) => {
     const images = [image1, image2, image3, image4, image5, image6];
+    const file = props.file;
 
     const deleteFile = () => {
         alert('delete')
         let fileForm = {
-            FileName: props.file.name
+            FileName: file.fileName
         }
 
         axios.post('files/DeleteFile', fileForm)
@@ -34,7 +35,7 @@ export const FileView = (props) => {
     const downloadFile = () => {
         alert('download')
         let fileForm = {
-            FileName: props.file.name
+            FileName: file.fileName
         }
 
         axios.post('files/DownloadFile', fileForm)
@@ -57,7 +58,7 @@ export const FileView = (props) => {
 
     return (
         <Modal
-            open={true}
+            open={props.show}
             closable={true}
             onCancel={props.close}
             maskClosable="false"
@@ -67,7 +68,7 @@ export const FileView = (props) => {
             <div className="padding">
                 <Row gutter={[24, 24]} align="middle">
                     <Col span={8} className="file-name">
-                        <h4 className="mulish-font"><b>"props.file.name"</b></h4>
+                        <h4 className="mulish-font"><b>{file.fileName}</b></h4>
                     </Col>
                     <Col span={10} className="delete-file-button">
                         <Button size="large" shape="circle" style={{ margin: 20, border: 'none' }} onClick={deleteFile}><DeleteOutlined /></Button>
@@ -91,19 +92,19 @@ export const FileView = (props) => {
                                         preview={false} height="50px" width="50px" />
                                 </Col>
                                 <Col span={17}>
-                                    <h7 className="mulish-font bold-font"><b>Firstname Lastname</b></h7>
+                                    <h6 className="mulish-font bold-font"><b>Firstname Lastname</b></h6>
                                     <p className="mulish-font">Username</p>
                                 </Col>
                             </Row> 
                             
                             <h6 style={{ color: "gray" }} className="mulish-font bold-font padding-top">Last updated</h6>
-                            <p className="mulish-font">"props.file.updated"</p>
+                            <p className="mulish-font">"file.lastUpdated"</p>
 
                             <h6 style={{ color: "gray" }} className="mulish-font bold-font padding-top">File type</h6>
-                            <p className="mulish-font">"props.file.type"</p>
+                            <p className="mulish-font">{file.type}</p>
 
                             <h6 style={{ color: "gray" }} className="mulish-font bold-font padding-top">File size</h6>
-                            <p className="mulish-font">"props.file.size"</p>
+                            <p className="mulish-font">{file.size}</p>
                         </div>
                         <Button onClick={props.download} style={Styles.defaultButtonStyle} type="default" onClick={downloadFile}>Download</Button>
                     </Col>

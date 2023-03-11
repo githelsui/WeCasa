@@ -30,9 +30,6 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public S3Result GetGroupFiles(string groupId)
         {
             var result = _dao.GetGroupFiles(groupId).Result;
-            var files = result.Files;
-            var filesArr = files.ToArray();
-            result.ReturnedObject = filesArr;
             return result;
         }
         
