@@ -23,6 +23,22 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
             var result = fm.GetGroupFiles("");
             return result;
         }
+
+        [HttpPost]
+        [Route("RemoveFile")]
+        public S3Result RemoveFile([FromBody] FileForm fileForm)
+        {
+            FileManager fm = new FileManager();
+            throw new NotImplementedException();
+        }
+
+        [HttpPost]
+        [Route("DownloadFile")]
+        public S3Result DownloadFile([FromBody] FileForm fileForm)
+        {
+            FileManager fm = new FileManager();
+            throw new NotImplementedException();
+        }
     }
 }
 

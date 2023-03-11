@@ -1,5 +1,6 @@
 ﻿import React, { Component, useState, useEffect } from 'react';
-import { Modal, ConfigProvider, Button, Row, Col, Image } from 'antd';
+import { Modal, ConfigProvider, Button, Row, Col, Image, notification } from 'antd';
+import axios from 'axios';
 import { DeleteOutlined } from '@ant-design/icons';
 import * as Styles from '../styles/ConstStyles.js';
 import defaultImage from '../assets/defaultimgs/wecasatemp.jpg';
@@ -16,11 +17,42 @@ export const FileView = (props) => {
     const images = [image1, image2, image3, image4, image5, image6];
 
     const deleteFile = () => {
-        //Axios call /delete
+        alert('delete')
+        let fileForm = {
+            FileName: props.file.name
+        }
+
+        axios.post('files/DeleteFile', fileForm)
+            .then(res => {
+                console.log(res.data);
+                props.close();
+                toast('File deleted successfully.')
+            })
+            .catch((error) => { console.error(error) });
     }
 
     const downloadFile = () => {
-        //Axios call /download
+        alert('download')
+        let fileForm = {
+            FileName: props.file.name
+        }
+
+        axios.post('files/DownloadFile', fileForm)
+            .then(res => {
+                console.log(res.data);
+                props.close();
+                toast('File downloading successfully.')
+            })
+            .catch((error) => { console.error(error) });
+    }
+
+    const toast = (title, desc = '') => {
+        notification.open({
+            message: title,
+            description: desc,
+            duration: 5,
+            placement: 'bottom',
+        });
     }
 
     return (
