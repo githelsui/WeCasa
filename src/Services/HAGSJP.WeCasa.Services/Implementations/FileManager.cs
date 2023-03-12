@@ -9,6 +9,8 @@ using System.Net;
 using System;
 using System.Collections;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
@@ -32,6 +34,10 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var result = _dao.GetGroupFiles(groupId).Result;
             return result;
         }
-        
+
+        public S3Result DeleteFile(string fileName, string bucketName)
+        {
+            return _dao.DeleteFile(fileName, bucketName).Result;
+        }
     }
 }

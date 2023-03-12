@@ -25,11 +25,11 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         }
 
         [HttpPost]
-        [Route("RemoveFile")]
-        public S3Result RemoveFile([FromBody] FileForm fileForm)
+        [Route("DeleteFile")]
+        public S3Result DeleteFile([FromBody] FileForm fileForm)
         {
             FileManager fm = new FileManager();
-            throw new NotImplementedException();
+            return fm.DeleteFile(fileForm.FileName, "");
         }
 
         [HttpPost]

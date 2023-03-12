@@ -11,5 +11,6 @@ namespace HAGSJP.WeCasa.Services.Implementations
     public interface IFileManager
     {
         public S3Result GetGroupFiles(string groupId);
+        public S3Result DeleteFile(string fileName, string bucketName);
     }
 }

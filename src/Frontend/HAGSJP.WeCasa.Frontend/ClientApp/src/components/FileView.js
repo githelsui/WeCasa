@@ -40,7 +40,7 @@ export const FileView = (props) => {
     }
 
     const deleteFile = () => {
-        alert('delete')
+        console.log('delete')
         let fileForm = {
             FileName: file.fileName
         }
@@ -51,11 +51,14 @@ export const FileView = (props) => {
                 props.close();
                 toast('File deleted successfully.')
             })
-            .catch((error) => { console.error(error) });
+            .catch((error) => {
+                console.error(error)
+                toast("Try again.", "Error deleting file.");
+            });
     }
 
     const downloadFile = () => {
-        alert('download')
+        console.log('download')
         let fileForm = {
             FileName: file.fileName
         }
@@ -66,7 +69,10 @@ export const FileView = (props) => {
                 props.close();
                 toast('File downloading successfully.')
             })
-            .catch((error) => { console.error(error) });
+            .catch((error) => {
+                console.error(error)
+                toast("Try again.", "Error downloading file.");
+            });
     }
 
     const toast = (title, desc = '') => {

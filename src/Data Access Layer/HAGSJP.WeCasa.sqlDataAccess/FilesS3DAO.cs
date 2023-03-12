@@ -116,5 +116,17 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             return result;
         }
 
+        public async Task<S3Result> DeleteFile(string fileName, string bucketName)
+        {
+            var result = new S3Result();
+            var request = new DeleteObjectRequest
+            {
+                BucketName = string.IsNullOrEmpty(bucketName) ? _bucketName : bucketName,
+                Key = fileName
+            };
+            await _client.DeleteObjectAsync(request);
+            return result;
+        }
+
     }
 }
