@@ -44,6 +44,7 @@ export const FileView = (props) => {
 
     const deleteFile = () => {
         console.log('delete')
+        // Making sure the user is the owner of the file
         if (currentUser['username'] != file.owner) {
             toast("Unable to delete.","You are not the owner of this file.");
             setShowModal(false);
@@ -57,7 +58,13 @@ export const FileView = (props) => {
             .then(res => {
                 console.log(res.data);
                 props.close();
-                toast('File deleted successfully.')
+                let isSuccessful = res.data['isSuccessful'];
+                if (isSuccessful) {
+                    toast('File deleted successfully.')
+                }
+                else {
+                    toast('An error occurred.')
+                }
             })
             .catch((error) => {
                 console.error(error)

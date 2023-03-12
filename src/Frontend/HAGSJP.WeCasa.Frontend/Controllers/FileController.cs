@@ -17,7 +17,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
     {
         [HttpGet]
         [Route("GetGroupFiles")]
-        public S3Result GetGroupFiles(string groupId)
+        public S3Result GetGroupFiles([FromQuery] string groupId)
         {
             FileManager fm = new FileManager();
             var result = fm.GetGroupFiles(groupId);

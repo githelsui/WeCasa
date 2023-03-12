@@ -55,7 +55,8 @@ export const Files = () => {
     }
 
     const getFiles = () => {
-        axios.get('files/GetGroupFiles', currentGroup['groupId'])
+        let groupId = currentGroup['groupId'];
+        axios.get('files/GetGroupFiles', { params: { groupId }})
             .then(res => {
                 var isSuccessful = res.data['isSuccessful']
                 if (isSuccessful) {
