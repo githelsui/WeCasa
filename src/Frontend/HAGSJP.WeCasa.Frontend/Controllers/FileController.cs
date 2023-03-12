@@ -41,7 +41,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         public S3Result DeleteFile([FromBody] FileForm fileForm)
         {
             FileManager fm = new FileManager();
-            var fileName = fileForm.FileName;
+            var fileName = fileForm.Owner + '/' + fileForm.FileName;
             var groupId = fileForm.GroupId;
             return fm.DeleteFile(fileName, groupId);
         }

@@ -18,7 +18,6 @@ export const Files = () => {
     const [uploadFile, setUploadFile] = useState('');
     const [showFile, setShowFile] = useState(false);
     const [refreshSettings, setRefreshSettings] = useState(true);
-    const [refreshFiles, setRefreshFiles] = useState(true);
     const fileInputRef = React.createRef();
     const navigate = useNavigate();
 
@@ -27,10 +26,8 @@ export const Files = () => {
     const tabItemClick = (key) => {
         console.log('tab click', key);
         if (key == 1) {
-            setRefreshFiles(true)
             setRefreshSettings(false)
         } else {
-            setRefreshFiles(false)
             setRefreshSettings(true)
         }
     };
@@ -55,6 +52,7 @@ export const Files = () => {
     }
 
     const getFiles = () => {
+        console.log("Getting group files...");
         let groupId = currentGroup['groupId'];
         axios.get('files/GetGroupFiles', { params: { groupId }})
             .then(res => {
@@ -126,6 +124,11 @@ export const Files = () => {
         setShowFile(true);
     }
 
+    const refreshFiles = () => {
+        setShowFile(false);
+        getFiles();
+    }
+
     const displayFileView = () => {
         var fileList = files.map(function (file, index) {
             return (
@@ -183,7 +186,7 @@ export const Files = () => {
                     </TabPane>
                     <TabPane tab="Deleted Files" key="2">{displayDeletedFiles()}</TabPane>
                 </Tabs>
-                <FileView show={showFile} close={() => setShowFile(false)} file={selectedFile} />
+                <FileView show={showFile} close={() => refreshFiles() } file={selectedFile} />
             </div>
         </div>
     );
