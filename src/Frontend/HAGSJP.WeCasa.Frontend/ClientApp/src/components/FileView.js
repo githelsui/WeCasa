@@ -3,9 +3,10 @@ import { Modal, ConfigProvider, Button, Row, Col, Image, notification } from 'an
 import axios from 'axios';
 import { DeleteOutlined } from '@ant-design/icons';
 import * as Styles from '../styles/ConstStyles.js';
-import defaultImage from '../assets/defaultimgs/wecasatemp.jpg';
+import { useAuth } from './AuthContext';
 import '../styles/System.css';
 import '../index.css';
+import DeleteFileModal from './DeleteFileModal.js';
 import image1 from '../assets/profileimgs/1.jpg';
 import image2 from '../assets/profileimgs/2.jpg';
 import image3 from '../assets/profileimgs/3.jpg';
@@ -14,6 +15,8 @@ import image5 from '../assets/profileimgs/5.jpg';
 import image6 from '../assets/profileimgs/6.jpg';
 
 export const FileView = (props) => {
+    const { currentUser } = useAuth();
+    const [showModal, setShowModal] = useState(false);
     const images = [image1, image2, image3, image4, image5, image6];
     const file = props.file;
 
@@ -41,10 +44,15 @@ export const FileView = (props) => {
 
     const deleteFile = () => {
         console.log('delete')
-        let fileForm = {
-            FileName: file.fileName
+        if (currentUser['username'] != file.owner) {
+            toast("Unable to delete.","You are not the owner of this file.");
+            setShowModal(false);
+            return;
         }
-
+        let fileForm = {
+            FileName: file.fileName,
+            Owner: currentUser['username']
+        }
         axios.post('files/DeleteFile', fileForm)
             .then(res => {
                 console.log(res.data);
@@ -55,6 +63,7 @@ export const FileView = (props) => {
                 console.error(error)
                 toast("Try again.", "Error deleting file.");
             });
+        setShowModal(false);
     }
 
     const downloadFile = () => {
@@ -99,7 +108,7 @@ export const FileView = (props) => {
                         <h4 className="mulish-font"><b>{file.fileName}</b></h4>
                     </Col>
                     <Col span={10} className="delete-file-button">
-                        <Button size="large" shape="circle" style={{ margin: 20, border: 'none' }} onClick={deleteFile}><DeleteOutlined /></Button>
+                        <Button size="large" shape="circle" style={{ margin: 20, border: 'none' }} onClick={() => setShowModal(true)}><DeleteOutlined /></Button>
                     </Col>
                 </Row>
 
@@ -121,7 +130,7 @@ export const FileView = (props) => {
                                 </Col>
                                 <Col span={17}>
                                     <h6 className="mulish-font bold-font"><b>Firstname Lastname</b></h6>
-                                    <p className="mulish-font">Username</p>
+                                    <p className="mulish-font">{file.owner}</p>
                                 </Col>
                             </Row> 
                             
@@ -137,6 +146,7 @@ export const FileView = (props) => {
                         <Button onClick={props.download} style={Styles.defaultButtonStyle} type="default" onClick={downloadFile}>Download</Button>
                     </Col>
                 </Row>
+                <DeleteFileModal show={showModal} close={() => setShowModal(false)} confirm={deleteFile} />
             </div>
         </Modal>
     );

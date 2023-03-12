@@ -18,8 +18,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
     {
         // Configuring AWS S3 client for hagsjp.wecasa.s3 user
         private AmazonS3Client _client = new AmazonS3Client(
-            "AKIA2K6ZUAG72RZQSEVE", // access key
-            "IvAMJp3Wx6qTzNxYDYCcUJGI7UtecLxJCO6APkDO", // secret access key
+            "AKIA2K6ZUAG7SOZBM5KV",
+            "",
             Amazon.RegionEndpoint.USEast2
         );
         private string _bucketName = "wecasa-group-files";
@@ -102,29 +102,45 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             return result;
         }
 
-        public async Task<S3Result> UploadFile(IFormFile file, string bucketName, string? prefix)
+        public async Task<S3Result> UploadFile(IFormFile file, string groupId, string? prefix)
         {
             var result = new S3Result();
             var request = new PutObjectRequest()
             {
-                BucketName = bucketName,
+                // BucketName = _bucketName+groupId,
+                BucketName = _bucketName,
                 Key = string.IsNullOrEmpty(prefix) ? file.FileName : $"{prefix?.TrimEnd('/')}/{file.FileName}",
                 InputStream = file.OpenReadStream()
             };
-            request.Metadata.Add("Content-Type", file.ContentType);
-            await _client.PutObjectAsync(request);
+            
+            var response = await _client.PutObjectAsync(request);
+            result.ErrorStatus = response.HttpStatusCode;
+            result.Message = $"{file.FileName} successfully uploaded.";
+            result.IsSuccessful = true;
             return result;
         }
 
-        public async Task<S3Result> DeleteFile(string fileName, string bucketName)
+        public async Task<S3Result> DeleteFile(string fileName, string groupId)
         {
             var result = new S3Result();
-            var request = new DeleteObjectRequest
+            var request = new DeleteObjectRequest()
             {
-                BucketName = string.IsNullOrEmpty(bucketName) ? _bucketName : bucketName,
+                //BucketName = _bucketName+groupId,
+                BucketName = _bucketName,
                 Key = fileName
             };
-            await _client.DeleteObjectAsync(request);
+            try
+            {
+                var response = await _client.DeleteObjectAsync(request);
+                result.ErrorStatus = response.HttpStatusCode;
+                result.Message = $"{fileName} successfully deleted.";
+                result.IsSuccessful = true;
+            }
+            catch (Exception ex)
+            {
+                result.Message = $"Error deleting {fileName}: {ex.Message}";
+                result.IsSuccessful = false;
+            }
             return result;
         }
 

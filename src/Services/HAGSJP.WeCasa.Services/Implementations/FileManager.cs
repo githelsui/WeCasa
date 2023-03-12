@@ -35,9 +35,16 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return result;
         }
 
-        public S3Result DeleteFile(string fileName, string bucketName)
+        public S3Result UploadFile(IFormFile file, string groupId, string username)
         {
-            return _dao.DeleteFile(fileName, bucketName).Result;
+            var result = _dao.UploadFile(file, groupId, username).Result;
+            return result;
         }
+
+        public S3Result DeleteFile(string fileName, string groupId)
+        {
+            return _dao.DeleteFile(fileName, groupId).Result;
+        }
+
     }
 }

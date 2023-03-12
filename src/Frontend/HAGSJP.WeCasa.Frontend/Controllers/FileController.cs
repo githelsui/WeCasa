@@ -17,10 +17,22 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
     {
         [HttpGet]
         [Route("GetGroupFiles")]
-        public S3Result GetGroupFiles()
+        public S3Result GetGroupFiles(string groupId)
         {
             FileManager fm = new FileManager();
-            var result = fm.GetGroupFiles("");
+            var result = fm.GetGroupFiles(groupId);
+            return result;
+        }
+
+        [HttpPost]
+        [Route("UploadFile")]
+        public S3Result UploadFile([FromForm] FileForm fileForm)
+        {
+            FileManager fm = new FileManager();
+            var file = fileForm.File;
+            var groupId = fileForm.GroupId;
+            var owner = fileForm.Owner;
+            var result = fm.UploadFile(file, groupId, owner);
             return result;
         }
 
@@ -29,7 +41,9 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         public S3Result DeleteFile([FromBody] FileForm fileForm)
         {
             FileManager fm = new FileManager();
-            return fm.DeleteFile(fileForm.FileName, "");
+            var fileName = fileForm.FileName;
+            var groupId = fileForm.GroupId;
+            return fm.DeleteFile(fileName, groupId);
         }
 
         [HttpPost]

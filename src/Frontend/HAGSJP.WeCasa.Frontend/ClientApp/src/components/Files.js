@@ -12,12 +12,14 @@ const { Meta } = Card;
 const TabPane = Tabs.TabPane;
 
 export const Files = () => {
-    const { auth, currentGroup } = useAuth();
+    const { currentUser, currentGroup } = useAuth();
     const [files, setFiles] = useState([]);
     const [selectedFile, setSelectedFile] = useState('');
+    const [uploadFile, setUploadFile] = useState('');
     const [showFile, setShowFile] = useState(false);
     const [refreshSettings, setRefreshSettings] = useState(true);
     const [refreshFiles, setRefreshFiles] = useState(true);
+    const fileInputRef = React.createRef();
     const navigate = useNavigate();
 
     useEffect(() => { getFiles(); }, []);
@@ -53,33 +55,69 @@ export const Files = () => {
     }
 
     const getFiles = () => {
-        axios.get('files/GetGroupFiles')
+        axios.get('files/GetGroupFiles', currentGroup['groupId'])
             .then(res => {
-                var fileContents = []
-                fileContents = res.data['returnedObject'].map(file => {
-                    const binaryData = atob(file['data']);
-                    const arrayBuffer = new ArrayBuffer(binaryData.length);
-                    const uint8Array = new Uint8Array(arrayBuffer);
-                    for (let i = 0; i < binaryData.length; i++) {
-                        uint8Array[i] = binaryData.charCodeAt(i);
-                    }
-                    const blob = new Blob([uint8Array], { type: getBlobType(file.contentType) })
-                    return {
-                        ...file,
-                        data: binaryData,
-                        url: URL.createObjectURL(blob)
-                    }
-                });
-                setFiles(fileContents);
+                var isSuccessful = res.data['isSuccessful']
+                if (isSuccessful) {
+                    var fileContents = []
+                    fileContents = res.data['returnedObject'].map(file => {
+                        const binaryData = atob(file['data']);
+                        const arrayBuffer = new ArrayBuffer(binaryData.length);
+                        const uint8Array = new Uint8Array(arrayBuffer);
+                        for (let i = 0; i < binaryData.length; i++) {
+                            uint8Array[i] = binaryData.charCodeAt(i);
+                        }
+                        const blob = new Blob([uint8Array], { type: getBlobType(file.contentType) })
+                        return {
+                            ...file,
+                            owner: file.fileName.split('/').slice(0, -1).join('/'),
+                            fileName: file.fileName.split('/').pop(),
+                            data: binaryData,
+                            url: URL.createObjectURL(blob)
+                        }
+                    });
+                    setFiles(fileContents);
+                }
+                else {
+                    failureFileView(res.data['message']);
+                }
             })
             .catch((error) => {
                 console.error(error)
-                // failure file display view
             });
     }
 
-    const attemptFileUpload = () => {
+    const getUserFile = () => {
+        fileInputRef.current.click();
+    }
 
+    const handleFileInputChange = (event) => {
+        const file = event.target.files[0];
+        // TODO: Input Validation
+        setUploadFile(file);
+        attemptFileUpload(file);
+    }
+
+    const attemptFileUpload = (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('name', file.name);
+        formData.append('owner', currentUser['username']);
+        formData.append('groupId', currentGroup['groupId']);
+        
+        axios.post('files/UploadFile', formData, { headers: { 'Content-Type': 'multipart/form-data' }})
+            .then(res => {
+                var isSuccessful = res.data['isSuccessful'];
+                if (isSuccessful) {
+                    getFiles();
+                }
+                else {
+                    failureFileView(res.data['message']);
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     }
 
     const selectFile = (file) => {
@@ -136,9 +174,10 @@ export const Files = () => {
                                 shape="round"
                                 icon={<PlusCircleOutlined />}
                                 size={'large'}
-                                onClick={() => attemptFileUpload()}>
+                                onClick={() => getUserFile()}>
                                 Add file
                             </Button>
+                            <input type="file" ref={fileInputRef} onChange={handleFileInputChange} style={{ display: 'none'}}></input>
                         </Space>
                     </TabPane>
                     <TabPane tab="Deleted Files" key="2">{displayDeletedFiles()}</TabPane>
