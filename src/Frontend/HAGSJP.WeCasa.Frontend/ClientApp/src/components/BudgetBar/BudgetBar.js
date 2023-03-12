@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Table, Progress, Tabs, Button } from 'antd';
+import { Table, Progress, Tabs, Button, Space } from 'antd';
 import NavMenu from '../NavMenu';
 import {MultiColorProgressBar} from './ProgressBar';
 import BillForm from './BillForm';
@@ -8,15 +8,17 @@ import BudgetForm from './BudgetForm';
 import DeletionModal from '../DeletionModal';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import * as Styles from '../../styles/ConstStyles';
+import { EditBillForm } from './EditBillForm';
 
 export const BudgetBar = (user) => {
   // const { auth, currentUser } = useAuth();
   const currentUser = 'frost@gmail.com'; //TEST DATA
   const groupId = 123456; //TEST DATA
-  const [GET, setGet] = useState();
   const [selectedUser, setSelectedUser] = useState(currentUser);
-  const [showBillForm, setShowBillForm] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [deleteBill, setDeleteBill] = useState(null);
+  const [editBill, setEditBill] = useState(null);
   
   const [budget, setBudget] = useState(0)
   const [groupTotal, setGroupTotal] = useState(0)
@@ -24,69 +26,75 @@ export const BudgetBar = (user) => {
   const [activeBills, setActiveBills] = useState([])
   const [deletedBills, setDeletedBills] = useState([])
 
-  const handleDelete = (billId) => {
-      axios.delete(`budgetbar/Delete/${billId}`).then((response) => { 
-        let res = response
-        if (res) {
-          console.log('Delete Successful')
-        } else {
-          console.log('Delete Failed')
-        }
-      }).catch((error => { console.error(error) }));
-      // setShowDeleteModal(false)
-    }
+  useEffect(() => {
+    axios.get(`budgetbar/${groupId}`).then((response) => { 
+       var res = response.data
+       setBudget(res["budget"])
+       setGroupTotal(res["groupTotal"])
+       console.log(groupTotal/budget)
+       let newUserList = [];
+       let colorCounter = 0;
+       res["group"].forEach(function (item) {
+         const newObj =   {
+           username: item.username,
+           name: item.firstName,
+           value: Math.floor(res["userTotals"][item.username]/res["groupTotal"] * 100),
+           color: color[colorCounter++]
+         }
+         newUserList.push(newObj)
+       })
+       setUsers(newUserList)
+       console.log("NEW OBJECT WITH COLOR", users)
+       let activeBillList = []
+       res["activeBills"].forEach(function (bill) {
+         let date = new Date(bill.dateEntered);
+         let formattedDate = date.getMonth() + "/" + date.getDay() + "/" + date.getFullYear();
+         let newObj = {
+           amount: bill.amount,
+           description: bill.billDescription,
+           billID: bill.billId,
+           billName: bill.billName,
+           date: formattedDate,
+           groupID: bill.groupId,
+           IsRepeated: bill.isRepeated,
+           owner: bill.owner,
+           paymentStatus: bill.paymentStatus,
+           usernames: bill.usernames,
+           PhotoFileName: bill.photoFileName
+         }
+         activeBillList.push(newObj)
+       })
+       setActiveBills(activeBillList)
+       console.log(activeBillList)
+       let deletedBillList = []
+       res["deletedBills"].forEach(function (bill) {
+         let date = new Date(bill.dateEntered);
+         let formattedDate = date.getMonth() + "/" + date.getDay() + "/" + date.getFullYear();
+         let newObj = {
+           amount: bill.amount,
+           description: bill.billDescription,
+           billID: bill.billId,
+           billName: bill.billName,
+           date: formattedDate,
+           groupID: bill.groupId,
+           IsRepeated: bill.isRepeated,
+           owner: bill.owner,
+           paymentStatus: bill.paymentStatus ? "PAID" : "UNPAID",
+           usernames: bill.usernames,
+           PhotoFileName: bill.photoFileName
 
-  const columns = [
-    {
-      key: "1",
-      title: '',
-      render: (bill) => {
-        return(
-        <span>
-          <EditOutlined onClick={()=>{setShowBillForm(!showBillForm)}}/>
-          <DeleteOutlined style={{ marginLeft: '10px' }} onClick={()=>{setShowDeleteModal(true)}}/>
-          <DeletionModal message='Are you sure you want to delete this bill?' show={showDeleteModal} close={()=>setShowDeleteModal(false)} confirm={handleDelete(bill.billID)} />
-        </span>
-        )}    
-    },
-    {
-      key: "2",
-      title: 'Date',
-      dataIndex: 'date',
-    },
-    {
-      key: "3",
-      title: 'Name',
-      dataIndex: 'billName',
-    },
-    {
-      key: "4",
-      title: 'Owner',
-      dataIndex: 'owner',
-    },
-    {
-      key: "5",
-      title: 'Description',
-      dataIndex: 'description',
-    },
-    {
-      key: "6",
-      title: 'Amount',
-      dataIndex: 'amount',
-    },
-    {
-      key: "7",
-      title: 'Status',
-      dataIndex: 'paymentStatus',
-    },
-    {
-      key: "8",
-      title: 'Receipt',
-      dataIndex: 'receipt',
-    }
-  ];
-
+         }
+         deletedBillList.push(newObj)
+       })
+       setDeletedBills(deletedBillList)
+     console.log("SUCCESS")
+ }).catch( (error) => {
+   console.log(error)
+   alert("Finances failed to load.")});
+ }, []);
+  
   const handleRestoreButton = (billId) => {
+    console.log("RESROTE", billId)
     if (billId !== null) {
       axios.put(`budgetbar/Restore/${billId}`).then((response) => { 
         let res = response
@@ -147,77 +155,80 @@ export const BudgetBar = (user) => {
    '#7e7e7e', '#c4bdac', '#e5e3d7', '#cbc3ba','#a88e7a', '#cbdae1', '#a88e7a', '#ebcfc4', '#a6a998', '#d9c2b0'
   ]
 
-  useEffect(() => {
-     axios.get(`budgetbar/${groupId}`).then((response) => { 
-        var res = response.data
-        setBudget(res["budget"])
-        setGroupTotal(res["groupTotal"])
-        console.log(groupTotal/budget)
-        let newUserList = [];
-        let colorCounter = 0;
-        res["group"].forEach(function (item) {
-          const newObj =   {
-            username: item.username,
-            name: item.firstName,
-            value: Math.floor(res["userTotals"][item.username]/res["groupTotal"] * 100),
-            color: color[colorCounter++]
-          }
-          newUserList.push(newObj)
-        })
-        setUsers(newUserList)
-        console.log("NEW OBJECT WITH COLOR", users)
-        let activeBillList = []
-        res["activeBills"].forEach(function (bill) {
-          let date = new Date(bill.dateEntered);
-          let formattedDate = date.getMonth() + "/" + date.getDay() + "/" + date.getFullYear();
-          let newObj = {
-            amount: bill.amount,
-            description: bill.billDescription,
-            billID: bill.billId,
-            billName: bill.billName,
-            date: formattedDate,
-            groupID: bill.groupId,
-            owner: bill.owner,
-            paymentStatus: bill.paymentStatus ? "PAID" : "UNPAID",
-            usernames: bill.usernames
-          }
-          activeBillList.push(newObj)
-        })
-        setActiveBills(activeBillList)
+  const handleDelete = (billId) => {
+    axios.delete(`budgetbar/Delete/${billId}`).then((response) => { 
+      let res = response
+      if (res) {
+        console.log('Delete Successful')
+      } else {
+        console.log('Delete Failed')
+      }
+    }).catch(() => { alert('Delete Failed') });
+    setDeleteBill(false)
+  }
 
-        let deletedBillList = []
-        res["deletedBills"].forEach(function (bill) {
-          let date = new Date(bill.dateEntered);
-          let formattedDate = date.getMonth() + "/" + date.getDay() + "/" + date.getFullYear();
-          let newObj = {
-            amount: bill.amount,
-            description: bill.billDescription,
-            billID: bill.billId,
-            billName: bill.billName,
-            date: formattedDate,
-            groupID: bill.groupId,
-            owner: bill.owner,
-            paymentStatus: bill.paymentStatus ? "PAID" : "UNPAID",
-            usernames: bill.usernames
-          }
-          deletedBillList.push(newObj)
-        })
-        setDeletedBills(deletedBillList)
-      setGet(true)
-      console.log("SUCCESS")
-  }).catch( (error) => {
-    console.log(error)
-    alert("Finances failed to load.")});
-  }, []);
+  const columns = [
+    {
+      key: "1",
+      title: '',
+      render: (bill) => {
+        return(
+        <Space size="middle">
+          <EditOutlined onClick={()=>{
+            setShowEditForm(true)
+            setEditBill(bill)
+            }}/>
+          <DeleteOutlined onClick={()=>setDeleteBill(bill)}/>   
+          {deleteBill && <DeletionModal message='Are you sure you want to delete this bill?' show={deleteBill} close={()=>setDeleteBill(false)} confirm={()=>handleDelete(deleteBill.billID)} />}
+          {showEditForm && <EditBillForm show={showEditForm} bill={editBill} close={()=>setShowEditForm(false)} setOpen={setShowEditForm}/>}
+        </Space>
+        )}    
+    },
+    {
+      key: "2",
+      title: 'Date',
+      dataIndex: 'date',
+    },
+    {
+      key: "3",
+      title: 'Name',
+      dataIndex: 'billName',
+    },
+    {
+      key: "4",
+      title: 'Owner',
+      dataIndex: 'owner',
+    },
+    {
+      key: "5",
+      title: 'Description',
+      dataIndex: 'description',
+    },
+    {
+      key: "6",
+      title: 'Amount',
+      dataIndex: 'amount',
+    },
+    {
+      key: "7",
+      title: 'Status',
+      dataIndex: 'paymentStatus',
+    },
+    {
+      key: "8",
+      title: 'Receipt',
+      dataIndex: 'receipt',
+    }
+  ];
 
   const handleCurrentTable = () => {
     const filteredBills = activeBills.filter(bill => bill.usernames.includes(selectedUser));
-    return <Table dataSource={filteredBills} columns={columns} rowKey={record => record.billId}/>
+    return <Table dataSource={filteredBills} columns={columns} rowKey={record => record.billID}/>
   }
 
   const handleHistoryTable = () => {
     const filteredBills = deletedBills.filter(bill => bill.usernames.includes(selectedUser));
-    return <Table dataSource={filteredBills} columns={historyColumns} rowKey={record => record.billId}/>
+    return <Table dataSource={filteredBills} columns={historyColumns} rowKey={record => record.billID}/>
   }
 
   const tabs = [
@@ -250,9 +261,9 @@ export const BudgetBar = (user) => {
         <p><strong>Total Budget: ${budget}</strong></p>
         <Progress percent={(groupTotal/budget)*100} strokeColor = {color[0]} showInfo={false} strokeWidth="30px"/>
         <MultiColorProgressBar  readings={users} />
-        {/* <div style={{ marginBottom: '50px' }}></div> */}
-        <Button style={Styles.addFormButton} onClick={()=>setShowBillForm(!showBillForm)}>Add Bill</Button>
-        {showBillForm && (<BillForm/>)}
+        <Button style={Styles.addFormButton} onClick={()=>setShowAddForm(!showAddForm)}>Add Bill</Button>
+        {showAddForm && (<BillForm/>)}
+        {/* {showEditForm && (<EditBillForm/>)} */}
         <Tabs defaultActiveKey="1" items={tabs} /> 
     </div>
     );

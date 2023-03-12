@@ -9,8 +9,8 @@ const DeletionModal = (props) => {
         <Modal
             title={props.message}
             open={props.show}
-            // closable={false}
-            centered="true"
+            closable={false}
+            centered={true}
             footer={[
                 <Button key="cancel" onClick={props.close} type="default" style={Styles.defaultButtonModal}>No thanks.</Button>,
                 <Button key="confirm" onClick={props.confirm} type="primary" style={Styles.deleteButtonModal}>Delete</Button>

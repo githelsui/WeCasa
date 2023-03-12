@@ -17,46 +17,44 @@ import * as Styles from '../../styles/ConstStyles';
 
 const { Option } = Select;
 
-export const BillForm = (props) => {
-
-  const [form] = Form.useForm();
-  const [members, setMembers] = useState([]);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [amount, setAmount] = useState(0);
-  const [paymentStatus, setPaymentStatus] = useState(false);
-  const [isRepeated, setIsRepeated] = useState(false);
+export const EditBillForm = (props) => {
+    {console.log("IN COMPO", props.bill)}
+  const [members, setMembers] = useState(props.bill.usernames);
+  const [name, setName] = useState(props.bill.billName);
+  const [description, setDescription] = useState(props.bill.description);
+  const [amount, setAmount] = useState(props.bill.amount);
+  const [paymentStatus, setPaymentStatus] = useState(props.bill.paymentStatus);
+  const [isRepeated, setIsRepeated] = useState(props.bill.IsRepeated);
   const [photoFileName, setPhotoFileName] = useState('');
-  const [open, setopen] = useState(true);
-
+  {console.log("DESCRIPTION",isRepeated)}
   const formItemLayout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 14 },
   }
 
-    // Flow: 1
-    const persistAddForm = () =>
+    const persistEditForm = () =>
     {
       // TEST DATA
-      let request =  {          
-            Usernames: members,
-            Owner: 'frost@gmail.com',
-            BillId: 13243,
-            GroupId: 123456,
+      let request =  {
+            Usernames : members,
+            Owner: props.bill.owner,
+            BillId: props.bill.billID,
+            groupID: props.bill.groupID,
             BillName: name,
             BillDescription: description,
             Amount: amount,
             PaymentStatus: paymentStatus,
             IsRepeated: isRepeated,
             PhotoFileName: photoFileName
-      }  
-       console.log(request)
-      axios.post('budgetbar/AddBill', request).then(res => {
+      } 
+      console.log("EDIT BILL", request)
+
+    axios.put('budgetbar/EditBill', request).then(res => {
           var response = res.data;
             console.log(response);
       })
       .catch((error => { console.error(error) }));
-      setopen(false);
+      props.setOpen(false);
     };
 
     const normFile = (e) => {
@@ -70,14 +68,15 @@ export const BillForm = (props) => {
     return (
       <div>
         <Modal
-            open={open}
-            title="Add Bill"
-            onCancel={() => {setopen(false);}}
+            // open={open}
+            title="Edit Bill"
+            open={props.show}
+            onCancel={props.close}
             footer={[
-              <Button key="submit" style={Styles.primaryButtonModal} type="primary" onClick={() => {persistAddForm()}}>Save</Button>,
-              <Button key="cancel" style={Styles.defaultButtonModal} type="default" onClick={() => setopen(false)}>Cancel</Button>
+              <Button key="submit" style={Styles.primaryButtonModal} type="primary" onClick={()=>persistEditForm()}>Save</Button>,
+              <Button key="cancel" style={Styles.defaultButtonModal} type="default" onClick={props.close}>Cancel</Button>
             ]}>
-            <Form name="billForm" {...formItemLayout} >
+            <Form name="EditBillForm" {...formItemLayout} >
                 <Form.Item name="name" label=" Bill Name" 
                   rules={[
                       {
@@ -85,15 +84,15 @@ export const BillForm = (props) => {
                       message: 'Please input a bill name!',
                       },
                   ]}>
-                  <Input onChange={e => setName(e.target.value)}/>
+                  <Input onChange={e => setName(e.target.value)} defaultValue={name}/>
                 </Form.Item>
 
                 <Form.Item name="description" label="Description">
-                  <Input onChange={e => setDescription(e.target.value)}/>
+                  <Input onChange={e => e?.target?.value && setDescription(e.target.value)} defaultValue={description}/>
                 </Form.Item> 
 
                 <Form.Item name="input-number" label="Amount">
-                  <InputNumber min={0} max={1000000000} onChange={value => setAmount(value)}/>
+                  <InputNumber min={0} max={1000000000} onChange={value => setAmount(value)} defaultValue={amount}/>
                 </Form.Item>
 
                 <Form.Item name="isRepeated" label="Repeat" valuePropName="checked">
@@ -101,7 +100,7 @@ export const BillForm = (props) => {
                 </Form.Item>
 
                 <Form.Item name="members" label="Members">
-                  <Select mode="multiple" onChange={e => setMembers(e)}>
+                  <Select mode="multiple" defaultValue={members} onChange={e => setMembers(e)}>
                     <Option value="captain@gmail.com" >captain@gmail.com</Option>
                     <Option value="wendy@gmail.com">wendy@gmail.com</Option>
                     <Option value="strange@gmail.com">strange@gmail.com</Option>
@@ -110,7 +109,7 @@ export const BillForm = (props) => {
 
                 <Form.Item name="paymentStatus" label="Radio.Button"
                   rules={[{ required: true, message: 'Please pick an item!' }]}>
-                <Radio.Group>
+                <Radio.Group defaultValue={paymentStatus? "a" : "b"}>
                     <Radio.Button value="a" onChange={() => setPaymentStatus(true)}>PAID</Radio.Button>
                     <Radio.Button value="b" onChange={() => setPaymentStatus(false)}>UNPAID</Radio.Button>
                 </Radio.Group>
@@ -134,4 +133,4 @@ export const BillForm = (props) => {
 
 
   
-export default BillForm;
+export default EditBillForm;
