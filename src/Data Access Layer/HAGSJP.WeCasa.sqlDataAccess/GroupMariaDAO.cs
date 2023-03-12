@@ -7,6 +7,7 @@ using Azure;
 using System.Data;
 using System.Reflection.PortableExecutable;
 using System.Data.SqlTypes;
+using static System.Net.WebRequestMethods;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
@@ -150,6 +151,49 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     result.IsSuccessful = ValidateSqlStatement(userGroupInsertRows).IsSuccessful;
                     result.ReturnedObject = group;
                 }
+                return result;
+            }
+        }
+
+        public GroupResult EditGroup(int groupId, GroupModel newGroup)
+        {
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new GroupResult();
+
+                // Update SQL statement
+                var insertGroupSql = @"UPDATE `Groups`
+                                        SET `group_name` = @group_name,
+                                            `icon` = @icon,
+                                            `features` = @features
+                                        WHERE `group_id` = @group_id";
+
+               
+                var command = connection.CreateCommand();
+                command.CommandText = insertGroupSql;
+                command.Parameters.AddWithValue("@group_name".ToLower(), newGroup.GroupName.ToLower());
+                command.Parameters.AddWithValue("@icon".ToLower(), newGroup.Icon.ToLower());
+                string featuresJSON = JsonSerializer.Serialize(newGroup.Features);
+                command.Parameters.AddWithValue("@features", featuresJSON);
+                command.Parameters.AddWithValue("@group_id", groupId);
+
+                // Execution of SQL
+                var rows = (command.ExecuteNonQuery());
+                var queryResult = ValidateSqlStatement(rows);
+                result.IsSuccessful = queryResult.IsSuccessful;
+
+                if (queryResult.IsSuccessful)
+                {
+                    result.Message = "Group edited successfully.";
+                    result.ReturnedObject = newGroup;
+                }
+                else
+                {
+                    result.Message = "Error editing group.";
+                }
+                connection.Close();
                 return result;
             }
         }
