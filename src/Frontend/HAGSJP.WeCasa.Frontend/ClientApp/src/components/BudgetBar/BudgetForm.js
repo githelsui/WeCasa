@@ -54,11 +54,13 @@ const BudgetForm = ({budget, setBudget}) => {
     return (
         <div style={Styles.body}>
              <Button
+                id="update-budget-btn"
                 style={Styles.addBudgetButton}
                 onClick={() => { setopen(true);}}>
                 Update Budget
             </Button>
             <Modal onCancel={() => {setopen(false);}}
+                id="budget-form"
                 open={open}
                 title="Update Monthly Budget"
                 footer={[
