@@ -249,6 +249,7 @@ export const Files = () => {
                         <Space direction="horizonal" size={32}>
                             {displayFileView()}
                             <Button
+                                id="add-file"
                                 style={Styles.fileButtonStyle}
                                 shape="round"
                                 icon={<PlusCircleOutlined />}
