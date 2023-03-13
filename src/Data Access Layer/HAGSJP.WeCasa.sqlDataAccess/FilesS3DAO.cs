@@ -147,6 +147,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 request.ContinuationToken = response.NextContinuationToken;
             } while (response.IsTruncated);
 
+            result.Files = s3Objects;
             result.ReturnedObject = s3Objects;
             result.ErrorStatus = response.HttpStatusCode;
             result.Message = $"Number of group files retrieved: {response.KeyCount}";
@@ -167,10 +168,11 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             {
                 if (version.IsDeleteMarker)
                 {
-                    s3Objects.Add(new S3ObjectModel(version.Key));
+                    s3Objects.Add(new S3ObjectModel(version.Key, version.LastModified));
                 }
             }
 
+            result.Files = s3Objects;
             result.ReturnedObject = s3Objects;
             result.IsSuccessful = true;
             return result;

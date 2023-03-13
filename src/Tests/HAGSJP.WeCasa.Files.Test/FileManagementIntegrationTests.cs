@@ -9,10 +9,11 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using Moq;
+using System.ComponentModel.DataAnnotations;
 
 namespace HAGSJP.WeCasa.Files.Test
-{ 
-[TestClass]
+{
+    [TestClass]
     public class FileManagementIntegrationTests
     {
         private GroupModel _testGroup;
@@ -34,7 +35,7 @@ namespace HAGSJP.WeCasa.Files.Test
             _testGroup.GroupId = result.GroupId;
         }
 
-    [TestMethod]
+        [TestMethod]
         public void ShouldSucceedWithNoGroupFiles()
         {
             // Arrange
@@ -64,7 +65,7 @@ namespace HAGSJP.WeCasa.Files.Test
             var result = systemUnderTest.UploadFile(testFile.Object, _testGroup.GroupId.ToString(), _testGroup.Owner);
             stopwatch.Stop();
 
-            var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
+            var actual = decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
 
             // Assert
             Assert.IsNotNull(actual);
@@ -86,7 +87,7 @@ namespace HAGSJP.WeCasa.Files.Test
             var testResult = systemUnderTest.GetGroupFiles(_testGroup.GroupId.ToString());
             stopwatch.Stop();
 
-            var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
+            var actual = decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
 
             // Assert
             Assert.IsNotNull(actual);
@@ -115,28 +116,33 @@ namespace HAGSJP.WeCasa.Files.Test
         {
             // Arrange
             var systemUnderTest = new FileManager();
+            var expected = 24; // hours since file was deleted
 
             // Act
-            //var actual = systemUnderTest.GetDeletedFiles("test.txt", _testGroup.GroupId.ToString(), _testGroup.Owner);
-
+            var actual = new Result();
+            actual.IsSuccessful = true;
+            var files = systemUnderTest.GetDeletedFiles(_testGroup.GroupId.ToString()).Files;
+            foreach(var file in files)
+            {
+                if(file.LastUpdated.HasValue)
+                {
+                    DateTime lastUpdated = file.LastUpdated.Value;
+                    var timeDiff = DateTime.UtcNow.Subtract(lastUpdated);
+                    if (timeDiff.TotalHours > expected)
+                    {
+                        actual.IsSuccessful = false;
+                        break;
+                    }
+                }
+                else
+                {
+                    actual.IsSuccessful = false;
+                }
+                
+            }
 
             // Assert
-            //Assert.IsNotNull(actual);
-            //Assert.IsTrue(actual.IsSuccessful);
-        }
-
-        [TestMethod]
-        public void ShouldRestoreFilesWithin24HoursSuccessfully()
-        {
-            // Arrange
-            var systemUnderTest = new FileManager();
-
-            // Act
-            var actual = systemUnderTest.DeleteFile("test.txt", _testGroup.GroupId.ToString(), _testGroup.Owner);
-
-
-            // Assert
-            Assert.IsNotNull(actual);
+            Assert.IsNotNull(files);
             Assert.IsTrue(actual.IsSuccessful);
         }
 

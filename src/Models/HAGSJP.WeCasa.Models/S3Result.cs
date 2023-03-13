@@ -5,6 +5,8 @@ namespace HAGSJP.WeCasa.Models
     {
         public Object? ReturnedObject { get; set; }
 
+        public List<S3ObjectModel> Files { get; set; }
+
         public S3Result() { }
 
         public S3Result(bool isSuccessful, HttpStatusCode errorStatus, string? message) 

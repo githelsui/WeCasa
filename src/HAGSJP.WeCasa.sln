@@ -49,7 +49,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HAGSJP.WeCasa.UserManagemen
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HAGSJP.WeCasa.GroupManagement.Test", "Tests\HAGSJP.WeCasa.GroupManagement.Test\HAGSJP.WeCasa.GroupManagement.Test.csproj", "{5C7E4380-BAF0-48EB-B4CA-2B4D4CF04768}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HAGSJP.WeCasa.Files.Test", "HAGSJP.WeCasa.Files.Test\HAGSJP.WeCasa.Files.Test.csproj", "{3F51E53C-28F5-4874-BDC0-1AC20570BACF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HAGSJP.WeCasa.Files.Test", "Tests\HAGSJP.WeCasa.Files.Test\HAGSJP.WeCasa.Files.Test.csproj", "{3F51E53C-28F5-4874-BDC0-1AC20570BACF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

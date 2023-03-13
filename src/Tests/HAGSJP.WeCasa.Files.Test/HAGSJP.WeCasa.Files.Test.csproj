@@ -17,8 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Models\HAGSJP.WeCasa.Models\HAGSJP.WeCasa.Models.csproj" />
-    <ProjectReference Include="..\Services\HAGSJP.WeCasa.Services\HAGSJP.WeCasa.Services.csproj" />
+    <ProjectReference Include="..\..\Models\HAGSJP.WeCasa.Models\HAGSJP.WeCasa.Models.csproj" />
+    <ProjectReference Include="..\..\Services\HAGSJP.WeCasa.Services\HAGSJP.WeCasa.Services.csproj" />
   </ItemGroup>
 
 </Project>

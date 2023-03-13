@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "ajv": "^8.11.0",
+    "chromedriver": "^111.0.0",
     "cross-env": "^7.0.3",
     "eslint": "^8.22.0",
     "eslint-config-react-app": "^7.0.1",
@@ -42,6 +43,8 @@
     "eslint-plugin-jsx-a11y": "^6.6.1",
     "eslint-plugin-react": "^7.30.1",
     "nan": "^2.16.0",
+    "nightwatch": "^2.6.17",
+    "selenium-webdriver": "^4.8.1",
     "typescript": "^4.7.4"
   },
   "overrides": {
