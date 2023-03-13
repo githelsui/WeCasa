@@ -43,7 +43,8 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
             FileManager fm = new FileManager();
             var fileName = fileForm.Owner + '/' + fileForm.FileName;
             var groupId = fileForm.GroupId;
-            return fm.DeleteFile(fileName, groupId);
+            var owner = fileForm.Owner;
+            return fm.DeleteFile(fileName, groupId, owner);
         }
     }
 }

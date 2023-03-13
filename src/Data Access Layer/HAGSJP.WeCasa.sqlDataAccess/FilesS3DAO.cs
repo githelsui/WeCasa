@@ -47,6 +47,16 @@ namespace HAGSJP.WeCasa.sqlDataAccess
              try
             {
                 var response = await _client.PutBucketAsync(bucketName);
+                // Enabling bucket versioning
+                var versioningRequest = new PutBucketVersioningRequest
+                {
+                    BucketName = bucketName,
+                    VersioningConfig = new S3BucketVersioningConfig
+                    {
+                        Status = VersionStatus.Enabled
+                    }
+                };
+                var versioningResponse = await _client.PutBucketVersioningAsync(versioningRequest);
                 result.Message = $"{bucketName} bucket successfully created.";
                 result.ErrorStatus = response.HttpStatusCode;
             } 
@@ -56,6 +66,47 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 result.Message = ex.Message;
             }
             return result; 
+        }
+
+        public async Task<S3Result> DeleteAllObjects(string groupId)
+        {
+            var result = new S3Result();
+            var bucketName = _bucketName + groupId;
+            var request = new ListObjectsV2Request { BucketName = _bucketName + groupId };
+            ListObjectsV2Response response;
+
+            do
+            {
+                response = await _client.ListObjectsV2Async(request);
+                foreach (var s3Obj in response.S3Objects)
+                {
+                    
+                    await _client.DeleteObjectAsync(bucketName, s3Obj.Key);
+                }
+                request.ContinuationToken = response.NextContinuationToken;
+            } while (response.IsTruncated);
+
+            result.ErrorStatus = response.HttpStatusCode;
+            result.IsSuccessful = true;
+            return result;
+        }
+
+        public async Task<S3Result> DeleteBucket(string groupId)
+        {
+            var result = new S3Result();
+            var bucketName = _bucketName + groupId;
+            try
+            {
+                var response = await _client.DeleteBucketAsync(bucketName);
+                result.Message = $"{bucketName} bucket successfully deleted.";
+                result.ErrorStatus = response.HttpStatusCode;
+            }
+            catch (AmazonS3Exception ex)
+            {
+                result.ErrorStatus = ex.StatusCode;
+                result.Message = ex.Message;
+            }
+            return result;
         }
 
         public async Task<S3Result> GetGroupFiles(string groupId)
@@ -119,19 +170,20 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             return result;
         }
 
-        public async Task<S3Result> DeleteFile(string fileName, string groupId)
+        public async Task<S3Result> DeleteFile(string fileName, string groupId, string? prefix)
         {
             var result = new S3Result();
+            var bucketName = _bucketName + groupId;
             var request = new DeleteObjectRequest()
             {
-                BucketName = _bucketName+groupId,
+                BucketName = bucketName,
                 Key = fileName
             };
             try
             {
                 var response = await _client.DeleteObjectAsync(request);
                 result.ErrorStatus = response.HttpStatusCode;
-                result.Message = $"{fileName} successfully deleted.";
+                result.Message = $"{fileName} successfully deleted from {bucketName}.";
                 result.IsSuccessful = true;
             }
             catch (Exception ex)

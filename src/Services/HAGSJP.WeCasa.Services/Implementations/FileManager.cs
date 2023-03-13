@@ -41,9 +41,9 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return result;
         }
 
-        public S3Result DeleteFile(string fileName, string groupId)
+        public S3Result DeleteFile(string fileName, string groupId, string username)
         {
-            return _dao.DeleteFile(fileName, groupId).Result;
+            return _dao.DeleteFile(fileName, groupId, username).Result;
         }
 
     }

@@ -14,6 +14,6 @@ namespace HAGSJP.WeCasa.Services.Implementations
     {
         public S3Result GetGroupFiles(string groupId);
         public S3Result UploadFile(IFormFile file, string groupId, string username);
-        public S3Result DeleteFile(string fileName, string bucketName);
+        public S3Result DeleteFile(string fileName, string bucketName, string username);
     }
 }

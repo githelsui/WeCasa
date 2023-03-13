@@ -14,10 +14,15 @@ export const Files = () => {
     const [files, setFiles] = useState([]);
     const [selectedFile, setSelectedFile] = useState('');
     const [uploadFile, setUploadFile] = useState('');
+    const [validInput, setValidInput] = useState(false);
     const [showFile, setShowFile] = useState(false);
     const [refreshSettings, setRefreshSettings] = useState(true);
     const fileInputRef = React.createRef();
     const navigate = useNavigate();
+    const validFileTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif', 'text/plain', 'text/html', 'application/pdf', 'application/msword', 'application / vnd.openxmlformats - officedocument.wordprocessingml.document'];
+    const validFileExt = ['.jpg', 'jpeg', '.png', '.gif', '.txt', '.html', '.pdf', '.doc', '.docx'];
+    const maxFileSize = 10 * 1024 * 1024; // 10 MB
+    const maxBucketSize = 15 * 1024 * 1024 * 1024 // 15 GB
 
     useEffect(() => { getFiles(); }, []);
 
@@ -33,8 +38,8 @@ export const Files = () => {
     const getBlobType = (fileType) => {
         var blobType = '';
         switch (fileType) {
-            case '.jpg' || '.png' || '.gif':
-                blobType = `image/${fileType}`;
+            case '.jpg' || '.jpeg' || '.png' || '.gif':
+                blobType = `image/${fileType.slice(1)}`;
                 break;
             case '.txt':
                 blobType = 'text/plain';
@@ -98,9 +103,22 @@ export const Files = () => {
 
     const handleFileInputChange = (event) => {
         const file = event.target.files[0];
-        // TODO: Input Validation
-        setUploadFile(file);
-        attemptFileUpload(file);
+        if (!validFileTypes.includes(file.type)) {
+            setValidInput(false);
+            toast('Invalid file type');
+        }
+        if (!validFileExt.includes(file.name.split(".").pop())) {
+            setValidInput(false);
+            toast('Invalid file type');
+        }
+        if (file.size > maxFileSize) {
+            setValidInput(false);
+            toast('File is too large');
+        }
+        if (validInput) {
+            setUploadFile(file);
+            attemptFileUpload(file);
+        }
     }
 
     const attemptFileUpload = (file) => {
@@ -142,9 +160,9 @@ export const Files = () => {
                     <Col span={10} style={{ marginTop: 16, marginLeft: 16 }}>
                         <Card
                             hoverable
-                            style={{ width: 150 }}
+                            style={{ width: 180, overflow: "hidden"}}
                             cover={(file.contentType == ".pdf" || file.contentType == ".txt" || file.contentType == ".doc" || file.contentType == ".docx") ?
-                                (<embed src={file.url} type="application/pdf" scrolling="no"></embed>) :
+                                (<embed src={file.url} type={file.blobType}></embed>) :
                                 (<Image
                                     src={file.url}
                                     onError={() => console.error(`Error loading image ${file.url}`)}
@@ -170,6 +188,15 @@ export const Files = () => {
             description: failureMessage,
             duration: 10,
             placement: "topLeft"
+        });
+    }
+
+    const toast = (title, desc = '') => {
+        notification.open({
+            message: title,
+            description: desc,
+            duration: 5,
+            placement: 'bottom',
         });
     }
 

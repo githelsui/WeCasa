@@ -15,7 +15,7 @@ import image5 from '../assets/profileimgs/5.jpg';
 import image6 from '../assets/profileimgs/6.jpg';
 
 export const FileView = (props) => {
-    const { currentUser } = useAuth();
+    const { currentUser, currentGroup } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const images = [image1, image2, image3, image4, image5, image6];
     const file = props.file;
@@ -52,6 +52,7 @@ export const FileView = (props) => {
         }
         let fileForm = {
             FileName: file.fileName,
+            GroupId: currentGroup['groupId'].toString(),
             Owner: currentUser['username']
         }
         axios.post('files/DeleteFile', fileForm)
@@ -74,7 +75,7 @@ export const FileView = (props) => {
     }
 
     const downloadFile = (fileUrl) => {
-        console.log('download')
+        console.log('downloading');
         fetch(fileUrl)
             .then(res => res.blob())
             .then(blob => {

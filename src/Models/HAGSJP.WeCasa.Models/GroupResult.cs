@@ -7,7 +7,7 @@ namespace HAGSJP.WeCasa.Models
     {
         public Object? ReturnedObject { get; set; }
         public List<GroupModel> Groups { get; set; }
-
+        public int GroupId { get; set; }
         public GroupResult() { }
 
         public GroupResult(List<GroupModel> groups, bool isSuccessful, HttpStatusCode errorStatus, string? message)

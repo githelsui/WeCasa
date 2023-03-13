@@ -54,7 +54,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             createGroupResult = _dao.CreateGroup(group);
             createFileBucketResult = _s3dao.CreateBucket(group.GroupId.ToString()).Result;
 
-            if (createGroupResult.IsSuccessful)
+            if (createGroupResult.IsSuccessful && createFileBucketResult.IsSuccessful)
             {
                 // Logging the group creation
                 successLogger.Log("Group created successfully", LogLevels.Info, "Data Store", group.Owner);
@@ -82,18 +82,28 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
             stopwatch.Start();
             var deleteGroupResult = new Result();
+            var deleteGroupFiles = new S3Result();
+            var deleteFileBucketResult = new S3Result();
 
             deleteGroupResult = _dao.DeleteGroup(group);
-
-            if (deleteGroupResult.IsSuccessful)
+            deleteGroupFiles = _s3dao.DeleteAllObjects(group.GroupId.ToString()).Result;
+            if (deleteGroupResult.IsSuccessful && deleteGroupFiles.IsSuccessful)
             {
-                // Logging the group deletion
-                successLogger.Log("Group deleted successfully", LogLevels.Info, "Data Store", group.Owner);
-            }
-            else
+                deleteFileBucketResult = _s3dao.DeleteBucket(group.GroupId.ToString()).Result;
+                if (deleteFileBucketResult.IsSuccessful)
+                {
+                    // Logging the group deletion
+                    successLogger.Log("Group deleted successfully", LogLevels.Info, "Data Store", group.Owner);
+                }
+                else
+                {
+                    // Logging the error
+                    errorLogger.Log("Error deleting a group", LogLevels.Error, "Data Store", group.Owner);
+                }
+            } else
             {
                 // Logging the error
-                errorLogger.Log("Error deleting a group", LogLevels.Error, "Data Store", group.Owner);
+                errorLogger.Log("Error deleting group files.", LogLevels.Error, "Data Store", group.Owner);
             }
 
             stopwatch.Stop();
