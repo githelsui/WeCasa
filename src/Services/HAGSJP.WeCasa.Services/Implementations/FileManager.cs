@@ -38,6 +38,11 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var result = _dao.GetGroupFiles(groupId).Result;
             return result;
         }
+        public S3Result GetDeletedFiles(string groupId)
+        {
+            var result = _dao.GetDeletedFiles(groupId).Result;
+            return result;
+        }
 
         public S3Result UploadFile(IFormFile file, string groupId, string username)
         {

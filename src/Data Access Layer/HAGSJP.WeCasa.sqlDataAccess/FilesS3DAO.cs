@@ -154,7 +154,48 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             return result;
         }
 
-        public async Task<S3Result> UploadFile(IFormFile file, string groupId, string? prefix)
+        public async Task<S3Result> GetDeletedFiles(string groupId)
+        {
+            var result = new S3Result();
+            var s3Objects = new List<S3ObjectModel>();
+            var request = new ListVersionsRequest { BucketName = _bucketName + groupId };
+            ListVersionsResponse response;
+
+            response = await _client.ListVersionsAsync(request);
+
+            foreach (var version in response.Versions)
+            {
+                if (version.IsDeleteMarker)
+                {
+                    s3Objects.Add(new S3ObjectModel(version.Key));
+                }
+            }
+
+            result.ReturnedObject = s3Objects;
+            result.IsSuccessful = true;
+            return result;
+        }
+
+        public async Task<S3Result> RecoverFile(IFormFile file, string groupId)
+        {
+            var result = new S3Result();
+            var bucketName = _bucketName + groupId;
+            var key = file.FileName;
+            var s3Objects = new List<S3ObjectModel>();
+            var request = new RestoreObjectRequest
+            {
+                BucketName = bucketName,
+                Key = key,
+                Days = 1
+            };
+            var token = new CancellationToken();
+            RestoreObjectResponse response = await _client.RestoreObjectAsync(request, token);
+            result.ErrorStatus = response.HttpStatusCode;
+            result.IsSuccessful = true;
+            return result;
+        }
+
+            public async Task<S3Result> UploadFile(IFormFile file, string groupId, string? prefix)
         {
             var result = new S3Result();
             var request = new PutObjectRequest()

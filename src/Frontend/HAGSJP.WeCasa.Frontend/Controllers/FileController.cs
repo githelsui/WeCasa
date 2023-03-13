@@ -24,6 +24,15 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
             return result;
         }
 
+        [HttpGet]
+        [Route("GetDeletedFiles")]
+        public S3Result GetDeletedFiles([FromQuery] string groupId)
+        {
+            FileManager fm = new FileManager();
+            var result = fm.GetDeletedFiles(groupId);
+            return result;
+        }
+
         [HttpPost]
         [Route("UploadFile")]
         public S3Result UploadFile([FromForm] FileForm fileForm)

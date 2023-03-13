@@ -2,7 +2,7 @@ import React, { Component, useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from './AuthContext';
 import { Col, Card, Row, Space, ConfigProvider, Button, Image, Tabs, notification } from 'antd';
-import { PlusCircleOutlined } from '@ant-design/icons'
+import { PlusCircleOutlined, FileOutlined } from '@ant-design/icons'
 import axios from 'axios';
 import * as Styles from '../styles/ConstStyles.js';
 import { FileView } from './FileView.js';
@@ -12,6 +12,7 @@ const TabPane = Tabs.TabPane;
 export const Files = () => {
     const { currentUser, currentGroup } = useAuth();
     const [files, setFiles] = useState([]);
+    const [deletedFiles, setDeletedFiles] = useState([]);
     const [selectedFile, setSelectedFile] = useState('');
     const [uploadFile, setUploadFile] = useState('');
     const [validInput, setValidInput] = useState(false);
@@ -24,7 +25,7 @@ export const Files = () => {
     const maxFileSize = 10 * 1024 * 1024; // 10 MB
     const maxBucketSize = 15 * 1024 * 1024 * 1024 // 15 GB
 
-    useEffect(() => { getFiles(); }, []);
+    useEffect(() => { getFiles(); getDeletedFiles(); }, []);
 
     const tabItemClick = (key) => {
         console.log('tab click', key);
@@ -61,7 +62,6 @@ export const Files = () => {
     }
 
     const getFiles = () => {
-        console.log("Getting group files...");
         let groupId = currentGroup['groupId'];
         axios.get('files/GetGroupFiles', { params: { groupId }})
             .then(res => {
@@ -87,6 +87,31 @@ export const Files = () => {
                         }
                     });
                     setFiles(fileContents);
+                }
+                else {
+                    failureFileView(res.data['message']);
+                }
+            })
+            .catch((error) => {
+                console.error(error)
+            });
+    }
+
+    const getDeletedFiles = () => {
+        let groupId = currentGroup['groupId'];
+        axios.get('files/GetDeletedFiles', { params: { groupId } })
+            .then(res => {
+                var isSuccessful = res.data['isSuccessful']
+                if (isSuccessful) {
+                    var fileContents = []
+                    fileContents = res.data['returnedObject'].map(file => {
+                        return {
+                            ...file,
+                            owner: file.fileName.split('/').slice(0, -1).join('/'),
+                            fileName: file.fileName.split('/').pop(),
+                        }
+                    });
+                    setDeletedFiles(fileContents);
                 }
                 else {
                     failureFileView(res.data['message']);
@@ -179,7 +204,23 @@ export const Files = () => {
     }
 
     const displayDeletedFiles = () => {
-
+        var deletedFileList = deletedFiles.map(function (file, index) {
+            return (
+                <div key={index} onClick={() => selectFile(file)}>
+                    <Col span={10} style={{ marginTop: 16, marginLeft: 16 }}>
+                        <Card
+                            hoverable
+                            style={{ width: 200 }}>
+                            <Meta title={file.fileName}
+                                avatar={<FileOutlined className="padding-bottom" />}
+                                type="inner"
+                                style={{ textAlign: "center", display: "block" }} />
+                        </Card>
+                    </Col>
+                </div>
+            );
+        });
+        return deletedFileList;
     }
 
     const failureFileView = (failureMessage) => {
@@ -218,7 +259,11 @@ export const Files = () => {
                             <input type="file" ref={fileInputRef} onChange={handleFileInputChange} style={{ display: 'none'}}></input>
                         </Space>
                     </TabPane>
-                    <TabPane tab="Deleted Files" key="2">{displayDeletedFiles()}</TabPane>
+                    <TabPane tab="Deleted Files" key="2">
+                        <Space direction="horizonal" size={32}>
+                            {displayDeletedFiles()}
+                        </Space>
+                    </TabPane>
                 </Tabs>
                 <FileView show={showFile} close={() => refreshFiles() } file={selectedFile} />
             </div>
