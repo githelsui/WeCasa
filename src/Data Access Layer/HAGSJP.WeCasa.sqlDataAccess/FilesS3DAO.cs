@@ -3,6 +3,7 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using Azure;
 using HAGSJP.WeCasa.Models;
+using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Identity.Client;
 using MySqlConnector;
@@ -14,7 +15,7 @@ using System.Text;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
-    public class FilesS3DAO
+    public class FilesS3DAO : ILoggerDAO
     {
         // Configuring AWS S3 client for hagsjp.wecasa.s3 user
         private AmazonS3Client _client = new AmazonS3Client(
@@ -194,5 +195,101 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             return result;
         }
 
+        public async Task<Result> LogData(Log log)
+        {
+            var result = new Result();
+            var connectionString = new MySqlConnectionStringBuilder
+             {
+                Server = "localhost",
+                 Port = 3306,
+                 UserID = "HAGSJP.WeCasa.SqlUser",
+                 Password = "cecs491",
+                 Database = "HAGSJP.WeCasa"
+             }.ConnectionString;
+
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                // Insert SQL statement
+                var insertSql = @"INSERT INTO `Logs` 
+                                    (`Message`, `Log_Level`, `Category`, `Username`, `Operation`, `Success`) 
+                                VALUES 
+                                    (@message, @logLevel, @category, @username, @operation, @success);";
+
+                var command = connection.CreateCommand();
+                command.CommandText = insertSql;
+                command.Parameters.AddWithValue("@message", log.Message);
+                command.Parameters.AddWithValue("@logLevel", log.LogLevel);
+                command.Parameters.AddWithValue("@category", log.Category);
+                command.Parameters.AddWithValue("@username", log.Username);
+                command.Parameters.AddWithValue("@operation", log.Operation.ToString());
+                command.Parameters.AddWithValue("@success", log.Success);
+
+                // Execution of SQL
+                int rows = await command.ExecuteNonQueryAsync();
+
+                connection.Close();
+
+                if (rows == 1)
+                {
+                    result.IsSuccessful = true;
+                    result.Message = string.Empty;
+
+                } else
+                {
+                    result.IsSuccessful = false;
+                    result.Message = $"Rows affected were not 1. It was {rows}";
+                }
+
+                return result;
+            }
+        }
+
+        public List<Log> GetLogData(UserAccount userAccount, Operations userOperation)
+        {
+            List<Log> logs = new List<Log>();
+            var connectionString = new MySqlConnectionStringBuilder
+            {
+                Server = "localhost",
+                Port = 3306,
+                UserID = "HAGSJP.WeCasa.SqlUser",
+                Password = "cecs491",
+                Database = "HAGSJP.WeCasa"
+            }.ConnectionString;
+
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                var result = new Result();
+
+                // Select SQL statement
+                var selectSql = @"SELECT * FROM `Logs` 
+                                    WHERE `Username` = @username 
+                                    AND `Operation` = @operation 
+                                    AND `Timestamp` >= NOW() - INTERVAL 1 DAY
+                                    ORDER BY `Timestamp` ASC;";
+
+                var command = connection.CreateCommand();
+                command.CommandText = selectSql;
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
+                command.Parameters.AddWithValue("@operation", userOperation.ToString());
+
+                // Execution of SQL
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var message = reader.GetString(1);
+                    LogLevels logLevel = (LogLevels)Enum.Parse(typeof(LogLevels), reader.GetString(2));
+                    var category = reader.GetString(3);
+                    var timestamp = reader.GetDateTime(4);
+                    var username = reader.GetString(5);
+                    Operations op = (Operations)Enum.Parse(typeof(Operations), reader.GetString(6));
+                    UserOperation operation = new UserOperation(op, 1);
+                    logs.Add(new Log(message, logLevel, category, timestamp, username, operation));
+                }
+                return logs;
+            }
+        }
     }
 }

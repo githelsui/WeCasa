@@ -29,6 +29,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public GroupManager(GroupMariaDAO dao)
         {
             _dao = dao;
+            _s3dao = new FilesS3DAO();
             successLogger = new Logger(dao);
             errorLogger = new Logger(dao);
         }

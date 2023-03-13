@@ -23,10 +23,14 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public FileManager()
         {
             _dao = new FilesS3DAO();
+            successLogger = new Logger(_dao);
+            errorLogger = new Logger(_dao);
         }
         public FileManager(FilesS3DAO dao)
         {
             _dao = dao;
+            successLogger = new Logger(dao);
+            errorLogger = new Logger(dao);
         }
 
         public S3Result GetGroupFiles(string groupId)
@@ -38,12 +42,33 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public S3Result UploadFile(IFormFile file, string groupId, string username)
         {
             var result = _dao.UploadFile(file, groupId, username).Result;
+            if (result.IsSuccessful)
+            {
+                // Logging the file upload
+                successLogger.Log("File uploaded successfully", LogLevels.Info, "Data Store", username, new UserOperation(Operations.FileUpload, 1));
+            }
+            else
+            {
+                // Logging the error
+                errorLogger.Log("Error uploading a file", LogLevels.Error, "Data Store", username, new UserOperation(Operations.FileUpload, 0));
+            }
             return result;
         }
 
         public S3Result DeleteFile(string fileName, string groupId, string username)
         {
-            return _dao.DeleteFile(fileName, groupId, username).Result;
+            var result = _dao.DeleteFile(fileName, groupId, username).Result;
+            if (result.IsSuccessful)
+            {
+                // Logging the file deletion
+                successLogger.Log("File deleted successfully", LogLevels.Info, "Data Store", username, new UserOperation(Operations.FileDeletion, 1));
+            }
+            else
+            {
+                // Logging the error
+                errorLogger.Log("Error deleting a file", LogLevels.Error, "Data Store", username, new UserOperation(Operations.FileDeletion, 0));
+            }
+            return result;
         }
 
     }
