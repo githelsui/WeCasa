@@ -7,6 +7,7 @@ using Azure;
 using System.Data;
 using System.Reflection.PortableExecutable;
 using System.Data.SqlTypes;
+using System.Data.SqlTypes;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
@@ -183,6 +184,31 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 var command = connection.CreateCommand();
                 command.CommandText = insertUserGroupSql;
+                command.Parameters.AddWithValue("@group_id", group.GroupId);
+                command.Parameters.AddWithValue("@username".ToLower(), newGroupMember.ToLower());
+
+                // Execution of SQL
+                var rows = (command.ExecuteNonQuery());
+                result = ValidateSqlStatement(rows);
+                return result;
+            }
+        }
+
+        public Result RemoveGroupMember(GroupModel group, string groupMember)
+        {
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new Result();
+
+                // Deletion SQL statement
+                var insertSql = @"DELETE FROM `UserGroups`
+                                  WHERE `group_id` = @group_id 
+                                  AND `username` = @username;";
+
+                var command = connection.CreateCommand();
+                command.CommandText = insertSql;
                 command.Parameters.AddWithValue("@group_id", group.GroupId);
                 command.Parameters.AddWithValue("@username".ToLower(), newGroupMember.ToLower());
 

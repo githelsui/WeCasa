@@ -10,6 +10,7 @@ const context = [
     "/login",
     "/budgetbar",
     "/logout",
+    "/home",
     "/group-settings"
 ];
 
