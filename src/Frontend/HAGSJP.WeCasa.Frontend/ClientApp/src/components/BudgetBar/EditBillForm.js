@@ -18,15 +18,13 @@ import * as Styles from '../../styles/ConstStyles';
 const { Option } = Select;
 
 export const EditBillForm = (props) => {
-    {console.log("IN COMPO", props.bill)}
   const [members, setMembers] = useState(props.bill.usernames);
   const [name, setName] = useState(props.bill.billName);
   const [description, setDescription] = useState(props.bill.description);
   const [amount, setAmount] = useState(props.bill.amount);
-  const [paymentStatus, setPaymentStatus] = useState(props.bill.paymentStatus);
+  const [paymentStatus, setPaymentStatus] = useState(props.bill.paymentStatus === 'PAID'? true : false);
   const [isRepeated, setIsRepeated] = useState(props.bill.IsRepeated);
   const [photoFileName, setPhotoFileName] = useState('');
-  {console.log("DESCRIPTION",isRepeated)}
   const formItemLayout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 14 },
@@ -100,11 +98,11 @@ export const EditBillForm = (props) => {
                 </Form.Item>
 
                 <Form.Item name="members" label="Members">
-                  <Select mode="multiple" defaultValue={members} onChange={e => setMembers(e)}>
-                    <Option value="captain@gmail.com" >captain@gmail.com</Option>
-                    <Option value="wendy@gmail.com">wendy@gmail.com</Option>
-                    <Option value="strange@gmail.com">strange@gmail.com</Option>
-                </Select>
+                  <Select mode="multiple" onChange={e => setMembers(e)} >
+                    {props.members.map(member => (
+                      <Option key={member.username} value={member.username}>{member.name}</Option>
+                    ))}
+                  </Select>
                 </Form.Item>
 
                 <Form.Item name="paymentStatus" label="Radio.Button"

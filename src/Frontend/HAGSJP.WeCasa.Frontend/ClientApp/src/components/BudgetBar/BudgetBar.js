@@ -31,7 +31,7 @@ export const BudgetBar = (user) => {
        var res = response.data
        setBudget(res["budget"])
        setGroupTotal(res["groupTotal"])
-       console.log(groupTotal/budget)
+       console.log("GROUPTOTAL", res["groupTotal"])
        let newUserList = [];
        let colorCounter = 0;
        res["group"].forEach(function (item) {
@@ -58,7 +58,7 @@ export const BudgetBar = (user) => {
            groupID: bill.groupId,
            IsRepeated: bill.isRepeated,
            owner: bill.owner,
-           paymentStatus: bill.paymentStatus,
+           paymentStatus: bill.paymentStatus ? "PAID" : "UNPAID",
            usernames: bill.usernames,
            PhotoFileName: bill.photoFileName
          }
@@ -174,13 +174,16 @@ export const BudgetBar = (user) => {
       render: (bill) => {
         return(
         <Space size="middle">
-          <EditOutlined onClick={()=>{
+          {(currentUser===bill.owner) && <EditOutlined onClick={()=>{
             setShowEditForm(true)
             setEditBill(bill)
-            }}/>
-          <DeleteOutlined onClick={()=>setDeleteBill(bill)}/>   
+            }}/> }
+           {(currentUser===bill.owner) &&  <DeleteOutlined onClick={()=>setDeleteBill(bill)}/> }
           {deleteBill && <DeletionModal message='Are you sure you want to delete this bill?' show={deleteBill} close={()=>setDeleteBill(false)} confirm={()=>handleDelete(deleteBill.billID)} />}
-          {showEditForm && <EditBillForm show={showEditForm} bill={editBill} close={()=>setShowEditForm(false)} setOpen={setShowEditForm}/>}
+          {showEditForm && <EditBillForm show={showEditForm} bill={editBill} members={users} close={()=>setShowEditForm(false)} setOpen={setShowEditForm}/> }
+            {console.log("BILL OWNRE", bill.owner)}
+            {console.log("currentUser", currentUser)}
+            {console.log("currentUser", currentUser===bill.owner)}
         </Space>
         )}    
     },
@@ -262,7 +265,7 @@ export const BudgetBar = (user) => {
         <Progress percent={(groupTotal/budget)*100} strokeColor = {color[0]} showInfo={false} strokeWidth="30px"/>
         <MultiColorProgressBar  readings={users} />
         <Button style={Styles.addFormButton} onClick={()=>setShowAddForm(!showAddForm)}>Add Bill</Button>
-        {showAddForm && (<BillForm/>)}
+        {showAddForm && (<BillForm budget={budget} groupTotal={groupTotal} members={users}/>)}
         {/* {showEditForm && (<EditBillForm/>)} */}
         <Tabs defaultActiveKey="1" items={tabs} /> 
     </div>

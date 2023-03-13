@@ -54,7 +54,7 @@ const BudgetForm = ({budget, setBudget}) => {
     return (
         <div style={Styles.body}>
              <Button
-                style={Styles.addBudgetButton }
+                style={Styles.addBudgetButton}
                 onClick={() => { setopen(true);}}>
                 Update Budget
             </Button>

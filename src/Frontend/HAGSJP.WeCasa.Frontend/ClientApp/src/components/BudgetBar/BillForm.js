@@ -18,10 +18,12 @@ import * as Styles from '../../styles/ConstStyles';
 const { Option } = Select;
 
 export const BillForm = (props) => {
-
-  const [form] = Form.useForm();
-  const [members, setMembers] = useState([]);
+  console.log("MEMBERS", props.members)
+  const [members, setMembers] = useState(props.members);
   const [name, setName] = useState('');
+  // TODO: use authContext
+  const [owner, setOwner] = useState('frost@gmail.com');
+  const [groupId, setGroupId] = useState(123456);
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState(0);
   const [paymentStatus, setPaymentStatus] = useState(false);
@@ -34,15 +36,13 @@ export const BillForm = (props) => {
     wrapperCol: { span: 14 },
   }
 
-    // Flow: 1
     const persistAddForm = () =>
     {
-      // TEST DATA
       let request =  {          
             Usernames: members,
-            Owner: 'frost@gmail.com',
-            BillId: 13243,
-            GroupId: 123456,
+            Owner: owner,
+            BillId: 0,
+            GroupId: groupId,
             BillName: name,
             BillDescription: description,
             Amount: amount,
@@ -58,14 +58,6 @@ export const BillForm = (props) => {
       .catch((error => { console.error(error) }));
       setopen(false);
     };
-
-    const normFile = (e) => {
-      console.log('Upload event:', e);
-      if (Array.isArray(e)) {
-          return e;
-      }
-      return e?.fileList;
-    }
     
     return (
       <div>
@@ -82,18 +74,45 @@ export const BillForm = (props) => {
                   rules={[
                       {
                       required: true,
-                      message: 'Please input a bill name!',
+                      message: 'Missing bill name',
+                      },
+                      {
+                        pattern: /^[a-zA-Z0-9]{1,60}$/,
+                        message: 'Invalid bill name',
                       },
                   ]}>
                   <Input onChange={e => setName(e.target.value)}/>
                 </Form.Item>
 
-                <Form.Item name="description" label="Description">
+                <Form.Item name="description" label="Description"
+                  rules={[
+                    {
+                      pattern: /^[a-zA-Z0-9]{0,2000}$/,
+                      message: 'Description is too long',
+                    },
+                ]}>
                   <Input onChange={e => setDescription(e.target.value)}/>
                 </Form.Item> 
 
-                <Form.Item name="input-number" label="Amount">
-                  <InputNumber min={0} max={1000000000} onChange={value => setAmount(value)}/>
+                <Form.Item name="input-number" label="Amount" rules={[
+                      {
+                      required: true,
+                      message: 'Invalid amount',
+                      },
+                      {
+                        pattern: /^\d+(\.\d{1,2})?$/,
+                        message: 'Amount should be in $X.XX format',
+                      },
+                      {
+                        validator(_, input) {
+                          if (input + props.groupTotal > props.budget) {
+                            return Promise.reject('Amount exceeds budget');
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                  ]}>
+                  <InputNumber min={0} max={props.budget} onChange={value => setAmount(value)}/>
                 </Form.Item>
 
                 <Form.Item name="isRepeated" label="Repeat" valuePropName="checked">
@@ -101,11 +120,11 @@ export const BillForm = (props) => {
                 </Form.Item>
 
                 <Form.Item name="members" label="Members">
-                  <Select mode="multiple" onChange={e => setMembers(e)}>
-                    <Option value="captain@gmail.com" >captain@gmail.com</Option>
-                    <Option value="wendy@gmail.com">wendy@gmail.com</Option>
-                    <Option value="strange@gmail.com">strange@gmail.com</Option>
-                </Select>
+                  <Select mode="multiple" onChange={e => setMembers(e)} >
+                    {props.members.map(member => (
+                      <Option key={member.username} value={member.username}>{member.name}</Option>
+                    ))}
+                  </Select>
                 </Form.Item>
 
                 <Form.Item name="paymentStatus" label="Radio.Button"
@@ -117,7 +136,7 @@ export const BillForm = (props) => {
                 </Form.Item>
 
                 <Form.Item label="Receipt">
-                <Form.Item name="dragger" valuePropName="fileList" getValueFromEvent={normFile} noStyle>
+                <Form.Item name="dragger" valuePropName="fileList" getValueFromEvent={(e)=>e?.fileList} noStyle>
                     <Upload.Dragger name="files" action="/upload.do" onChange={(value) => setPhotoFileName(value)}>
                       <p className="ant-upload-drag-icon" >
                         <InboxOutlined />
@@ -131,7 +150,5 @@ export const BillForm = (props) => {
       </div>
     );
 };
-
-
   
 export default BillForm;

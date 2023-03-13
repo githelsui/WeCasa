@@ -122,37 +122,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 return result;
             }
         }
-
-        // public DAOResult UpdatePaymentStatus(string username, string billId, Boolean paymentStatus)
-        // {    
-        //     var result = new DAOResult();   
-        //     _connectionString = BuildConnectionString().ConnectionString;
-        //     using(var connection = new MySqlConnection(_connectionString))
-        //     {
-        //         try
-        //         {
-        //             connection.Open();
-
-        //             var insertSql = @"UPDATE Bills 
-        //                                     SET 
-        //                                         payment_status = @payment_status
-        //                                     WHERE bill_id = @bill_id AND username = @username;";
-        //             var command = connection.CreateCommand();
-        //             command.CommandText = insertSql;
-        //             command.Parameters.AddWithValue("@bill_id", billId);
-        //             command.Parameters.AddWithValue("@payment_status", paymentStatus);
-        //             command.Parameters.AddWithValue("@username", username);
-
-        //             var rows = (command.ExecuteNonQuery());
-        //             result = result.ValidateSqlResult(rows);
-        //         }
-        //         catch (MySqlException sqlex)
-        //         {
-        //             PopulateResult(result, sqlex);
-        //         } 
-        //         return result;
-        //     }
-        // }
     
         public DAOResult DeleteBill(int billId)
         {
