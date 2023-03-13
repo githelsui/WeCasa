@@ -15,12 +15,14 @@ namespace HAGSJP.WeCasa.Services.Implementations
     public class GroupManager : IGroupManager
     {
         private readonly GroupMariaDAO _dao;
+        private readonly FilesS3DAO _s3dao;
         private Logger successLogger;
         private Logger errorLogger;
 
         public GroupManager()
         {
             _dao = new GroupMariaDAO();
+            _s3dao = new FilesS3DAO();
             successLogger = new Logger(_dao);
             errorLogger = new Logger(_dao);
         }
@@ -47,8 +49,10 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
             stopwatch.Start();
             var createGroupResult = new GroupResult();
+            var createFileBucketResult = new S3Result();
 
             createGroupResult = _dao.CreateGroup(group);
+            createFileBucketResult = _s3dao.CreateBucket(group.GroupId.ToString()).Result;
 
             if (createGroupResult.IsSuccessful)
             {

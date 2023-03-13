@@ -22,7 +22,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             "",
             Amazon.RegionEndpoint.USEast2
         );
-        private string _bucketName = "wecasa-group-files";
+        private string _bucketName = "wecasa-group-files-";
 
         public FilesS3DAO() { }
         
@@ -40,13 +40,14 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             return $"{Math.Round(size, 2)} {units[index]}";
         }
 
-        public async Task<Result> CreateBucket(string bucketName)
+        public async Task<S3Result> CreateBucket(string groupId)
         {
-            var result = new Result();
+            var result = new S3Result();
+            var bucketName = _bucketName + groupId;
              try
             {
                 var response = await _client.PutBucketAsync(bucketName);
-                result.Message = response.ResponseMetadata.ToString();
+                result.Message = $"{bucketName} bucket successfully created.";
                 result.ErrorStatus = response.HttpStatusCode;
             } 
             catch(AmazonS3Exception ex)
@@ -61,7 +62,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             var result = new S3Result();
             var s3Objects = new List<S3ObjectModel>();
-            var request = new ListObjectsV2Request{ BucketName = _bucketName }; //BucketName = _bucketName+groupId,
+            var request = new ListObjectsV2Request { BucketName = _bucketName + groupId };
             ListObjectsV2Response response;
 
             do
@@ -71,8 +72,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     var getObjectRequest = new GetObjectRequest
                     {
-                        //BucketName = _bucketName+groupId, 
-                        BucketName = _bucketName,
+                        BucketName = _bucketName+groupId, 
                         Key = s3Obj.Key
                     };
                     var getDataResponse = await _client.GetObjectAsync(getObjectRequest);
@@ -107,8 +107,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             var result = new S3Result();
             var request = new PutObjectRequest()
             {
-                // BucketName = _bucketName+groupId,
-                BucketName = _bucketName,
+                BucketName = _bucketName+groupId,
                 Key = string.IsNullOrEmpty(prefix) ? file.FileName : $"{prefix?.TrimEnd('/')}/{file.FileName}",
                 InputStream = file.OpenReadStream()
             };
@@ -125,8 +124,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             var result = new S3Result();
             var request = new DeleteObjectRequest()
             {
-                //BucketName = _bucketName+groupId,
-                BucketName = _bucketName,
+                BucketName = _bucketName+groupId,
                 Key = fileName
             };
             try

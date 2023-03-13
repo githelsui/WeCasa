@@ -6,8 +6,6 @@ import { PlusCircleOutlined } from '@ant-design/icons'
 import axios from 'axios';
 import * as Styles from '../styles/ConstStyles.js';
 import { FileView } from './FileView.js';
-import image2 from '../assets/profileimgs/2.jpg';
-import NavMenu from './NavMenu';
 const { Meta } = Card;
 const TabPane = Tabs.TabPane;
 
