@@ -73,21 +73,13 @@ export const FileView = (props) => {
         setShowModal(false);
     }
 
-    const downloadFile = () => {
+    const downloadFile = (fileUrl) => {
         console.log('download')
-        let fileForm = {
-            FileName: file.fileName
-        }
-
-        axios.post('files/DownloadFile', fileForm)
-            .then(res => {
-                console.log(res.data);
-                props.close();
-                toast('File downloading successfully.')
-            })
-            .catch((error) => {
-                console.error(error)
-                toast("Try again.", "Error downloading file.");
+        fetch(fileUrl)
+            .then(res => res.blob())
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                window.open(url);
             });
     }
 
@@ -121,7 +113,9 @@ export const FileView = (props) => {
 
                 <Row gutter={[24, 24]} align="top">
                     <Col span={16} className="file-object">
-                        <Image src={file.url} preview={false} />
+                        {(file.contentType == ".pdf" || file.contentType == ".txt" || file.contentType == ".doc" || file.contentType == ".docx") ?
+                            (<embed src={file.url} type={file.blobType} width="100%" height="600px"></embed>) :
+                            (<Image src={file.url} preview={false} />)}
                     </Col>
                     <Col span={6}>
                         <div className="file-info-section">
@@ -150,7 +144,7 @@ export const FileView = (props) => {
                             <h6 style={{ color: "gray" }} className="mulish-font bold-font padding-top">File size</h6>
                             <p className="mulish-font">{file.size}</p>
                         </div>
-                        <Button onClick={props.download} style={Styles.defaultButtonStyle} type="default" onClick={downloadFile}>Download</Button>
+                        <Button style={Styles.defaultButtonStyle} type="default" onClick={() => downloadFile(file.url)} download>Download</Button>
                     </Col>
                 </Row>
                 <DeleteFileModal show={showModal} close={() => setShowModal(false)} confirm={deleteFile} />

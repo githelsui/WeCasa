@@ -35,16 +35,22 @@ export const Files = () => {
         switch (fileType) {
             case '.jpg' || '.png' || '.gif':
                 blobType = `image/${fileType}`;
+                break;
             case '.txt':
                 blobType = 'text/plain';
+                break;
             case '.html':
                 blobType = 'text/html';
+                break;
             case '.pdf':
                 blobType = 'application/pdf';
+                break;
             case '.doc':
                 blobType = 'application/msword';
+                break;
             case '.docx':
                 blobType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                break;
         }
         return blobType;
     }
@@ -64,12 +70,14 @@ export const Files = () => {
                         for (let i = 0; i < binaryData.length; i++) {
                             uint8Array[i] = binaryData.charCodeAt(i);
                         }
-                        const blob = new Blob([uint8Array], { type: getBlobType(file.contentType) })
+                        const blobType = getBlobType(file.contentType);
+                        const blob = new Blob([uint8Array], { type: blobType })
                         return {
                             ...file,
                             owner: file.fileName.split('/').slice(0, -1).join('/'),
                             fileName: file.fileName.split('/').pop(),
                             data: binaryData,
+                            blobType: blobType,
                             url: URL.createObjectURL(blob)
                         }
                     });
@@ -135,11 +143,12 @@ export const Files = () => {
                         <Card
                             hoverable
                             style={{ width: 150 }}
-                            cover={
-                                <Image
+                            cover={(file.contentType == ".pdf" || file.contentType == ".txt" || file.contentType == ".doc" || file.contentType == ".docx") ?
+                                (<embed src={file.url} type="application/pdf" scrolling="no"></embed>) :
+                                (<Image
                                     src={file.url}
                                     onError={() => console.error(`Error loading image ${file.url}`)}
-                                    preview={false}/>}>
+                                    preview={false} />)}>
                             <Meta title={file.fileName}
                                 type="inner"
                                 style={{ textAlign: "center", display: "flex" }} />

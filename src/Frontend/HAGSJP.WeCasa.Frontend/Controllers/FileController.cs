@@ -45,14 +45,6 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
             var groupId = fileForm.GroupId;
             return fm.DeleteFile(fileName, groupId);
         }
-
-        [HttpPost]
-        [Route("DownloadFile")]
-        public S3Result DownloadFile([FromBody] FileForm fileForm)
-        {
-            FileManager fm = new FileManager();
-            throw new NotImplementedException();
-        }
     }
 }
 
