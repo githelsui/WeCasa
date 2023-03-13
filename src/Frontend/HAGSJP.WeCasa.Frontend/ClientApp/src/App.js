@@ -9,12 +9,12 @@ import './custom.css';
 
 function App() {
     const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
-    const { auth } = useAuth();
+    const { auth, currentGroup } = useAuth();
 
     return (
         <BrowserRouter basename={baseUrl}>
         <Header />
-            {auth ? <NavMenu /> : <div />}
+            {(auth && currentGroup != null) ? <NavMenu /> : <div />}
         <Container tag="main">
         <Routes>
           {AppRoutes.map((route, index) => {

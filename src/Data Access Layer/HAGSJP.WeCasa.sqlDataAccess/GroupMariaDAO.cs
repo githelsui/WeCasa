@@ -7,7 +7,7 @@ using Azure;
 using System.Data;
 using System.Reflection.PortableExecutable;
 using System.Data.SqlTypes;
-using System.Data.SqlTypes;
+using static System.Net.WebRequestMethods;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
@@ -155,6 +155,49 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
+        public GroupResult EditGroup(int groupId, GroupModel newGroup)
+        {
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                var result = new GroupResult();
+
+                // Update SQL statement
+                var insertGroupSql = @"UPDATE `Groups`
+                                        SET `group_name` = @group_name,
+                                            `icon` = @icon,
+                                            `features` = @features
+                                        WHERE `group_id` = @group_id";
+
+               
+                var command = connection.CreateCommand();
+                command.CommandText = insertGroupSql;
+                command.Parameters.AddWithValue("@group_name".ToLower(), newGroup.GroupName.ToLower());
+                command.Parameters.AddWithValue("@icon".ToLower(), newGroup.Icon.ToLower());
+                string featuresJSON = JsonSerializer.Serialize(newGroup.Features);
+                command.Parameters.AddWithValue("@features", featuresJSON);
+                command.Parameters.AddWithValue("@group_id", groupId);
+
+                // Execution of SQL
+                var rows = (command.ExecuteNonQuery());
+                var queryResult = ValidateSqlStatement(rows);
+                result.IsSuccessful = queryResult.IsSuccessful;
+
+                if (queryResult.IsSuccessful)
+                {
+                    result.Message = "Group edited successfully.";
+                    result.ReturnedObject = newGroup;
+                }
+                else
+                {
+                    result.Message = "Error editing group.";
+                }
+                connection.Close();
+                return result;
+            }
+        }
+
         public Result AddGroupMember(GroupModel group, string newGroupMember)
         {
             _connectionString = BuildConnectionString().ConnectionString;
@@ -184,31 +227,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 var command = connection.CreateCommand();
                 command.CommandText = insertUserGroupSql;
-                command.Parameters.AddWithValue("@group_id", group.GroupId);
-                command.Parameters.AddWithValue("@username".ToLower(), newGroupMember.ToLower());
-
-                // Execution of SQL
-                var rows = (command.ExecuteNonQuery());
-                result = ValidateSqlStatement(rows);
-                return result;
-            }
-        }
-
-        public Result RemoveGroupMember(GroupModel group, string groupMember)
-        {
-            _connectionString = BuildConnectionString().ConnectionString;
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                var result = new Result();
-
-                // Deletion SQL statement
-                var insertSql = @"DELETE FROM `UserGroups`
-                                  WHERE `group_id` = @group_id 
-                                  AND `username` = @username;";
-
-                var command = connection.CreateCommand();
-                command.CommandText = insertSql;
                 command.Parameters.AddWithValue("@group_id", group.GroupId);
                 command.Parameters.AddWithValue("@username".ToLower(), newGroupMember.ToLower());
 

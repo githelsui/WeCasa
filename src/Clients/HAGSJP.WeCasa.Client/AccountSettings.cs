@@ -106,7 +106,7 @@ class AccountSettings
                             }
                             string salt = BitConverter.ToString(hashSaltSecurity.GenerateSalt(newPassword));
                             string encryptedPass = hashSaltSecurity.GetHashSaltCredentials(newPassword, salt);
-                            um.UpdatePassword(userAccount, salt, encryptedPass);
+                            // um.UpdatePassword(userAccount, salt, encryptedPass);
                             break;
                         case "5":
                             um.UpdateUserIcon(userAccount);

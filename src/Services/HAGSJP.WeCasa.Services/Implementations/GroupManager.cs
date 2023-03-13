@@ -101,9 +101,37 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
             return deleteGroupResult;
         }
-        public Result EditGroup(UserAccount userAccount, int groupId, GroupModel newGroup)
+
+        public GroupResult EditGroup(int groupId, GroupModel newGroup)
         {
-            throw new NotImplementedException();
+            // System log entry recorded if group editing process takes longer than 5 seconds
+            var stopwatch = new Stopwatch();
+            var expected = 5;
+
+            stopwatch.Start();
+            var result = new GroupResult();
+
+            result = _dao.EditGroup(groupId, newGroup);
+
+            if (result.IsSuccessful)
+            {
+                // Logging the group creation
+                successLogger.Log("Group edited successfully", LogLevels.Info, "Data Store", newGroup.Owner);
+            }
+            else
+            {
+                // Logging the error
+                errorLogger.Log("Error editing group", LogLevels.Error, "Data Store", newGroup.Owner);
+            }
+
+            stopwatch.Stop();
+            var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
+            if (result.IsSuccessful && actual > expected)
+            {
+                errorLogger.Log("Group edited successfully, but took longer than 5 seconds", LogLevels.Info, "Business", newGroup.Owner, new UserOperation(Operations.GroupCreation, 1));
+            }
+
+            return result;
         }
 
         public GroupResult GetGroupMembers(GroupModel group)

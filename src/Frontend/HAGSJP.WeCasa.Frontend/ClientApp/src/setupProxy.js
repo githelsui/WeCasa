@@ -11,7 +11,8 @@ const context = [
     "/budgetbar",
     "/logout",
     "/home",
-    "/group-settings"
+    "/group-settings",
+    "/account-settings"
 ];
 
 const onError = (err, req, resp, target) => {

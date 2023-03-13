@@ -6,6 +6,8 @@ import { Login } from "./components/Login";
 import { BudgetBar } from "./components/BudgetBar/BudgetBar";
 import { GroupSettings } from "./components/GroupSettings";
 
+import { AccountSettings } from "./components/AccountSettings";
+
 
 const AppRoutes = [
   {
@@ -43,6 +45,10 @@ const AppRoutes = [
   {
     path: '/finances',
     element: <BudgetBar />
+    },
+    {
+        path: '/account-settings',
+        element: <AccountSettings />
     }
 ];
 

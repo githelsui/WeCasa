@@ -50,7 +50,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="WebAPIModels\" />
     <Folder Include="ClientApp\src\assets\" />
     <Folder Include="ClientApp\src\assets\defaultimgs\" />
     <Folder Include="ClientApp\src\scripts\" />

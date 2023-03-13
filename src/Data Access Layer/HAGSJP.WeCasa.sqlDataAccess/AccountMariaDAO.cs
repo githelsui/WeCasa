@@ -161,6 +161,15 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         {
                             result.IsSuccessful = true;
                             result.HasValidOTP = true;
+                            // returning authenticated user info
+                            UserProfile userProfile = new UserProfile();
+                            userProfile.Username = userAccount.Username;
+                            userProfile.FirstName = reader.GetString(reader.GetOrdinal("first_name"));
+                            userProfile.LastName = reader.GetString(reader.GetOrdinal("last_name"));
+                            userProfile.Notifications = JsonSerializer.Deserialize<List<string>>(reader.GetString(reader.GetOrdinal("notifications")));
+                            userProfile.Image = reader.GetInt32(reader.GetOrdinal("image"));
+                            result.ErrorStatus = System.Net.HttpStatusCode.Found;
+                            result.ReturnedObject = userProfile;
                         }
                         else
                         {
