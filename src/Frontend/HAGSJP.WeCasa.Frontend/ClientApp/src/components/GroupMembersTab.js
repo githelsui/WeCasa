@@ -5,6 +5,7 @@ import '../styles/System.css';
 import '../index.css';
 import axios from 'axios';
 import defaultImage from '../assets/defaultimgs/wecasatemp.jpg';
+import InviteRoommateModal from './InviteRoommateModal.js';
 import { useAuth } from './AuthContext';
 import { UserOutlined } from '@ant-design/icons'
 
@@ -40,6 +41,7 @@ const groupData = {
 export const GroupMembersTab = (props) => {
     const [membersList, setMembersList] = useState([]);
     const { currentUser, currentGroup } = useAuth();
+    const [showInviteModal, setShowInviteModal] = useState(false);
 
     const getFullName = (first, last) => {
         return first + ' ' + last
@@ -109,7 +111,8 @@ export const GroupMembersTab = (props) => {
             {currentUser["username"] == currentGroup["owner"] ? (
                 <Row gutter={24} style={{ display: "flex", alignItems: "right", justifyContent: "right" }}>
                     <Col span={8}>
-                        <Button type="primary" style={Styles.primaryButtonStyle}>Invite roommates</Button>
+                        <Button type="primary" style={Styles.primaryButtonStyle} onClick={() => setShowInviteModal(true)}>Invite roommates</Button>
+                        <InviteRoommateModal show={showInviteModal} close={() => setShowInviteModal(false)}/>
                     </Col>
                 </Row>)
                 : (<div></div>)}

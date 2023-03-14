@@ -50,12 +50,22 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("DeleteGroup")]
-        public Result DeleteGroup([FromBody] GroupMemberForm groupForm)
+        public Result DeleteGroup([FromBody] GroupForm groupForm)
         {
             var group = new GroupModel();
             group.GroupId = groupForm.GroupId;
             var groupManager = new GroupManager();
             var result = groupManager.DeleteGroup(group);
+            return result;
+        }
+
+        [HttpPost]
+        [Route("EditGroup")]
+        public GroupResult EditGroup([FromBody] GroupForm groupForm)
+        {
+            var newGroup = new GroupModel(groupForm.GroupId, groupForm.Owner, groupForm.GroupName, groupForm.Icon, groupForm.Features); ;
+            var groupManager = new GroupManager();
+            var result = groupManager.EditGroup(groupForm.GroupId, newGroup);
             return result;
         }
     }

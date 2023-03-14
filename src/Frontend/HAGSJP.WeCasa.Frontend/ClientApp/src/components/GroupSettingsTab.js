@@ -8,6 +8,7 @@ import '../index.css';
 import axios from 'axios';
 import defaultImage from '../assets/defaultimgs/wecasatemp.jpg';
 import * as ValidationFuncs from '../scripts/InputValidation.js';
+const maxConfiguredFeatures = 6;
 
 export const GroupSettingsTab = (props) => {
 
@@ -26,7 +27,7 @@ export const GroupSettingsTab = (props) => {
     const [roommate, setRoommate] = useState("");
     const [invitedRoommates, setInvitedRoommates] = useState([])
     const [noInvitations, setNoInvitations] = useState(true);
-    const { currentUser, currentGroup } = useAuth();
+    const { currentUser, currentGroup, setCurrentGroup } = useAuth();
 
     const updateFeatureSection = () => {
         var features = currentGroup['Features'];
@@ -139,7 +140,42 @@ export const GroupSettingsTab = (props) => {
     }
 
     const submitGroupSettings = (values) => {
+        // Editing features 
+        let newFeatures = [];
+        if (values.budgetBar) newFeatures.push("Budget Bar");
+        if (values.bulletinBoard) newFeatures.push("Bulletin Board");
+        if (values.calendar) newFeatures.push("Calendar");
+        if (values.choreList) newFeatures.push("Chore List");
+        if (values.groceryList) newFeatures.push("Grocery List");
+        if (values.circularProgressBar) newFeatures.push("Circular Progress Bar");
+        if (values.length == maxConfiguredFeatures) newFeatures = ['all'];
 
+        let groupForm = {
+            GroupId: currentGroup['groupId'],
+            Owner: currentGroup['owner'],
+            GroupName: currentGroup['groupName'],
+            Icon: currentGroup['icon'],
+            Features: newFeatures
+        }
+
+        //Editing group name
+        if (values.groupName != undefined && values.groupName != '') {
+            groupForm['groupName'] = values.groupName
+        }
+
+        console.log(groupForm)
+        axios.post('group-settings/EditGroup', groupForm)
+            .then(res => {
+                var isSuccessful = res.data['isSuccessful'];
+                if (isSuccessful) {
+                    console.log("Successfully saved group.")
+                    toast("Successfully saved group.")
+                    setCurrentGroup(res.data['returnedObject'])
+                } else {
+                    toast('Try again.', res.data['message']);
+                }
+            })
+            .catch((error => { console.error(error) }));
     }
 
     const toast = (title, desc = '') => {
@@ -175,7 +211,7 @@ export const GroupSettingsTab = (props) => {
                     </Col>
                     <Col span={14} className="group-name-input">
                         <Form.Item name="groupName">
-                            <Input style={Styles.inputFieldStyle} placeholder="Group name" required />
+                            <Input style={Styles.inputFieldStyle} placeholder="Group name" />
                         </Form.Item>
                     </Col>
                 </Row>
