@@ -13,7 +13,7 @@ describe('File Upload Failure', function () {
             .pause(1000)
             .waitForElementVisible('.ant-notification-notice-message')
             .getText('.ant-notification-notice-message', function (result) {
-                this.assert.equals(result.value, 'Invalid file type')
+                assert.equals(result.value, 'Invalid file type')
             });
     });
     after(browser => browser.end());

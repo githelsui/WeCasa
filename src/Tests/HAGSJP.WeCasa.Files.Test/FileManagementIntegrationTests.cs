@@ -50,7 +50,7 @@ namespace HAGSJP.WeCasa.Files.Test
         }
 
         [TestMethod]
-        public async void ShouldUploadFileWithin10Sec()
+        public void ShouldUploadFileWithin10Sec()
         {
             // Arrange
             var stopwatch = new Stopwatch();
