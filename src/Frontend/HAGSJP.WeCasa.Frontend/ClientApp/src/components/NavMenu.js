@@ -36,6 +36,14 @@ export const NavMenu = () => {
                                 to="/finanaces">Finances</NavLink>
                         </li>
                         <li>
+                            <NavLink tag={Link}
+                                style={({ isActive }) => ({
+                                    ...Styles.navLink,
+                                    ...(isActive ? Styles.activeStyle : null)
+                                })}
+                                to="/files">Files</NavLink>
+                        </li>
+                        <li>
                             <NavLink
                                 tag={Link}
                                 style={({ isActive }) => ({

@@ -223,7 +223,9 @@ export const GroupSettingsTab = (props) => {
                             <h6 className="mulish-font">Budget Bar</h6>
                         </Col>
                         <Col span={6}>
-                            <Form.Item name="budgetBar" valuePropName="checked" initialValue={(currentGroup.features.includes("Budget Bar")) ? true : false}>
+                            <Form.Item name="budgetBar"
+                                valuePropName="checked"
+                                initialValue={currentGroup.features.includes("Budget Bar") || currentGroup.features.includes("all") ? true : false}>
                                 <Switch defaultChecked="false" checkedChildren="ON" unCheckedChildren="OFF" />
                             </Form.Item>
                         </Col>
@@ -234,7 +236,9 @@ export const GroupSettingsTab = (props) => {
                             <h6 className="mulish-font">Bulletin Board</h6>
                         </Col>
                         <Col span={6}>
-                            <Form.Item name="bulletinBoard" valuePropName="checked" initialValue={(currentGroup.features.includes("Bulletin Board")) ? true : false}>
+                            <Form.Item name="bulletinBoard"
+                                valuePropName="checked"
+                                initialValue={currentGroup.features.includes("Bulletin Board") || currentGroup.features.includes("all") ? true : false}>
                                 <Switch defaultChecked="false" checkedChildren="ON" unCheckedChildren="OFF" />
                             </Form.Item>
                         </Col>
@@ -245,7 +249,9 @@ export const GroupSettingsTab = (props) => {
                             <h6 className="mulish-font">Calendar</h6>
                         </Col>
                         <Col span={6}>
-                            <Form.Item name="calendar" valuePropName="checked" initialValue={(currentGroup.features.includes("Calendar")) ? true : false}>
+                            <Form.Item name="calendar"
+                                valuePropName="checked"
+                                initialValue={currentGroup.features.includes("Calendar") || currentGroup.features.includes("all") ? true : false}>
                                 <Switch defaultChecked="false" checkedChildren="ON" unCheckedChildren="OFF" />
                             </Form.Item>
                         </Col>
@@ -256,7 +262,9 @@ export const GroupSettingsTab = (props) => {
                             <h6 className="mulish-font">Chore List</h6>
                         </Col>
                         <Col span={6}>
-                            <Form.Item name="choreList" valuePropName="checked" initialValue={(currentGroup.features.includes("Chore List")) ? true : false}>
+                            <Form.Item name="choreList"
+                                valuePropName="checked"
+                                initialValue={currentGroup.features.includes("Chore List") || currentGroup.features.includes("all") ? true : false}>
                                 <Switch defaultChecked="false" checkedChildren="ON" unCheckedChildren="OFF" />
                             </Form.Item>
                         </Col>
@@ -267,7 +275,9 @@ export const GroupSettingsTab = (props) => {
                             <h6 className="mulish-font">Grocery List</h6>
                         </Col>
                         <Col span={6}>
-                            <Form.Item name="groceryList" valuePropName="checked" initialValue={(currentGroup.features.includes("Grocery List")) ? true : false}>
+                            <Form.Item name="groceryList"
+                                valuePropName="checked"
+                                initialValue={currentGroup.features.includes("Grocery List") || currentGroup.features.includes("all") ? true : false}>
                                 <Switch defaultChecked="false" checkedChildren="ON" unCheckedChildren="OFF" />
                             </Form.Item>
                         </Col>
@@ -278,7 +288,9 @@ export const GroupSettingsTab = (props) => {
                             <h6 className="mulish-font">Circular Progress Bar</h6>
                         </Col>
                         <Col span={6}>
-                            <Form.Item name="circularProgressBar" valuePropName="checked" initialValue={(currentGroup.features.includes("Circular Progress Bar")) ? true : false}>
+                            <Form.Item name="circularProgressBar"
+                                valuePropName="checked"
+                                initialValue={currentGroup.features.includes("Circular Progress Bar") || currentGroup.features.includes("all") ? true : false}>
                                 <Switch defaultChecked="false" checkedChildren="ON" unCheckedChildren="OFF" />
                             </Form.Item>
                         </Col>

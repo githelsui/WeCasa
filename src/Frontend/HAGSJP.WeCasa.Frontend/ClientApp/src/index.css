@@ -71,6 +71,15 @@ body {
     font-family: 'Mulish', sans-serif;
 }
 
+file-upload-allison
+.thin-font {
+    font-weight:100;
+}
+
+.bold-font {
+    font-weight: bolder;
+}
+
 .read-only-text {
     font-family: 'Mulish';
     background-color: #F4F5F4;

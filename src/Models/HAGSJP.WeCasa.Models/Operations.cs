@@ -6,7 +6,9 @@ namespace HAGSJP.WeCasa.Models
         Login,
         Registration,
         Logout,
-        GroupCreation
+        GroupCreation,
+        FileUpload,
+        FileDeletion
     }
 }
 

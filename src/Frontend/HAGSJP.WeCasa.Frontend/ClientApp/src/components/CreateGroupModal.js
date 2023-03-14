@@ -170,7 +170,7 @@ const CreateGroupModal = (props) => {
                         </Row>
                         <p className="group-feature-desc-p">{tempFeatureDesc}</p>
                     </div>
-                    <Button key="cancel" onClick={props.close} type="default" style={Styles.defaultButtonModal}>Exit</Button>,
+                    <Button key="cancel" onClick={props.close} type="default" style={Styles.defaultButtonModal}>Exit</Button>
                     <Button key="create" type="primary" htmlType="submit" style={Styles.primaryButtonModal}>Create Group</Button>
                 </Form>
             </div>
