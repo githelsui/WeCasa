@@ -6,15 +6,23 @@ import {MultiColorProgressBar} from './ProgressBar';
 import BillForm from './BillForm';
 import BudgetForm from './BudgetForm';
 import DeletionModal from '../DeletionModal';
+import { useAuth } from '../AuthContext';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import * as Styles from '../../styles/ConstStyles';
 import { EditBillForm } from './EditBillForm';
 
-export const BudgetBar = (user) => {
-  // const { auth, currentUser } = useAuth();
-  const currentUser = 'frost@gmail.com'; //TEST DATA
-  const groupId = 123456; //TEST DATA
-  const [selectedUser, setSelectedUser] = useState(currentUser);
+export const BudgetBar = () => {
+  const { auth, currentUser, currentGroup } = useAuth();
+  let user = currentUser
+  let authorized = auth
+  let group = currentGroup
+
+  // TODO: temporary fix for refresh issue
+  if (authorized===null) authorized = true
+  if (user===null) user = 'frost@gmail.com'
+  if (group===null) group = {groupId: '123456'}
+
+  const [selectedUser, setSelectedUser] = useState(user);
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [deleteBill, setDeleteBill] = useState(null);
@@ -27,11 +35,10 @@ export const BudgetBar = (user) => {
   const [deletedBills, setDeletedBills] = useState([])
 
   useEffect(() => {
-    axios.get(`budgetbar/${groupId}`).then((response) => { 
+    axios.get(`budgetbar/${group.groupId}`).then((response) => { 
        var res = response.data
        setBudget(res["budget"])
        setGroupTotal(res["groupTotal"])
-       console.log("GROUPTOTAL", res["groupTotal"])
        let newUserList = [];
        let colorCounter = 0;
        res["group"].forEach(function (item) {
@@ -44,7 +51,6 @@ export const BudgetBar = (user) => {
          newUserList.push(newObj)
        })
        setUsers(newUserList)
-       console.log("NEW OBJECT WITH COLOR", users)
        let activeBillList = []
        res["activeBills"].forEach(function (bill) {
          let date = new Date(bill.dateEntered);
@@ -65,7 +71,6 @@ export const BudgetBar = (user) => {
          activeBillList.push(newObj)
        })
        setActiveBills(activeBillList)
-       console.log(activeBillList)
        let deletedBillList = []
        res["deletedBills"].forEach(function (bill) {
          let date = new Date(bill.dateEntered);
@@ -93,8 +98,8 @@ export const BudgetBar = (user) => {
    alert("Finances failed to load.")});
  }, []);
   
-  const handleRestoreButton = (billId) => {
-    console.log("RESROTE", billId)
+  const handleRestoreButton = (bill) => {
+    const billId = bill.billID
     if (billId !== null) {
       axios.put(`budgetbar/Restore/${billId}`).then((response) => { 
         let res = response
@@ -112,7 +117,7 @@ export const BudgetBar = (user) => {
       key: "1",
       title: '',
       render: (bill) => {
-        return (<Button onClick={()=>{handleRestoreButton(bill.billID)}}>Restore</Button>)}    
+        return (<Button onClick={()=>{handleRestoreButton(bill)}}>Restore</Button>)}    
     },
     {
       key: "2",
@@ -174,16 +179,13 @@ export const BudgetBar = (user) => {
       render: (bill) => {
         return(
         <Space size="middle">
-          {(currentUser===bill.owner) && <EditOutlined onClick={()=>{
+          {(user===bill.owner) && <EditOutlined onClick={()=>{
             setShowEditForm(true)
             setEditBill(bill)
             }}/> }
-           {(currentUser===bill.owner) &&  <DeleteOutlined onClick={()=>setDeleteBill(bill)}/> }
+           {(user===bill.owner) &&  <DeleteOutlined onClick={()=>setDeleteBill(bill)}/> }
           {deleteBill && <DeletionModal message='Are you sure you want to delete this bill?' show={deleteBill} close={()=>setDeleteBill(false)} confirm={()=>handleDelete(deleteBill.billID)} />}
-          {showEditForm && <EditBillForm show={showEditForm} bill={editBill} members={users} close={()=>setShowEditForm(false)} setOpen={setShowEditForm}/> }
-            {console.log("BILL OWNRE", bill.owner)}
-            {console.log("currentUser", currentUser)}
-            {console.log("currentUser", currentUser===bill.owner)}
+          {showEditForm && <EditBillForm show={showEditForm} bill={editBill} members={users} setActiveBills={setActiveBills} close={()=>setShowEditForm(false)} setOpen={setShowEditForm}/> }
         </Space>
         )}    
     },

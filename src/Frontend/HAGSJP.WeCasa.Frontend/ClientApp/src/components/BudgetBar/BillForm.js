@@ -49,7 +49,7 @@ export const BillForm = (props) => {
             PaymentStatus: paymentStatus,
             IsRepeated: isRepeated,
             PhotoFileName: photoFileName
-      }  
+      }
        console.log(request)
       axios.post('budgetbar/AddBill', request).then(res => {
           var response = res.data;
