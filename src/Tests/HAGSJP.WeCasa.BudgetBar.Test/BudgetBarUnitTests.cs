@@ -1,4 +1,5 @@
-﻿namespace HAGSJP.WeCasa.BudgetBar.Test;
+﻿using HAGSJP.WeCasa.Frontend.Controllers;
+namespace HAGSJP.WeCasa.BudgetBar.Test;
 
 [TestClass]
 public class UnitTest1

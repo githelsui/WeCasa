@@ -10,8 +10,8 @@ import * as Styles from '../../styles/ConstStyles';
 import axios from 'axios';
 
 
-const BudgetForm = ({budget, setBudget}) => {
-    const groupId = 123456 // TEST DATA
+const BudgetForm = ({budget, setBudget, group}) => {
+    const groupId = group.groupId // TEST DATA
     const [open, setopen] = useState(false);
     const [tempBudget, setTempBudget] = useState(0);
   

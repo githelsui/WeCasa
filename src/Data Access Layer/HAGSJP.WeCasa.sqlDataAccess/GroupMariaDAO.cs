@@ -222,14 +222,12 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                                           )
                                           VALUES (
                                             @group_id, 
-                                            @owner 
+                                            @username 
                                          );";
-
                 var command = connection.CreateCommand();
                 command.CommandText = insertUserGroupSql;
                 command.Parameters.AddWithValue("@group_id", group.GroupId);
                 command.Parameters.AddWithValue("@username".ToLower(), newGroupMember.ToLower());
-
                 // Execution of SQL
                 var rows = (command.ExecuteNonQuery());
                 result = ValidateSqlStatement(rows);

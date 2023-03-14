@@ -6,7 +6,8 @@ namespace HAGSJP.WeCasa.Models
      [Serializable]
    public class Bill
    {
-       public List<string> Usernames { get; set; }
+
+        public List<string> Usernames { get; set; }
        public string Owner { get; set; }
        public string BillName { get; set; }
        public int GroupId { get; set; }
@@ -36,9 +37,10 @@ namespace HAGSJP.WeCasa.Models
             PhotoFileName = photoFileName;
        }
 
-       public Bill(List<string> username, int billId, DateTime dateEntered, string billName , string billDescription, decimal amount, Boolean paymentStatus,Boolean isRepeated, Boolean isDeleted, DateTime dateDeleted, string photoFileName)
+       public Bill(List<string> username, string owner, int billId, DateTime dateEntered, string billName , string billDescription, decimal amount, Boolean paymentStatus,Boolean isRepeated, Boolean isDeleted, DateTime dateDeleted, string photoFileName)
        {
             Usernames = username;
+            Owner = owner;
             BillId = billId;
             DateEntered = dateEntered;
             BillName = billName;
@@ -50,5 +52,5 @@ namespace HAGSJP.WeCasa.Models
             DateDeleted = dateDeleted;
             PhotoFileName = photoFileName;
        }
-   }
+    }
 }

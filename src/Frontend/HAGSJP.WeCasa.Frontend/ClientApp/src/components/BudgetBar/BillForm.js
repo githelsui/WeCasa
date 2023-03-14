@@ -22,8 +22,8 @@ export const BillForm = (props) => {
   const [members, setMembers] = useState(props.members);
   const [name, setName] = useState('');
   // TODO: use authContext
-  const [owner, setOwner] = useState('frost@gmail.com');
-  const [groupId, setGroupId] = useState(123456);
+  const [owner, setOwner] = useState(props.user);
+  const [groupId, setGroupId] = useState(props.group.groupId);
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState(0);
   const [paymentStatus, setPaymentStatus] = useState(false);
@@ -77,7 +77,7 @@ export const BillForm = (props) => {
                       message: 'Missing bill name',
                       },
                       {
-                        pattern: /^[a-zA-Z0-9]{1,60}$/,
+                        pattern: /^[a-zA-Z0-9 ]{1,60}$/,
                         message: 'Invalid bill name',
                       },
                   ]}>
@@ -87,7 +87,7 @@ export const BillForm = (props) => {
                 <Form.Item name="description" label="Description"
                   rules={[
                     {
-                      pattern: /^[a-zA-Z0-9]{0,2000}$/,
+                      pattern: /^[a-zA-Z0-9 ]{0,2000}$/,
                       message: 'Description is too long',
                     },
                 ]}>

@@ -15,12 +15,13 @@ export const BudgetBar = () => {
   const { auth, currentUser, currentGroup } = useAuth();
   let user = currentUser
   let authorized = auth
+  console.log("AUTH", authorized)
   let group = currentGroup
 
   // TODO: temporary fix for refresh issue
-  if (authorized===null) authorized = true
-  if (user===null) user = 'frost@gmail.com'
-  if (group===null) group = {groupId: '123456'}
+  if (auth===null) authorized = true
+  if (user===null) user = 'joy@gmail.com'
+  if (group===null) group = {groupId: '1235467'}
 
   const [selectedUser, setSelectedUser] = useState(user);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -179,6 +180,8 @@ export const BudgetBar = () => {
       render: (bill) => {
         return(
         <Space size="middle">
+          {console.log(currentUser)}
+          {console.log("Owner", bill.owner)}
           {(user===bill.owner) && <EditOutlined onClick={()=>{
             setShowEditForm(true)
             setEditBill(bill)
@@ -259,17 +262,17 @@ export const BudgetBar = () => {
     }
 
     return (
-        <div>
-        <NavMenu/>
-        {displayButtonIcons() }
-        <BudgetForm budget={budget} setBudget={setBudget} style="margin-top: 20px"/>
-        <p><strong>Total Budget: ${budget}</strong></p>
-        <Progress percent={(groupTotal/budget)*100} strokeColor = {color[0]} showInfo={false} strokeWidth="30px"/>
-        <MultiColorProgressBar  readings={users} />
-        <Button style={Styles.addFormButton} onClick={()=>setShowAddForm(!showAddForm)}>Add Bill</Button>
-        {showAddForm && (<BillForm budget={budget} groupTotal={groupTotal} members={users}/>)}
-        {/* {showEditForm && (<EditBillForm/>)} */}
-        <Tabs defaultActiveKey="1" items={tabs} /> 
+        <div >
+        {(!authorized && !auth) && alert("Unauthorized")}
+          {(auth == null) ? <NavMenu/> : null}
+          {displayButtonIcons() }
+          <BudgetForm budget={budget} setBudget={setBudget} group={group} style="margin-top: 20px"/>
+          <p><strong>Total Budget: ${budget}</strong></p>
+          <Progress percent={(groupTotal/budget)*100} strokeColor = {color[0]} showInfo={false} strokeWidth="30px"/>
+          <MultiColorProgressBar  readings={users} />
+          <Button style={Styles.addFormButton} onClick={()=>setShowAddForm(!showAddForm)}>Add Bill</Button>
+          {showAddForm && (<BillForm budget={budget} groupTotal={groupTotal} user={user} group={group} members={users}/>)}
+          <Tabs defaultActiveKey="1" items={tabs} /> 
     </div>
     );
   }

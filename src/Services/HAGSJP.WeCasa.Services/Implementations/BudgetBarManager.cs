@@ -21,7 +21,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return Guid.NewGuid().ToString("N");
         }
 
-        public object GetInitialBudgetBarVew(int groupId)
+        public BudgetBarView GetInitialBudgetBarVew(int groupId)
         {
             Logger lo = new Logger(new GroupMariaDAO());
             AccountMariaDAO dao = new AccountMariaDAO();
@@ -57,15 +57,15 @@ namespace HAGSJP.WeCasa.Services.Implementations
                     deletedBills.Add(bill);
                 }
             }
+            BudgetBarView bbView = new BudgetBarView();
+            bbView.ActiveBills = activeBills;
+            bbView.DeletedBills = deletedBills;
+            bbView.Group = budgetBarUsers;
+            bbView.Budget = budget;
+            bbView.GroupTotal = totalSpent;
+            bbView.UserTotals = userTotals;
             
-            return new {
-                ActiveBills = activeBills,
-                DeletedBills = deletedBills,
-                Group = budgetBarUsers,
-                Budget = budget,
-                GroupTotal = totalSpent,
-                UserTotals = userTotals
-            };
+            return bbView;
         }
  
         public Result DeleteAllOutdatedBills(string username)
@@ -152,7 +152,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public Result DeleteBill(int billId)
         {
 
-            DAOResult result = _dao.DeleteBill(billId);
+            DAOResult result = _dao.DeleteBill(billId, DateTime.Now);
             if (result.IsSuccessful)
             {
                 _logger.Log("Delete bill was successful", LogLevels.Info, "Data Store", "Bill Id: " + billId);

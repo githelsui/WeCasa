@@ -5,6 +5,8 @@ namespace HAGSJP.WeCasa.Models
         public string? ErrorStatus;
          public string? SqlState;
 
+         public object? ReturnedObject;
+
         public DAOResult ValidateSqlResult(int rows)
         {
             var result = new DAOResult();

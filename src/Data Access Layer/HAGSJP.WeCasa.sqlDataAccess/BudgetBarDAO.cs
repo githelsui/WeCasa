@@ -44,23 +44,35 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     connection.Open();
 
                     var insertSql = @"INSERT INTO Bills (usernames, owner, group_id, date_submitted, bill_description, amount, bill_name, payment_status, is_repeated, receipt_file_name)
-                                    VALUES (@usernames, @owner, @group_id, @date_submitted, @bill_description, @amount, @bill_name, @payment_status, @is_repeated, @receipt_file_name);";
+                                    VALUES (@usernames, @owner, @group_id, @date_submitted, @bill_description, @amount, @bill_name, @payment_status, @is_repeated, @receipt_file_name);
+                                    SELECT LAST_INSERT_ID();";
                 
                     var command = connection.CreateCommand();
                     command.CommandText = insertSql;
                     command.Parameters.AddWithValue("@usernames", billsJSON);
                     command.Parameters.AddWithValue("@owner", bill.Owner);
                     command.Parameters.AddWithValue("@group_id", bill.GroupId);
-                    command.Parameters.AddWithValue("@date_submitted", DateTime.Now);
+                    command.Parameters.AddWithValue("@date_submitted", bill.DateEntered != null? bill.DateEntered : DateTime.Now);
                     command.Parameters.AddWithValue("@bill_description", bill.BillDescription);
                     command.Parameters.AddWithValue("@amount", bill.Amount);
                     command.Parameters.AddWithValue("@bill_name", bill.BillName);
-                    command.Parameters.AddWithValue("@payment_status", bill.PaymentStatus == null? bill.PaymentStatus : false);
+                    command.Parameters.AddWithValue("@payment_status", bill.PaymentStatus != null? bill.PaymentStatus : false);
                     command.Parameters.AddWithValue("@is_repeated", bill.IsRepeated == null ? bill.IsRepeated : false);
                     command.Parameters.AddWithValue("@receipt_file_name", bill.PhotoFileName == null ? bill.PhotoFileName : "");
 
-                    var rows = (command.ExecuteNonQuery());
-                    result = result.ValidateSqlResult(rows);
+
+                    var billId = Convert.ToInt32(command.ExecuteScalar());
+                    if (billId == null)
+                    {
+                        result.IsSuccessful = false;
+                        result.Message = "Add bill failure";
+                    }
+                    else
+                    {
+                        result.IsSuccessful = true;
+                        result.Message = "Add bill success";
+                        result.ReturnedObject = billId;
+                    }
                 }
                 catch (MySqlException sqlex)
                 {
@@ -123,7 +135,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
     
-        public DAOResult DeleteBill(int billId)
+        public DAOResult DeleteBill(int billId, DateTime date)
         {
             var result = new DAOResult();
             _connectionString = BuildConnectionString().ConnectionString;
@@ -142,7 +154,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.CommandText = insertSql;
                     command.Parameters.AddWithValue("@bill_id", billId);
                     command.Parameters.AddWithValue("@is_deleted", true);
-                    command.Parameters.AddWithValue("@date_deleted", DateTime.Now);
+                    command.Parameters.AddWithValue("@date_deleted", date);
 
                     var rows = (command.ExecuteNonQuery());
                     result = result.ValidateSqlResultMultiple(rows);
@@ -305,11 +317,37 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         {
                             return reader.GetDecimal(reader.GetOrdinal("budget")); 
                         }
-                        // else
-                        // {
-                        //     throw new Exception("Cannot find item for get budget");
-                        // }
                         return -1; 
+                    }
+                }
+                catch(Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
+        public int GetGroupId(string username)
+        {
+            _connectionString = BuildConnectionString().ConnectionString;
+            using(var connection = new MySqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
+
+                    var insertSql = @"SELECT * from USERGROUPS
+                                        WHERE username = @username;";
+                    var command = connection.CreateCommand();
+                    command.CommandText = insertSql;
+                    command.Parameters.AddWithValue("@username".ToLower(), username.ToLower());
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return reader.GetInt32(reader.GetOrdinal("group_id")); 
+                        }
+                        return 0; 
                     }
                 }
                 catch(Exception ex)

@@ -85,7 +85,13 @@ export const EditBillForm = (props) => {
                   <Input onChange={e => setName(e.target.value)} defaultValue={name}/>
                 </Form.Item>
 
-                <Form.Item name="description" label="Description">
+                <Form.Item name="description" label="Description"
+                  rules={[
+                    {
+                      pattern: /^[a-zA-Z0-9 ]{0,2000}$/,
+                      message: 'Description is too long',
+                    },
+                ]}>
                   <Input onChange={e => e?.target?.value && setDescription(e.target.value)} defaultValue={description}/>
                 </Form.Item> 
 
