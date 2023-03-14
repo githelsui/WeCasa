@@ -21,7 +21,7 @@ export const Files = () => {
     const fileInputRef = React.createRef();
     const navigate = useNavigate();
     const validFileTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif', 'text/plain', 'text/html', 'application/pdf', 'application/msword', 'application / vnd.openxmlformats - officedocument.wordprocessingml.document'];
-    const validFileExt = ['.jpg', 'jpeg', '.png', '.gif', '.txt', '.html', '.pdf', '.doc', '.docx'];
+    const validFileExt = ['jpg', 'jpeg', 'png', 'gif', 'txt', 'html', 'pdf', 'doc', 'docx'];
     const maxFileSize = 10 * 1024 * 1024; // 10 MB
     const maxBucketSize = 15 * 1024 * 1024 * 1024 // 15 GB
 
@@ -131,19 +131,22 @@ export const Files = () => {
         if (!validFileTypes.includes(file.type)) {
             setValidInput(false);
             toast('Invalid file type');
+            return;
         }
         if (!validFileExt.includes(file.name.split(".").pop())) {
+            console.log(file.name.split(".").pop());
             setValidInput(false);
             toast('Invalid file type');
+            return;
         }
         if (file.size > maxFileSize) {
             setValidInput(false);
             toast('File is too large');
+            return;
         }
-        if (validInput) {
-            setUploadFile(file);
-            attemptFileUpload(file);
-        }
+        setValidInput(true);
+        setUploadFile(file);
+        attemptFileUpload(file);
     }
 
     const attemptFileUpload = (file) => {
@@ -157,6 +160,7 @@ export const Files = () => {
             .then(res => {
                 var isSuccessful = res.data['isSuccessful'];
                 if (isSuccessful) {
+                    successFileView(res.data['message']);
                     getFiles();
                 }
                 else {
@@ -221,6 +225,15 @@ export const Files = () => {
             );
         });
         return deletedFileList;
+    }
+
+    const successFileView = (successMessage) => {
+        notification.open({
+            message: "",
+            description: successMessage,
+            duration: 10,
+            placement: "topLeft"
+        });
     }
 
     const failureFileView = (failureMessage) => {
