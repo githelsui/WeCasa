@@ -28,13 +28,12 @@ export const primaryButtonStyle = {
 }
 
 export const deleteButtonStyle = {
-    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
     fontFamily: 'Mulish',
     width: '50%',
     fontWeight: 'bold',
-    backgroundColor: '#bd0d25',
-    color: '#FFFFFF',
-    marginTop: -10,
+    backgroundColor: 'white',
+    borderColor: '#111827',
+    color: '#bd0d25',
     marginLeft: 200,
     marginRight: 200,
     justifyContent: 'center',
@@ -43,7 +42,6 @@ export const deleteButtonStyle = {
 }
 
 export const saveButtonStyle = {
-    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
     fontFamily: 'Mulish',
     width: '50%',
     fontWeight: 'bold',
@@ -64,6 +62,19 @@ export const defaultButtonStyle = {
     borderWidth: 'thin',
     borderColor: '#111827',
     textDecoration: 'none'
+}
+
+export const fileButtonStyle = {
+    fontFamily: 'Mulish',
+    fontWeight: 'bold',
+    display: 'inline-flex',
+    alignItems: 'center',
+    borderWidth: 'thin',
+    borderColor: '#111827',
+    backgroundColor: 'white',
+    textDecoration: 'none',
+    marginLeft: 30,
+    marginTop: 80,
 }
 
 export const buttonHover = {
@@ -96,6 +107,22 @@ export const defaultButtonModal = {
     //marginBottom: '10px'
 }
 
+export const navLink = {
+    fontFamily: 'Mulish',
+    fontWeight: 'bold',
+    textDecoration: 'none',
+    color: '#717171',
+    backgroundColor: 'white',
+}
+
+export const activeStyle = {
+    backgroundColor: '#525252',
+    color: 'white',
+    fontWeight: 'normal',
+    borderRadius: '50px',
+    borderWidth: '100px',
+}
+
 export const defaultImage = {
     borderRadius: '20px'
 }
@@ -123,8 +150,8 @@ export const primaryButtonStyleNoMargins = {
 // Overrides styling for Row antd component
 export const groupFeatureContainer = {
     backgroundColor: '#ECECEC',
-    paddingTop: '4%',
-    paddingBottom: '3%',
+    paddingTop: '1%',
+    paddingBottom: '0%',
     paddingLeft: '6%',
     paddingRight: '0%',
     marginTop: '1%',

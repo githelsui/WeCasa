@@ -9,7 +9,9 @@ const context = [
     "/registration",
     "/login",
     "/home",
-    "/group-settings"
+    "/group-settings",
+    "/account-settings",
+    "/files"
 ];
 
 const onError = (err, req, resp, target) => {

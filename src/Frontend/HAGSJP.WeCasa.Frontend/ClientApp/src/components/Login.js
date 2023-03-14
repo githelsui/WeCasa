@@ -100,7 +100,7 @@ export const Login = () => {
                         console.log(res.data)
                         setLoginResults(true);
                         setAuth(true);
-                        setCurrentUser(account);
+                        setCurrentUser(res.data.returnedObject);
                         successLoginView();
                     } else {
                         failureLoginView(res.data['message']);
@@ -128,6 +128,20 @@ export const Login = () => {
         navigate('/home', { replace:true});
         //this.forceUpdate();
     }
+
+    // DELETE ME
+    // for dev purposes lol
+    /*setAuth(true);
+    const tempUser = {
+        firstName: "allison",
+        lastName: "test",
+        username: "test123@gmail.com",
+        image: 1,
+        notifications: ["email", "sms"]
+    }
+    setCurrentUser(tempUser);
+    successLoginView();*/
+
 
     return (
         <div id="LoginPage"> 

@@ -71,6 +71,26 @@ body {
     font-family: 'Mulish', sans-serif;
 }
 
+file-upload-allison
+.thin-font {
+    font-weight:100;
+}
+
+.bold-font {
+    font-weight: bolder;
+}
+
+.read-only-text {
+    font-family: 'Mulish';
+    background-color: #F4F5F4;
+    border-color: #F4F5F4;
+    border-radius: 2%;
+    border-width: 1;
+    height: 100%;
+    width: 100%;
+    padding: 5px 10px;
+}
+
 /* Crete Group Modal (CreateGroupModal.js) */
 .group-feature-desc-p {
     font-size: 12px;

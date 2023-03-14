@@ -1,10 +1,13 @@
 ﻿import React, { Component, useState, useEffect } from 'react';
-import { List, Avatar, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Skeleton, notification } from 'antd';
+import { List, Avatar, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Divider, Skeleton, notification } from 'antd';
 import * as Styles from '../styles/ConstStyles.js';
 import '../styles/System.css';
 import '../index.css';
 import axios from 'axios';
 import defaultImage from '../assets/defaultimgs/wecasatemp.jpg';
+import InviteRoommateModal from './InviteRoommateModal.js';
+import { useAuth } from './AuthContext';
+import { UserOutlined } from '@ant-design/icons'
 
 // FOR TESTING
 const data = [
@@ -37,7 +40,8 @@ const groupData = {
 
 export const GroupMembersTab = (props) => {
     const [membersList, setMembersList] = useState([]);
-    const currentGroup = props.group
+    const { currentUser, currentGroup } = useAuth();
+    const [showInviteModal, setShowInviteModal] = useState(false);
 
     const getFullName = (first, last) => {
         return first + ' ' + last
@@ -51,10 +55,8 @@ export const GroupMembersTab = (props) => {
 
         axios.post('group-settings/GetGroupMembers', groupMemberForm)
             .then(res => {
-                console.log(res.data)
                 var memberArrRes = res.data['returnedObject']
                 var copyArr = cleanArrayCopy(memberArrRes)
-                console.log(memberArrRes)
                 setMembersList(copyArr)
             })
             .catch((error => { console.error(error) }));
@@ -104,10 +106,19 @@ export const GroupMembersTab = (props) => {
         fetchMemberList()
     }, [])
 
-    console.log(currentGroup)
-
     return (
-        <div className="group-members-tab padding">
+        <div className="group-members-tab">
+            {currentUser["username"] == currentGroup["owner"] ? (
+                <Row gutter={24} style={{ display: "flex", alignItems: "right", justifyContent: "right" }}>
+                    <Col span={8}>
+                        <Button type="primary" style={Styles.primaryButtonStyle} onClick={() => setShowInviteModal(true)}>Invite roommates</Button>
+                        <InviteRoommateModal show={showInviteModal} close={() => setShowInviteModal(false)}/>
+                    </Col>
+                </Row>)
+                : (<div></div>)}
+            <h6 className="padding-top">Group Owner</h6>
+            <Divider plain>
+            </Divider>
             <List
                 className="group-members-list"
                 itemLayout="vertical"
@@ -116,13 +127,15 @@ export const GroupMembersTab = (props) => {
                     <List.Item className="padding-vertical">
                         <Skeleton avatar title={false} loading={false} >
                             <List.Item.Meta 
-                                avatar={<Avatar src={defaultImage} />}
+                                avatar={<Avatar icon={<UserOutlined />} />}
                                 title={getFullName(item.firstName, item.lastName)}
                                 description={item.username}
                             />
-                            <Button onClick={(e) => {
-                                removeRoommate(item.username)
-                            }} type="default" style={Styles.removeGroupMemberButton}>X  Remove Member</Button>
+                            {currentUser["username"] == currentGroup["owner"] && currentGroup["owner"] != item.username ? (
+                                <Button onClick={(e) => {
+                                    removeRoommate(item.username)
+                                }} type="default" style={Styles.removeGroupMemberButton}>X  Remove Member</Button>)
+                                : (<div></div>)}
                         </Skeleton>
                     </List.Item>
                 )}
