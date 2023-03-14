@@ -131,7 +131,7 @@ export const Login = () => {
 
     // DELETE ME
     // for dev purposes lol
-    setAuth(true);
+    /*setAuth(true);
     const tempUser = {
         firstName: "allison",
         lastName: "test",
@@ -140,7 +140,7 @@ export const Login = () => {
         notifications: ["email", "sms"]
     }
     setCurrentUser(tempUser);
-    successLoginView();
+    successLoginView();*/
 
 
     return (
