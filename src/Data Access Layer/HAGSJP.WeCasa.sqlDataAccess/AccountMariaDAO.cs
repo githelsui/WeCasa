@@ -525,25 +525,32 @@ namespace HAGSJP.WeCasa.sqlDataAccess
            _connectionString = BuildConnectionString().ConnectionString;
             using(var connection = new MySqlConnection(_connectionString))
             {
-                connection.Open();
-                Dictionary<string, string> groupMembers = new Dictionary<string, string>();
-
-                var insertSql = @"SELECT * from USERS 
-                                        WHERE group_id = @groupId;";
-                var command = connection.CreateCommand();
-                command.CommandText = insertSql;
-                command.Parameters.AddWithValue("@groupId", groupId);
-
-                using (var reader = command.ExecuteReader())
+                try
                 {
-                    while (reader.Read())
+                    connection.Open();
+                    Dictionary<string, string> groupMembers = new Dictionary<string, string>();
+
+                    var insertSql = @"SELECT * from USERS 
+                                            WHERE group_id = @groupId;";
+                    var command = connection.CreateCommand();
+                    command.CommandText = insertSql;
+                    command.Parameters.AddWithValue("@groupId", groupId);
+
+                    using (var reader = command.ExecuteReader())
                     {
-                        string username = reader.GetString(reader.GetOrdinal("username"));
-                        string firstName = reader.GetString(reader.GetOrdinal("first_name"));
-                        groupMembers.Add(username, firstName);
+                        while (reader.Read())
+                        {
+                            string username = reader.GetString(reader.GetOrdinal("username"));
+                            string firstName = reader.GetString(reader.GetOrdinal("first_name"));
+                            groupMembers.Add(username, firstName);
+                        }
                     }
+                    return groupMembers;
                 }
-                return groupMembers;
+                catch (Exception sqlex)
+                {
+                    throw sqlex;
+                }
             }
         } 
 

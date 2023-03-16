@@ -40,7 +40,7 @@ module.exports = {
   test_settings: {
     default: {
       disable_error_log: false,
-      launch_url: 'http://localhost:44411',
+      launch_url: 'http://localhost',
 
       screenshots: {
         enabled: false,
@@ -49,7 +49,7 @@ module.exports = {
       },
 
       desiredCapabilities: {
-        browserName: 'chrom'
+        browserName: 'chrome'
       },
       
       webdriver: {

@@ -20,19 +20,5 @@ namespace HAGSJP.WeCasa.Models
             result.Message = $"The number of rows affected were {rows}";
             return result;
         }
-
-         public DAOResult ValidateSqlResultMultiple(int rows)
-        {
-            var result = new DAOResult();
-            if (rows >= 0)
-            {
-                result.IsSuccessful = true;
-                result.Message = $"The number of rows affected were {rows}";
-                return result;
-            }
-            result.IsSuccessful = false;
-            result.Message = "No entries were affected";
-            return result;
-        }
     }
 }

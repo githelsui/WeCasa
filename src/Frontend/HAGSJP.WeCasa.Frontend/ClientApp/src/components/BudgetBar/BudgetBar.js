@@ -12,14 +12,13 @@ import * as Styles from '../../styles/ConstStyles';
 import { EditBillForm } from './EditBillForm';
 
 export const BudgetBar = () => {
-  const { auth, currentUser, currentGroup } = useAuth();
-  let user = currentUser
+  const { auth, currentUser, currentGroup } = useAuth()
+  let user = currentUser != null? currentUser.username : null
   let authorized = auth
-  console.log("AUTH", authorized)
   let group = currentGroup
 
   // TODO: temporary fix for refresh issue
-  if (auth===null) authorized = true
+  if (authorized===null) authorized = true
   if (user===null) user = 'joy@gmail.com'
   if (group===null) group = {groupId: '1235467'}
 
@@ -34,6 +33,16 @@ export const BudgetBar = () => {
   const [users, setUsers] = useState([])
   const [activeBills, setActiveBills] = useState([])
   const [deletedBills, setDeletedBills] = useState([])
+
+  const errorPage = () => {
+    return (
+      <div name="ErrorPage">
+        <p><strong>Oops, something went wrong!</strong></p>
+        <p>Please try again!</p>
+        <p>For further assistance, please submit a User Feedback ticket.</p>
+      </div>
+    )
+  }
 
   useEffect(() => {
     axios.get(`budgetbar/${group.groupId}`).then((response) => { 
@@ -93,10 +102,10 @@ export const BudgetBar = () => {
          deletedBillList.push(newObj)
        })
        setDeletedBills(deletedBillList)
-     console.log("SUCCESS")
+     console.log("GET SUCCESS")
  }).catch( (error) => {
    console.log(error)
-   alert("Finances failed to load.")});
+   errorPage()});
  }, []);
   
   const handleRestoreButton = (bill) => {
@@ -118,7 +127,11 @@ export const BudgetBar = () => {
       key: "1",
       title: '',
       render: (bill) => {
-        return (<Button onClick={()=>{handleRestoreButton(bill)}}>Restore</Button>)}    
+        if (bill.paymentStatus === 'UNPAID')
+        {
+          return ( <Button onClick={()=>{handleRestoreButton(bill)}}>Restore</Button>)
+        }    
+      }
     },
     {
       key: "2",
@@ -180,9 +193,7 @@ export const BudgetBar = () => {
       render: (bill) => {
         return(
         <Space size="middle">
-          {console.log(currentUser)}
-          {console.log("Owner", bill.owner)}
-          {(user===bill.owner) && <EditOutlined onClick={()=>{
+          {(currentUser===bill.owner || user===bill.owner) && <EditOutlined onClick={()=>{
             setShowEditForm(true)
             setEditBill(bill)
             }}/> }
@@ -262,9 +273,9 @@ export const BudgetBar = () => {
     }
 
     return (
-        <div >
-        {(!authorized && !auth) && alert("Unauthorized")}
-          {(auth == null) ? <NavMenu/> : null}
+      (authorized) ?
+        <div>
+          <div>{(auth == null) ? <NavMenu/> : null}</div>
           {displayButtonIcons() }
           <BudgetForm budget={budget} setBudget={setBudget} group={group} style="margin-top: 20px"/>
           <p><strong>Total Budget: ${budget}</strong></p>
@@ -273,6 +284,7 @@ export const BudgetBar = () => {
           <Button style={Styles.addFormButton} onClick={()=>setShowAddForm(!showAddForm)}>Add Bill</Button>
           {showAddForm && (<BillForm budget={budget} groupTotal={groupTotal} user={user} group={group} members={users}/>)}
           <Tabs defaultActiveKey="1" items={tabs} /> 
-    </div>
+        </div>
+      : errorPage()
     );
   }

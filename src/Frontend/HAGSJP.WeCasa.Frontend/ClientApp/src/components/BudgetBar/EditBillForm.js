@@ -77,11 +77,15 @@ export const EditBillForm = (props) => {
             <Form name="EditBillForm" {...formItemLayout} >
                 <Form.Item name="name" label=" Bill Name" 
                   rules={[
-                      {
-                      required: true,
-                      message: 'Please input a bill name!',
-                      },
-                  ]}>
+                    {
+                    required: true,
+                    message: 'Missing bill name',
+                    },
+                    {
+                      pattern: /^[a-zA-Z0-9 ]{1,60}$/,
+                      message: 'Invalid bill name',
+                    },
+                ]}>
                   <Input onChange={e => setName(e.target.value)} defaultValue={name}/>
                 </Form.Item>
 
@@ -95,8 +99,26 @@ export const EditBillForm = (props) => {
                   <Input onChange={e => e?.target?.value && setDescription(e.target.value)} defaultValue={description}/>
                 </Form.Item> 
 
-                <Form.Item name="input-number" label="Amount">
-                  <InputNumber min={0} max={1000000000} onChange={value => setAmount(value)} defaultValue={amount}/>
+                <Form.Item name="input-number" label="Amount"
+                    rules={[
+                      {
+                      required: true,
+                      message: 'Invalid amount',
+                      },
+                      {
+                        pattern: /^\d+(\.\d{1,2})?$/,
+                        message: 'Amount should be in $X.XX format',
+                      },
+                      {
+                        validator(_, input) {
+                          if ((parseInt(input) + parseInt(props.groupTotal)) >= props.budget) {
+                            return Promise.reject('Amount exceeds budget');
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}>
+                  <InputNumber min={0} max={props.budget} onChange={value => setAmount(value)} defaultValue={amount}/>
                 </Form.Item>
 
                 <Form.Item name="isRepeated" label="Repeat" valuePropName="checked">

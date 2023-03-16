@@ -18,7 +18,6 @@ import * as Styles from '../../styles/ConstStyles';
 const { Option } = Select;
 
 export const BillForm = (props) => {
-  console.log("MEMBERS", props.members)
   const [members, setMembers] = useState(props.members);
   const [name, setName] = useState('');
   // TODO: use authContext
@@ -53,7 +52,7 @@ export const BillForm = (props) => {
        console.log(request)
       axios.post('budgetbar/AddBill', request).then(res => {
           var response = res.data;
-            console.log(response);
+          console.log(response);
       })
       .catch((error => { console.error(error) }));
       setopen(false);
@@ -94,10 +93,11 @@ export const BillForm = (props) => {
                   <Input onChange={e => setDescription(e.target.value)}/>
                 </Form.Item> 
 
-                <Form.Item name="input-number" label="Amount" rules={[
+                <Form.Item name="input-number" label="Amount" 
+                    rules={[
                       {
                       required: true,
-                      message: 'Invalid amount',
+                      message: 'Amount is required',
                       },
                       {
                         pattern: /^\d+(\.\d{1,2})?$/,
@@ -105,21 +105,26 @@ export const BillForm = (props) => {
                       },
                       {
                         validator(_, input) {
-                          if (input + props.groupTotal > props.budget) {
+                          if (input + props.groupTotal >= props.budget) {
                             return Promise.reject('Amount exceeds budget');
                           }
                           return Promise.resolve();
                         },
                       },
                   ]}>
-                  <InputNumber min={0} max={props.budget} onChange={value => setAmount(value)}/>
+                  <InputNumber step={0.01} min={0} onChange={value => setAmount(value)}/>
                 </Form.Item>
 
                 <Form.Item name="isRepeated" label="Repeat" valuePropName="checked">
                   <Checkbox value="M" style={{ lineHeight: '32px' }} onChange={() => setIsRepeated(true)}>Monthly</Checkbox>
                 </Form.Item>
 
-                <Form.Item name="members" label="Members">
+                <Form.Item name="members" label="Members" rules={[
+                      {
+                      required: true,
+                      message: 'Missing Members',
+                      }
+                  ]}>
                   <Select mode="multiple" onChange={e => setMembers(e)} >
                     {props.members.map(member => (
                       <Option key={member.username} value={member.username}>{member.name}</Option>

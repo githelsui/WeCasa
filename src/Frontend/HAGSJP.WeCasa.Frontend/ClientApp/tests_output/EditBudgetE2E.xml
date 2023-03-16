@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="1"
+            failures="0"
+            tests="0">
+
+  <testsuite name="EditBudgetE2E"
+    errors="1" failures="0" hostname="" id="" package="EditBudgetE2E" skipped="1"
+    tests="0" time="0.000" timestamp="">
+  
+
+  
+    <system-err>
+      
+┌──────────────────────────────────────────────────────────────────────────────┐│                                                                              ││   ChromeDriver cannot be found in the current project.                       ││                                                                              ││   You can either install chromedriver from NPM with:                         ││                                                                              ││   npm install chromedriver --save-dev                                        ││                                                                              ││   or download it from                                                        ││   https://sites.google.com/chromium.org/driver/downloads,                    ││   extract the archive and set &#34;webdriver.server_path&#34; config option to       ││   point to the binary file.                                                  ││                                                                              ││                                                                              ││                                                                              │└──────────────────────────────────────────────────────────────────────────────┘
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐│                                                                              ││   ChromeDriver cannot be found in the current project.                       ││                                                                              ││   You can either install chromedriver from NPM with:                         ││                                                                              ││   npm install chromedriver --save-dev                                        ││                                                                              ││   or download it from                                                        ││   https://sites.google.com/chromium.org/driver/downloads,                    ││   extract the archive and set &#34;webdriver.server_path&#34; config option to       ││   point to the binary file.                                                  ││                                                                              ││                                                                              ││                                                                              │└──────────────────────────────────────────────────────────────────────────────┘
+
+    </system-err>
+  
+
+    
+    <error message=""><![CDATA[
+      
+      ]]></error>  
+
+  
+    
+    <testcase
+      name="Navigate to Login" classname="EditBudgetE2E">
+      <skipped />
+    </testcase>
+    
+  
+  </testsuite>
+</testsuites>

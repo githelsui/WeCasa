@@ -40,7 +40,7 @@ namespace HAGSJP.WeCasa.BudgetBar.Test
         }
 
         [TestMethod]
-        public void ShouldGetInitialData()
+        public void ShouldGetInitialDataWithin5Sec()
         {
             // Arrange
             BudgetBarDAO bbDao = new BudgetBarDAO();
@@ -66,7 +66,7 @@ namespace HAGSJP.WeCasa.BudgetBar.Test
         {
             // Arrange
             BudgetBarDAO bbDao = new BudgetBarDAO();
-            Bill bill1 = new Bill(new List<string> { "budgetBartest1@gmail.com" }, "budgetBartest1@gmail.com",  0, DateTime.Now, "Bill1" , "some-description", 10, true, true , false, default, null);            
+            Bill bill1 = new Bill(new List<string> { "budgetBartest1@gmail.com" }, "budgetBartest1@gmail.com",  0, DateTime.Now, "AddBillWithin5Sec" , "some-description", 10, true, true , false, default, null);            
             var stopwatch = new Stopwatch();
             var expected = 5;
 
@@ -88,15 +88,18 @@ namespace HAGSJP.WeCasa.BudgetBar.Test
         [TestMethod]
         public void ShouldUpdateBillWithin5Sec()
         {
-            // Arrange
+            // Arrange result.ReturnedObject
             BudgetBarManager bbManager = new BudgetBarManager();
-            Bill bill1 = new Bill(new List<string> { "budgetBartest1@gmail.com" }, "budgetBartest1@gmail.com",  0, DateTime.Now, "Updated Bill" , "some-description", 10, true, true , false, default, null);            
+            BudgetBarDAO bbDao = new BudgetBarDAO();
+            Bill bill1 = new Bill(new List<string> { "budgetBartest1@gmail.com" }, "budgetBartest1@gmail.com",  0, DateTime.Now, "UpdateBillWithin5Sec" , "some description", 10, true, true , false, default, null);            
+            var insertedBill = bbDao.InsertBill(bill1);
+            Bill bill2 = new Bill(new List<string> { "budgetBartest1@gmail.com" }, "budgetBartest1@gmail.com",  (int)insertedBill.ReturnedObject, DateTime.Now, "UpdateBillWithin5Sec" , "some description", 10, true, true , false, default, null);            
             var stopwatch = new Stopwatch();
             var expected = 5;
 
             // Act
             stopwatch.Start();
-            var testResult = bbManager.UpdateBill(bill1);
+            var testResult = bbManager.UpdateBill(bill2);
             stopwatch.Stop();
 
             // turn ms to seconds
@@ -144,7 +147,7 @@ namespace HAGSJP.WeCasa.BudgetBar.Test
             // Arrange
             BudgetBarDAO bbDao = new BudgetBarDAO();
             BudgetBarManager bbManager = new BudgetBarManager();
-            Bill bill1 = new Bill(new List<string> { "budgetBartest1@gmail.com" }, "budgetBartest1@gmail.com",  0, DateTime.Now, "Delete Bill test" , "some-description", 10, true, true , false, default, null);            
+            Bill bill1 = new Bill(new List<string> { "budgetBartest1@gmail.com" }, "budgetBartest1@gmail.com",  0, DateTime.Now, "DeleteBillWithin5Sec" , "some-description", 10, true, true , false, default, null);            
             var groupId = bbDao.GetGroupId("budgetBartest1@gmail.com");
             var stopwatch = new Stopwatch();
             var expectedTime = 5;
@@ -173,7 +176,7 @@ namespace HAGSJP.WeCasa.BudgetBar.Test
             // Arrange
             BudgetBarDAO bbDao = new BudgetBarDAO();
             BudgetBarManager bbManager = new BudgetBarManager();
-            Bill bill = new Bill(new List<string> { "budgetBartest1@gmail.com" }, "budgetBartest1@gmail.com",  0, DateTime.Now, "Delete Bill test" , "some-description", 10, true, true , true, DateTime.Now, null);            
+            Bill bill = new Bill(new List<string> { "budgetBartest1@gmail.com" }, "budgetBartest1@gmail.com",  0, DateTime.Now, "RestoreBillWithin5Sec" , "some-description", 10, true, true , true, DateTime.Now, null);            
             DAOResult result = bbDao.InsertBill(bill);
             var stopwatch = new Stopwatch();
             var expectedTime = 5;
@@ -197,7 +200,7 @@ namespace HAGSJP.WeCasa.BudgetBar.Test
         {
             // Arrange
             BudgetBarDAO bbDao = new BudgetBarDAO();
-            Bill bill = new Bill(new List<string> { "budgetBartest1@gmail.com" }, "budgetBartest1@gmail.com",  0, DateTime.Now.AddDays(-2), "Delete Bill test" , "some-description", 10, true, true , true, default, null);            
+            Bill bill = new Bill(new List<string> { "budgetBartest1@gmail.com" }, "budgetBartest1@gmail.com",  0, DateTime.Now.AddDays(-2), "CleanDeletedBillsAfter24Hours" , "some-description", 10, true, true , true, default, null);            
             DAOResult insertBillresult = bbDao.InsertBill(bill);
             bbDao.DeleteBill((int)insertBillresult.ReturnedObject, DateTime.Now.AddDays(-1));
             var groupId = bbDao.GetGroupId("budgetBartest1@gmail.com");
@@ -206,7 +209,8 @@ namespace HAGSJP.WeCasa.BudgetBar.Test
             Thread.Sleep(TimeSpan.FromMinutes(1));
             List<Bill> bills = bbDao.GetBills(groupId);
             Boolean actual = true;
-            foreach(Bill b in bills) {
+            foreach(Bill b in bills) 
+            {
                 if(b.BillId == (int)insertBillresult.ReturnedObject) 
                 {
                     actual = false;
@@ -218,11 +222,11 @@ namespace HAGSJP.WeCasa.BudgetBar.Test
         }   
 
         [TestMethod]
-        public void ShouldCleanHistoryPaid()
+        public void ShouldCleanHistory()
         {
             // Arrange
             BudgetBarDAO bbDao = new BudgetBarDAO();
-            Bill bill = new Bill(new List<string> { "budgetBartest1@gmail.com" }, "budgetBartest1@gmail.com",  0, DateTime.Now.AddMonths(-1), "Delete Bill test" , "some-description", 10, true, true , false, default, null);            
+            Bill bill = new Bill(new List<string> { "budgetBartest1@gmail.com" }, "budgetBartest1@gmail.com",  0, DateTime.Now.AddMonths(-1), "CleanHistoryUnPaid" , "some-description", 10, false, false , false, default, null);            
             DAOResult insertBillresult = bbDao.InsertBill(bill);
             var groupId = bbDao.GetGroupId("budgetBartest1@gmail.com");
 
@@ -230,31 +234,8 @@ namespace HAGSJP.WeCasa.BudgetBar.Test
             Thread.Sleep(TimeSpan.FromMinutes(1));
             List<Bill> bills = bbDao.GetBills(groupId);
             Boolean actual = true;
-            foreach(Bill b in bills) {
-                if(b.BillId == (int)insertBillresult.ReturnedObject) 
-                {
-                    actual = false;
-                }   
-            }
-
-            // Assert
-            Assert.IsTrue(actual);
-        } 
-
-        [TestMethod]
-        public void ShouldCleanHistoryUnPaid()
-        {
-            // Arrange
-            BudgetBarDAO bbDao = new BudgetBarDAO();
-            Bill bill = new Bill(new List<string> { "budgetBartest1@gmail.com" }, "budgetBartest1@gmail.com",  0, DateTime.Now.AddMonths(-1), "Delete Bill test" , "some-description", 10, false, false , false, default, null);            
-            DAOResult insertBillresult = bbDao.InsertBill(bill);
-            var groupId = bbDao.GetGroupId("budgetBartest1@gmail.com");
-
-            // Act
-            Thread.Sleep(TimeSpan.FromMinutes(1));
-            List<Bill> bills = bbDao.GetBills(groupId);
-            Boolean actual = true;
-            foreach(Bill b in bills) {
+            foreach(Bill b in bills) 
+            {
                 if(b.BillId == (int)insertBillresult.ReturnedObject) 
                 {
                     actual = false;

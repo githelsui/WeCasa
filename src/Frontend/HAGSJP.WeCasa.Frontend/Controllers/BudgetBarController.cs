@@ -32,7 +32,6 @@ public class BudgetBarController : Controller
         }
         catch(Exception exc)
         {
-            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", "Group ID: " + groupId, new UserOperation(Operations.BudgetBar,0));
             tcs.SetResult(NotFound());
             return tcs.Task;
         }
@@ -55,7 +54,6 @@ public class BudgetBarController : Controller
         }
         catch(Exception exc)
         {
-            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", bill.Owner, new UserOperation(Operations.BudgetBar,0));
             tcs.SetResult(StatusCode(500));
             return tcs.Task;
         }
@@ -77,7 +75,6 @@ public class BudgetBarController : Controller
         }
         catch(Exception exc)
         {
-            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", bill.Owner, new UserOperation(Operations.BudgetBar,0));
             tcs.SetResult(StatusCode(500));
             return tcs.Task;
         }
@@ -100,7 +97,6 @@ public class BudgetBarController : Controller
         }
         catch(Exception exc)
         {
-            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", "GroupID: " + request.GroupId, new UserOperation(Operations.BudgetBar,0));
             tcs.SetResult(StatusCode(500));
             return tcs.Task;
         }
@@ -123,7 +119,6 @@ public class BudgetBarController : Controller
         }
         catch(Exception exc)
         {
-            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", "Bill Id: " + billId, new UserOperation(Operations.BudgetBar,0));
             tcs.SetResult(StatusCode(500));
             return tcs.Task;
         }
@@ -145,7 +140,6 @@ public class BudgetBarController : Controller
           }
         catch(Exception exc)
         {
-            _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", "Bill Id: " + billId, new UserOperation(Operations.BudgetBar,0));
             tcs.SetResult(StatusCode(500));
             return tcs.Task;
         }

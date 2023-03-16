@@ -120,7 +120,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@bill_id", bill.BillId);
 
                     var rows = (command.ExecuteNonQuery());
-                    result = result.ValidateSqlResultMultiple(rows);
+                    result = result.ValidateSqlResult(rows);
                 }
                 catch (MySqlException sqlex)
                 {
@@ -157,7 +157,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@date_deleted", date);
 
                     var rows = (command.ExecuteNonQuery());
-                    result = result.ValidateSqlResultMultiple(rows);
+                    result = result.ValidateSqlResult(rows);
                 }
                 catch (MySqlException sqlex)
                 {
@@ -188,7 +188,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@date_deleted", default);
 
                     var rows = (command.ExecuteNonQuery());
-                    result = result.ValidateSqlResultMultiple(rows);
+                    result = result.ValidateSqlResult(rows);
                 }
                 catch (MySqlException sqlex)
                 {
@@ -197,53 +197,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 return result;
             }
         }
-
-        public DAOResult RefreshBillList()
-       {
-            var result = new DAOResult();
-           _connectionString = BuildConnectionString().ConnectionString;
-           using(var connection = new MySqlConnection(_connectionString))
-           {
-                try
-                {
-                    connection.Open();
-                    var insertSql = @"DELETE from Bills WHERE (SELECT MONTH(date_submitted) AS Month) != MONTH(NOW()) OR (SELECT YEAR(date_submitted) AS Month) != YEAR(NOW());";
-                    var command = connection.CreateCommand();
-                    command.CommandText = insertSql;
-                    var rows = (command.ExecuteNonQuery());
-                    result = result.ValidateSqlResultMultiple(rows);
-                }
-                catch (MySqlException sqlex)
-                {
-                    PopulateResult(result, sqlex);
-                } 
-                return result;
-           }
-       }
-
-       public DAOResult DeleteAllOutdatedBills()
-       {
-            var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
-            using(var connection = new MySqlConnection(_connectionString))
-            {
-                try
-                {
-                    connection.Open();
-
-                    var insertSql = @"DELETE from Bills WHERE date_deleted <= NOW() - INTERVAL 1 DAY;";
-                    var command = connection.CreateCommand();
-                    command.CommandText = insertSql;
-                    var rows = (command.ExecuteNonQuery());
-                    result = result.ValidateSqlResultMultiple(rows);
-                }
-                catch (MySqlException sqlex)
-                {
-                    PopulateResult(result, sqlex);
-                } 
-                return result;
-            }
-       }
 
         public List<Bill> GetBills(int groupId)
         {
