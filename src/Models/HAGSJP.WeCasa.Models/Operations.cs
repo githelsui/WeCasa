@@ -8,7 +8,8 @@ namespace HAGSJP.WeCasa.Models
         Logout,
         GroupCreation,
         FileUpload,
-        FileDeletion
+        FileDeletion,
+        BudgetBar
     }
 }
 

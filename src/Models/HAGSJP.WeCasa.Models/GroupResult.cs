@@ -16,6 +16,7 @@ namespace HAGSJP.WeCasa.Models
             this.ErrorStatus = errorStatus;
             this.Message = message;
             this.Groups = groups;
+            this.Groups = groups;
         }
 
         public new bool Equals(GroupResult result)
@@ -24,7 +25,8 @@ namespace HAGSJP.WeCasa.Models
                 return false;
             var result1 = (GroupResult)result;
             return (ErrorStatus == result1.ErrorStatus)
-                    && (Message == result1.Message);
+                    && (Message == result1.Message)
+                    && (Groups == result1.Groups);
         }
         public static bool operator !=(GroupResult result1, GroupResult result2)        
         {

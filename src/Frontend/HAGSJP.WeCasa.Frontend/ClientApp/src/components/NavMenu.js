@@ -1,6 +1,9 @@
 ﻿import React, { useState } from 'react';
 import { Collapse, Navbar, NavbarBrand, NavbarToggler } from 'reactstrap';
 import { NavLink, Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Collapse, Navbar, NavbarBrand, NavbarToggler } from 'reactstrap';
+import { NavLink, Link } from 'react-router-dom';
 import '../styles/NavMenu.css';
 import * as Styles from '../styles/ConstStyles.js';
 

@@ -96,15 +96,52 @@ export const primaryButtonModal = {
     //marginBottom: '10px'
 }
 
+export const addFormButton = {
+    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+    fontFamily: 'Mulish',
+    width: '13%',
+    fontWeight: 'bold',
+    backgroundColor: '#111827',
+    color: '#FFFFFF',
+    marginLeft: "auto",
+    float: 'right'
+}
+
 export const defaultButtonModal = {
     fontFamily: 'Mulish',
     fontWeight: 'bold',
     width: '35%',
-    borderWidth: 'thin',
+    borderWidth: 'bold',
     borderColor: '#111827',
     textDecoration: 'none',
     margin: '2%',
-    //marginBottom: '10px'
+}
+
+export const addBudgetButton = {
+    fontFamily: 'Mulish',
+    fontWeight: 'bold',
+    width: '13%',
+    borderWidth: 'thin',
+    borderColor: '#111827',
+    textDecoration: 'none',
+    marginLeft: "auto",
+    float: 'right',
+}
+
+export const navLink = {
+    fontFamily: 'Mulish',
+    fontWeight: 'bold',
+    textDecoration: 'none',
+    color: '#717171',
+    backgroundColor: 'white',
+}
+
+export const activeStyle = {
+    backgroundColor: '#525252',
+    color: 'white',
+    fontWeight: 'normal',
+    borderRadius: '50px',
+    borderWidth: '100px',
 }
 
 export const navLink = {
