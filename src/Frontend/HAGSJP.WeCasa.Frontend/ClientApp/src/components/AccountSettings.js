@@ -301,7 +301,7 @@ export const AccountSettings = () => {
                                 </NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink>
+                                <NavLink onClick={() => navigate('/edit-profile')}>
                                     Edit Profile
                                 </NavLink>
                             </NavItem>

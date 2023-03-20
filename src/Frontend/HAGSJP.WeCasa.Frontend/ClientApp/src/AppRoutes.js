@@ -4,6 +4,7 @@ import { Home } from "./components/Home";
 import { Registration } from "./components/Registration";
 import { Login } from "./components/Login";
 import { GroupSettings } from "./components/GroupSettings";
+import { ProfileSettings } from "./components/ProfileSettings";
 import { AccountSettings } from "./components/AccountSettings";
 import { Files } from "./components/Files";
 import { FileView } from "./components/FileView";
@@ -41,6 +42,10 @@ const AppRoutes = [
   {
     path: '/group-settings',
     element: <GroupSettings />
+  },
+  {
+     path: '/edit-profile',
+     element: <ProfileSettings />
   },
   {
     path: '/account-settings',
