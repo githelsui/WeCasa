@@ -1,5 +1,5 @@
 ﻿import React, { Component, useState } from 'react';
-import { Modal, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Switch, notification } from 'antd';
+import { Modal, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Switch, notification, Spin } from 'antd';
 import * as Styles from '../styles/ConstStyles.js';
 import '../styles/System.css';
 import '../index.css';
@@ -10,11 +10,11 @@ import axios from 'axios';
 const CreateGroupModal = (props) => {
     //Development Only:
     const tempFeatureDesc = "DESCRIPTION: Lorem ipsum dolor sit amet consectetur. In non proin et interdum at. Vel mi praesent tincidunt tincidunt odio at mauris nisl cras."
+    const [loading, setLoading] = useState(false);
     const [newIcon, setNewIcon] = useState(null);
     const [roommate, setRoommate] = useState("");
     const [invitedRoommates, setInvitedRoommates] = useState([])
     const [noInvitations, setNoInvitations] = useState(true);
-    const [attemptSubmit, setAttemptSubmit] = useState(false);
     const [form] = Form.useForm();
 
     const inviteRoommate = () => {
@@ -69,29 +69,22 @@ const CreateGroupModal = (props) => {
     }
 
     const validateEmail = (rule, value, callback) => {
-        if (!attemptSubmit) {
-            var ruleResult = ValidationFuncs.validateEmail(value)
-            if (ruleResult.isSuccessful) {
-                callback();
-            } else {
-                callback(ruleResult.message);
-            }
-        } else {
-            //attempting form submission
+        var ruleResult = ValidationFuncs.validateEmail(value)
+        if (ruleResult.isSuccessful) {
             callback();
+        } else {
+            callback(ruleResult.message);
         }
     };
 
     const attemptSubmission = () => {
-        //Account for empty field in roommate email textfield
-        setAttemptSubmit(true);
         form.validateFields()
             .then((values) => {
-                console.log(values)
-                props.confirm(values);
+                props.confirm(values)
+                setLoading(true)
+                
             })
-            .catch((errorInfo) => { toast('Error validating fields.'); });
-
+            .catch((errorInfo) => { });
     }
 
     const resetForm = () => {
@@ -120,8 +113,9 @@ const CreateGroupModal = (props) => {
             >
             
             <div className="padding">
-                <h2 className="padding-bottom"><b>Create group</b></h2>
-                <Form id="groupCreationForm" onFinish={props.confirm}>
+                <Spin spinning={loading}>
+                    <h2 className="padding-bottom"><b>Create group</b></h2>
+                    <Form id="groupCreationForm" onFinish={attemptSubmission} form={form}>
                     <Row gutter={[24, 24]} align="middle">
                         <Col span={8} className="group-icon-selection">
                             <Image style={Styles.groupIconSelection} src={defaultImage} preview={false} height="120px" width="120px" />
@@ -226,7 +220,8 @@ const CreateGroupModal = (props) => {
                     </div>
                     <Button key="cancel" onClick={resetForm} type="default" style={Styles.defaultButtonModal}>Exit</Button>
                     <Button key="create" htmlType="submit" type="primary" style={Styles.primaryButtonModal}>Create Group</Button>
-                </Form>
+                    </Form>
+                </Spin>
             </div>
         </Modal>
     );
