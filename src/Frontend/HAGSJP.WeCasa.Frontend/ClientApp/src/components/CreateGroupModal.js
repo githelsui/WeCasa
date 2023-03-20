@@ -1,7 +1,6 @@
 ﻿import React, { Component, useState } from 'react';
-import { Modal, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Switch, notification } from 'antd';
 import React, { Component, useState } from 'react';
-import { Modal, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Switch, notification } from 'antd';
+import { Modal, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Switch, notification, Spin } from 'antd';
 import * as Styles from '../styles/ConstStyles.js';
 import '../styles/System.css';
 import '../index.css';
@@ -14,17 +13,19 @@ import axios from 'axios';
 const CreateGroupModal = (props) => {
     //Development Only:
     const tempFeatureDesc = "DESCRIPTION: Lorem ipsum dolor sit amet consectetur. In non proin et interdum at. Vel mi praesent tincidunt tincidunt odio at mauris nisl cras."
+    const [loading, setLoading] = useState(false);
     const [newIcon, setNewIcon] = useState(null);
     const [roommate, setRoommate] = useState("");
     const [invitedRoommates, setInvitedRoommates] = useState([])
     const [noInvitations, setNoInvitations] = useState(true);
+    const [form] = Form.useForm();
 
     const inviteRoommate = () => {
         if (roommate == '') {
             notification.open({
-                message: "Please enter a username",
+                message: "Please enter a username.",
                 duration: 5,
-                placement: "topRight",
+                placement: "bottom",
             });
         } else {
             addToInviteList(roommate)
@@ -39,16 +40,23 @@ const CreateGroupModal = (props) => {
             .then(res => {
                 var isSuccessful = res.data['isSuccessful'];
                 if (isSuccessful) {
-                    let tempRoommates = getRoommatesCopy()
-                    tempRoommates.push(username)
-                    if (tempRoommates.length > 0) {
-                        setNoInvitations(false)
+                    if (!invitedRoommates.includes(username)) {
+                        let tempRoommates = getRoommatesCopy()
+                        tempRoommates.push(username)
+                        if (tempRoommates.length > 0) {
+                            // Enables UI list of invited users
+                            setNoInvitations(false)
+                        } else {
+                            setNoInvitations(true)
+                        }
+                        setInvitedRoommates(tempRoommates)
+                        props.onInvitationListUpdated(tempRoommates)
                     } else {
-                        setNoInvitations(true)
+                        // User already invited
+                        toast('Cannot invite a user that has already been invited to group.');
                     }
-                    setInvitedRoommates(tempRoommates)
-                    props.onInvitationListUpdated(tempRoommates)
                 } else {
+                    // Invalid user in system
                     toast(res.data['message']);
                 }
             })
@@ -71,6 +79,23 @@ const CreateGroupModal = (props) => {
             callback(ruleResult.message);
         }
     };
+
+    const attemptSubmission = () => {
+        form.validateFields()
+            .then((values) => {
+                props.confirm(values)
+                setLoading(true)
+                
+            })
+            .catch((errorInfo) => { });
+    }
+
+    const resetForm = () => {
+        setNoInvitations(true)
+        setInvitedRoommates([])
+        props.onInvitationListUpdated([])
+        props.close();
+    }
 
     const toast = (title, desc = '') => {
         notification.open({
@@ -160,19 +185,41 @@ const CreateGroupModal = (props) => {
             >
             
             <div className="padding">
-                <h2 className="padding-bottom"><b>Create group</b></h2>
-                <Form id="groupCreationForm" onFinish={props.confirm}>
+                <Spin spinning={loading}>
+                    <h2 className="padding-bottom"><b>Create group</b></h2>
+                    <Form id="groupCreationForm" onFinish={attemptSubmission} form={form}>
                     <Row gutter={[24, 24]} align="middle">
                         <Col span={8} className="group-icon-selection">
                             <Image style={Styles.groupIconSelection} src={defaultImage} preview={false} height="120px" width="120px" />
                         </Col>
                     <Col span={16} className="group-name-input">
                             <Form.Item name="groupName">
-                                <Input style={Styles.inputFieldStyle} placeholder="Group name" required />
+                                <Input style={Styles.inputFieldStyle} required placeholder="Group name" />
                             </Form.Item>
+                    </Col>
+                    </Row>
+
+                <h5 className="padding-top mulish-font">Invite roommates</h5>
+                <Row gutter={[24, 24]}>
+                    <Col span={18} className="invite-group-members">
+                        <Form.Item name="memberUsername">
+                            <Input style={Styles.inputFieldStyle} placeholder="Roommate Email/Username" value={roommate} onChange={(e) => { setRoommate(e.target.value) }} />
+                        </Form.Item>
+                    </Col>
+                    <Col span={6} className="invite-group-members-btn">
+                        <Button style={Styles.primaryButtonStyleNoMargins} type="primary" onClick={inviteRoommate}>Invite</Button>
                     </Col>
                 </Row>
 
+                <div>
+                    {
+                        (noInvitations) ? (<div></div>) :
+                            (<div className="pending-invitations-section padding-vertical">
+                                <h5 className="mulish-font">Users to invite upon creation</h5>
+                                <div>{invitedRoommates.map((member) => <p>{member}</p>)}</div>
+                            </div>)
+                    }
+                </div>
 
                 <h5 className="mulish-font">Customize group features</h5>
                     <div className="group-feature-row">
@@ -243,9 +290,10 @@ const CreateGroupModal = (props) => {
                         </Row>
                         <p className="group-feature-desc-p">{tempFeatureDesc}</p>
                     </div>
-                    <Button key="cancel" onClick={props.close} type="default" style={Styles.defaultButtonModal}>Exit</Button>
-                    <Button key="create" type="primary" htmlType="submit" style={Styles.primaryButtonModal}>Create Group</Button>
-                </Form>
+                    <Button key="cancel" onClick={resetForm} type="default" style={Styles.defaultButtonModal}>Exit</Button>
+                    <Button key="create" htmlType="submit" type="primary" style={Styles.primaryButtonModal}>Create Group</Button>
+                    </Form>
+                </Spin>
             </div>
         </Modal>
     );

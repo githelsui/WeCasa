@@ -66,7 +66,7 @@ const InviteRoommateModal = (props) => {
 
     return (
         <Modal
-            title="Invite to props.group.name"
+            title={"Invite to " + props.group.groupName}
             open={props.show}
             closable={true}
             onCancel={props.close}
