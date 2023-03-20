@@ -38,7 +38,7 @@ export const ProfileSettings = () => {
                             src={images[currentUser.image - 1]}
                             preview={false} height="150px" width="150px" />)}
                 </Col>
-                <Col span={8} className="user-info">
+                <Col span={20} className="user-info">
                     <div className="padding">
                         <Form>
                             <Form.Item>

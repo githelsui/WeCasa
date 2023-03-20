@@ -112,7 +112,7 @@ export const GroupMembersTab = (props) => {
                 <Row gutter={24} style={{ display: "flex", alignItems: "right", justifyContent: "right" }}>
                     <Col span={8}>
                         <Button type="primary" style={Styles.primaryButtonStyle} onClick={() => setShowInviteModal(true)}>Invite roommates</Button>
-                        <InviteRoommateModal show={showInviteModal} close={() => setShowInviteModal(false)}/>
+                        <InviteRoommateModal show={showInviteModal} close={() => setShowInviteModal(false)} group={currentGroup}/>
                     </Col>
                 </Row>)
                 : (<div></div>)}

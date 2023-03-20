@@ -8,6 +8,7 @@ import { ProfileSettings } from "./components/ProfileSettings";
 import { AccountSettings } from "./components/AccountSettings";
 import { Files } from "./components/Files";
 import { FileView } from "./components/FileView";
+import { IconSelectorModal } from "./components/IconSelectorModal";
 
 
 const AppRoutes = [
@@ -58,6 +59,10 @@ const AppRoutes = [
   {
     path: '/file-view-development',
     element: <FileView />
+  },
+  {
+     path: '/icon-selector-dev',
+     element: <IconSelectorModal />
   }
 ];
 
