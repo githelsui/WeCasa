@@ -8,10 +8,12 @@ const context = [
     "/weatherforecast",
     "/registration",
     "/login",
+    "/budgetbar",
+    "/logout",
     "/home",
+    "/files",
     "/group-settings",
-    "/account-settings",
-    "/files"
+    "/account-settings"
 ];
 
 const onError = (err, req, resp, target) => {
@@ -31,6 +33,10 @@ module.exports = function (app) {
       Connection: 'Keep-Alive'
     }
   });
+
+  module.exports = {
+    devtool: "source-map",
+}
 
   app.use(appProxy);
 };

@@ -11,7 +11,7 @@ const { Meta } = Card;
 
 const maxConfiguredFeatures = 6;
 
-export const Groups = () => {
+export const Groups = (props) => {
     const [loading, setLoading] = useState(true);
     const { currentUser, currentGroup, setCurrentGroup } = useAuth();
     const [invitedRoommates, setInvitedRoommates] = useState([]);

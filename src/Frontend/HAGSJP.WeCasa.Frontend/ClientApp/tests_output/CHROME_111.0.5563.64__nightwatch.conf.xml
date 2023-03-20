@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="0"
+            failures="0"
+            tests="0">
+
+  <testsuite name="nightwatch.conf"
+    errors="0" failures="0" hostname="" id="" package="nightwatch.conf" skipped="0"
+    tests="0" time="0.000" timestamp="">
+  
+
+  
+    <system-err>
+       NoSuchElementError
+   An element could not be located on the page using the given search parameters.
+
+    Try fixing by :
+    1. Please inspect the html before the step
+    2. Verify if an element with the mentioned selector is present in the DOM tree
+
+    Error location:
+    /Users/judy/WeCasa/src/Frontend/HAGSJP.WeCasa.Frontend/ClientApp/e2e/EditBudgetE2E.js:
+    –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+     8 |       browser
+     9 |       .waitForElementVisible(&#39;body&#39;, 5000)
+     10 |       .setValue(&#39;input[type=email]&#39;, &#39;frost@gmail.com&#39;) 
+     11 |       .click(&#39;div[id=LoginButton]&#39;)
+     12 |       .pause(2000)
+    –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+ NoSuchElementError
+   An element could not be located on the page using the given search parameters.
+
+    Try fixing by :
+    1. Please inspect the html before the step
+    2. Verify if an element with the mentioned selector is present in the DOM tree
+
+    Error location:
+    /Users/judy/WeCasa/src/Frontend/HAGSJP.WeCasa.Frontend/ClientApp/e2e/EditBudgetE2E.js:
+    –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+     9 |       .waitForElementVisible(&#39;body&#39;, 5000)
+     10 |       .setValue(&#39;input[type=email]&#39;, &#39;frost@gmail.com&#39;)
+     11 |       .click(&#39;div[id=LoginButton]&#39;) 
+     12 |       .pause(2000)
+     13 |       .end();
+    –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+ NoSuchElementError
+   An element could not be located on the page using the given search parameters.
+    {&#34;value&#34;:null,&#34;status&#34;:0}
+
+    Try fixing by :
+    1. Please inspect the html before the step
+    2. Verify if an element with the mentioned selector is present in the DOM tree
+
+    Error location:
+    /Users/judy/WeCasa/src/Frontend/HAGSJP.WeCasa.Frontend/ClientApp/e2e/EditBudgetE2E.js:
+    –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+     26 |       // browser.click(&#39;button#update-budget-btn&#39;);
+     27 |       // browser.waitForElementVisible(&#39;Modal#budget-form&#39;, 5000);
+     28 |       browser.setValue(&#39;InputNumber#budget-input&#39;, &#39;5000&#39;); 
+     29 | 
+     30 |     })
+    –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+
+    </system-err>
+  
+
+    
+
+  
+  </testsuite>
+</testsuites>

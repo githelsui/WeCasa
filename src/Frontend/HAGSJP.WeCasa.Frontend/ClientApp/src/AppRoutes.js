@@ -3,6 +3,7 @@ import { FetchData } from "./components/FetchData";
 import { Home } from "./components/Home";
 import { Registration } from "./components/Registration";
 import { Login } from "./components/Login";
+import { BudgetBar } from "./components/BudgetBar/BudgetBar";
 import { GroupSettings } from "./components/GroupSettings";
 import { ProfileSettings } from "./components/ProfileSettings";
 import { AccountSettings } from "./components/AccountSettings";
@@ -41,10 +42,17 @@ const AppRoutes = [
     element: <Home />
   },
   {
-    path: '/group-settings',
-    element: <GroupSettings />
+      path: '/group-settings',
+      element: <GroupSettings />
   },
   {
+    path: '/finances',
+    element: <BudgetBar />
+    },
+    {
+        path: '/account-settings',
+        element: <AccountSettings />
+    },
      path: '/edit-profile',
      element: <ProfileSettings />
   },
