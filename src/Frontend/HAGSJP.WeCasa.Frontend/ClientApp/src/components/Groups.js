@@ -14,7 +14,7 @@ const maxConfiguredFeatures = 6;
 export const Groups = () => {
     const [loading, setLoading] = useState(true);
     const { currentUser, currentGroup, setCurrentGroup } = useAuth();
-    const [invitedRoommates, setInvitedRoommates] = useState([])
+    const [invitedRoommates, setInvitedRoommates] = useState([]);
     const [groups, setGroups] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
@@ -56,7 +56,12 @@ export const Groups = () => {
                 var groupId = createdGroup['groupId']
                 if (isSuccessful) {
                     setCurrentGroup(createdGroup);
-                    navigate('/group-settings');
+                    if (invitedRoommates.length > 0) {
+                        //add invited users from creation modal
+                        inviteGroupMembers(createdGroup);
+                    } else {
+                        navigate('/group-settings');
+                    }
                 } else {
                     failureGroupView(res.data['message']);
                 }
@@ -74,11 +79,9 @@ export const Groups = () => {
         setInvitedRoommates(memberCopy)
     }
 
-    const inviteGroupMembers = () => {
-        console.log(invitedRoommates)
-
+    const inviteGroupMembers = (createdGroup) => {
         let groupMemberForm = {
-            GroupId: currentGroup['groupId'],
+            GroupId: createdGroup['groupId'],
             GroupMembers: invitedRoommates
         }
 

@@ -14,13 +14,15 @@ const CreateGroupModal = (props) => {
     const [roommate, setRoommate] = useState("");
     const [invitedRoommates, setInvitedRoommates] = useState([])
     const [noInvitations, setNoInvitations] = useState(true);
+    const [attemptSubmit, setAttemptSubmit] = useState(false);
+    const [form] = Form.useForm();
 
     const inviteRoommate = () => {
         if (roommate == '') {
             notification.open({
-                message: "Please enter a username",
+                message: "Please enter a username.",
                 duration: 5,
-                placement: "topRight",
+                placement: "bottom",
             });
         } else {
             addToInviteList(roommate)
@@ -35,16 +37,23 @@ const CreateGroupModal = (props) => {
             .then(res => {
                 var isSuccessful = res.data['isSuccessful'];
                 if (isSuccessful) {
-                    let tempRoommates = getRoommatesCopy()
-                    tempRoommates.push(username)
-                    if (tempRoommates.length > 0) {
-                        setNoInvitations(false)
+                    if (!invitedRoommates.includes(username)) {
+                        let tempRoommates = getRoommatesCopy()
+                        tempRoommates.push(username)
+                        if (tempRoommates.length > 0) {
+                            // Enables UI list of invited users
+                            setNoInvitations(false)
+                        } else {
+                            setNoInvitations(true)
+                        }
+                        setInvitedRoommates(tempRoommates)
+                        props.onInvitationListUpdated(tempRoommates)
                     } else {
-                        setNoInvitations(true)
+                        // User already invited
+                        toast('Cannot invite a user that has already been invited to group.');
                     }
-                    setInvitedRoommates(tempRoommates)
-                    props.onInvitationListUpdated(tempRoommates)
                 } else {
+                    // Invalid user in system
                     toast(res.data['message']);
                 }
             })
@@ -60,13 +69,37 @@ const CreateGroupModal = (props) => {
     }
 
     const validateEmail = (rule, value, callback) => {
-        var ruleResult = ValidationFuncs.validateEmail(value)
-        if (ruleResult.isSuccessful) {
-            callback();
+        if (!attemptSubmit) {
+            var ruleResult = ValidationFuncs.validateEmail(value)
+            if (ruleResult.isSuccessful) {
+                callback();
+            } else {
+                callback(ruleResult.message);
+            }
         } else {
-            callback(ruleResult.message);
+            //attempting form submission
+            callback();
         }
     };
+
+    const attemptSubmission = () => {
+        //Account for empty field in roommate email textfield
+        setAttemptSubmit(true);
+        form.validateFields()
+            .then((values) => {
+                console.log(values)
+                props.confirm(values);
+            })
+            .catch((errorInfo) => { toast('Error validating fields.'); });
+
+    }
+
+    const resetForm = () => {
+        setNoInvitations(true)
+        setInvitedRoommates([])
+        props.onInvitationListUpdated([])
+        props.close();
+    }
 
     const toast = (title, desc = '') => {
         notification.open({
@@ -95,11 +128,32 @@ const CreateGroupModal = (props) => {
                         </Col>
                     <Col span={16} className="group-name-input">
                             <Form.Item name="groupName">
-                                <Input style={Styles.inputFieldStyle} placeholder="Group name" required />
+                                <Input style={Styles.inputFieldStyle} required placeholder="Group name" />
                             </Form.Item>
+                    </Col>
+                    </Row>
+
+                <h5 className="padding-top mulish-font">Invite roommates</h5>
+                <Row gutter={[24, 24]}>
+                    <Col span={18} className="invite-group-members">
+                        <Form.Item name="memberUsername">
+                            <Input style={Styles.inputFieldStyle} placeholder="Roommate Email/Username" value={roommate} onChange={(e) => { setRoommate(e.target.value) }} />
+                        </Form.Item>
+                    </Col>
+                    <Col span={6} className="invite-group-members-btn">
+                        <Button style={Styles.primaryButtonStyleNoMargins} type="primary" onClick={inviteRoommate}>Invite</Button>
                     </Col>
                 </Row>
 
+                <div>
+                    {
+                        (noInvitations) ? (<div></div>) :
+                            (<div className="pending-invitations-section padding-vertical">
+                                <h5 className="mulish-font">Users to invite upon creation</h5>
+                                <div>{invitedRoommates.map((member) => <p>{member}</p>)}</div>
+                            </div>)
+                    }
+                </div>
 
                 <h5 className="mulish-font">Customize group features</h5>
                     <div className="group-feature-row">
@@ -170,8 +224,8 @@ const CreateGroupModal = (props) => {
                         </Row>
                         <p className="group-feature-desc-p">{tempFeatureDesc}</p>
                     </div>
-                    <Button key="cancel" onClick={props.close} type="default" style={Styles.defaultButtonModal}>Exit</Button>
-                    <Button key="create" type="primary" htmlType="submit" style={Styles.primaryButtonModal}>Create Group</Button>
+                    <Button key="cancel" onClick={resetForm} type="default" style={Styles.defaultButtonModal}>Exit</Button>
+                    <Button key="create" htmlType="submit" type="primary" style={Styles.primaryButtonModal}>Create Group</Button>
                 </Form>
             </div>
         </Modal>
