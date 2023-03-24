@@ -5,9 +5,8 @@ import '../styles/System.css';
 import '../index.css';
 import defaultImage from '../assets/defaultimgs/wecasatemp.jpg';
 import * as ValidationFuncs from '../scripts/InputValidation.js';
-import  IconSelectorModal from "./IconSelectorModal.js";
-import axios from 'axios';
-import * as ValidationFuncs from '../scripts/InputValidation.js';
+import IconSelectorModal from "./IconSelectorModal.js";
+import { EditOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
 
@@ -128,7 +127,9 @@ const CreateGroupModal = (props) => {
                     <Form id="groupCreationForm" onFinish={attemptSubmission} form={form}>
                     <Row gutter={[24, 24]} align="middle">
                             <Col span={8} className="group-icon-selection">
-                                <Card onClick={() => setShowModal(true)} style={{ backgroundColor: selectedIcon, borderRadius: 5, width: 100, height: 100, cursor: 'pointer' }}/>
+                                <Card onClick={() => setShowModal(true)} style={{ backgroundColor: selectedIcon, borderRadius: 5, width: 100, height: 100, cursor: 'pointer' }}>
+                                    <EditOutlined style={{ color: 'gray', backgroundColor: 'white', marginLeft: 35, marginTop: 35, borderRadius: 50, height: 30, width: 30, opacity: 0.9, justifyContent: 'center'}} />
+                                </Card>
                                 <IconSelectorModal show={showModal} close={() => setShowModal(false)} confirm={setSelectedIcon} iconType='Group'/>
                         </Col>
                     <Col span={16} className="group-name-input">
