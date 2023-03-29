@@ -8,8 +8,6 @@ using System.Data;
 using System.Reflection.PortableExecutable;
 using System.Data.SqlTypes;
 using static System.Net.WebRequestMethods;
-using System.Data.SqlTypes;
-using static System.Net.WebRequestMethods;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
@@ -54,7 +52,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
             return result;
         }
-        
+
         public GroupResult GetGroupList(UserAccount userAccount)
         {
             _connectionString = BuildConnectionString().ConnectionString;
@@ -69,17 +67,12 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                                  INNER JOIN `UserGroups` 
                                     ON `Groups`.`group_id` = `UserGroups`.`group_id`
                                  WHERE `UserGroups`.`username` = @username";
-                                    FROM `Groups`
-                                 INNER JOIN `UserGroups` 
-                                    ON `Groups`.`group_id` = `UserGroups`.`group_id`
-                                 WHERE `UserGroups`.`username` = @username";
                 var command = connection.CreateCommand();
                 command.CommandText = selectSql;
                 command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
 
                 // Execution of SQL
                 var reader = command.ExecuteReader();
-                List<GroupModel> groups = new List<GroupModel>();
                 List<GroupModel> groups = new List<GroupModel>();
                 while (reader.Read())
                 {
@@ -97,64 +90,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 return result;
             }
         }
-                    groups.Add(new GroupModel(
-                        reader.GetInt32(reader.GetOrdinal("group_id")),
-                        reader.GetString(reader.GetOrdinal("owner")),
-                        reader.GetString(reader.GetOrdinal("group_name")),
-                        reader.GetString(reader.GetOrdinal("icon")),
-                        JsonSerializer.Deserialize<List<string>>(reader.GetString(reader.GetOrdinal("features")))
-                    ));
-                }
-                connection.Close();
-                result.Groups = groups;
-                result.IsSuccessful = true;
-                return result;
-            }
-        }
 
-        public GroupResult CreateGroup(GroupModel group)
-        {
-            _connectionString = BuildConnectionString().ConnectionString;
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                var result = new GroupResult();
-
-                // Insert SQL statements
-                var insertGroupSql = @"INSERT INTO `Groups` (
-                                        `owner`, 
-                                        `group_name`, 
-                                        `icon`,
-                                        `features`
-                                      )
-                                      VALUES (
-                                        @owner, 
-                                        @group_name, 
-                                        @icon,
-                                        @features
-                                     ); 
-                                     SELECT LAST_INSERT_ID();";
-
-                var insertUserGroupSql = @"INSERT INTO `UserGroups` (
-                                            `group_id`, 
-                                            `username`
-                                          )
-                                          VALUES (
-                                            @group_id, 
-                                            @owner 
-                                         );";
-
-                var command = connection.CreateCommand();
-                command.CommandText = insertGroupSql;
-                command.Parameters.AddWithValue("@owner".ToLower(), group.Owner.ToLower());
-                command.Parameters.AddWithValue("@group_name".ToLower(), group.GroupName.ToLower());
-                command.Parameters.AddWithValue("@icon".ToLower(), group.Icon.ToLower());
-                string featuresJSON = JsonSerializer.Serialize(group.Features);
-                command.Parameters.AddWithValue("@features", featuresJSON);
-
-                // Execution of first SQL query
-                // Storing auto-incremented group_id from insertion into Groups table
-                var groupId = command.ExecuteScalar();
         public GroupResult CreateGroup(GroupModel group)
         {
             _connectionString = BuildConnectionString().ConnectionString;
@@ -281,38 +217,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                                     @username
                                  );";
 
-                var insertUserGroupSql = @"INSERT INTO `UserGroups` (
-                                            `group_id`, 
-                                            `username`
-                                          )
-                                          VALUES (
-                                            @group_id, 
-                                            @username 
-                                         );";
-                var command = connection.CreateCommand();
-                command.CommandText = insertUserGroupSql;
-                command.Parameters.AddWithValue("@group_id", group.GroupId);
-                command.Parameters.AddWithValue("@username".ToLower(), newGroupMember.ToLower());
-                // Execution of SQL
-                var rows = (command.ExecuteNonQuery());
-                result = ValidateSqlStatement(rows);
-                return result;
-            }
-        }
-
-        public Result RemoveGroupMember(GroupModel group, string groupMember)
-        {
-            _connectionString = BuildConnectionString().ConnectionString;
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                var result = new Result();
-
-                // Deletion SQL statement
-                var insertSql = @"DELETE FROM `UserGroups`
-                                  WHERE `group_id` = @group_id 
-                                  AND `username` = @username;";
-
                 var command = connection.CreateCommand();
                 command.CommandText = insertSql;
                 command.Parameters.AddWithValue("@group_id", group.GroupId);
@@ -447,104 +351,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
-        //User already exists in group
-        public GroupResult FindGroupMember(GroupModel group, string groupMember)
-        {
-            _connectionString = BuildConnectionString().ConnectionString;
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                var result = new GroupResult();
-
-                // Select SQL statement
-                var insertSql = @"SELECT * FROM `UserGroups`
-                                    WHERE `username` = @username
-                                    AND `group_id` = @group_id;";
-
-                var command = connection.CreateCommand();
-                command.CommandText = insertSql;
-                command.Parameters.AddWithValue("@group_id", group.GroupId);
-                command.Parameters.AddWithValue("@username".ToLower(), groupMember.ToLower());
-
-                // Execution of SQL
-                using (var reader = command.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        result.ReturnedObject = true;
-                    }
-                    // User not found in group
-                    else
-                    {
-                        result.ReturnedObject = false;
-                    }
-                }
-                return result;
-            }
-        }
-
-        public GroupResult GetGroupMembers(GroupModel group)
-        {
-            _connectionString = BuildConnectionString().ConnectionString;
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                var result = new GroupResult();
-
-                // Select SQL statement
-                var deleteSql = @"SELECT * FROM `UserGroups`
-                                    WHERE `group_id` = @group_id;";
-
-                var command = connection.CreateCommand();
-                command.CommandText = deleteSql;
-                command.Parameters.AddWithValue("@group_id", group.GroupId);
-
-                // Execution of SQL
-                var groupMembers = new List<string>();
-                var reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    groupMembers.Add(reader.GetString(reader.GetOrdinal("username")));
-                }
-                var groupMemberArr = groupMembers.ToArray();
-                result.ReturnedObject = groupMemberArr;
-                return result;
-            }
-        }
-
-        public Result DeleteGroup(GroupModel group)
-        {
-            _connectionString = BuildConnectionString().ConnectionString;
-            using (var connection = new MySqlConnection(_connectionString))
-            {
-                connection.Open();
-                var result = new Result();
-
-                // Deletion SQL statement
-                var deleteSqlGroup = @"DELETE FROM `Groups`
-                                  WHERE `group_id` = @group_id;";
-
-                var deleteSqlUserGroup = @"DELETE FROM `UserGroups`
-                                  WHERE `group_id` = @group_id;";
-
-                var command = connection.CreateCommand();
-                command.CommandText = deleteSqlGroup;
-                command.Parameters.AddWithValue("@group_id", group.GroupId);
-
-                // Execution of SQL
-                var rows = (command.ExecuteNonQuery());
-                result = ValidateSqlStatement(rows);
-                if (result.IsSuccessful)
-                {
-                    command.CommandText = deleteSqlUserGroup;
-                    rows = (command.ExecuteNonQuery());
-                    result = ValidateSqlStatement(rows);
-                }
-                return result;
-            }
-        }
-
-            public async Task<Result> LogData(Log log)
+        public async Task<Result> LogData(Log log)
         {
 
             _connectionString = BuildConnectionString().ConnectionString;
