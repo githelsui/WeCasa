@@ -57,50 +57,6 @@ export const GroupSettingsTab = (props) => {
         console.log(features)
     };
 
-    const inviteRoommate = () => {
-        if (roommate == '') {
-            notification.open({
-                message: "Please enter a username",
-                duration: 5,
-                placement: "topRight",
-            });
-        } else {
-            //call web api method
-            addGroupMember(roommate)
-        }
-    };
-
-    const addGroupMember = (username) => {
-        let groupMemberForm = {
-            GroupId: currentGroup['groupId'],
-            GroupMember: username
-        }
-
-        console.log('GROUP ID: ' + currentGroup['groupId'])
-
-        axios.post('group-settings/AddGroupMembers', groupMemberForm)
-            .then(res => {
-                var isSuccessful = res.data['isSuccessful'];
-                if (isSuccessful) {
-                    console.log("Successfully invited group member.")
-                    let tempRoommates = invitedRoommates
-                    tempRoommates.push(username)
-                    console.log(tempRoommates)
-                    if (tempRoommates.length > 0) {
-                        setNoInvitations(false)
-                    } else {
-                        setNoInvitations(true)
-                    }
-                    setInvitedRoommates(tempRoommates)
-                    toast(("Successfully invited group member " + groupMemberForm.GroupMember))
-                    this.forceUpdate()
-                } else {
-                    toast('Try again', res.data['message']);
-                }
-            })
-            .catch((error => { console.error(error) }));
-    }
-
     const deleteGroup = () => {
         setShowModal(false)
 
@@ -158,7 +114,7 @@ export const GroupSettingsTab = (props) => {
             GroupId: currentGroup['groupId'],
             Owner: currentGroup['owner'],
             GroupName: currentGroup['groupName'],
-            Icon: currentGroup['icon'],
+            Icon: selectedIcon,
             Features: newFeatures
         }
 

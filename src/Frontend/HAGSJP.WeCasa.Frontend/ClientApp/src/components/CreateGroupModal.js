@@ -85,6 +85,7 @@ const CreateGroupModal = (props) => {
     const attemptSubmission = () => {
         form.validateFields()
             .then((values) => {
+                values['icon'] = selectedIcon
                 props.confirm(values)
                 setLoading(true)
                 
