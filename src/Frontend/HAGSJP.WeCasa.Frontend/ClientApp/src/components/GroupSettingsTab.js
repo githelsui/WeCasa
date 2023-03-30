@@ -1,5 +1,5 @@
-﻿import React, { Component, useState } from 'react';
-import { Modal, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Switch, notification } from 'antd';
+﻿import React, { Component, useState, useEffect } from 'react';
+import { Modal, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Switch, notification, Card } from 'antd';
 import * as Styles from '../styles/ConstStyles.js';
 import GroupDeletionModal from './GroupDeletionModal.js';
 import { useAuth } from './AuthContext.js';
@@ -8,6 +8,8 @@ import '../index.css';
 import axios from 'axios';
 import defaultImage from '../assets/defaultimgs/wecasatemp.jpg';
 import * as ValidationFuncs from '../scripts/InputValidation.js';
+import IconSelectorModal from "./IconSelectorModal.js";
+import { EditOutlined } from '@ant-design/icons';
 const maxConfiguredFeatures = 6;
 
 export const GroupSettingsTab = (props) => {
@@ -27,6 +29,8 @@ export const GroupSettingsTab = (props) => {
     const [roommate, setRoommate] = useState("");
     const [invitedRoommates, setInvitedRoommates] = useState([])
     const [noInvitations, setNoInvitations] = useState(true);
+    const [showIconModal, setShowIconModal] = useState(false);
+    const [selectedIcon, setSelectedIcon] = useState('')
     const { currentUser, currentGroup, setCurrentGroup } = useAuth();
 
     const updateFeatureSection = () => {
@@ -196,18 +200,19 @@ export const GroupSettingsTab = (props) => {
         }
     };
 
+    useEffect(() => {
+        setSelectedIcon(currentGroup["icon"]); //Default
+    }, []);
     return (
         <div className="group-settings-tab padding">
 
             <Form id="groupSettingsForm" onFinish={(values) => submitGroupSettings(values)}>
                 <Row gutter={[24, 24]} align="middle">
                     <Col span={8} className="group-icon-selection">
-                        <Image style={{
-                            borderRadius: '5%',
-                            objectFit: 'cover',
-                            margin: '5%',
-                            backgroundColor: currentGroup["icon"]
-                        }} preview={false} height="180px" width="180px" />
+                        <Card onClick={() => setShowIconModal(true)} style={{ backgroundColor: selectedIcon, borderRadius: 5, width: 100, height: 100, cursor: 'pointer' }}>
+                            <EditOutlined style={{ color: 'gray', backgroundColor: 'white', marginLeft: 35, marginTop: 35, borderRadius: 50, height: 30, width: 30, opacity: 0.9, justifyContent: 'center' }} />
+                        </Card> 
+                        <IconSelectorModal show={showIconModal} close={() => setShowIconModal(false)} confirm={setSelectedIcon} iconType='Group' />
                     </Col>
                     <Col span={14} className="group-name-input">
                         <Form.Item name="groupName">
