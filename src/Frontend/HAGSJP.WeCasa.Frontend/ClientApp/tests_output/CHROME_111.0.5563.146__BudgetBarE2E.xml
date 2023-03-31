@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="0"
+            failures="0"
+            tests="5">
+
+  <testsuite name="BudgetBarE2E"
+    errors="0" failures="0" hostname="" id="" package="BudgetBarE2E" skipped="0"
+    tests="5" time="2.626" timestamp="">
+  
+    <testcase name="should create an account" classname="BudgetBarE2E" time="1.009" assertions="3">
+
+    
+
+    
+
+    
+    </testcase>
+  
+    <testcase name="should log in" classname="BudgetBarE2E" time="0.1930" assertions="1">
+
+    
+    </testcase>
+  
+    <testcase name="should enter the OTP code" classname="BudgetBarE2E" time="1.161" assertions="2">
+
+    
+
+    
+    </testcase>
+  
+    <testcase name="should enter group" classname="BudgetBarE2E" time="0.1250" assertions="2">
+
+    
+
+    
+    </testcase>
+  
+    <testcase name="should navigate to finances tab" classname="BudgetBarE2E" time="0.1380" assertions="2">
+
+    
+
+    
+    </testcase>
+  
+
+  
+
+    
+
+  
+  </testsuite>
+</testsuites>

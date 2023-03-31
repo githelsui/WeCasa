@@ -20,11 +20,13 @@ const { Option } = Select;
 export const EditBillForm = (props) => {
   const [members, setMembers] = useState(props.bill.usernames);
   const [name, setName] = useState(props.bill.billName);
-  const [description, setDescription] = useState(props.bill.description);
+  // const [billID, setBillID] = useState(props.bill.billID);
+  // const [groupID, setGroupID] = useState(props.bill.groupID);
+  const [description, setDescription] = useState(props.bill.billDescription);
   const [amount, setAmount] = useState(props.bill.amount);
   const [paymentStatus, setPaymentStatus] = useState(props.bill.paymentStatus === 'PAID'? true : false);
-  const [isRepeated, setIsRepeated] = useState(props.bill.IsRepeated);
-  const [photoFileName, setPhotoFileName] = useState('');
+  const [isRepeated, setIsRepeated] = useState(props.bill.isRepeated);
+  const [photoFileName, setPhotoFileName] = useState(props.bill.photoFileName);
   const formItemLayout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 14 },
@@ -32,18 +34,18 @@ export const EditBillForm = (props) => {
 
     const persistEditForm = () =>
     {
-      // TEST DATA
+      console.log("PROP BILL", props.bill)
       let request =  {
-            Usernames : members,
-            Owner: props.bill.owner,
-            BillId: props.bill.billID,
+            usernames : members,
+            owner: props.bill.owner,
+            billID: props.bill.billID,
             groupID: props.bill.groupID,
-            BillName: name,
-            BillDescription: description,
-            Amount: amount,
-            PaymentStatus: paymentStatus,
-            IsRepeated: isRepeated,
-            PhotoFileName: photoFileName
+            billName: name,
+            billDescription: description,
+            amount: amount,
+            paymentStatus: paymentStatus,
+            isRepeated: isRepeated,
+            photoFileName: photoFileName
       } 
       console.log("EDIT BILL", request)
 
@@ -52,6 +54,19 @@ export const EditBillForm = (props) => {
             console.log(response);
       })
       .catch((error => { console.error(error) }));
+
+      paymentStatus? request.paymentStatus = 'PAID' : request.paymentStatus = 'UNPAID'
+      request.date = props.bill.date
+      let filteredList = props.activeBills.filter(Bill => Bill.billID !== props.bill.billID)
+      console.log("FILTERED ACTIVE1", filteredList)
+      const newList =  [...filteredList, request]
+      console.log("New List", newList)
+
+      props.setActiveBills(newList)
+      console.log("ACTIVE3", props.activeBills)
+      console.log("BILLID", props.bill.billID)
+      props.handleCurrentTable()
+      console.log(newList)
       props.setOpen(false);
     };
 

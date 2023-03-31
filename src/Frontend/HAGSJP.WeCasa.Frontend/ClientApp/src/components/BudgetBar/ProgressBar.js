@@ -47,17 +47,18 @@ export const MultiColorProgressBar = (props) => {
 
     return (
       <div className="multicolor-bar">
-      	<div className="values">
-      		{values == ''?'':values}
+      	<div className="values"> 
+		  	{/* percentages spent */}
+      		{values === ''?'':values}
       	</div>
       	<div className="scale">
-      		{calibrations == ''?'':calibrations}
+      		{calibrations === ''?'':calibrations}
       	</div>
       	<div className="bars">
-      		{bars == ''?'':bars}
+      		{bars === ''?'':bars}
       	</div>
       	<div className="legends">
-      		{legends == ''?'':legends}
+      		{legends === ''?'':legends}
       	</div>
       </div>
     );

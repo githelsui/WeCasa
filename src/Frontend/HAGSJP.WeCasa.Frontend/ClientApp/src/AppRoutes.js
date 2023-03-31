@@ -53,6 +53,7 @@ const AppRoutes = [
         path: '/account-settings',
         element: <AccountSettings />
     },
+    {
      path: '/edit-profile',
      element: <ProfileSettings />
   },

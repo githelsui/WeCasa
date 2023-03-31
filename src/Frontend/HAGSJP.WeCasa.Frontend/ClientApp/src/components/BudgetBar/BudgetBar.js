@@ -72,11 +72,11 @@ export const BudgetBar = () => {
            billName: bill.billName,
            date: formattedDate,
            groupID: bill.groupId,
-           IsRepeated: bill.isRepeated,
+           isRepeated: bill.isRepeated,
            owner: bill.owner,
            paymentStatus: bill.paymentStatus ? "PAID" : "UNPAID",
            usernames: bill.usernames,
-           PhotoFileName: bill.photoFileName
+           photoFileName: bill.photoFileName
          }
          activeBillList.push(newObj)
        })
@@ -119,6 +119,12 @@ export const BudgetBar = () => {
           console.log('Restore Failed')
         }
       }).catch((error => { console.error(error) }));
+      const billToRestore = deletedBills.filter(deletedBills => deletedBills.billID === billId)
+      const newList =  [...activeBills, billToRestore[0]];
+      setActiveBills(newList);
+      setDeletedBills(deletedBills.filter(deletedBills => deletedBills.billID !== billId))
+      handleCurrentTable()
+      handleHistoryTable()
     }
   }
 
@@ -127,7 +133,7 @@ export const BudgetBar = () => {
       key: "1",
       title: '',
       render: (bill) => {
-        if (bill.paymentStatus === 'UNPAID')
+        if (bill.paymentStatus === 'UNPAID' && bill.owner === user)
         {
           return ( <Button onClick={()=>{handleRestoreButton(bill)}}>Restore</Button>)
         }    
@@ -183,6 +189,12 @@ export const BudgetBar = () => {
         console.log('Delete Failed')
       }
     }).catch(() => { alert('Delete Failed') });
+    const billToDelete = activeBills.filter(activeBills => activeBills.billID === billId)
+    const newList =  [...deletedBills, billToDelete[0]];
+    setActiveBills(activeBills.filter(activeBills => activeBills.billID !== billId))
+    setDeletedBills(newList);
+    handleCurrentTable()
+    handleHistoryTable()
     setDeleteBill(false)
   }
 
@@ -199,7 +211,7 @@ export const BudgetBar = () => {
             }}/> }
            {(user===bill.owner) &&  <DeleteOutlined onClick={()=>setDeleteBill(bill)}/> }
           {deleteBill && <DeletionModal message='Are you sure you want to delete this bill?' show={deleteBill} close={()=>setDeleteBill(false)} confirm={()=>handleDelete(deleteBill.billID)} />}
-          {showEditForm && <EditBillForm show={showEditForm} bill={editBill} members={users} setActiveBills={setActiveBills} close={()=>setShowEditForm(false)} setOpen={setShowEditForm}/> }
+          {showEditForm && <EditBillForm handleCurrentTable={handleCurrentTable} activeBills={activeBills} setActiveBills={setActiveBills} show={showEditForm} bill={editBill} members={users} close={()=>setShowEditForm(false)} setOpen={setShowEditForm}/> }
         </Space>
         )}    
     },
@@ -241,6 +253,7 @@ export const BudgetBar = () => {
   ];
 
   const handleCurrentTable = () => {
+    console.log("FILTERED", activeBills)
     const filteredBills = activeBills.filter(bill => bill.usernames.includes(selectedUser));
     return <Table dataSource={filteredBills} columns={columns} rowKey={record => record.billID}/>
   }
@@ -282,7 +295,7 @@ export const BudgetBar = () => {
           <Progress percent={(groupTotal/budget)*100} strokeColor = {color[0]} showInfo={false} strokeWidth="30px"/>
           <MultiColorProgressBar  readings={users} />
           <Button style={Styles.addFormButton} onClick={()=>setShowAddForm(!showAddForm)}>Add Bill</Button>
-          {showAddForm && (<BillForm budget={budget} groupTotal={groupTotal} user={user} group={group} members={users}/>)}
+          {showAddForm && (<BillForm handleCurrentTable={handleCurrentTable} activeBills={activeBills} setActiveBills={setActiveBills} budget={budget} groupTotal={groupTotal} user={user} group={group} members={users}/>)}
           <Tabs defaultActiveKey="1" items={tabs} /> 
         </div>
       : errorPage()

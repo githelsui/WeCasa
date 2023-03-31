@@ -144,22 +144,6 @@ export const activeStyle = {
     borderWidth: '100px',
 }
 
-export const navLink = {
-    fontFamily: 'Mulish',
-    fontWeight: 'bold',
-    textDecoration: 'none',
-    color: '#717171',
-    backgroundColor: 'white',
-}
-
-export const activeStyle = {
-    backgroundColor: '#525252',
-    color: 'white',
-    fontWeight: 'normal',
-    borderRadius: '50px',
-    borderWidth: '100px',
-}
-
 export const defaultImage = {
     borderRadius: '20px'
 }
