@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="0"
+            failures="1"
+            tests="6">
+
+  <testsuite name="EditBudgetE2E"
+    errors="0" failures="1" hostname="" id="" package="EditBudgetE2E" skipped="0"
+    tests="6" time="2.488" timestamp="">
+  
+    <testcase name="should create an account" classname="EditBudgetE2E" time="0.7850" assertions="3">
+
+    
+
+    
+
+    
+    </testcase>
+  
+    <testcase name="should log in" classname="EditBudgetE2E" time="0.1960" assertions="1">
+
+    
+    </testcase>
+  
+    <testcase name="should enter the OTP code" classname="EditBudgetE2E" time="1.157" assertions="2">
+
+    
+
+    
+    </testcase>
+  
+    <testcase name="should enter group" classname="EditBudgetE2E" time="0.1260" assertions="2">
+
+    
+
+    
+    </testcase>
+  
+    <testcase name="should navigate to finances tab" classname="EditBudgetE2E" time="0.1470" assertions="2">
+
+    
+
+    
+    </testcase>
+  
+    <testcase name="should successfully delete bill" classname="EditBudgetE2E" time="0.07700" assertions="1">  <failure message="Error while running &#34;getText&#34; command: [TypeError] result.value.forEach is not a function">TypeError: Error while running &#34;getText&#34; command: [TypeError] result.value.forEach is not a function
+    at NightwatchAPI.&lt;anonymous&gt; (/Users/judy/WeCasa/src/Frontend/HAGSJP.WeCasa.Frontend/ClientApp/e2e/EditBudgetE2E.js:75:22)</failure>
+
+    
+    </testcase>
+  
+
+  
+
+    
+
+  
+  </testsuite>
+</testsuites>

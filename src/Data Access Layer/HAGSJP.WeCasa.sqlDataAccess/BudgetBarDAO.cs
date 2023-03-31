@@ -226,7 +226,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                             bill.GroupId = reader.GetInt32(reader.GetOrdinal("group_id"));
                             bill.DateEntered = reader.GetDateTime(reader.GetOrdinal("date_submitted"));
                             bill.BillName = reader.GetString(reader.GetOrdinal("bill_name"));
-                            bill.BillDescription = reader.GetString(reader.GetOrdinal("bill_description"));
+                            // bill.BillDescription = reader.GetString(reader.GetOrdinal("bill_description"));
+                            bill.BillDescription = reader.IsDBNull(reader.GetOrdinal("bill_description")) ? "" : reader.GetString(reader.GetOrdinal("bill_description"));
                             bill.Amount = reader.GetDecimal(reader.GetOrdinal("amount"));
                             bill.PaymentStatus = reader.GetInt32(reader.GetOrdinal("payment_status")) == 1 ? true : false;
                             bill.IsRepeated = reader.GetInt32(reader.GetOrdinal("is_repeated")) == 1 ? true : false;

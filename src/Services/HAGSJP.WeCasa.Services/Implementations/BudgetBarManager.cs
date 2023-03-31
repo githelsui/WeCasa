@@ -298,6 +298,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
         public Boolean ValidateBill(Bill bill)
         {
+
             // validate name
             if (!Regex.IsMatch(bill.BillName, "^[a-zA-Z0-9 ]{1,60}$"))
             {
@@ -323,6 +324,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 _logger.Log("Validate Bill: Invalid file", LogLevels.Error, "Data", bill.Owner);
                 return false;
             }
+            // TODO: validate optional fields exist
             return true;
         }
 

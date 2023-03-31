@@ -20,7 +20,6 @@ const { Option } = Select;
 export const BillForm = (props) => {
   const [members, setMembers] = useState(props.members);
   const [name, setName] = useState('');
-  // TODO: use authContext
   const [owner, setOwner] = useState(props.user);
   const [groupId, setGroupId] = useState(props.group.groupId);
   const [description, setDescription] = useState('');
@@ -37,17 +36,19 @@ export const BillForm = (props) => {
 
     const persistAddForm = () =>
     {
+      let date = new Date();
+      let formattedDate = date.getMonth() + "/" + date.getDay() + "/" + date.getFullYear();
       let request =  {          
-            Usernames: members,
-            Owner: owner,
-            BillId: 0,
-            GroupId: groupId,
-            BillName: name,
-            BillDescription: description,
-            Amount: amount,
-            PaymentStatus: paymentStatus,
-            IsRepeated: isRepeated,
-            PhotoFileName: photoFileName
+            usernames: members,
+            owner: owner,
+            billId: 0,
+            groupId: groupId,
+            billName: name,
+            billDescription: description,
+            amount: amount,
+            paymentStatus: paymentStatus,
+            isRepeated: isRepeated,
+            photoFileName: photoFileName
       }
        console.log(request)
       axios.post('budgetbar/AddBill', request).then(res => {
@@ -55,6 +56,11 @@ export const BillForm = (props) => {
           console.log(response);
       })
       .catch((error => { console.error(error) }));
+      request.date = formattedDate
+      paymentStatus? request.paymentStatus = 'PAID' : request.paymentStatus = 'UNPAID'
+      const newList =  [...props.activeBills, request];
+      props.setActiveBills(newList)
+      props.handleCurrentTable()
       setopen(false);
     };
     
