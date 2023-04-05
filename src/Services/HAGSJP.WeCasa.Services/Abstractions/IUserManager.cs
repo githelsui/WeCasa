@@ -25,7 +25,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public Result UpdateLastName(UserAccount userAccount, string lastName);
         public Result UpdateUsername(UserAccount userAccount, string userName);
         public Result UpdatePassword(UserAccount userAccount, string Password);
-        public Result UpdateUserIcon(UserAccount userAccount);
+        public Result UpdateUserIcon(UserAccount userAccount, int image);
         public Result UpdatePhoneNumber(UserAccount userAccount);
         public Result LogoutUser(UserAccount userAccount);
         public Result EnableUser(UserAccount userAccount);

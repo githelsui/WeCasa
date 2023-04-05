@@ -298,9 +298,10 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return _dao.UpdateUser(userAccount, updateSQL);
         }
 
-        public Result UpdateUserIcon(UserAccount userAccount)
+        public Result UpdateUserIcon(UserAccount userAccount, int image)
         {
-            throw new NotImplementedException();
+            string updateSQL = string.Format(@"UPDATE users SET IMAGE = '{0}' WHERE username = '{1}'", image, userAccount.Username);
+            return _dao.UpdateUser(userAccount, updateSQL);
         }
 
         public Result UpdatePhoneNumber(UserAccount userAccount)
