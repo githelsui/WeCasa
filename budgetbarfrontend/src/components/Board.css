@@ -1,0 +1,76 @@
+.bulletin-board {
+  position: relative;
+  width: 95vw; /* updated */
+  height: 100vh; /* updated */
+  background-color: #fff;
+  border: 1px solid #ccc;
+  margin: 50px auto;
+  padding: 20px;
+}
+
+.color-picker {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.color-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin: 0 10px;
+  cursor: pointer;
+}
+
+.sticky-note {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background-color: #ffe8b3;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.sticky-text {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: transparent;
+  resize: none;
+  font-size: 16px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.picture {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.picture-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.delete-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.delete-button:hover {
+  color: #f44336;
+}

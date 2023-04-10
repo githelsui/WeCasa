@@ -5,22 +5,19 @@ const Header = () => {
   return (
     <header>
       <nav>
-        <div className="logo">Logo</div>
+        <div className="logo">WeCasa</div>
         <ul>
           <li>
-            <a href="#">Home</a>
+            Bulletin Board
           </li>
           <li>
-            <a href="#">Bulletin Board</a>
+            Calendar
           </li>
           <li>
-            <a href="#">Calendar</a>
+            Finances
           </li>
           <li>
-            <a href="#">Finances</a>
-          </li>
-          <li>
-            <a href="#">Group Members</a>
+            Group Members
           </li>
         </ul>
         <button>Profile</button>
@@ -30,4 +27,10 @@ const Header = () => {
 };
 
 export default Header;
+
+
+
+
+
+
 

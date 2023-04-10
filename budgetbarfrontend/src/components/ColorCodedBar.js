@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './ColorCodedBar.css';
 
 const ColorCodedBar = () => {
-  const [data, setData] = useState([
+  const [data] = useState([ //setData
     { color: 'red', value: 50, name: 'Roommate 1' },
     { color: 'blue', value: 10, name: 'Roommate 2' },
     { color: 'green', value: 40, name: 'Roommate 3' },
@@ -13,7 +13,7 @@ const ColorCodedBar = () => {
   );
   const totalSpent = data.reduce((acc, item) => acc + item.value, 0);
   const remainingBudget = totalBudget - totalSpent;
-  const remainingBudgetPercentage = (remainingBudget / totalBudget) * 100;
+  //const remainingBudgetPercentage = (remainingBudget / totalBudget) * 100;
 
   const [showModal, setShowModal] = useState(false);
   const [newTotalBudget, setNewTotalBudget] = useState(totalBudget);
