@@ -146,7 +146,7 @@ export const ProfileSettings = () => {
                                     objectFit: 'cover',
                                     margin: '5%',
                                     zIndex: '0'
-                                }} preview={false} src={images[selectedIcon]}></Image>}
+                                }} preview={false} src={images[selectedIcon - 1]}></Image>}
                              onClick={() => setShowIconModal(true)}
                              >
                                 <EditOutlined style={{ color: 'white', backgroundColor: 'black', marginLeft: 90, marginTop: 90, zIndex: 9, borderRadius: 50, height: 30, width: 30, opacity: 0.9, justifyContent: 'center' }} />
