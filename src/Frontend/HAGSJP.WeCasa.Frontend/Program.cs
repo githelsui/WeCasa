@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Add configurations
-builder.Configuration.AddJsonFile("appsettings.json", false, true);
+builder.Configuration.AddJsonFile("appsettings.json", true, true);
 
 var app = builder.Build();
 

@@ -21,6 +21,7 @@
     <ProjectReference Include="..\..\Clients\HAGSJP.WeCasa.Client\HAGSJP.WeCasa.Client.csproj" />
     <ProjectReference Include="..\..\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\HAGSJP.WeCasa.Logging.csproj" />
     <ProjectReference Include="..\..\Data Access Layer\HAGSJP.WeCasa.sqlDataAccess\HAGSJP.WeCasa.sqlDataAccess.csproj" />
+    <ProjectReference Include="..\..\Manager Layer\HAGSJP.WeCasa.Managers\HAGSJP.WeCasa.Managers.csproj" />
     <ProjectReference Include="..\..\Models\HAGSJP.WeCasa.Models\HAGSJP.WeCasa.Models.csproj" />
     <ProjectReference Include="..\..\Services\HAGSJP.WeCasa.Services\HAGSJP.WeCasa.Services.csproj" />
   </ItemGroup>

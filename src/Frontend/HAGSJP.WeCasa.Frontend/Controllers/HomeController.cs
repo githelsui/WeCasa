@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using HAGSJP.WeCasa.Services.Implementations;
+using HAGSJP.WeCasa.Managers.Implementations;
 using HAGSJP.WeCasa.Client;
 using HAGSJP.WeCasa.Models;
 using MySqlConnector;
@@ -13,7 +13,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class HomeController : Controller
+public class HomeController : ControllerBase
 {
     [HttpPost]
     [Route("AttemptLogout")]

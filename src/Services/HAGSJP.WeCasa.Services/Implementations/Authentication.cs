@@ -6,6 +6,7 @@ using HAGSJP.WeCasa.sqlDataAccess;
 using System.Net;
 using System.Security.Cryptography;
 using static System.Net.WebRequestMethods;
+using Microsoft.AspNetCore.Identity;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
@@ -110,6 +111,23 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return authRes;
         }
 
+        // Checks if there were 3 failed login attempts in the past 24 hours
+        // On the third attempt, disable user account
+        public Boolean IsAccountEnabled(UserAccount userAccount)
+        {
+            UserOperation userOperation = new UserOperation(Operations.Login, 0);
+            List<DateTime> failedAttemptTimes = _dao.GetUserOperations(userAccount, userOperation);
+            var result = new Result();
+            if (failedAttemptTimes.Count >= 3)
+            {
+                // Disabling account
+                Authentication auth = new Authentication();
+                result = auth.DisableUser(userAccount);
+                return false;
+            }
+            return true;
+        }
+
         public Result AuthenticateUser(UserAccount userAccount, OTP userOtp, OTP otp)
         {
             var loginUser = new AuthResult();
@@ -153,31 +171,23 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return loginUser;
         }
 
-        // Checks if there were 3 failed login attempts in the past 24 hours
-        // On the third attempt, disable user account
-        public Boolean IsAccountEnabled(UserAccount userAccount){
-            UserOperation userOperation = new UserOperation(Operations.Login, 0);
-            List<DateTime> failedAttemptTimes = _dao.GetUserOperations(userAccount, userOperation);
-            
-            if (failedAttemptTimes.Count >= 3) 
+
+        public Result DisableUser(UserAccount userAccount){
+            var disablingUser = new Result();
+            // disabling user
+            disablingUser = _dao.SetUserAbility(userAccount, 0);
+
+            if (disablingUser.IsSuccessful)
             {
-                // Disabling account
-                UserManager um = new UserManager();
-                var result = um.DisableUser(userAccount);
-                if (result.IsSuccessful)
-                {
-                    successLogger.Log("User has been disabled after 3 failed login attempts in the past 24 hours", LogLevels.Debug, "Business", userAccount.Username);
-                }
-                else
-                {
-                    errorLogger.Log("Error disabling user account.", LogLevels.Error, "Data Store", userAccount.Username);
-                }
-                return false;
+                // Logging the disabling user
+                successLogger.Log("User disabled successfully", LogLevels.Info, "Data Store", userAccount.Username);
             }
-            else 
+            else
             {
-                return true;
+                // Logging the error
+                errorLogger.Log("Error disabling user", LogLevels.Error, "Data Store", userAccount.Username);
             }
+            return disablingUser;
         }
         // clears all failed attempts when the user successfully logs in OR when 
         // system recovery is performed

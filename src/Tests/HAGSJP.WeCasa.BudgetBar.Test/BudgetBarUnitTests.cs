@@ -1,4 +1,5 @@
 ﻿using HAGSJP.WeCasa.Models;
+using HAGSJP.WeCasa.Managers.Implementations;
 using HAGSJP.WeCasa.Services.Implementations;
 
 namespace HAGSJP.WeCasa.BudgetBar.Test;

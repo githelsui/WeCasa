@@ -1,5 +1,6 @@
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Services.Implementations;
+using HAGSJP.WeCasa.Managers.Implementations;
 
 namespace HAGSJP.WeCasa.Files.Test
 {

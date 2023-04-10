@@ -1,6 +1,7 @@
 using HAGSJP.WeCasa.Client;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Services.Implementations;
+using HAGSJP.WeCasa.Managers.Implementations;
 
 class AccountSettings
 {
