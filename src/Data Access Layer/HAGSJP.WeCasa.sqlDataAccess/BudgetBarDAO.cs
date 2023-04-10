@@ -8,7 +8,11 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         private string _connectionString;
         private DAOResult result;
 
-
+        // TODO: pass connection string into DAO object
+        // TODO: add secrets to config file (.gitignore), URGENT
+        // TODO: explicit rollback upon exception (mysqlConnector rollback?)
+        // TODO: fix redundant code
+        
         public MySqlConnectionStringBuilder BuildConnectionString()
         {
                 var builder = new MySqlConnectionStringBuilder
@@ -96,6 +100,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             {
                 try
                 {
+                    // TODO: async open
                     connection.Open();
 
                     var insertSql = @"UPDATE Bills 
@@ -119,6 +124,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@usernames", billsJSON);
                     command.Parameters.AddWithValue("@bill_id", bill.BillId);
 
+                    // TODO: async excution
                     var rows = (command.ExecuteNonQuery());
                     result = result.ValidateSqlResult(rows);
                 }

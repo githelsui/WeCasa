@@ -41,7 +41,6 @@ const BudgetForm = ({budget, setBudget, group}) => {
           GroupId: groupId,
           Amount: tempBudget
       }
-
       axios.put('budgetbar/UpdateBudget', request).then(res => {
           var response = res.data;
             console.log(response);

@@ -18,9 +18,9 @@ export const BudgetBar = () => {
   let group = currentGroup
 
   // TODO: temporary fix for refresh issue
-  if (authorized===null) authorized = true
-  if (user===null) user = 'joy@gmail.com'
-  if (group===null) group = {groupId: '1235467'}
+  // if (authorized===null) authorized = true
+  // if (user===null) user = 'joy@gmail.com'
+  // if (group===null) group = {groupId: '1235467'}
 
   const [selectedUser, setSelectedUser] = useState(user);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -104,13 +104,14 @@ export const BudgetBar = () => {
        setDeletedBills(deletedBillList)
      console.log("GET SUCCESS")
  }).catch( (error) => {
-   console.log(error)
+   console.log(error) // TODO: delete in prod
    errorPage()});
  }, []);
   
   const handleRestoreButton = (bill) => {
     const billId = bill.billID
     if (billId !== null) {
+      // Updating bill
       axios.put(`budgetbar/Restore/${billId}`).then((response) => { 
         let res = response
         if (res) {
@@ -119,6 +120,7 @@ export const BudgetBar = () => {
           console.log('Restore Failed')
         }
       }).catch((error => { console.error(error) }));
+      // Insert
       const billToRestore = deletedBills.filter(deletedBills => deletedBills.billID === billId)
       const newList =  [...activeBills, billToRestore[0]];
       setActiveBills(newList);
@@ -133,7 +135,7 @@ export const BudgetBar = () => {
       key: "1",
       title: '',
       render: (bill) => {
-        if (bill.paymentStatus === 'UNPAID' && bill.owner === user)
+        if (bill.paymentStatus === 'UNPAID' && bill.owner === user) // unpaid = 'unpaid', .toLower()
         {
           return ( <Button onClick={()=>{handleRestoreButton(bill)}}>Restore</Button>)
         }    
@@ -189,6 +191,7 @@ export const BudgetBar = () => {
         console.log('Delete Failed')
       }
     }).catch(() => { alert('Delete Failed') });
+
     const billToDelete = activeBills.filter(activeBills => activeBills.billID === billId)
     const newList =  [...deletedBills, billToDelete[0]];
     setActiveBills(activeBills.filter(activeBills => activeBills.billID !== billId))
@@ -290,7 +293,8 @@ export const BudgetBar = () => {
         <div>
           <div>{(auth == null) ? <NavMenu/> : null}</div>
           {displayButtonIcons() }
-          <BudgetForm budget={budget} setBudget={setBudget} group={group} style="margin-top: 20px"/>
+          {/* inline styling can lead to cross scripting (use external/class) */}
+          <BudgetForm budget={budget} setBudget={setBudget} group={group} style="margin-top: 20px"/> 
           <p><strong>Total Budget: ${budget}</strong></p>
           <Progress percent={(groupTotal/budget)*100} strokeColor = {color[0]} showInfo={false} strokeWidth="30px"/>
           <MultiColorProgressBar  readings={users} />
@@ -301,3 +305,5 @@ export const BudgetBar = () => {
       : errorPage()
     );
   }
+
+  

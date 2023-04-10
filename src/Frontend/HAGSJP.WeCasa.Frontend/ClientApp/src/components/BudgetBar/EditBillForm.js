@@ -20,8 +20,6 @@ const { Option } = Select;
 export const EditBillForm = (props) => {
   const [members, setMembers] = useState(props.bill.usernames);
   const [name, setName] = useState(props.bill.billName);
-  // const [billID, setBillID] = useState(props.bill.billID);
-  // const [groupID, setGroupID] = useState(props.bill.groupID);
   const [description, setDescription] = useState(props.bill.billDescription);
   const [amount, setAmount] = useState(props.bill.amount);
   const [paymentStatus, setPaymentStatus] = useState(props.bill.paymentStatus === 'PAID'? true : false);
@@ -57,14 +55,11 @@ export const EditBillForm = (props) => {
 
       paymentStatus? request.paymentStatus = 'PAID' : request.paymentStatus = 'UNPAID'
       request.date = props.bill.date
+      request.description = description
       let filteredList = props.activeBills.filter(Bill => Bill.billID !== props.bill.billID)
-      console.log("FILTERED ACTIVE1", filteredList)
-      const newList =  [...filteredList, request]
-      console.log("New List", newList)
 
+      const newList =  [...filteredList, request]
       props.setActiveBills(newList)
-      console.log("ACTIVE3", props.activeBills)
-      console.log("BILLID", props.bill.billID)
       props.handleCurrentTable()
       console.log(newList)
       props.setOpen(false);

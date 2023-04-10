@@ -28,7 +28,9 @@ public class BudgetBarController : Controller
         { 
             Object result = _budgetBarManager.GetInitialBudgetBarVew(groupId);
             tcs.SetResult(Ok(result));
-            return tcs.Task;
+            return tcs.Task; // check if result == null, notfound
+            // otherwise 500
+            // 400: bad request (groupid validation)
         }
         catch(Exception exc)
         {

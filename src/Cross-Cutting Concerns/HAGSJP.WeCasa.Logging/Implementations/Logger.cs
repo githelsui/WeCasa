@@ -1,7 +1,6 @@
 ﻿using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Logging.Abstractions;
 using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
-using HAGSJP.WeCasa.Models.Security;
 
 namespace HAGSJP.WeCasa.Logging.Implementations
 {

@@ -213,7 +213,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         {
             try
             {
-                // Check if GroupId is valid
+                // Check if BillId is valid
                 Boolean validId = ValidateId(billId); 
                 if (!validId)
                 {
@@ -223,7 +223,8 @@ namespace HAGSJP.WeCasa.Services.Implementations
                     return InvalidResult;
                 }
                 // Delete bill
-                DAOResult result = _dao.DeleteBill(billId, DateTime.Now);
+                // TODO: Service layer (handles all db errors, repeated functionality)
+                DAOResult result = _dao.DeleteBill(billId, DateTime.Now); // TODO: UTC.NOW()
                 if (result.IsSuccessful)
                 {
                     _logger.Log("Delete bill was successful", LogLevels.Info, "Data Store", "Bill Id: " + billId);
@@ -237,7 +238,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             catch (Exception exc)
             {
                 _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", "Bill Id: " + billId, new UserOperation(Operations.BudgetBar,0));
-                throw exc;
+                throw exc; // TODO: Antipattern
             }
         }
 
@@ -285,8 +286,6 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 }
                 // Get bills
                 List<Bill> bills = _dao.GetBills(groupId);
-                _logger.Log( "Bill" + bills, LogLevels.Error, "Data Store", "Group ID: " + groupId);
-
                 return bills;
             }
             catch(MySqlException exc)

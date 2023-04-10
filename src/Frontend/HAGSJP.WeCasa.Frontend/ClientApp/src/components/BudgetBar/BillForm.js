@@ -50,13 +50,14 @@ export const BillForm = (props) => {
             isRepeated: isRepeated,
             photoFileName: photoFileName
       }
-       console.log(request)
       axios.post('budgetbar/AddBill', request).then(res => {
           var response = res.data;
           console.log(response);
       })
       .catch((error => { console.error(error) }));
+
       request.date = formattedDate
+      request.description = description
       paymentStatus? request.paymentStatus = 'PAID' : request.paymentStatus = 'UNPAID'
       const newList =  [...props.activeBills, request];
       props.setActiveBills(newList)
@@ -78,8 +79,8 @@ export const BillForm = (props) => {
                 <Form.Item name="name" label=" Bill Name" 
                   rules={[
                       {
-                      required: true,
-                      message: 'Missing bill name',
+                        required: true,
+                        message: 'Missing bill name',
                       },
                       {
                         pattern: /^[a-zA-Z0-9 ]{1,60}$/,
