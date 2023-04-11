@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using HAGSJP.WeCasa.Client;
 using HAGSJP.WeCasa.Models;
+using HAGSJP.WeCasa.Managers.Implementations;
 using HAGSJP.WeCasa.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +14,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 {
     [ApiController]
     [Route("group-settings")]
-    public class GroupController : Controller
+    public class GroupController : ControllerBase
     {
         [HttpPost]
         [Route("AddGroupMembers")]

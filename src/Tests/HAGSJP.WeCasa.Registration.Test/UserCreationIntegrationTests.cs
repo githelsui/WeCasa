@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using HAGSJP.WeCasa.Services.Implementations;
+using HAGSJP.WeCasa.Managers.Implementations;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Client;
 using HAGSJP.WeCasa.sqlDataAccess;

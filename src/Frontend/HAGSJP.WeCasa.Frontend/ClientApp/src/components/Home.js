@@ -2,7 +2,7 @@ import React, { Component, useState, useEffect } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from './AuthContext';
 import { Modal, notification } from 'antd';
-import { Groups } from './Groups.js';
+import { Groups } from './Group/Groups.js';
 import { NavMenu } from './NavMenu.js';
 import axios from 'axios';
 import * as Styles from '../styles/ConstStyles.js';

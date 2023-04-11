@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using HAGSJP.WeCasa.Managers.Implementations;
 using HAGSJP.WeCasa.Services.Implementations;
 using HAGSJP.WeCasa.Client;
 using HAGSJP.WeCasa.Models;
@@ -14,7 +15,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 {
     [ApiController]
     [Route("edit-profile")]
-    public class ProfileController : Controller
+    public class ProfileController : ControllerBase
     {
         [HttpPost]
         [Route("UpdateFullName")]

@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using HAGSJP.WeCasa.Services.Implementations;
+using HAGSJP.WeCasa.Managers.Implementations;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Models.Security;
 using static System.Net.WebRequestMethods;

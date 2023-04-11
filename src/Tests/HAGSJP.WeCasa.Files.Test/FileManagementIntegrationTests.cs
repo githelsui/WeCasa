@@ -2,6 +2,7 @@ using Amazon.Runtime.Internal.Auth;
 using Amazon.S3.Model;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Services.Implementations;
+using HAGSJP.WeCasa.Managers.Implementations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Identity;
