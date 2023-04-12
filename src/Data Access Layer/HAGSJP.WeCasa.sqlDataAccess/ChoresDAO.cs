@@ -50,8 +50,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     connection.Open();
 
-                    var insertSql = @"INSERT INTO Chores (name, group_id, reset_time, notes, assignment, is_repeated, is_completed)
-                                    VALUES (@name, @group_id, @reset_time, @notes, @assignment, @is_repeated, @is_completed);
+                    var insertSql = @"INSERT INTO Chores (name, group_id, reset_time, notes, assigned_to, repeats, is_completed)
+                                    VALUES (@name, @group_id, @reset_time, @notes, @assigned_to, @repeats, @is_completed);
                                     SELECT LAST_INSERT_ID();";
 
                     var command = connection.CreateCommand();
@@ -60,8 +60,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@group_id", chore.GroupId);
                     command.Parameters.AddWithValue("@reset_time", chore.ResetTime != null ? chore.ResetTime : null);
                     command.Parameters.AddWithValue("@notes", chore.Notes != null ? chore.Notes : null);
-                    command.Parameters.AddWithValue("@assignment", chore.Assignment != null ? chore.Assignment : null);
-                    command.Parameters.AddWithValue("@is_repeated", chore.IsRepeated == null ? chore.IsRepeated : false);
+                    command.Parameters.AddWithValue("@assigned_to", chore.AssignedTo != null ? chore.AssignedTo : null);
+                    command.Parameters.AddWithValue("@repeats", chore.Repeats != null ? chore.Repeats : null);
                     command.Parameters.AddWithValue("@is_completed", chore.IsCompleted == null ? chore.IsCompleted : false);
 
 
@@ -106,8 +106,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                                             name = @name,
                                             reset_time = @reset_time,
                                             notes = @notes,
-                                            assignment = @assignment,
-                                            is_repeated = @is_repeated,
+                                            assigned_to = @assigned_to,
+                                            repeats = @repeats,
                                             is_completed = @is_completed
                                     WHERE chore_id = @chore_id";
 
@@ -116,8 +116,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@name", chore.Name);
                     command.Parameters.AddWithValue("@reset_time", chore.ResetTime != null ? chore.ResetTime : null);
                     command.Parameters.AddWithValue("@notes", chore.Notes != null ? chore.Notes : null);
-                    command.Parameters.AddWithValue("@assignment", chore.Assignment != null ? chore.Assignment : null);
-                    command.Parameters.AddWithValue("@is_repeated", chore.IsRepeated == null ? chore.IsRepeated : false);
+                    command.Parameters.AddWithValue("@assigned_to", chore.AssignedTo != null ? chore.AssignedTo : null);
+                    command.Parameters.AddWithValue("@repeats", chore.Repeats != null ? chore.Repeats : null);
                     command.Parameters.AddWithValue("@is_completed", chore.IsCompleted == null ? chore.IsCompleted : false);
                     command.Parameters.AddWithValue("@chore_id", chore.ChoreId);
 
@@ -160,10 +160,10 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                             chore.GroupId = reader.GetInt32(reader.GetOrdinal("group_id"));
                             chore.Name = reader.GetString(reader.GetOrdinal("name"));
                             chore.Notes = reader.IsDBNull(reader.GetOrdinal("notes")) ? "" : reader.GetString(reader.GetOrdinal("notes"));
-                            chore.IsRepeated = reader.GetInt32(reader.GetOrdinal("is_repeated")) == 1 ? true : false;
+                            command.Parameters.AddWithValue("@repeats", chore.Repeats != null ? chore.Repeats : null);
                             chore.IsCompleted = reader.GetInt32(reader.GetOrdinal("is_completed")) == 1 ? true : false;
                             chore.ResetTime = reader.IsDBNull(reader.GetOrdinal("reset_time")) ? null : reader.GetDateTime(reader.GetOrdinal("reset_time"));
-                            chore.Assignment = reader.IsDBNull(reader.GetOrdinal("assignment")) ? "" : reader.GetString(reader.GetOrdinal("assignment"));
+                            //chore.AssignedTo = reader.IsDBNull(reader.GetOrdinal("assigned_to")) ? "" : reader.GetString(reader.GetOrdinal("assigned_to"));
                             chores.Add(chore);
                         }
                         result.IsSuccessful = true;
