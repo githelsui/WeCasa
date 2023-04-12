@@ -4,6 +4,7 @@ using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.sqlDataAccess;
 using HAGSJP.WeCasa.Services.Implementations;
 using MySqlX.XDevAPI.CRUD;
+using MySqlX.XDevAPI.Common;
 
 namespace HAGSJP.WeCasa.Managers.Implementations
 {
@@ -29,24 +30,16 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 chore.CreatedBy = userAccount.Username;
                 chore.IsCompleted = false;
 
-                // Populate AssignedTo property (if null -> AssignedTo = CreatedBy)
-                if (chore.AssignedTo == null || chore.AssignedTo.Count == 0)
+                var assignedProfilesRes = ReassignChore(chore, chore.UsernamesAssignedTo);
+                if (assignedProfilesRes.IsSuccessful)
                 {
-                    List<String> assignedTo = new List<String>();
-                    assignedTo.Add(chore.CreatedBy);
-                    chore.AssignedTo = assignedTo;
+                    chore.AssignedTo = (List<UserProfile>)assignedProfilesRes.ReturnedObject;
                 }
-
-                // Validate all users in AssignedTo
-                foreach (String username in chore.AssignedTo)
+                else
                 {
-                    // Check if user does not exist
-                    if (!_um.IsUsernameTaken(username))
-                    {
-                        result.IsSuccessful = false;
-                        result.Message = "Cannot assign chore to a user that does not exist.";
-                        return result;
-                    }
+                    result.IsSuccessful = false;
+                    result.Message = assignedProfilesRes.Message;
+                    return result;
                 }
 
                 var serviceResult = _service.AddChore(chore);
@@ -80,24 +73,16 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 chore.LastUpdatedBy = userAccount.Username;
                 chore.IsCompleted = false;
 
-                // Populate AssignedTo property (if null -> AssignedTo = CreatedBy)
-                if (chore.AssignedTo == null || chore.AssignedTo.Count == 0)
+                var assignedProfilesRes = ReassignChore(chore, chore.UsernamesAssignedTo);
+                if (assignedProfilesRes.IsSuccessful)
                 {
-                    List<String> assignedTo = new List<String>();
-                    assignedTo.Add(chore.CreatedBy);
-                    chore.AssignedTo = assignedTo;
+                    chore.AssignedTo = (List<UserProfile>)assignedProfilesRes.ReturnedObject;
                 }
-
-                // Validate all users in new AssignedTo
-                foreach (String username in chore.AssignedTo)
+                else
                 {
-                    // Check if user does not exist
-                    if (!_um.IsUsernameTaken(username))
-                    {
-                        result.IsSuccessful = false;
-                        result.Message = "Cannot assign chore to a user that does not exist.";
-                        return result;
-                    }
+                    result.IsSuccessful = false;
+                    result.Message = assignedProfilesRes.Message;
+                    return result;
                 }
 
                 var serviceResult = _service.EditChore(chore);
@@ -289,6 +274,51 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 _logger.Log("Error Message: " + exc.Message, LogLevels.Error, "Service", user.Username, new UserOperation(Operations.ChoreList, 0));
                 throw exc;
             }
+        }
+
+        //Assignment Validation
+        private ChoreResult ReassignChore(Chore chore, List<String> newAssignments)
+        {
+            var result = new ChoreResult();
+
+            if (newAssignments == null || newAssignments.Count == 0)
+            {
+                List<String> assignedToStr = new List<String>();
+                assignedToStr.Add(chore.CreatedBy);
+                chore.UsernamesAssignedTo = assignedToStr;
+            }
+
+            // Validate all users in UsernamesAssignedTo
+            List<UserProfile> assignedTo = new List<UserProfile>();
+            foreach (String username in chore.UsernamesAssignedTo)
+            {
+                // Check if user does not exist
+                if (!_um.IsUsernameTaken(username))
+                {
+                    result.IsSuccessful = false;
+                    result.Message = "Cannot assign chore to a user that does not exist.";
+                    return result;
+                }
+                else // Populate AssignedTo with UserProfile (profile icons)
+                {
+                    var userProfileResult = _um.GetUserProfile(new UserAccount(username));
+                    if (userProfileResult.IsSuccessful)
+                    {
+                        assignedTo.Add((UserProfile)userProfileResult.ReturnedObject);
+                    }
+                    else
+                    {
+                        // Error fetching an assigned user's UserProfiles
+                        result.IsSuccessful = false;
+                        result.Message = userProfileResult.Message;
+                        return result;
+                    }
+                }
+            }
+            result.IsSuccessful = true;
+            result.Message = "Successfully fetched all assigned user's profiles.";
+            result.ReturnedObject = assignedTo;
+            return result;
         }
     }
 }

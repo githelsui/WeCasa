@@ -30,7 +30,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
                 chore.ResetTime = choreForm.ResetTime;
                 chore.Notes = choreForm.Notes;
                 chore.GroupId = choreForm.GroupId;
-                chore.AssignedTo = choreForm.AssignedTo;
+                chore.UsernamesAssignedTo = choreForm.AssignedTo;
                 chore.Repeats = choreForm.Repeats;
                 var result = _manager.AddChore(chore, new UserAccount(choreForm.CurrentUser));
                 if(result.IsSuccessful)
@@ -45,6 +45,133 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
             }
             catch(Exception exc)
+            {
+                return new ChoreResult(false, System.Net.HttpStatusCode.Conflict, exc.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("EditChore")]
+        public ChoreResult EditChore([FromBody] ChoreForm choreForm)
+        {
+            try
+            {
+                Chore chore = new Chore();
+                chore.Name = choreForm.Name;
+                chore.ResetTime = choreForm.ResetTime;
+                chore.Notes = choreForm.Notes;
+                chore.GroupId = choreForm.GroupId;
+                chore.UsernamesAssignedTo = choreForm.AssignedTo;
+                chore.Repeats = choreForm.Repeats;
+                var result = _manager.EditChore(chore, new UserAccount(choreForm.CurrentUser));
+                if (result.IsSuccessful)
+                {
+                    result.ErrorStatus = System.Net.HttpStatusCode.OK;
+                }
+                else
+                {
+                    result.ErrorStatus = System.Net.HttpStatusCode.BadRequest;
+                }
+                return result;
+
+            }
+            catch (Exception exc)
+            {
+                return new ChoreResult(false, System.Net.HttpStatusCode.Conflict, exc.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("GetGroupToDoChores")]
+        public ChoreResult GetGroupToDoChores([FromBody] ChoreForm choreForm)
+        {
+            try
+            {
+                var result = _manager.GetGroupToDoChores(new GroupModel(choreForm.GroupId));
+                if (result.IsSuccessful)
+                {
+                    result.ErrorStatus = System.Net.HttpStatusCode.OK;
+                }
+                else
+                {
+                    result.ErrorStatus = System.Net.HttpStatusCode.BadRequest;
+                }
+                return result;
+
+            }
+            catch (Exception exc)
+            {
+                return new ChoreResult(false, System.Net.HttpStatusCode.Conflict, exc.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("GetGroupCompletedChores")]
+        public ChoreResult GetGroupCompletedChores([FromBody] ChoreForm choreForm)
+        {
+            try
+            {
+                var result = _manager.GetGroupCompletedChores(new GroupModel(choreForm.GroupId));
+                if (result.IsSuccessful)
+                {
+                    result.ErrorStatus = System.Net.HttpStatusCode.OK;
+                }
+                else
+                {
+                    result.ErrorStatus = System.Net.HttpStatusCode.BadRequest;
+                }
+                return result;
+
+            }
+            catch (Exception exc)
+            {
+                return new ChoreResult(false, System.Net.HttpStatusCode.Conflict, exc.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("GetUserToDoChores")]
+        public ChoreResult GetUserToDoChores([FromBody] ChoreForm choreForm)
+        {
+            try
+            {
+                var result = _manager.GetUserToDoChores(new UserAccount(choreForm.CurrentUser));
+                if (result.IsSuccessful)
+                {
+                    result.ErrorStatus = System.Net.HttpStatusCode.OK;
+                }
+                else
+                {
+                    result.ErrorStatus = System.Net.HttpStatusCode.BadRequest;
+                }
+                return result;
+
+            }
+            catch (Exception exc)
+            {
+                return new ChoreResult(false, System.Net.HttpStatusCode.Conflict, exc.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("GetUserCompletedChores")]
+        public ChoreResult GetUserCompletedChores([FromBody] ChoreForm choreForm)
+        {
+            try
+            {
+                var result = _manager.GetUserCompletedChores(new UserAccount(choreForm.CurrentUser));
+                if (result.IsSuccessful)
+                {
+                    result.ErrorStatus = System.Net.HttpStatusCode.OK;
+                }
+                else
+                {
+                    result.ErrorStatus = System.Net.HttpStatusCode.BadRequest;
+                }
+                return result;
+
+            }
+            catch (Exception exc)
             {
                 return new ChoreResult(false, System.Net.HttpStatusCode.Conflict, exc.Message);
             }

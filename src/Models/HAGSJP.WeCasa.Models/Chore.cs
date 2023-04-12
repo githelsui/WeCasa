@@ -12,8 +12,10 @@ namespace HAGSJP.WeCasa.Models
         public String? Notes { get; set; }
         public int GroupId { get; set; }
         public Boolean? IsCompleted { get; set; }
-        public List<string> AssignedTo { get; set; }
         public String? Repeats { get; set; }
+        public List<UserProfile> AssignedTo { get; set; }
+        public List<String> UsernamesAssignedTo { get; set; }
+        public List<int> UserChoreIds { get; set; } // List of userchore_id's per each assigned task and respective user
 
         //Assigned in Manager layer
         public DateTime? Created { get; set; }
@@ -24,6 +26,10 @@ namespace HAGSJP.WeCasa.Models
 
         [JsonConstructor]
         public Chore(){}
-	}
+        public Chore(String name)
+        {
+
+        }
+    }
 }
 

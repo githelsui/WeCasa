@@ -127,7 +127,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
                 // DAO Operations
                 // Preparation of first sql query from UserChore table
-                var selectSql = string.Format(@"SELECT * from USERCHORES WHERE username = '{0}' AND is_completed = '{1}'", user.Username, isCompleted);
+                var selectSql = string.Format(@"SELECT * from USERCHORE WHERE username = '{0}' AND is_completed = '{1}'", user.Username, isCompleted);
                 var daoResult = _dao.GetUserChores(selectSql);
                 
                 if (daoResult.IsSuccessful)
