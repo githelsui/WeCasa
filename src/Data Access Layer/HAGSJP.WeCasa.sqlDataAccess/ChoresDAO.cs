@@ -185,6 +185,54 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 }
             }
         }
+
+        public DAOResult GetUserChores(string selectSql)
+        {
+            var result = new DAOResult();
+            List<int> choreIds = new List<int>();
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
+
+                    var command = connection.CreateCommand();
+                    command.CommandText = selectSql;
+
+                    // Execution of first sql query for UserChore table
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var choreId = reader.GetInt32(reader.GetOrdinal("chore_id"));
+                            choreIds.Add(choreId);
+                        }
+                    }
+
+                    if(choreIds.Count > 0)
+                    {
+                        result.ReturnedObject = choreIds;
+                        result.IsSuccessful = true;
+                    }
+                    else
+                    {
+                        result.ReturnedObject = new List<Chore>();
+                        result.IsSuccessful = true;
+                        result.Message = "User has no chores under these specifications.";
+                    }
+                    return result;
+                }
+                catch (MySqlException sqlex)
+                {
+                    throw sqlex;
+                }
+                catch (Exception sqlex)
+                {
+                    throw sqlex;
+                }
+            }
+        }
     }
 }
 

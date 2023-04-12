@@ -10,6 +10,7 @@ public class ChoreForm
     public DateTime? ResetTime { get; set; }
     public string? Notes { get; set; }
     public int GroupId { get; set; }
+    public int? ChoreId { get; set; }
     public Boolean? IsCompleted { get; set; }
     public string? Repeats { get; set; }
     public List<string>? AssignedTo { get; set; }
