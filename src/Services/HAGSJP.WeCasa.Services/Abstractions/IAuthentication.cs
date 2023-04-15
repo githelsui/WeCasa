@@ -10,6 +10,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         public Result AuthenticateUser(UserAccount userAccount, OTP submittedOTP);
         public Result AuthenticateUser(UserAccount userAccount, OTP userOtp, OTP otp);
         public Boolean IsAccountEnabled(UserAccount userAccount);
+        public Result DisableUser(UserAccount userAccount);
         public Result ResetAuthenticationAttempts(UserAccount userAccount);
     }
 }

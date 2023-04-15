@@ -1,6 +1,6 @@
 import React, { Component, useState, useEffect } from 'react';
 import { Collapse, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
-import LogoutModal from './LogoutModal'
+import LogoutModal from './Logout/LogoutModal'
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import '../styles/NavMenu.css';

@@ -1,6 +1,7 @@
 using HAGSJP.WeCasa.Client;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Services.Implementations;
+using HAGSJP.WeCasa.Managers.Implementations;
 
 class AccountSettings
 {
@@ -109,7 +110,7 @@ class AccountSettings
                             // um.UpdatePassword(userAccount, salt, encryptedPass);
                             break;
                         case "5":
-                            um.UpdateUserIcon(userAccount);
+                            //um.UpdateUserIcon(userAccount);
                             break;
                         case "6":
                             um.UpdatePhoneNumber(userAccount);

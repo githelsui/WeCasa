@@ -10,7 +10,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class RegistrationController : Controller
+public class RegistrationController : ControllerBase
 {
     [HttpPost]
     public Result Post([FromBody]RegistrationForm form)

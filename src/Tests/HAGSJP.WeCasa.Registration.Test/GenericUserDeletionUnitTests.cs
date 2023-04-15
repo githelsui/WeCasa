@@ -1,4 +1,5 @@
 using HAGSJP.WeCasa.Services.Implementations;
+using HAGSJP.WeCasa.Managers.Implementations;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Models.Security;
 using System.Net;

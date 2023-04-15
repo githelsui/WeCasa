@@ -2,13 +2,13 @@ using Microsoft.AspNetCore.Mvc;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.sqlDataAccess;
 using HAGSJP.WeCasa.Logging.Implementations;
-using HAGSJP.WeCasa.Services.Implementations;
+using HAGSJP.WeCasa.Managers.Implementations;
 
 namespace HAGSJP.WeCasa.Frontend.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class BudgetBarController : Controller
+public class BudgetBarController : ControllerBase
 {
     private readonly Logger _logger;
     private readonly BudgetBarManager _budgetBarManager;

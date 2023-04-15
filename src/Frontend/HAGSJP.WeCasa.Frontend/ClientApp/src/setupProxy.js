@@ -13,7 +13,8 @@ const context = [
     "/home",
     "/files",
     "/group-settings",
-    "/account-settings"
+    "/account-settings",
+    "/edit-profile"
 ];
 
 const onError = (err, req, resp, target) => {

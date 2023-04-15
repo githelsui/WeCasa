@@ -151,7 +151,8 @@ export const defaultImage = {
 export const groupIconSelection = {
     borderRadius: '5%',
     objectFit: 'cover',
-    margin: '5%'
+    margin: '5%',
+    cursor: 'pointer'
 }
 
 // Navbar styles 

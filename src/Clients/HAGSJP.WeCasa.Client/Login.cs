@@ -1,6 +1,7 @@
 ﻿using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Models.Security;
 using HAGSJP.WeCasa.Services.Implementations;
+using HAGSJP.WeCasa.Managers.Implementations;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
