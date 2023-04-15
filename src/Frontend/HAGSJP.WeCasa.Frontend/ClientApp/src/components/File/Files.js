@@ -1,11 +1,12 @@
 import React, { Component, useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '../AuthContext';
-import { Col, Card, Row, Space, ConfigProvider, Button, Image, Tabs, notification } from 'antd';
+import { Col, Card, Space, Button, Image, Tabs, notification, Pagination } from 'antd';
 import { PlusCircleOutlined, FileOutlined } from '@ant-design/icons'
 import axios from 'axios';
 import * as Styles from '../../styles/ConstStyles.js';
 import { FileView } from './FileView.js';
+import * as config from '../../../../../appsettings.json';
 const { Meta } = Card;
 const TabPane = Tabs.TabPane;
 
@@ -18,14 +19,17 @@ export const Files = () => {
     const [validInput, setValidInput] = useState(false);
     const [showFile, setShowFile] = useState(false);
     const [refreshSettings, setRefreshSettings] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
     const fileInputRef = React.createRef();
     const navigate = useNavigate();
-    const validFileTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif', 'text/plain', 'text/html', 'application/pdf', 'application/msword', 'application / vnd.openxmlformats - officedocument.wordprocessingml.document'];
-    const validFileExt = ['jpg', 'jpeg', 'png', 'gif', 'txt', 'html', 'pdf', 'doc', 'docx'];
     const maxFileSize = 10 * 1024 * 1024; // 10 MB
     const maxBucketSize = 15 * 1024 * 1024 * 1024 // 15 GB
+    const maxFilesPerPage = config.maxFilesPerPage;
+    const validFileTypes = config.validFileTypes;
+    const validFileExt = config.validFileExt;
+    const filesToDisplay = files.slice((currentPage - 1) * maxFilesPerPage, currentPage * maxFilesPerPage);
 
-    useEffect(() => { getFiles(); getDeletedFiles(); }, []);
+    useEffect(() => { getFiles(); }, []);
 
     const tabItemClick = (key) => {
         console.log('tab click', key);
@@ -69,9 +73,13 @@ export const Files = () => {
                 if (isSuccessful) {
                     var fileContents = []
                     fileContents = res.data['returnedObject'].map(file => {
+                        // decoding the base-64 string data to binary array
                         const binaryData = atob(file['data']);
+                        // creating an array buffer to perform data manipulation on the binary data
                         const arrayBuffer = new ArrayBuffer(binaryData.length);
+                        // creating an array of 8-bit unsigned integers necessary for creating the Blob
                         const uint8Array = new Uint8Array(arrayBuffer);
+                        // converting binary data into string representation
                         for (let i = 0; i < binaryData.length; i++) {
                             uint8Array[i] = binaryData.charCodeAt(i);
                         }
@@ -120,6 +128,7 @@ export const Files = () => {
             .catch((error) => {
                 console.error(error)
             });
+        displayDeletedFiles();
     }
 
     const getUserFile = () => {
@@ -148,6 +157,10 @@ export const Files = () => {
         setUploadFile(file);
         attemptFileUpload(file);
     }
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
 
     const attemptFileUpload = (file) => {
         const formData = new FormData();
@@ -183,7 +196,7 @@ export const Files = () => {
     }
 
     const displayFileView = () => {
-        var fileList = files.map(function (file, index) {
+        var fileList = filesToDisplay.map(function (file, index) {
             return (
                 <div key={index} onClick={() => selectFile(file)}>
                     <Col span={10} style={{ marginTop: 16, marginLeft: 16 }}>
@@ -275,7 +288,13 @@ export const Files = () => {
                     </TabPane>
                     <TabPane tab="Deleted Files" key="2">
                         <Space direction="horizonal" size={32}>
-                            {displayDeletedFiles()}
+                            {getDeletedFiles()}
+                            <Pagination
+                                current={currentPage}
+                                pageSize={maxFilesPerPage}
+                                total={files.length}
+                                onChange={handlePageChange}
+                            />
                         </Space>
                     </TabPane>
                 </Tabs>
