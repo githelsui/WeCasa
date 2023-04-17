@@ -7,7 +7,7 @@ using HAGSJP.WeCasa.Managers.Implementations;
 namespace HAGSJP.WeCasa.Frontend.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("chorelist")]
     public class ChoreController : ControllerBase
     {
         private readonly Logger _logger;
@@ -156,6 +156,37 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
                 {
                     result.ErrorStatus = System.Net.HttpStatusCode.BadRequest;
                 }
+                return result;
+
+            }
+            catch (Exception exc)
+            {
+                return new ChoreResult(false, System.Net.HttpStatusCode.Conflict, exc.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("GetCurrentGroupMembers")]
+        public ChoreResult GetCurrentGroupMembers([FromBody] GroupMemberForm groupForm)
+        {
+            try
+            {
+                var result = new ChoreResult();
+                var groupModel = new GroupModel();
+                groupModel.GroupId = groupForm.GroupId;
+                var groupManager = new GroupManager();
+                var managerResult = groupManager.GetGroupMembers(groupModel);
+                if (managerResult.IsSuccessful)
+                {
+                    result.ReturnedObject = managerResult.ReturnedObject;
+                    result.ErrorStatus = System.Net.HttpStatusCode.OK;
+                }
+                else
+                {
+                    result.ErrorStatus = System.Net.HttpStatusCode.BadRequest;
+                }
+                result.IsSuccessful = managerResult.IsSuccessful;
+                result.Message = managerResult.Message;
                 return result;
 
             }

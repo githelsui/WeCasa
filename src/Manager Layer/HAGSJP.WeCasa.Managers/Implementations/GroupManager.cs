@@ -154,19 +154,30 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             var userManager = new UserManager();
             var result = new GroupResult();
 
-            var usernamesList = (_dao.GetGroupMembers(group).ReturnedObject);
-            IEnumerable enumerable = usernamesList as IEnumerable;
-            var groupMembersList = new List<UserProfile>();
-            foreach (string username in enumerable)
+            result = (_dao.GetGroupMembers(group));
+            if (result.IsSuccessful)
             {
-                Console.Write("Username = " + username);
-                var userAccount = new UserAccount(username);
-                var userProfile = userManager.GetUserProfile(userAccount);
-                groupMembersList.Add((UserProfile)userProfile.ReturnedObject);
+                var usernamesList = result.ReturnedObject;
+                IEnumerable enumerable = usernamesList as IEnumerable;
+                var groupMembersList = new List<UserProfile>();
+                foreach (string username in enumerable)
+                {
+                    Console.Write("Username = " + username);
+                    var userAccount = new UserAccount(username);
+                    var userProfile = userManager.GetUserProfile(userAccount);
+                    groupMembersList.Add((UserProfile)userProfile.ReturnedObject);
+                }
+                var groupMemberArr = groupMembersList.ToArray();
+                result.ReturnedObject = groupMemberArr;
+                return result;
             }
-            var groupMemberArr = groupMembersList.ToArray();
-            result.ReturnedObject = groupMemberArr;
-            return result;
+            else
+            {
+                // Logging the error
+                errorLogger.Log("Error fetching group member", LogLevels.Error, "Data Store", group.Owner);
+                result.Message = "Error fetching group member";
+                return result;
+            }
         }
 
         public Result AddGroupMembers(GroupModel group, string[] groupMembers)

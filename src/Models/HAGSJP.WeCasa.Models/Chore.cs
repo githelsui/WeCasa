@@ -15,10 +15,12 @@ namespace HAGSJP.WeCasa.Models
         public String? Repeats { get; set; }
         public List<UserProfile> AssignedTo { get; set; }
         public List<String> UsernamesAssignedTo { get; set; }
-       
-        //Assigned in Manager layer
-        public DateTime? Created { get; set; }
-        public String? CreatedBy { get; set; }
+        public List<String>? Days { get; set; } //day string
+        public String? Day { get; set; } //day string
+
+        // Assigned in Manager layer 
+        public DateTime? Created { get; set; }  
+        public String? CreatedBy { get; set; } 
         public DateTime? LastUpdated { get; set; }
         public String? LastUpdatedBy { get; set; }
         
