@@ -18,7 +18,8 @@
 
 [role="progressbar"] {
     --percentage: var(--value);
-    --primary: black;
+    --text: black;
+    --primary: #10B364;
     --secondary: #0D77CF;
     --size: 200px;
     animation: progress 2s 0.5s forwards;
@@ -40,9 +41,10 @@
         width: 100%;
         height: 100%;
         background: conic-gradient(from 0.75turn at 50% 100%, var(--primary) calc(var(--percentage) * 1% / 2), var(--secondary) calc(var(--percentage) * 1% / 2 + 0.1%));
-        mask: #10B364;
+        mask: radial-gradient(at 50% 100%, white 55%, transparent 55.5%);
         mask-mode: alpha;
         -webkit-mask: radial-gradient(at 50% 100%, #0000 55%, #000 55.5%);
+        -webkit-mask-mode: alpha;
     }
 
 [role="progressbar"]::after {
@@ -50,5 +52,5 @@
     content: counter(percentage) '%';
     font-family: Mulish;
     font-size: calc(var(--size) / 5);
-    color: var(--primary);
+    color: var(--text);
 }

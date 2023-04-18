@@ -14,10 +14,16 @@ export const GroupMembersTab = (props) => {
     const [membersList, setMembersList] = useState([]);
     const { currentUser, currentGroup } = useAuth();
     const [showInviteModal, setShowInviteModal] = useState(false);
-    const days = 0;
+    const [daysUntilRefresh, setDaysUntilRefresh] = useState(0);
 
     const getFullName = (first, last) => {
         return first + ' ' + last
+    }
+
+    const getDaysUntilRefresh = () => {
+        const currentDate = new Date();
+        const refreshDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+        return Math.ceil(Math.abs(refreshDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60 * 24));
     }
 
     const fetchMemberList = () => {
@@ -77,6 +83,7 @@ export const GroupMembersTab = (props) => {
 
     useEffect(() => {
         fetchMemberList()
+        setDaysUntilRefresh(getDaysUntilRefresh());
     }, [])
 
     return (
@@ -89,15 +96,15 @@ export const GroupMembersTab = (props) => {
                     </Col>
                 </Row>)
                 : (<div></div>)}
-            <Row gutter={24}>
-                <Col span={16}>
+            <Row gutter={[24, 24]} align="middle">
+                <Col span={10}>
                     <h6 className="padding-top">Group Owner</h6>
                 </Col>
-                <Col span={4}>
+                <Col span={4} offset={6}>
                     <h6 className="text-end padding-top">Chore progress</h6>
                 </Col>
                 <Col span={4}>
-                    <h6 className="text-end padding-top">Resets in {days} days</h6>
+                    <h6 className="text-end padding-top">Resets in {daysUntilRefresh} days</h6>
                 </Col>
             </Row>
             <Divider plain>
