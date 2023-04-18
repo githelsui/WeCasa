@@ -13,6 +13,7 @@ public class ChoreForm
     public int? ChoreId { get; set; }
     public Boolean? IsCompleted { get; set; }
     public string? Repeats { get; set; }
+    public List<string>? Days { get; set; }
     public List<string>? AssignedTo { get; set; }
 }
 

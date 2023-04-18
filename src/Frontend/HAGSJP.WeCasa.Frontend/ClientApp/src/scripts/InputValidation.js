@@ -7,7 +7,7 @@ const successRes = {
 
 const inputExceedLimitRes = {
     isSuccessful: false,
-    message: 'Exceeds characters limit'
+    message: 'Exceeds character limit'
 }
 
 const invalidEmailRes = {
@@ -80,3 +80,10 @@ export const validatePassword = (password) => {
     }
 
 };
+
+export const validateChoreName = (input) => {
+    if (input.length > 60) {
+        return inputExceedLimitRes;
+    }
+    return successRes;
+}

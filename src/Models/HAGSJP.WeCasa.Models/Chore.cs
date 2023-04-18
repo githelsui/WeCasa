@@ -16,7 +16,6 @@ namespace HAGSJP.WeCasa.Models
         public List<UserProfile> AssignedTo { get; set; }
         public List<String> UsernamesAssignedTo { get; set; }
         public List<String>? Days { get; set; } //day string
-        public String? Day { get; set; } //day string
 
         // Assigned in Manager layer 
         public DateTime? Created { get; set; }  
@@ -27,10 +26,10 @@ namespace HAGSJP.WeCasa.Models
 
         [JsonConstructor]
         public Chore(){}
-        public Chore(String name, DateTime? resetTime, String? notes, int groupId, List<string> usernamesAssignedTo, String? repeats)
+        public Chore(String name, List<String>? days, String? notes, int groupId, List<string> usernamesAssignedTo, String? repeats)
         {
             Name = name;
-            ResetTime = resetTime;
+            Days = days;
             Notes =notes;
             GroupId = groupId;
             UsernamesAssignedTo = usernamesAssignedTo;

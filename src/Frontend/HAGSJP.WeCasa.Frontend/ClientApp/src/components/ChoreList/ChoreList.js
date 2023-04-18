@@ -24,8 +24,31 @@ export const ChoreList = (props) => {
         }
     };
 
-    const attemptChoreCreation = () => {
-        
+    const attemptChoreCreation = (modalConfig) => {
+        console.log(currentGroup)
+
+        let choreForm = {
+            CurrentUser: currentUser['username'],
+            GroupId: currentGroup['groupId'], //or is it GroupId
+            Name: modalConfig['ChoreName'],
+            Notes: modalConfig['ChoreNotes'],
+            Repeats: modalConfig['ChoreRepeats'],
+            Days: modalConfig['ChoreDays'],
+            AssignedTo: modalConfig['ChoreAssignments']
+        }
+
+        // Web api call
+        axios.post('chorelist/AddChore', choreForm)
+            .then(res => {
+                var isSuccessful = res.data['isSuccessful'];
+                console.log(res.data)
+                if (isSuccessful) {
+                   
+                }
+            })
+            .catch((error => { console.error(error) }));
+
+        // Refresh ChoresToDoTab 
     }
 
     const fetchCurrentRoommates = () => {
@@ -72,8 +95,6 @@ export const ChoreList = (props) => {
     }
 
     useEffect(() => {
-        // fetch current group members (groupMembers) in Chore List
-        // (ChoreController) ensures only updated, valid group members
         setMembersList([])
         fetchCurrentRoommates()
         console.log(membersList)
