@@ -2,7 +2,7 @@ import { Home } from "./components/Home";
 import { Registration } from "./components/Registration/Registration";
 import { Login } from "./components/Login/Login";
 import { BudgetBar } from "./components/BudgetBar/BudgetBar";
-import { Calendar } from "./components/Calendar/Calendar";
+import { CalendarView } from "./components/Calendar/CalendarView";
 import { GroupSettings } from "./components/Group/GroupSettings";
 import { ProfileSettings } from "./components/Profile/ProfileSettings";
 import { AccountSettings } from "./components/Account/AccountSettings";
@@ -42,7 +42,7 @@ const AppRoutes = [
     },
     {
         path: '/calendar',
-        element: <Calendar />
+        element: <CalendarView />
     },
     {
         path: '/account-settings',

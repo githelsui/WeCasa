@@ -6,7 +6,7 @@ import { PlusCircleOutlined, FileOutlined } from '@ant-design/icons'
 import axios from 'axios';
 import * as Styles from '../../styles/ConstStyles.js';
 import { FileView } from './FileView.js';
-import * as config from '../../../../../appsettings.json';
+import config from '../../appsettings.json';
 const { Meta } = Card;
 const TabPane = Tabs.TabPane;
 
@@ -23,7 +23,7 @@ export const Files = () => {
     const fileInputRef = React.createRef();
     const navigate = useNavigate();
     const maxFileSize = 10 * 1024 * 1024; // 10 MB
-    const maxBucketSize = 15 * 1024 * 1024 * 1024 // 15 GB
+    const maxBucketSize = 15 * 1024 * 1024 * 1024 // 15 GBS
     const maxFilesPerPage = config.maxFilesPerPage;
     const validFileTypes = config.validFileTypes;
     const validFileExt = config.validFileExt;

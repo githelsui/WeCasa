@@ -85,6 +85,20 @@ export const buttonHover = {
     }
 }
 
+export const toggleSelect = {
+    fontFamily: 'Mulish',
+    width: '100px',
+    height: '40px',
+    border: '1px solid #717171',
+    backgroundColor: '#717171',
+    color: '#ffffff',
+    fontWeight: 'bold',
+    borderRadius: '10px',
+    boxSizing: 'border-box',
+    justifyContent: 'center',
+    alignItems: 'center',
+}
+
 export const primaryButtonModal = {
     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
     fontFamily: 'Mulish',
@@ -126,6 +140,27 @@ export const addBudgetButton = {
     textDecoration: 'none',
     marginLeft: "auto",
     float: 'right',
+}
+
+export const calendarViewToggleGroup = {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: '10px'
+}
+
+export const calendarViewToggle = {
+    fontFamily: 'Mulish',
+    width: '100px',
+    height: '40px',
+    border: '1px solid #717171',
+    borderRadius: '10px',
+    boxSizing: 'border-box',
+    justifyContent: 'center',
+    alignItems: 'center',
+}
+
+export const defaultDropdown = {
+    fontFamily: 'Mulish',
 }
 
 export const navLink = {
