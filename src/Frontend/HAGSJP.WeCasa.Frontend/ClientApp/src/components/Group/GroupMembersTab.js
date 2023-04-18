@@ -6,42 +6,15 @@ import '../../index.css';
 import axios from 'axios';
 import defaultImage from '../../assets/defaultimgs/wecasatemp.jpg';
 import InviteRoommateModal from './InviteRoommateModal.js';
+import CircularProgressBar from '../CircularProgressBar.js';
 import { useAuth } from '../AuthContext';
-import { UserOutlined } from '@ant-design/icons'
-
-// FOR TESTING
-const data = [
-    {
-        Username: 'githelsuico@gmail.com',
-        FirstName: "githel",
-        LastName: "suico"
-    },
-    {
-        Username: 'apple@gmail.com',
-        FirstName: "adam",
-        LastName: "smith"
-    },
-    {
-        Username: 'apple@gmail.com',
-        FirstName: "adam",
-        LastName: "smith"
-    },
-    {
-        Username: 'apple@gmail.com',
-        FirstName: "adam",
-        LastName: "smith"
-    }
-]
-
-const groupData = {
-    GroupId: 1,
-    Owner: 'test@gmail.com'
-}
+import { UserOutlined } from '@ant-design/icons';
 
 export const GroupMembersTab = (props) => {
     const [membersList, setMembersList] = useState([]);
     const { currentUser, currentGroup } = useAuth();
     const [showInviteModal, setShowInviteModal] = useState(false);
+    const days = 0;
 
     const getFullName = (first, last) => {
         return first + ' ' + last
@@ -116,7 +89,17 @@ export const GroupMembersTab = (props) => {
                     </Col>
                 </Row>)
                 : (<div></div>)}
-            <h6 className="padding-top">Group Owner</h6>
+            <Row gutter={24}>
+                <Col span={16}>
+                    <h6 className="padding-top">Group Owner</h6>
+                </Col>
+                <Col span={4}>
+                    <h6 className="text-end padding-top">Chore progress</h6>
+                </Col>
+                <Col span={4}>
+                    <h6 className="text-end padding-top">Resets in {days} days</h6>
+                </Col>
+            </Row>
             <Divider plain>
             </Divider>
             <List
@@ -126,11 +109,12 @@ export const GroupMembersTab = (props) => {
                 renderItem={(item) => (
                     <List.Item className="padding-vertical">
                         <Skeleton avatar title={false} loading={false} >
-                            <List.Item.Meta 
+                            <List.Item.Meta
                                 avatar={<Avatar icon={<UserOutlined />} />}
                                 title={getFullName(item.firstName, item.lastName)}
                                 description={item.username}
                             />
+                            <CircularProgressBar percentage={item.progress}></CircularProgressBar>
                             {currentUser["username"] == currentGroup["owner"] && currentGroup["owner"] != item.username ? (
                                 <Button onClick={(e) => {
                                     removeRoommate(item.username)
