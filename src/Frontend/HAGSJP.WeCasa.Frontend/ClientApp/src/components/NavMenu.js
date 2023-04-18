@@ -25,6 +25,15 @@ export const NavMenu = () => {
                                     ...Styles.navLink,
                                     ...(isActive ? Styles.activeStyle : null)
                                 })}
+                                to="/grocerylist">Groceries
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink tag={Link}
+                                style={({ isActive }) => ({
+                                    ...Styles.navLink,
+                                    ...(isActive ? Styles.activeStyle : null)
+                                })}
                                 to="/calendar">Calendar</NavLink>
                         </li>
                         <li>

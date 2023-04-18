@@ -8,6 +8,7 @@ import { AccountSettings } from "./components/Account/AccountSettings";
 import { Files } from "./components/File/Files";
 import { FileView } from "./components/File/FileView";
 import { IconSelectorModal } from "./components/IconSelectorModal";
+import { GroceryList } from "./components/GroceryList/GroceryList";
 
 
 const AppRoutes = [
@@ -62,7 +63,11 @@ const AppRoutes = [
   {
      path: '/icon-selector-dev',
      element: <IconSelectorModal />
-  }
+  },
+  {
+      path: '/grocerylist',
+      element: <GroceryList />
+  },
 ];
 
 export default AppRoutes;
