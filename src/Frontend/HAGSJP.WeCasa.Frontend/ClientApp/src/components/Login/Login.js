@@ -133,9 +133,9 @@ export const Login = () => {
     // for dev purposes lol
     setAuth(true);
     const tempUser = {
-        firstName: "allison",
-        lastName: "test",
-        username: "test123@gmail.com",
+        firstName: "githel",
+        lastName: "suico",
+        username: "githelsuico@gmail.com",
         image: 1,
         notifications: ["email", "sms"]
     }
