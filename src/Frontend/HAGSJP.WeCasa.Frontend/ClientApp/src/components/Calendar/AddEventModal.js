@@ -11,7 +11,7 @@ const reminderOptions = ['30 minutes', 'A day', 'A week'];
 
 const AddEventModal = (props) => {
     const [loading, setLoading] = useState(false);
-    const [eventDate, setEventDate] = useState('');
+    const [eventDate, setEventDate] = useState(props.date);
     const [eventDateTime, setEventDateTime] = useState('');
     const [repeat, setRepeat] = useState('');
     const [eventType, setEventType] = useState('');
@@ -84,7 +84,7 @@ const AddEventModal = (props) => {
                         <Row gutter={[24, 24]} align="middle">
                             <Col span={16} className="event-name-input">
                                 <Form.Item name="eventName">
-                                    <Input style={Styles.inputFieldStyle} required placeholder="Event Name" />
+                                    <Input style={Styles.eventInputFieldStyle} required placeholder="Event Name" />
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -93,7 +93,7 @@ const AddEventModal = (props) => {
                         <Row gutter={[24, 24]}>
                             <Col span={18} className="description-field">
                                 <Form.Item name="description">
-                                    <Input style={Styles.largeTextField} placeholder="Description" />
+                                    <Input style={Styles.eventDescTextField} placeholder="Description" />
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -101,12 +101,14 @@ const AddEventModal = (props) => {
                         <h6 className="mulish-font">Date and Time</h6>
                         <div className="datetime-row padding-bottom">
                             <Row gutter={24} style={{ display: 'flex', flexDirection: 'horizontal' }}>
+                                    <Col span={8}>
+                                        <DatePicker defaultValue={props.date} onChange={onDateChange} />
+                                    </Col>
                                 <Col span={8}>
-                                    <DatePicker onChange={onDateChange} />
-                                </Col>
-                                <Col span={8}>
-                                    <TimePicker onChange={onTimeChange} />
-                                </Col>
+                                    <Form.Item name="eventDate" value={eventDateTime}>
+                                        <TimePicker onChange={onTimeChange} />
+                                    </Form.Item>
+                                    </Col>
                             </Row>
                         </div>
 
@@ -114,7 +116,9 @@ const AddEventModal = (props) => {
                         <div className="repeats-row padding-bottom">
                             <Row gutter={24} style={{ display: 'flex', flexDirection: 'horizontal' }} >
                                 <Col span={20}>
-                                    <Radio.Group options={repeatOptions} value={repeat} onChange={onRepeatChange} />
+                                    <Form.Item name="repeat" value={repeat}>
+                                        <Radio.Group options={repeatOptions} onChange={onRepeatChange} />
+                                    </Form.Item>
                                 </Col>
                             </Row>
                         </div>
@@ -123,7 +127,9 @@ const AddEventModal = (props) => {
                         <div className="eventtype-row padding-bottom">
                             <Row gutter={24} style={{display:'flex', flexDirection:'horizontal'}}>
                                 <Col span={18}>
-                                    <Radio.Group options={eventTypeOptions} value={eventType} onChange={onTypeChange} />
+                                    <Form.Item name="type" value={eventType}>
+                                        <Radio.Group options={eventTypeOptions} value={eventType} onChange={onTypeChange} />
+                                    </Form.Item>
                                 </Col>
                             </Row>
                         </div>
@@ -132,7 +138,9 @@ const AddEventModal = (props) => {
                         <div className="reminder-row padding-bottom">
                             <Row gutter={24} style={{ display: 'flex', flexDirection: 'horizontal' }}>
                                 <Col span={18}>
-                                    <Radio.Group options={reminderOptions} value={reminder} onChange={onReminderChange} />
+                                    <Form.Item name="reminder" value={reminder}>
+                                        <Radio.Group options={reminderOptions} value={reminder} onChange={onReminderChange} />
+                                    </Form.Item>
                                 </Col>
                             </Row>
                         </div>
@@ -141,6 +149,7 @@ const AddEventModal = (props) => {
                         <div className="tag-row padding-bottom">
                             <Row gutter={24} style={{ display: 'flex', flexDirection: 'horizontal' }}>
                                 {displayEventColors()}
+                                <Form.Item name="color" value={eventColor}></Form.Item>
                             </Row>
                         </div>
                         <Row gutter={24} style={{alignItems:'center', justifyContent:'center', gap:'30px'}} > 

@@ -7,7 +7,7 @@ import axios from 'axios';
 import defaultImage from '../../assets/defaultimgs/wecasatemp.jpg';
 import InviteRoommateModal from './InviteRoommateModal.js';
 import CircularProgressBar from '../CircularProgressBar.js';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../Auth/AuthContext';
 import { UserOutlined } from '@ant-design/icons';
 
 export const GroupMembersTab = (props) => {

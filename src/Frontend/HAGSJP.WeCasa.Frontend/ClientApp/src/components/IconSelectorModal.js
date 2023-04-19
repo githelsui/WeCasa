@@ -4,7 +4,6 @@ import * as Styles from '../styles/ConstStyles.js';
 import '../styles/System.css';
 import '../index.css';
 import * as ValidationFuncs from '../scripts/InputValidation.js';
-import { useAuth } from './AuthContext.js';
 import axios from 'axios';
 import image1 from '../assets/profileimgs/1.jpg';
 import image2 from '../assets/profileimgs/2.jpg';

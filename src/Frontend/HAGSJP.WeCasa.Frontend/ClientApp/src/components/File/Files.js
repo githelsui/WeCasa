@@ -1,6 +1,6 @@
 import React, { Component, useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom'
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../Auth/AuthContext';
 import { Col, Card, Space, Button, Image, Tabs, notification, Pagination } from 'antd';
 import { PlusCircleOutlined, FileOutlined } from '@ant-design/icons'
 import axios from 'axios';
@@ -272,14 +272,7 @@ export const Files = () => {
             <div>
                 <Tabs defaultActiveKey="1" onChange={tabItemClick} destroyInactiveTabPane>
                     <TabPane tab="Group Files" key="1">
-                        <Space direction="horizonal" size={32}>
-                            {displayFileView()}
-                            <Pagination
-                                current={currentPage}
-                                pageSize={maxFilesPerPage}
-                                total={files.length}
-                                onChange={handlePageChange}
-                            />
+                        <div style={{display:'flex'}}>
                             <Button
                                 id="add-file"
                                 style={Styles.addButtonStyle}
@@ -289,12 +282,22 @@ export const Files = () => {
                                 onClick={() => getUserFile()}>
                                 Add file
                             </Button>
+                        </div>
+                        <Space direction="horizonal" size={24} wrap>
+                            {displayFileView()} 
+                            <Pagination
+                                current={currentPage}
+                                pageSize={maxFilesPerPage}
+                                total={files.length}
+                                onChange={handlePageChange}
+                                />
+                            
                             <input type="file" ref={fileInputRef} onChange={handleFileInputChange} style={{ display: 'none'}}></input>
                         </Space>
                     </TabPane>
                     <TabPane tab="Deleted Files" key="2">
                         <Space direction="horizonal" size={32}>
-                            {getDeletedFiles()}
+                            {displayDeletedFiles()}
                             <Pagination
                                 current={currentPage}
                                 pageSize={maxFilesPerPage}

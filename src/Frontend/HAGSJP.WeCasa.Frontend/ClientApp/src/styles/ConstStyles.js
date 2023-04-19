@@ -103,7 +103,7 @@ export const addButtonStyle = {
     borderColor: '#111827',
     backgroundColor: 'white',
     textDecoration: 'none',
-    marginLeft: 30,
+    marginLeft: 'auto',
 }
 
 export const buttonHover = {
@@ -174,7 +174,8 @@ export const addBudgetButton = {
 export const calendarViewToggleGroup = {
     display: 'flex',
     flexDirection: 'horizontal',
-    gap: '10px'
+    gap: '10px',
+    width: '100%'
 }
 
 export const calendarViewToggle = {
@@ -184,7 +185,26 @@ export const calendarViewToggle = {
     borderRadius: '10px',
     boxSizing: 'border-box',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+}
+
+export const dayViewContainer = {
+    position: 'relative'
+}
+
+export const currentTime = {
+    background: 'transparent',
+    borderTop: '1px solid red',
+    borderBottom: 'none',
+    margin: '0px',
+    position: 'absolute',
+    width: '100%'
+}
+
+export const hourColumn = {
+    width: '100px',
+    maxWidth: '100px',
+    textAlign: 'right'
 }
 
 export const navLink = {

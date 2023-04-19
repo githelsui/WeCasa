@@ -56,10 +56,6 @@ const AppRoutes = [
      element: <ProfileSettings />
   },
   {
-    path: '/account-settings',
-    element: <AccountSettings />
-  },
-  {
     path: '/files',
     element: <Files />
   },

@@ -9,7 +9,7 @@ export const CircularProgressBar = (props) => {
 
     return (
         <div>
-        <div role="progressbar"
+        <div role="circularbar"
             aria-valuemin="0"
             aria-valuemax="100"
             style={{ "--value": value }}>

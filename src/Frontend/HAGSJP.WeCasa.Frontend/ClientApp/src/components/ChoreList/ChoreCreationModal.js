@@ -3,11 +3,7 @@ import { Modal, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Swi
 import * as Styles from '../../styles/ConstStyles.js';
 import '../../styles/System.css';
 import '../../index.css';
-import defaultImage from '../../assets/defaultimgs/wecasatemp.jpg';
 import * as ValidationFuncs from '../../scripts/InputValidation.js';
-import IconSelectorModal from "../IconSelectorModal.js";
-import { EditOutlined } from '@ant-design/icons';
-import axios from 'axios';
 import image1 from '../../assets/profileimgs/1.jpg';
 import image2 from '../../assets/profileimgs/2.jpg';
 import image3 from '../../assets/profileimgs/3.jpg';

@@ -16,7 +16,7 @@
     initial-value: 0;
 }
 
-[role="progressbar"] {
+[role="circularbar"] {
     --percentage: var(--value);
     --text: black;
     --primary: #10B364;
@@ -33,7 +33,7 @@
     justify-content: center;
 }
 
-    [role="progressbar"]::before {
+    [role="circularbar"]::before {
         content: "";
         position: absolute;
         top: 0;
@@ -47,7 +47,7 @@
         -webkit-mask-mode: alpha;
     }
 
-[role="progressbar"]::after {
+[role="circularbar"]::after {
     counter-reset: percentage var(--value);
     content: counter(percentage) '%';
     font-family: Mulish;

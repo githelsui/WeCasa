@@ -3,7 +3,7 @@ import { Modal, ConfigProvider, Button, Row, Col, Image, notification } from 'an
 import axios from 'axios';
 import { DeleteOutlined } from '@ant-design/icons';
 import * as Styles from '../../styles/ConstStyles.js';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../Auth/AuthContext';
 import '../../styles/System.css';
 import '../../index.css';
 import DeleteFileModal from './DeleteFileModal.js';
