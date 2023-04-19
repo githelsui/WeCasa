@@ -114,19 +114,21 @@ export const GroupMembersTab = (props) => {
                 itemLayout="vertical"
                 dataSource={membersList}
                 renderItem={(item) => (
-                    <List.Item className="padding-vertical">
-                        <Skeleton avatar title={false} loading={false} >
-                            <List.Item.Meta
-                                avatar={<Avatar icon={<UserOutlined />} />}
-                                title={getFullName(item.firstName, item.lastName)}
-                                description={item.username}
-                            />
-                            <CircularProgressBar percentage={item.progress}></CircularProgressBar>
-                            {currentUser["username"] == currentGroup["owner"] && currentGroup["owner"] != item.username ? (
-                                <Button onClick={(e) => {
+                    <List.Item className="padding-vertical" style={{display:'flex', flexDirection:'horizontal'}}>
+                        <Skeleton avatar title={false} loading={false}>
+                            <List.Item
+                                key={item.username}>
+                                <List.Item.Meta
+                                    avatar={<Avatar icon={<UserOutlined />} />}
+                                    title={getFullName(item.firstName, item.lastName)}
+                                    description={item.username}>
+                                </List.Item.Meta>
+                                <Button disabled={(currentUser["username"] != currentGroup["owner"]) || (currentGroup["owner"] == item.username)}
+                                    onClick={(e) => {
                                     removeRoommate(item.username)
-                                }} type="default" style={Styles.removeGroupMemberButton}>X  Remove Member</Button>)
-                                : (<div></div>)}
+                                }} type="default" style={Styles.removeGroupMemberButton}>X  Remove Member</Button>
+                            </List.Item>
+                            <CircularProgressBar percentage={item.progress}></CircularProgressBar>
                         </Skeleton>
                     </List.Item>
                 )}
