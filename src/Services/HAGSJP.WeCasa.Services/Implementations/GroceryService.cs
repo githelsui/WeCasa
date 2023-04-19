@@ -25,8 +25,6 @@ namespace HAGSJP.WeCasa.Services.Implementations
             {
                 var result = new GroceryResult();
 
-                Console.Write("Service layer");
-
                 // Input Validation
                 var validateResult = ValidateGroceryItem(item);
                 if (!validateResult.IsSuccessful)
@@ -54,7 +52,34 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 _logger.Log("Error Message: " + exc.Message, LogLevels.Error, "Data Store", item.CreatedBy, new UserOperation(Operations.GroceryList, 0));
                 throw exc;
             }
+        }
 
+        public GroceryResult GetGroceryItems(GroupModel group)
+        {
+            try
+            {
+                var result = new GroceryResult();
+
+                // DAO Operation
+                var daoResult = _dao.GetGroceryItems(group);
+                if (daoResult.IsSuccessful)
+                {
+                    result.ReturnedObject = daoResult.ReturnedObject;
+                    _logger.Log("Grocery items fetched successfully from database", LogLevels.Info, "Data Store", group.Owner);
+                }
+                else
+                {
+                    _logger.Log("Failed to fetch grocery items from database", LogLevels.Info, "Data Store", group.Owner);
+                }
+                result.IsSuccessful = daoResult.IsSuccessful;
+                result.Message = daoResult.Message;
+                return result;
+            }
+            catch (Exception exc)
+            {
+                _logger.Log("Error Message: " + exc.Message, LogLevels.Error, "Data Store", group.Owner, new UserOperation(Operations.GroceryList, 0));
+                throw exc;
+            }
         }
 
         public GroceryResult ValidateGroceryItem(GroceryItem item)

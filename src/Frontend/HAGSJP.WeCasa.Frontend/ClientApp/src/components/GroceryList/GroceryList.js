@@ -30,6 +30,7 @@ export const GroceryList = (props) => {
     const [showAddModal, setShowAddModal] = useState(false);
     const { currentGroup, currentUser } = useAuth();
     const [groceryItems, setGroceryItems] = useState([])
+    const [successfulFetch, setSuccessFetch] = useState(false);
 
     const addGroceryItem = (modalConfig) => {
         let groceryForm = {
@@ -40,16 +41,13 @@ export const GroceryList = (props) => {
             Assignments: modalConfig['Assignments']
         }
 
-        console.log(groceryForm)
-
-        // Web api call
         axios.post('grocerylist/AddGroceryItem', groceryForm)
             .then(res => {
                 var isSuccessful = res.data['isSuccessful'];
                 console.log(res.data)
                 if (isSuccessful) {
                     toast('Successfully added grocery item!')
-                    // fetchGroceries()
+                     fetchGroceries()
                 } else {
                     toast(res.data['message'])
                 }
@@ -58,7 +56,15 @@ export const GroceryList = (props) => {
     }
 
     const itemPurchased = (item) => {
-        // get grocery_id from item obj
+        let groceryForm = {
+            GroceryId: item['groceryId'],
+            GroupId: currentGroup['groupId'],
+            CurrentUser: currentUser['username']
+        }
+
+        //TODO: Implement axios call /PurchaseItem post request
+
+        console.log('item purchased' + item['name'])
     }
 
     const fetchGroceries = () => {
@@ -69,9 +75,16 @@ export const GroceryList = (props) => {
         axios.post('grocerylist/GetGroceryItems', groupForm)
             .then(res => {
                 var isSuccessful = res.data['isSuccessful'];
-                console.log(res.data)
                 if (isSuccessful) {
-                    // setGroceryItems(returnedobject)
+                    var items = res.data['returnedObject']
+                    console.log(items)
+                    setGroceryItems(items)
+                    if (groceryItems.length > 0) {
+                        setSuccessFetch(true)
+                    }
+                    console.log(groceryItems)
+                } else {
+                    toast(res.data['message'])
                 }
             })
             .catch((error => { console.error(error) }));
@@ -86,7 +99,7 @@ export const GroceryList = (props) => {
                 if (i == assignments.length - 1) {
                     label += assignments[i] + ')'
                 } else {
-                    label += assignments[i]
+                    label += assignments[i] + ', '
                 }
             }
             console.log(label)
@@ -104,11 +117,11 @@ export const GroceryList = (props) => {
     }
 
     useEffect(() => {
-        //fetchGroceries()
-
-        //dev only
-        //setGroceryItems(data)
-    }, []);
+        if (!successfulFetch) {
+            fetchGroceries()
+            setCount(count + 1);
+        }
+    }, [count]);
 
     return (
         <div>
@@ -125,12 +138,12 @@ export const GroceryList = (props) => {
             </div>
             <div className="grocery-board">
 
-                {(groceryItems.length > 0) ?
+                {(groceryItems.length > 0 && successfulFetch) ?
                     (<div>{groceryItems.map((item, i) =>
                         <Row gutter={24,24}>
-                            <Checkbox onChange={itemPurchased(item)}>
+                            <Checkbox defaultChecked={item['isPurchased']} onClick={() => itemPurchased(item)}>
                                 <h6 className="mulish-font">
-                                    {item['Name']} <i> {(assignmentLabel(item['Assignments']))}</i>
+                                    {item['name']} <i> {(assignmentLabel(item['assignments']))}</i>
                                 </h6>
                             </Checkbox></Row>)}
                        </div>) :

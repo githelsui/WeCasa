@@ -6,7 +6,7 @@ public class GroceryForm
     [JsonConstructor]
     public GroceryForm() { }
     public string? CurrentUser { get; set; }
-    public string Name { get; set; }
+    public string? Name { get; set; }
     public string? Notes { get; set; }
     public int GroupId { get; set; }
     public int? GroceryId { get; set; }

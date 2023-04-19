@@ -38,6 +38,41 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         }
 
         [HttpPost]
+        [Route("GetGroceryItems")]
+        public GroceryResult GetGroceryItems([FromBody] GroupMemberForm groupForm)
+        {
+             var result = _manager.GetGroceryItems(new GroupModel(groupForm.GroupId));
+            if (result.IsSuccessful)
+            {
+                result.ErrorStatus = System.Net.HttpStatusCode.OK;
+            }
+            else
+            {
+                result.ErrorStatus = System.Net.HttpStatusCode.BadRequest;
+            }
+            return result;
+        }
+
+        [HttpPost]
+        [Route("PurchaseItem")]
+        public GroceryResult PurchaseItem([FromBody] GroceryForm groceryForm)
+        {
+            var result = new GroceryResult();
+            GroceryItem item = new GroceryItem(groceryForm.GroupId, groceryForm.Name, (groceryForm.Notes != null ? groceryForm.Notes : ""), (groceryForm.Assignments != null ? groceryForm.Assignments : new List<string>()));
+            //TODO: Implement Controller -> Manager -> Service -> DAO for PurchaseItem
+            //var result = _manager.PurchaseItem(item, new UserAccount(groceryForm.CurrentUser));
+            if (result.IsSuccessful)
+            {
+                result.ErrorStatus = System.Net.HttpStatusCode.OK;
+            }
+            else
+            {
+                result.ErrorStatus = System.Net.HttpStatusCode.BadRequest;
+            }
+            return result;
+        }
+
+        [HttpPost]
         [Route("GetCurrentGroupMembers")]
         public GroceryResult GetCurrentGroupMembers([FromBody] GroupMemberForm groupForm)
         {

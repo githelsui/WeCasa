@@ -64,6 +64,33 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             }
         }
 
+        public GroceryResult GetGroceryItems(GroupModel group)
+        {
+            try
+            {
+                var result = new GroceryResult();
+
+                var serviceResult = _service.GetGroceryItems(group);
+                if (serviceResult.IsSuccessful)
+                {
+                    result.ReturnedObject = serviceResult.ReturnedObject;
+                    _logger.Log("Fetching grocery items was successful", LogLevels.Info, "Service", group.Owner);
+                }
+                else
+                {
+                    _logger.Log("Error fetching grocery items: " + result.ErrorStatus + "\n" + "Message: " + result.Message, LogLevels.Error, "Service", group.Owner);
+                }
+                result.IsSuccessful = true;
+                result.Message = serviceResult.Message;
+                return result;
+            }
+            catch (Exception exc)
+            {
+                _logger.Log("Error Message: " + exc.Message, LogLevels.Error, "Service", group.Owner, new UserOperation(Operations.GroceryList, 0));
+                throw exc;
+            }
+        }
+
         //Assignment Validation
         private GroceryResult AssignItem(GroceryItem item)
         {
@@ -74,10 +101,8 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             // If no assignments were manually set, assign to creator
             if (item.Assignments == null || item.Assignments.Count == 0)
             {
-                Console.WriteLine("item.Assignments is not null");
                 List<String> assignedToStr = new List<String>();
                 assignedToStr.Add(item.CreatedBy);
-                Console.WriteLine("created by: " + item.CreatedBy);
                 item.Assignments = assignedToStr;
             }
 
