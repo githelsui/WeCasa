@@ -1,11 +1,12 @@
 import React, { Component, useState, useEffect } from 'react';
 import { useAuth } from '../AuthContext';
-import { Calendar, Col, Radio, Space, Row, Select, Button, Typography, theme } from 'antd';
+import { Calendar, Col, Radio, Space, Row, Select, Button, Typography, theme, notification } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import dayLocaleData from 'dayjs/plugin/localeData';
 import * as Styles from '../../styles/ConstStyles.js';
+import AddEventModal from './AddEventModal.js';
 
 export const CalendarView = () => {
     const { currentGroup } = useAuth();
@@ -27,6 +28,15 @@ export const CalendarView = () => {
 
     const addCalendarEvent = (date) => {
         console.log("adding event")
+    }
+
+    const failureCalendarView = (failureMessage) => {
+        notification.open({
+            message: "Sorry, an error occurred.",
+            description: failureMessage,
+            duration: 10,
+            placement: "topLeft"
+        });
     }
 
     return (
@@ -68,19 +78,14 @@ export const CalendarView = () => {
                                 padding: 8,
                             }}
                         >
-                            <Row gutter={8}>
-                                <h2 className="padding-button mulish-font"><b>{months[month]}  {year}</b></h2>
-                                <Col span={4} offset={4}>
-                                    <Space
-                                        direction="horizontal"
-                                    >
+                            <h2 className="padding-bottom mulish-font"><b>{months[month]}  {year}</b></h2>
+
+                            <Row gutter={24}>
+                                <Col span={16}>
+                                    <div style={Styles.calendarViewToggleGroup}>
                                         <Button style={Styles.calendarViewToggle} onClick={(e) => onTypeChange(e.target.value)} value="month">Month</Button>
                                         <Button style={Styles.calendarViewToggle} onClick={(e) => onTypeChange(e.target.value)} value="year">Year</Button>
-                                    </Space>
-                                </Col>
-                                <Col offset={2}>
                                     <Select
-                                        style={Styles.defaultDropdown}
                                         size="small"
                                         dropdownMatchSelectWidth={false}
                                         className="my-year-select"
@@ -89,13 +94,9 @@ export const CalendarView = () => {
                                             const now = value.clone().year(newYear);
                                             onChange(now);
                                         }}
-                                    >
-                                        {options}
+                                    >{options}
                                     </Select>
-                                </Col>
-                                <Col>
                                     <Select
-                                        style={Styles.defaultDropdown}
                                         size="small"
                                         dropdownMatchSelectWidth={false}
                                         value={month}
@@ -105,24 +106,28 @@ export const CalendarView = () => {
                                         }}
                                     >
                                         {monthOptions}
-                                    </Select>
+                                        </Select>
+                                    </div>
                                 </Col>
-                                <Col span={4} push={2}>
+
+
+                                <Col span={4} offset={4}>
                                     <Button
                                         id="add-file"
-                                        style={Styles.fileButtonStyle}
+                                        style={Styles.addButtonStyle}
                                         shape="round"
                                         icon={<PlusCircleOutlined />}
                                         size={'large'}
-                                        onClick={() => addCalendarEvent()}>
+                                        onClick={() => setShowModal(true)}>
                                         Add event
-                                    </Button>
-                                </Col>
+                                        </Button>
+                                    </Col>
                             </Row>
                         </div>
                     );
                 }}
                 onPanelChange={onPanelChange} />
+            <AddEventModal show={showModal} close={() => setShowModal(false)} confirm={addCalendarEvent} reject={failureCalendarView} />
         </div>
     );
 };

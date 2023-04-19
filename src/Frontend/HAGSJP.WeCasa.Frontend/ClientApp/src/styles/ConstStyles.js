@@ -17,6 +17,14 @@ export const inputFieldStyle = {
     borderWidth: 1,
 }
 
+export const eventInputFieldStyle = {
+    fontFamily: 'Mulish',
+    backgroundColor: '#F4F5F4',
+    borderColor: '#d9d9d9',
+    borderRadius: '10px',
+    borderWidth: 1,
+}
+
 export const largeTextField = {
     fontFamily: 'Mulish',
     paddingTop: 10,
@@ -25,6 +33,17 @@ export const largeTextField = {
     backgroundColor: '#FFFFFF',
     borderColor: '#d9d9d9',
     borderRadius: '2%',
+    borderWidth: 1,
+}
+
+export const eventDescTextField = {
+    fontFamily: 'Mulish',
+    paddingTop: 10,
+    paddingBottom: 50,
+    lineHeight: '1em',
+    backgroundColor: '#F4F5F4',
+    borderColor: '#d9d9d9',
+    borderRadius: '10px',
     borderWidth: 1,
 }
 
@@ -75,7 +94,7 @@ export const defaultButtonStyle = {
     textDecoration: 'none'
 }
 
-export const fileButtonStyle = {
+export const addButtonStyle = {
     fontFamily: 'Mulish',
     fontWeight: 'bold',
     display: 'inline-flex',
@@ -85,7 +104,6 @@ export const fileButtonStyle = {
     backgroundColor: 'white',
     textDecoration: 'none',
     marginLeft: 30,
-    marginTop: 80,
 }
 
 export const buttonHover = {
@@ -155,23 +173,18 @@ export const addBudgetButton = {
 
 export const calendarViewToggleGroup = {
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'horizontal',
     gap: '10px'
 }
 
 export const calendarViewToggle = {
     fontFamily: 'Mulish',
     width: '100px',
-    height: '40px',
     border: '1px solid #717171',
     borderRadius: '10px',
     boxSizing: 'border-box',
     justifyContent: 'center',
-    alignItems: 'center',
-}
-
-export const defaultDropdown = {
-    fontFamily: 'Mulish',
+    alignItems: 'center'
 }
 
 export const navLink = {

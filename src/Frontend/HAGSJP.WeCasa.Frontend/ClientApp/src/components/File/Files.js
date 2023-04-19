@@ -274,9 +274,15 @@ export const Files = () => {
                     <TabPane tab="Group Files" key="1">
                         <Space direction="horizonal" size={32}>
                             {displayFileView()}
+                            <Pagination
+                                current={currentPage}
+                                pageSize={maxFilesPerPage}
+                                total={files.length}
+                                onChange={handlePageChange}
+                            />
                             <Button
                                 id="add-file"
-                                style={Styles.fileButtonStyle}
+                                style={Styles.addButtonStyle}
                                 shape="round"
                                 icon={<PlusCircleOutlined />}
                                 size={'large'}
