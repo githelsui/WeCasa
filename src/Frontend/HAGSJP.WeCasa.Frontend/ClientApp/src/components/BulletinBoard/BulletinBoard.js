@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Draggable from 'react-draggable'; // import the Draggable component
 import './BulletinBoard.css'; // import the CSS stylesheet
 import axios from 'axios';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../Auth/AuthContext';
 
 function BulletinBoard() {
   // global variables

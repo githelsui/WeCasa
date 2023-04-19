@@ -6,7 +6,7 @@ import {MultiColorProgressBar} from './ProgressBar';
 import BillForm from './BillForm';
 import BudgetForm from './BudgetForm';
 import DeletionModal from '../DeletionModal';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../Auth/AuthContext';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import * as Styles from '../../styles/ConstStyles';
 import { EditBillForm } from './EditBillForm';

@@ -2,7 +2,7 @@
 import { Modal, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Switch, notification, Card } from 'antd';
 import * as Styles from '../../styles/ConstStyles.js';
 import GroupDeletionModal from './GroupDeletionModal.js';
-import { useAuth } from '../AuthContext.js';
+import { useAuth } from '../Auth/AuthContext.js';
 import '../../styles/System.css';
 import '../../index.css';
 import axios from 'axios';

@@ -1,7 +1,6 @@
 ﻿import React, { Component, useState, useEffect } from 'react';
 import { Divider, Modal, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Switch, notification, Card } from 'antd';
 import * as Styles from '../../styles/ConstStyles.js';
-import { useAuth } from '../AuthContext.js';
 import '../../styles/System.css';
 import '../../index.css';
 import ChoreCard from './ChoreCard'

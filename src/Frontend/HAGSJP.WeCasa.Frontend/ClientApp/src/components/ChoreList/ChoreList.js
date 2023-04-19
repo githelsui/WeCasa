@@ -1,6 +1,6 @@
 ﻿import React, { Component, useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom'
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../Auth/AuthContext';
 import { Col, Card, Row, Space, Avatar, Button, notification, Tabs } from 'antd';
 import ChoreToDoTab from './ChoreToDoTab'
 import ChoreHistory from './ChoreHistoryTab'

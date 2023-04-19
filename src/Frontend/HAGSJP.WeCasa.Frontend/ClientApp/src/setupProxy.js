@@ -9,6 +9,7 @@ const context = [
     "/registration",
     "/login",
     "/budgetbar",
+    "/calendar",
     "/logout",
     "/home",
     "/files",
