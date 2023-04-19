@@ -196,7 +196,7 @@ export const removeGroupMemberButton = {
     color: '#FFFFFF',
     fontFamily: 'Mulish',
     fontWeight: 'bold',
-    width: '30%',
+    width: '100%',
     borderWidth: 'thin',
     borderColor: '#9A9A9A',
     textDecoration: 'none',

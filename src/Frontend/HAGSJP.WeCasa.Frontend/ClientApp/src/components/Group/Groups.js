@@ -139,7 +139,7 @@ export const Groups = (props) => {
 
     return (
         <div>
-             <div><Space direction="horizonal" size={32}>
+             <div><Space direction="horizonal" size={32} wrap>
                     {displayGroupView()}
                   </Space>
                     <Row gutter={24} style={{ display: "flex" }}>
