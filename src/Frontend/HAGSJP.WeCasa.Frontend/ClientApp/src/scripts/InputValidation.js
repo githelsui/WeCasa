@@ -80,3 +80,10 @@ export const validatePassword = (password) => {
     }
 
 };
+
+export const validate60CharLimit = (input) => {
+    if (input.length > 60) {
+        return inputExceedLimitRes;
+    }
+    return successRes;
+}

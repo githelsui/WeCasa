@@ -17,6 +17,17 @@ export const inputFieldStyle = {
     borderWidth: 1,
 }
 
+export const largeTextField = {
+    fontFamily: 'Mulish',
+    paddingTop: 10,
+    paddingBottom: 50,
+    lineHeight: '1em',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#d9d9d9',
+    borderRadius: '2%',
+    borderWidth: 1,
+}
+
 export const primaryButtonStyle = {
     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
     fontFamily: 'Mulish',

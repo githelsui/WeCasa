@@ -9,7 +9,8 @@ namespace HAGSJP.WeCasa.Models
         GroupCreation,
         FileUpload,
         FileDeletion,
-        BudgetBar
+        BudgetBar,
+        GroceryList
     }
 }
 

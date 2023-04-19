@@ -308,13 +308,19 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                 // Execution of SQL
                 var groupMembers = new List<string>();
-                var reader = command.ExecuteReader();
-                while (reader.Read())
+                using (var reader = command.ExecuteReader())
                 {
-                    groupMembers.Add(reader.GetString(reader.GetOrdinal("username")));
+                    while (reader.Read())
+                    {
+                        groupMembers.Add(reader.GetString(reader.GetOrdinal("username")));
+                    }
+                    var groupMemberArr = groupMembers.ToArray();
+                    result.IsSuccessful = true;
+                    result.ReturnedObject = groupMemberArr;
+                    return result;
                 }
-                var groupMemberArr = groupMembers.ToArray();
-                result.ReturnedObject = groupMemberArr;
+                result.IsSuccessful = false;
+                result.Message = "Cannot find group members.";
                 return result;
             }
         }
