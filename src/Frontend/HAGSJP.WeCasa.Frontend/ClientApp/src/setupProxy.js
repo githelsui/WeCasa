@@ -14,7 +14,8 @@ const context = [
     "/files",
     "/group-settings",
     "/account-settings",
-    "/edit-profile"
+    "/edit-profile",
+    "/bulletin-board",
 ];
 
 const onError = (err, req, resp, target) => {

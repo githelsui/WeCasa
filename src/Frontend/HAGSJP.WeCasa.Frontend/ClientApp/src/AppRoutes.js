@@ -8,6 +8,7 @@ import { AccountSettings } from "./components/Account/AccountSettings";
 import { Files } from "./components/File/Files";
 import { FileView } from "./components/File/FileView";
 import { IconSelectorModal } from "./components/IconSelectorModal";
+import BulletinBoard from "./components/BulletinBoard/BulletinBoard";
 
 
 const AppRoutes = [
@@ -62,7 +63,11 @@ const AppRoutes = [
   {
      path: '/icon-selector-dev',
      element: <IconSelectorModal />
-  }
+  },
+  {
+    path: '/bulletin',
+    element: <BulletinBoard />
+ }
 ];
 
 export default AppRoutes;
