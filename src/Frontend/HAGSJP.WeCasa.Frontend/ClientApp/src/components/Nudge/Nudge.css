@@ -1,0 +1,13 @@
+﻿/* NudgeButton.css */
+.radio-button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 8px;
+    border: none;
+    box-shadow: none;
+}
+
+.send-button {
+    margin-top: 8px;
+}

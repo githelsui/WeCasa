@@ -81,7 +81,7 @@ export const validatePassword = (password) => {
 
 };
 
-export const validateChoreName = (input) => {
+export const validate60CharLimit = (input) => {
     if (input.length > 60) {
         return inputExceedLimitRes;
     }

@@ -34,7 +34,7 @@ const ChoreCreationModal = (props) => {
 
                 // Frontend input validation
                 // -> Chore name (required)
-                var nameResult = ValidationFuncs.validateChoreName(name)
+                var nameResult = ValidationFuncs.validate60CharLimit(name)
                 console.log(nameResult)
                 if (!nameResult.isSuccessful) {
                     setValidData(false)
