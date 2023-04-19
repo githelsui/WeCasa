@@ -1,5 +1,5 @@
 ﻿import React, { Component, useState } from 'react';
-import { Modal, DatePicker, TimePicker, Button, Row, Col, Image, Space, Input, Form, Radio, Spin } from 'antd';
+import { Modal, DatePicker, TimePicker, Button, Row, Col, Image, Space, Card, Input, Form, Radio, Spin } from 'antd';
 import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 import * as Styles from '../../styles/ConstStyles';
 import config from '../../appsettings.json'
@@ -16,7 +16,9 @@ const AddEventModal = (props) => {
     const [repeat, setRepeat] = useState('');
     const [eventType, setEventType] = useState('');
     const [reminder, setReminder] = useState('');
+    const [eventColor, setEventColor] = useState('');
     const [form] = Form.useForm();
+    const eventColors = ['#0256D4', '#F4B105', '#FFEE58', '#FF2929', '#10B364'];
 
     const onDateChange = (date, dateString) => {
         setEventDate(dateString);
@@ -46,6 +48,23 @@ const AddEventModal = (props) => {
 
             })
             .catch((errorInfo) => { });
+    }
+
+    const displayEventColors = () => {
+        return (
+            eventColors.map((color, i) =>
+                <div key={i}>
+                    <Col span={5} style={{ marginLeft: 10 }}>
+                        <Card
+                            onClick={() => setEventColor(i)}
+                            bordered={true}
+                            hoverable
+                            style={(eventColor == i) ? {
+                                border: '5px solid #555', backgroundColor: color, borderRadius: 50, width: 50, height: 50
+                            } : { backgroundColor: color, borderRadius: 50, width: 50, height: 50 }}></Card>
+                    </Col>
+                </div>)
+        );
     }
 
     return (
@@ -121,8 +140,7 @@ const AddEventModal = (props) => {
                         <h5 className="mulish-font">Color Tag</h5>
                         <div className="tag-row padding-bottom">
                             <Row gutter={24} style={{ display: 'flex', flexDirection: 'horizontal' }}>
-                                <Col span={18}>
-                                </Col>
+                                {displayEventColors()}
                             </Row>
                         </div>
                         <Row gutter={24} style={{alignItems:'center', justifyContent:'center', gap:'30px'}} > 

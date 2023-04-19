@@ -78,35 +78,36 @@ export const CalendarView = () => {
                                 padding: 8,
                             }}
                         >
-                            <h2 className="padding-bottom mulish-font"><b>{months[month]}  {year}</b></h2>
-
+                            <h2 className="mulish-font"><b>{months[month]}  {year}</b></h2>
+                                <div className="padding-bottom">
+                                <Select
+                                    size="small"
+                                    dropdownMatchSelectWidth={false}
+                                    className="my-year-select"
+                                    value={year}
+                                    onChange={(newYear) => {
+                                        const now = value.clone().year(newYear);
+                                        onChange(now);
+                                    }}
+                                >{options}
+                                </Select>
+                                <Select
+                                    size="small"
+                                    dropdownMatchSelectWidth={false}
+                                    value={month}
+                                    onChange={(newMonth) => {
+                                        const now = value.clone().month(newMonth);
+                                        onChange(now);
+                                    }}
+                                >{monthOptions}
+                                </Select>
+                            </div>
                             <Row gutter={24}>
                                 <Col span={16}>
                                     <div style={Styles.calendarViewToggleGroup}>
                                         <Button style={Styles.calendarViewToggle} onClick={(e) => onTypeChange(e.target.value)} value="month">Month</Button>
                                         <Button style={Styles.calendarViewToggle} onClick={(e) => onTypeChange(e.target.value)} value="year">Year</Button>
-                                    <Select
-                                        size="small"
-                                        dropdownMatchSelectWidth={false}
-                                        className="my-year-select"
-                                        value={year}
-                                        onChange={(newYear) => {
-                                            const now = value.clone().year(newYear);
-                                            onChange(now);
-                                        }}
-                                    >{options}
-                                    </Select>
-                                    <Select
-                                        size="small"
-                                        dropdownMatchSelectWidth={false}
-                                        value={month}
-                                        onChange={(newMonth) => {
-                                            const now = value.clone().month(newMonth);
-                                            onChange(now);
-                                        }}
-                                    >
-                                        {monthOptions}
-                                        </Select>
+                                    
                                     </div>
                                 </Col>
 
