@@ -129,19 +129,6 @@ export const Login = () => {
         //this.forceUpdate();
     }
 
-    // DELETE ME
-    // for dev purposes lol
-    setAuth(true);
-    const tempUser = {
-        firstName: "githel",
-        lastName: "suico",
-        username: "githelsuico@gmail.com",
-        image: 1,
-        notifications: ["email", "sms"]
-    }
-    setCurrentUser(tempUser);
-    successLoginView();
-
 
     return (
         <div id="LoginPage"> 
