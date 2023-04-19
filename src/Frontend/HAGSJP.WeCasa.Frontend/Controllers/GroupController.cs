@@ -40,12 +40,21 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("GetGroupMembers")]
-        public GroupResult GetGroupMembers([FromBody] GroupMemberForm groupForm)
+        public async Task<GroupResult> GetGroupMembers([FromBody] GroupMemberForm groupForm)
         {
             var groupModel = new GroupModel();
-            groupModel.GroupId = groupForm.GroupId;
-            var groupManager = new GroupManager();
-            var result = groupManager.GetGroupMembers(groupModel);
+            var result = new GroupResult();
+            try
+            {
+                groupModel.GroupId = groupForm.GroupId;
+                var groupManager = new GroupManager();
+                result = groupManager.GetGroupMembers(groupModel);
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccessful = false;
+                result.Message = ex.Message;
+            }
             return result;
         }
 

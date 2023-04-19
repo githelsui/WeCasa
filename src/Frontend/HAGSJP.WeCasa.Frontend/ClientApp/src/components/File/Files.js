@@ -6,7 +6,7 @@ import { PlusCircleOutlined, FileOutlined } from '@ant-design/icons'
 import axios from 'axios';
 import * as Styles from '../../styles/ConstStyles.js';
 import { FileView } from './FileView.js';
-import * as config from '../../../../../appsettings.json';
+import config from '../../appsettings.json';
 const { Meta } = Card;
 const TabPane = Tabs.TabPane;
 

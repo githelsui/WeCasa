@@ -9,7 +9,10 @@ namespace HAGSJP.WeCasa.Models
         GroupCreation,
         FileUpload,
         FileDeletion,
-        BudgetBar
+        BudgetBar,
+        ChoreList,
+        GroceryList,
+        Calendar    
     }
 }
 

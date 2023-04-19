@@ -9,6 +9,8 @@ import { Files } from "./components/File/Files";
 import { FileView } from "./components/File/FileView";
 import { IconSelectorModal } from "./components/IconSelectorModal";
 import BulletinBoard from "./components/BulletinBoard/BulletinBoard";
+import { ChoreList } from "./components/ChoreList/ChoreList";
+import { GroceryList } from "./components/GroceryList/GroceryList";
 
 
 const AppRoutes = [
@@ -63,6 +65,14 @@ const AppRoutes = [
   {
      path: '/icon-selector-dev',
      element: <IconSelectorModal />
+  },
+  {
+        path: '/chorelist',
+        element: <ChoreList />
+  },
+  {
+      path: '/grocerylist',
+      element: <GroceryList />
   },
   {
     path: '/bulletin',
