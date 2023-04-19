@@ -9,7 +9,9 @@ import defaultImage from '../../assets/defaultimgs/wecasatemp.jpg';
 import * as ValidationFuncs from '../../scripts/InputValidation.js';
 import { SendOutlined, EllipsisOutlined, SettingOutlined, CheckSquareOutlined } from '@ant-design/icons';
 import IconStack from './IconStack'
+import Nudge from '../Nudge/Nudge';
 const { Meta } = Card;
+
 
 export const ChoreCard = (props) => {
     return (<div className="padding-bottom">
@@ -20,7 +22,7 @@ export const ChoreCard = (props) => {
                 borderColor: 'black'
             }}
             actions={[
-                <SendOutlined key="nudge" />,
+                <Nudge key="nudge" assignedUser="Assignee" />,
                 <CheckSquareOutlined key="complete"/>
             ]}
         >
