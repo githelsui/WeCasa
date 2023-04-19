@@ -184,7 +184,15 @@ export const AccountSettings = () => {
                         <h2>{setting}</h2>
                         <Form id="emailUpdateForm" onFinish={(values) => submitEmailUpdateForm(values)}>
 
-                            <Form.Item name="email1" hasFeedback style={{ marginBottom: 15 }} rules={[{ validator: validateEmail }]}>
+                            <Form.Item name="email1" hasFeedback style={{ marginBottom: 15 }} rules={[{ required: true, message: '' }, () => ({
+                                validator(rule, value) {
+                                    let valid = ValidationFuncs.validateEmail(value);
+                                    if (!value || valid.isSuccessful) {
+                                        return Promise.resolve();
+                                    }
+                                    return Promise.reject(valid.message);
+                                },
+                            })]}>
                                 <Input style={Styles.inputFieldStyle} placeholder="Email" />
                             </Form.Item>
 
@@ -209,7 +217,15 @@ export const AccountSettings = () => {
                         <h2>{setting}</h2>
                         <Form id="pwUpdateForm" onFinish={(values) => submitPwUpdateForm(values)}>
 
-                            <Form.Item name="password1" style={{ marginBottom: 15 }} hasFeedback rules={[{ validator: validatePassword }]}>
+                            <Form.Item name="password1" style={{ marginBottom: 15 }} hasFeedback rules={[{ required: true, message: '' }, () => ({
+                                validator(rule, value) {
+                                    let valid = ValidationFuncs.validatePassword(value);
+                                    if (!value || valid.isSuccessful) {
+                                        return Promise.resolve();
+                                    }
+                                    return Promise.reject(valid.message);
+                                },
+                            })]}>
                                 <Input.Password style={Styles.inputFieldStyle} placeholder="Password" />
                             </Form.Item>
 
