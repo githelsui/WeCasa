@@ -65,9 +65,10 @@ export const AddGroceryModal = (props) => {
 
     //Grocery Assignment
     const selectAssignment = (index) => {
-        if (selectedAssignments.includes(index)) {
+        var user = assignments[index]['username']
+        if (selectedAssignments.includes(user)) {
             //Undo assignment selection
-            var copy = selectedAssignments.filter(e => e !== index)
+            var copy = selectedAssignments.filter(e => e !== user)
             setSelectedAssignments(copy)
         } else {
             //Make assignment selection
@@ -77,7 +78,7 @@ export const AddGroceryModal = (props) => {
                     copy.push(selectedAssignments[i])
                 }
             }
-            copy.push(index)
+            copy.push(user)
             setSelectedAssignments(copy)
         }
     }
@@ -116,7 +117,7 @@ export const AddGroceryModal = (props) => {
     }
 
     const closeForm = () => {
-        setAssignments([])
+        setSelectedAssignments([])
         setValidData(true)
         props.close()
     }
@@ -144,7 +145,7 @@ export const AddGroceryModal = (props) => {
         >
             <div className="padding">
                 <h2 className="padding-bottom mulish-font">Add Item</h2>
-                <Form id="addGroceryForm" onFinish={props.confirm} form={form}>
+                <Form id="addGroceryForm" form={form}>
                     <p className="mulish-font" style={{ marginBottom: 2, fontWeight: '100' }}>Name</p>
                     <Form.Item name="groceryItemName">
                         <Input style={Styles.inputFieldStyle} required placeholder="Grocery Item" />
@@ -166,7 +167,7 @@ export const AddGroceryModal = (props) => {
                                                 border: '0.5px solid #555',
                                             }}
                                                 src={profileImages[member['image']]} preview={false} />}
-                                            style={(selectedAssignments.includes(i)) ? { border: '5px solid #555', borderRadius: '50%', width: 50, height: 50, cursor: 'pointer' } : { borderRadius: '50%', width: 50, height: 50, cursor: 'pointer' }}></Card>
+                                            style={(selectedAssignments.includes(member['username'])) ? { border: '5px solid #555', borderRadius: '50%', width: 50, height: 50, cursor: 'pointer' } : { borderRadius: '50%', width: 50, height: 50, cursor: 'pointer' }}></Card>
                                         <p style={{ color: 'gray', fontSize: 10, marginLeft: 10 }}>{member['firstName'] + member['lastName']}</p>
                                     </Col>)}
                             </Row>) :

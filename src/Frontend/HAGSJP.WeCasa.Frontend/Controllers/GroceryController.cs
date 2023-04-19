@@ -24,25 +24,17 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         [Route("AddGroceryItem")]
         public GroceryResult AddGroceryItem([FromBody] GroceryForm groceryForm)
         {
-            try
+            GroceryItem item = new GroceryItem(groceryForm.GroupId, groceryForm.Name, (groceryForm.Notes != null ? groceryForm.Notes : ""), (groceryForm.Assignments != null ? groceryForm.Assignments : new List<string>()));
+            var result = _manager.AddGroceryItem(item, new UserAccount(groceryForm.CurrentUser));
+            if (result.IsSuccessful)
             {
-                GroceryItem item = new GroceryItem(groceryForm.GroupId, groceryForm.Name, groceryForm.Notes, groceryForm.Assignments);
-                var result = _manager.AddGroceryItem(item, new UserAccount(groceryForm.CurrentUser));
-                if (result.IsSuccessful)
-                {
-                    result.ErrorStatus = System.Net.HttpStatusCode.OK;
-                }
-                else
-                {
-                    result.ErrorStatus = System.Net.HttpStatusCode.BadRequest;
-                }
-                return result;
-
+                result.ErrorStatus = System.Net.HttpStatusCode.OK;
             }
-            catch (Exception exc)
+            else
             {
-                return new GroceryResult(false, System.Net.HttpStatusCode.Conflict, exc.Message);
+                result.ErrorStatus = System.Net.HttpStatusCode.BadRequest;
             }
+            return result;
         }
 
         [HttpPost]

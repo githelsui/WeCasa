@@ -61,7 +61,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@group_id", item.GroupId);
                     command.Parameters.AddWithValue("@created", item.Created);
                     command.Parameters.AddWithValue("@created_by", item.CreatedBy);
-                    command.Parameters.AddWithValue("@notes", item.Notes != null ? item.Notes : null);
+                    command.Parameters.AddWithValue("@notes", item.Notes != null ? item.Notes : "");
                     command.Parameters.AddWithValue("@is_purchased", item.IsPurchased == null ? item.IsPurchased : false);
                     string assignedToJSON = JsonSerializer.Serialize(item.Assignments);
                     command.Parameters.AddWithValue("@assignments", assignedToJSON);

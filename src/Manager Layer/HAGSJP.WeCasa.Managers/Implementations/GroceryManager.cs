@@ -17,6 +17,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
         public GroceryManager()
         {
             _logger = new Logger(new AccountMariaDAO());
+            _um = new UserManager();
             _service = new GroceryService();
         }
 
@@ -31,9 +32,9 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 item.IsPurchased = false;
 
                 var assignedProfilesRes = AssignItem(item);
-                if (!assignedProfilesRes.IsSuccessful)
+                if (assignedProfilesRes.IsSuccessful)
                 {
-                    item.Assignments = (List<String>)assignedProfilesRes.ReturnedObject;
+                    item.Assignments = (List<string>)assignedProfilesRes.ReturnedObject;
                 }
                 else
                 {
@@ -52,7 +53,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 {
                     _logger.Log("Add Grocery error: " + result.ErrorStatus + "\n" + "Message: " + result.Message, LogLevels.Error, "Service", userAccount.Username);
                 }
-                result.IsSuccessful = serviceResult.IsSuccessful;
+                result.IsSuccessful = true;
                 result.Message = serviceResult.Message;
                 return result;
             }
@@ -68,18 +69,22 @@ namespace HAGSJP.WeCasa.Managers.Implementations
         {
             var result = new GroceryResult();
 
+            Console.WriteLine(string.Join(", ", item.Assignments));
+
             // If no assignments were manually set, assign to creator
             if (item.Assignments == null || item.Assignments.Count == 0)
             {
+                Console.WriteLine("item.Assignments is not null");
                 List<String> assignedToStr = new List<String>();
                 assignedToStr.Add(item.CreatedBy);
+                Console.WriteLine("created by: " + item.CreatedBy);
                 item.Assignments = assignedToStr;
             }
 
             // Validate all users
-            foreach (String username in item.Assignments)
+            foreach (string username in item.Assignments)
             {
-                // Check if user does not exist
+                //Check if user does not exist
                 if (!_um.IsUsernameTaken(username))
                 {
                     result.IsSuccessful = false;

@@ -40,6 +40,8 @@ export const GroceryList = (props) => {
             Assignments: modalConfig['Assignments']
         }
 
+        console.log(groceryForm)
+
         // Web api call
         axios.post('grocerylist/AddGroceryItem', groceryForm)
             .then(res => {
@@ -102,9 +104,10 @@ export const GroceryList = (props) => {
     }
 
     useEffect(() => {
-        fetchGroceries()
+        //fetchGroceries()
+
         //dev only
-        setGroceryItems(data)
+        //setGroceryItems(data)
     }, []);
 
     return (

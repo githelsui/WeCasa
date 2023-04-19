@@ -11,7 +11,7 @@ namespace HAGSJP.WeCasa.Models
         public String? Notes { get; set; }
         public int GroupId { get; set; }
         public Boolean? IsPurchased { get; set; }
-        public List<String>? Assignments { get; set; } //day string
+        public List<string>? Assignments { get; set; } 
 
         // Assigned in Manager layer 
         public DateTime? Created { get; set; }
@@ -24,9 +24,9 @@ namespace HAGSJP.WeCasa.Models
         public GroceryItem() { }
         public GroceryItem(int groupId, String name, String? notes, List<string> assignments)
         {
+            GroupId = groupId;
             Name = name;
             Notes = notes;
-            GroupId = groupId;
             Assignments = assignments;
         }
     }

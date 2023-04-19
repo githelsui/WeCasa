@@ -25,6 +25,8 @@ namespace HAGSJP.WeCasa.Services.Implementations
             {
                 var result = new GroceryResult();
 
+                Console.Write("Service layer");
+
                 // Input Validation
                 var validateResult = ValidateGroceryItem(item);
                 if (!validateResult.IsSuccessful)
@@ -68,18 +70,21 @@ namespace HAGSJP.WeCasa.Services.Implementations
             }
 
             var checkValidName = new Regex(@"\b([A-ZÀ-ÿ][-,a-z. ']*)+");
-            if (!checkValidName.IsMatch(item.Name)) // grocery name valid characters
+            if (checkValidName.IsMatch(item.Name)) // grocery name invalid characters
             {
                 result.IsSuccessful = false;
                 result.Message = "Grocery item name has invalid characters.";
                 return result;
             }
 
-            if (item.Notes != null && item.Notes.Length > 250) // grocery notes character limit
+            if (item.Notes != null) // grocery notes character limit
             {
-                result.IsSuccessful = false;
-                result.Message = "Grocery item notes exceeds 250 chracter limit.";
-                return result;
+                if(item.Notes.Length > 250)
+                {
+                    result.IsSuccessful = false;
+                    result.Message = "Grocery item notes exceeds 250 chracter limit.";
+                    return result;
+                }
             }
             result.IsSuccessful = true;
             return result;
