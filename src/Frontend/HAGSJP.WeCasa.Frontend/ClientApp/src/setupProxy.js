@@ -15,6 +15,7 @@ const context = [
     "/group-settings",
     "/account-settings",
     "/edit-profile",
+    "/bulletin-board",,
     "/chorelist",
     "/grocerylist"
 ];

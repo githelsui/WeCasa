@@ -8,6 +8,7 @@ import { AccountSettings } from "./components/Account/AccountSettings";
 import { Files } from "./components/File/Files";
 import { FileView } from "./components/File/FileView";
 import { IconSelectorModal } from "./components/IconSelectorModal";
+import BulletinBoard from "./components/BulletinBoard/BulletinBoard";
 import { ChoreList } from "./components/ChoreList/ChoreList";
 import { GroceryList } from "./components/GroceryList/GroceryList";
 
@@ -73,6 +74,10 @@ const AppRoutes = [
       path: '/grocerylist',
       element: <GroceryList />
   },
+  {
+    path: '/bulletin',
+    element: <BulletinBoard />
+ }
 ];
 
 export default AppRoutes;

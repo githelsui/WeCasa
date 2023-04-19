@@ -12,8 +12,7 @@ namespace HAGSJP.WeCasa.Models
         BudgetBar,
         ChoreList,
         GroceryList,
-        Calendar,
-        GroceryList
+        Calendar    
     }
 }
 
