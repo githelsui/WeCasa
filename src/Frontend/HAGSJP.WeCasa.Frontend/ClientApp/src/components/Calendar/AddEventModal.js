@@ -1,6 +1,5 @@
 ﻿import React, { Component, useState } from 'react';
 import { Modal, DatePicker, TimePicker, Button, Row, Col, Image, Space, Card, Input, Form, Radio, Spin } from 'antd';
-import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 import * as Styles from '../../styles/ConstStyles';
 import config from '../../appsettings.json'
 
@@ -102,7 +101,7 @@ const AddEventModal = (props) => {
                         <div className="datetime-row padding-bottom">
                             <Row gutter={24} style={{ display: 'flex', flexDirection: 'horizontal' }}>
                                     <Col span={8}>
-                                        <DatePicker defaultValue={props.date} onChange={onDateChange} />
+                                        <DatePicker onChange={onDateChange} />
                                     </Col>
                                 <Col span={8}>
                                     <Form.Item name="eventDate" value={eventDateTime}>
