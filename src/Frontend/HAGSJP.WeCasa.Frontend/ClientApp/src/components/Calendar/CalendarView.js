@@ -16,7 +16,7 @@ import AddEventModal from './AddEventModal.js';
 
 export const CalendarView = () => {
     const { currentUser, currentGroup } = useAuth();
-    const [value, setValue] = useState();
+    const [value, setValue] = useState(new Date());
     const [events, setEvents] = useState([]);
     const [mode, setMode] = useState('month');
     const [selectedDate, setSelectedDate] = useState(value);
@@ -24,7 +24,7 @@ export const CalendarView = () => {
     const [collapsed, setCollapsed] = useState(true);
     dayjs.extend(dayLocaleData);
 
-    // useEffect(() => { getDayEvents(); }, []);
+    // useEffect(() => { getDayEvents(selectedDate);}, []);
 
     const getDayEvents = (value) => {
         console.log(value);
@@ -52,10 +52,10 @@ export const CalendarView = () => {
             EventName: eventConfig.eventName,
             Description: eventConfig.description,
             GroupId: currentGroup['groupId'],
-            EventDate: eventConfig.eventDate,
+            EventDate: eventConfig.eventDateTime,
             Repeats: eventConfig.repeats,
             Type: eventConfig.type,
-            Notification: eventConfig.notification,
+            Reminder: eventConfig.reminder,
             Color: (eventConfig.color == null) ? "#0256D4" : eventConfig.color,
             CreatedBy: currentUser['username']
         }
@@ -242,7 +242,7 @@ export const CalendarView = () => {
                 style={{ fontFamily: 'Mulish' }}
                 headerRender={headerRender}
                 onPanelChange={onPanelChange} />
-            <AddEventModal show={showModal} close={() => setShowModal(false)} confirm={addCalendarEvent} reject={failureCalendarView} date={selectedDate} />
+            <AddEventModal show={showModal} close={() => setShowModal(false)} confirm={addCalendarEvent} reject={failureCalendarView} date={value} />
         </div>
     );
 };

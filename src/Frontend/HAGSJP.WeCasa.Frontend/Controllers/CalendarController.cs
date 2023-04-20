@@ -46,7 +46,8 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
             var result = new Result();
             try
             {
-                result = _manager.AddEvent(eventForm);
+                Event e = new Event(eventForm.EventName, eventForm.Description, eventForm.EventDate, eventForm.GroupId, eventForm.Repeats, eventForm.Type, eventForm.Reminder, eventForm.Color, eventForm.CreatedBy);
+                result = _manager.AddEvent(e);
             }
             catch (Exception ex)
             {

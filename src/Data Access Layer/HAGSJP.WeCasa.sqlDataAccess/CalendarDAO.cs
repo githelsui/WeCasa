@@ -10,7 +10,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 	public class CalendarDAO : AccountMariaDAO
 	{
         private string _connectionString;
-        private DAOResult result;
+        private DAOResult _result;
 
         public MySqlConnectionStringBuilder BuildConnectionString()
         {

@@ -7,6 +7,19 @@ namespace HAGSJP.WeCasa.Models
     public class Event
 	{
         public Event() { }
+
+        public Event(string eventName, string description, DateTime eventDate, int groupId, string repeats, string type, string reminder, string color, string createdBy)
+        {
+            EventName = eventName;
+            Description = description;
+            EventDate = eventDate;
+            GroupId = groupId;
+            Repeats = repeats;
+            Type = type;
+            Reminder = reminder;
+            Color = color;
+            CreatedBy = createdBy;
+        }
         public int? EventId { get; set; }
         public string EventName { get; set; }
         public string? Description { get; set; }
