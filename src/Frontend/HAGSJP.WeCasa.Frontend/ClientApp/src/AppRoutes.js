@@ -12,7 +12,7 @@ import { IconSelectorModal } from "./components/IconSelectorModal";
 import BulletinBoard from "./components/BulletinBoard/BulletinBoard";
 import { ChoreList } from "./components/ChoreList/ChoreList";
 import { GroceryList } from "./components/GroceryList/GroceryList";
-
+import { NotFound } from "./components/NotFound";
 
 const AppRoutes = [
   {
@@ -78,7 +78,11 @@ const AppRoutes = [
   {
     path: '/bulletin',
     element: <BulletinBoard />
- }
+    },
+    {
+        path: '*',
+        element: <NotFound />
+    }
 ];
 
 export default AppRoutes;
