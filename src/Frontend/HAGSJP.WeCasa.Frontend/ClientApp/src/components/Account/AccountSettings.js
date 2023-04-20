@@ -7,7 +7,7 @@ import * as Styles from '../../styles/ConstStyles.js';
 import '../../styles/System.css';
 import '../../index.css';
 import axios from 'axios';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../Auth/AuthContext';
 import image1 from '../../assets/profileimgs/1.jpg';
 import image2 from '../../assets/profileimgs/2.jpg';
 import image3 from '../../assets/profileimgs/3.jpg';

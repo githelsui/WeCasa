@@ -99,3 +99,12 @@ file-upload-allison
     padding-top: 2%;
     text-align:center;
 }
+
+.grocery-board {
+    background-color: #F8F8F8;
+    border-radius: 25px;
+    height: 1000px;
+    width: 100%;
+    padding: 50px 50px;
+    margin-top: 2%;
+}

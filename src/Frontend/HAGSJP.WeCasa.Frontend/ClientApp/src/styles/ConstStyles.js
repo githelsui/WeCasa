@@ -17,6 +17,36 @@ export const inputFieldStyle = {
     borderWidth: 1,
 }
 
+export const eventInputFieldStyle = {
+    fontFamily: 'Mulish',
+    backgroundColor: '#F4F5F4',
+    borderColor: '#d9d9d9',
+    borderRadius: '10px',
+    borderWidth: 1,
+}
+
+export const largeTextField = {
+    fontFamily: 'Mulish',
+    paddingTop: 10,
+    paddingBottom: 50,
+    lineHeight: '1em',
+    backgroundColor: '#FFFFFF',
+    borderColor: '#d9d9d9',
+    borderRadius: '2%',
+    borderWidth: 1,
+}
+
+export const eventDescTextField = {
+    fontFamily: 'Mulish',
+    paddingTop: 10,
+    paddingBottom: 50,
+    lineHeight: '1em',
+    backgroundColor: '#F4F5F4',
+    borderColor: '#d9d9d9',
+    borderRadius: '10px',
+    borderWidth: 1,
+}
+
 export const primaryButtonStyle = {
     boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
     fontFamily: 'Mulish',
@@ -64,7 +94,7 @@ export const defaultButtonStyle = {
     textDecoration: 'none'
 }
 
-export const fileButtonStyle = {
+export const addButtonStyle = {
     fontFamily: 'Mulish',
     fontWeight: 'bold',
     display: 'inline-flex',
@@ -73,8 +103,7 @@ export const fileButtonStyle = {
     borderColor: '#111827',
     backgroundColor: 'white',
     textDecoration: 'none',
-    marginLeft: 30,
-    marginTop: 80,
+    marginLeft: 'auto',
 }
 
 export const buttonHover = {
@@ -83,6 +112,20 @@ export const buttonHover = {
             colorPrimaryHover: 'lightgray',
         }
     }
+}
+
+export const toggleSelect = {
+    fontFamily: 'Mulish',
+    width: '100px',
+    height: '40px',
+    border: '1px solid #717171',
+    backgroundColor: '#717171',
+    color: '#ffffff',
+    fontWeight: 'bold',
+    borderRadius: '10px',
+    boxSizing: 'border-box',
+    justifyContent: 'center',
+    alignItems: 'center',
 }
 
 export const primaryButtonModal = {
@@ -126,6 +169,42 @@ export const addBudgetButton = {
     textDecoration: 'none',
     marginLeft: "auto",
     float: 'right',
+}
+
+export const calendarViewToggleGroup = {
+    display: 'flex',
+    flexDirection: 'horizontal',
+    gap: '10px',
+    width: '100%'
+}
+
+export const calendarViewToggle = {
+    fontFamily: 'Mulish',
+    width: '100px',
+    border: '1px solid #717171',
+    borderRadius: '10px',
+    boxSizing: 'border-box',
+    justifyContent: 'center',
+    alignItems: 'center',
+}
+
+export const dayViewContainer = {
+    position: 'relative'
+}
+
+export const currentTime = {
+    background: 'transparent',
+    borderTop: '1px solid red',
+    borderBottom: 'none',
+    margin: '0px',
+    position: 'absolute',
+    width: '100%'
+}
+
+export const hourColumn = {
+    width: '100px',
+    maxWidth: '100px',
+    textAlign: 'right'
 }
 
 export const navLink = {
@@ -185,7 +264,7 @@ export const removeGroupMemberButton = {
     color: '#FFFFFF',
     fontFamily: 'Mulish',
     fontWeight: 'bold',
-    width: '30%',
+    width: '100%',
     borderWidth: 'thin',
     borderColor: '#9A9A9A',
     textDecoration: 'none',

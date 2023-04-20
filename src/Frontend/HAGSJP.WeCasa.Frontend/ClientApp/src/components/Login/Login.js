@@ -1,7 +1,7 @@
 ﻿import React, { Component, useState, useEffect } from 'react';
 import { Form, Input, Button, notification, ConfigProvider, Row, Gutter, Col, Image} from 'antd';
 import { withRouter, useNavigate, Navigate, Link } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../Auth/AuthContext';
 import axios from 'axios';
 import * as Styles from '../../styles/ConstStyles.js';
 import defaultImage from '../../assets/defaultimgs/wecasatemp.jpg';
@@ -128,20 +128,6 @@ export const Login = () => {
         navigate('/home', { replace:true});
         //this.forceUpdate();
     }
-
-    // DELETE ME
-    // for dev purposes lol
-    setAuth(true);
-    const tempUser = {
-        firstName: "allison",
-        lastName: "test",
-        username: "test123@gmail.com",
-        image: 1,
-        notifications: ["email", "sms"]
-    }
-    setCurrentUser(tempUser);
-    successLoginView();
-
 
     return (
         <div id="LoginPage"> 

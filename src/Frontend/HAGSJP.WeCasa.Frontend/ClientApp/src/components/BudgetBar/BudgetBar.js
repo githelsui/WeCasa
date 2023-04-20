@@ -6,7 +6,7 @@ import {MultiColorProgressBar} from './ProgressBar';
 import BillForm from './BillForm';
 import BudgetForm from './BudgetForm';
 import DeletionModal from '../DeletionModal';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../Auth/AuthContext';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import * as Styles from '../../styles/ConstStyles';
 import { EditBillForm } from './EditBillForm';
@@ -16,11 +16,6 @@ export const BudgetBar = () => {
   let user = currentUser != null? currentUser.username : null
   let authorized = auth
   let group = currentGroup
-
-  // TODO: temporary fix for refresh issue
-  if (authorized===null) authorized = true
-  if (user===null) user = 'joy@gmail.com'
-  if (group===null) group = {groupId: '1235467'}
 
   const [selectedUser, setSelectedUser] = useState(user);
   const [showAddForm, setShowAddForm] = useState(false);

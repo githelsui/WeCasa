@@ -6,6 +6,12 @@ namespace HAGSJP.WeCasa.Models
     public class GroupModel
     {
         public GroupModel(){}
+        
+        public GroupModel(int id)
+        {
+            GroupId = id;
+        }
+
         public GroupModel(int id, string owner, string name, string icon)
         {
             GroupId = id;

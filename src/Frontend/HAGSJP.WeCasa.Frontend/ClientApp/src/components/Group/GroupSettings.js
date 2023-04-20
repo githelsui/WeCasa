@@ -7,7 +7,7 @@ import '../../index.css';
 import GroupSettingsTab from './GroupSettingsTab'
 import GroupMembersTab from './GroupMembersTab'
 import defaultImage from '../../assets/defaultimgs/wecasatemp.jpg';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../Auth/AuthContext';
 const TabPane = Tabs.TabPane;
 
 export const GroupSettings = (props) => {
