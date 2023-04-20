@@ -142,11 +142,11 @@ export const GroceryList = (props) => {
                         (<div>{(groceryItems.length > 0) ? (<div>{groceryItems.map((item, i) =>
                                     <Row gutter={24, 24}>
                                         <Checkbox defaultChecked={item['isPurchased']} onClick={() => itemPurchased(item)}>
-                                            <h6 className="mulish-font">
+                                            <h5 className="mulish-font">
                                                 {item['name']} <i> {(assignmentLabel(item['assignments']))}</i>
-                                            </h6>
+                                            </h5>
                                         </Checkbox></Row>)}
-                        </div>) : (<p className='mulish-font'>No grocery items for this group</p>)}
+                        </div>) : (<h5 className='mulish-font'>No grocery items for this group</h5>)}
                         </div>):
                         (<p className='mulish-font'>Fetching grocery items</p>)}
                     </Spin>
