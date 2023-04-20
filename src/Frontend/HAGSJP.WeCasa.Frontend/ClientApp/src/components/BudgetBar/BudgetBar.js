@@ -17,11 +17,6 @@ export const BudgetBar = () => {
   let authorized = auth
   let group = currentGroup
 
-  // TODO: temporary fix for refresh issue
-  // if (authorized===null) authorized = true
-  // if (user===null) user = 'joy@gmail.com'
-  // if (group===null) group = {groupId: '1235467'}
-
   const [selectedUser, setSelectedUser] = useState(user);
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
