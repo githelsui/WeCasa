@@ -9,6 +9,26 @@ import defaultImage from '../../assets/defaultimgs/wecasatemp.jpg';
 import * as ValidationFuncs from '../../scripts/InputValidation.js';
 
 export const ChoreWeek = (props) => {
+    const [monChores, setMonChores] = useState([]);
+    const [tuesChores, setTuesChores] = useState([]);
+    const [wedChores, setWedChores] = useState([]);
+    const [thursChores, setThursChores] = useState([]);
+    const [friChores, setFriChores] = useState([]);
+    const [satChores, setSatChores] = useState([]);
+    const [sunChores, setSunChores] = useState([]);
+    
+    useEffect(() => {
+        console.log('test')
+        console.log(props.toDoList)
+        setMonChores(props.toDoList['MON'])
+        setTuesChores(props.toDoList['TUES'])
+        setWedChores(props.toDoList['WED'])
+        setThursChores(props.toDoList['THURS'])
+        setFriChores(props.toDoList['FRI'])
+        setSatChores(props.toDoList['SAT'])
+        setSunChores(props.toDoList['SUN'])
+    }, []);
+
     return (<div style={{ paddingTop: 20 }}>
         <Row gutter={[8, 8]} align="center" justify="space-around" className="todo-chores-header">
             <Col span={2}>
@@ -36,44 +56,57 @@ export const ChoreWeek = (props) => {
         <Divider orientation="center" style={{ border: '0.2px solid gray', marginBottom: 0, marginTop: 5 }} />
         <Row gutter={[8, 8]} align="center" justify="space-around" className="todo-chores-board">
             <Col span={2} style={{ paddingTop: 20 }} >
-                <ChoreCard />
-                <ChoreCard/>
+                <div>{monChores.map((item, i) =>
+                    <ChoreCard chore={item}/>)}
+                </div>
             </Col>
             <Col span={1}>
                 <Divider type="vertical" style={{ border: '0.2px solid gray', height: '100%' }} />
             </Col>
             <Col span={2} style={{ paddingTop: 20 }} >
-              // Tuesday chores
+                <div>{tuesChores.map((item, i) =>
+                    <ChoreCard chore={item}/>)}
+                </div>
             </Col>
             <Col span={1}>
                 <Divider type="vertical" style={{ border: '0.2px solid gray', height: '100%' }} />
             </Col>
             <Col span={2} style={{ paddingTop: 20 }} >
-                // Wed chores
+                <div>{wedChores.map((item, i) =>
+                    <ChoreCard chore={item}/>)}
+                </div>
             </Col>
             <Col span={1}>
                 <Divider type="vertical" style={{ border: '0.2px solid gray', height: '100%' }} />
             </Col>
             <Col span={2} style={{ paddingTop: 20 }} >
-                //Thurs chores
+                <div>{thursChores.map((item, i) =>
+                    <ChoreCard chore={item}/>)}
+                </div>
             </Col>
             <Col span={1}>
                 <Divider type="vertical" style={{ border: '0.2px solid gray', height: '100%' }} />
             </Col>
             <Col span={2} style={{ paddingTop: 20 }} >
-                //Fri chores
+                <div>{friChores.map((item, i) =>
+                    <ChoreCard chore={item}/>)}
+                </div>
             </Col>
             <Col span={1}>
                 <Divider type="vertical" style={{ border: '0.2px solid gray', height: '100%' }} />
             </Col>
             <Col span={2} style={{ paddingTop: 20 }} >
-                //Sat chores
+                <div>{satChores.map((item, i) =>
+                    <ChoreCard chore={item}/>)}
+                </div>
             </Col>
             <Col span={1}>
                 <Divider type="vertical" style={{ border: '0.2px solid gray', height: '100%' }} />
             </Col>
             <Col span={2} style={{ paddingTop: 20 }} >
-                //Sun chores
+                <div>{sunChores.map((item, i) =>
+                    <ChoreCard chore={item}/>)}
+                </div>
             </Col>
         </Row>
     </div>);

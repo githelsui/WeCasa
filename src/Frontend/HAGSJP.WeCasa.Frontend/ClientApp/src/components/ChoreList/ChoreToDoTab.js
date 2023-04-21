@@ -7,7 +7,7 @@ import ChoreWeek from './ChoreWeek'
 
 export const ChoreToDoTab = (props) => {
     return (<div>
-        <ChoreWeek />
+        <ChoreWeek toDoList={props.toDoList} />
          </div>);
 };
 
