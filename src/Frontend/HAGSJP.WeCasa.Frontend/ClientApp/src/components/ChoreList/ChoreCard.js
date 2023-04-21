@@ -13,7 +13,22 @@ const { Meta } = Card;
 
 
 export const ChoreCard = (props) => {
-    return (<div className="padding-bottom">
+
+    const assignmentLabel = (assignments) => {
+        var label = ''
+        for (let i = 0; i < assignments.length; i++) {
+            if (i == assignments.length - 1) {
+                label += assignments[i] 
+            } else {
+                label += assignments[i] + ', '
+            }
+        }
+        console.log(label)
+        return label;
+    }
+
+    return (
+        <div className="padding-bottom">
         <Card
             style={{
                 marginBottom: 10,
@@ -26,9 +41,9 @@ export const ChoreCard = (props) => {
             ]}
         >
             <Avatar className='padding' src="https://xsgames.co/randomusers/avatar.php?g=pixel" />
-            <h6 className="mulish-font"><b>Chore name</b></h6>
-            <p className="mulish-font">assigned usernames</p>
-            <p className="mulish-font" style={{ color: 'gray' }}><i>Notes</i></p>
+            <h6 className="mulish-font"><b>{props.chore['Name']}</b></h6>
+                <p className="mulish-font">{(assignmentLabel(props.chore['Assignments']))}</p>
+                <p className="mulish-font" style={{ color: 'gray' }}><i>{props.chore['Notes']}</i></p>
         </Card>
     </div>);
 };
