@@ -5,6 +5,7 @@ using HAGSJP.WeCasa.sqlDataAccess;
 using HAGSJP.WeCasa.Services.Implementations;
 using MySqlX.XDevAPI.CRUD;
 using MySqlX.XDevAPI.Common;
+using System.Collections.Generic;
 
 namespace HAGSJP.WeCasa.Managers.Implementations
 {
@@ -178,7 +179,29 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 var serviceResult = _service.GetGroupChores(group, 0);
                 if (serviceResult.IsSuccessful)
                 {
-                    result.ReturnedObject = serviceResult.ReturnedObject;
+                    List<Chore> resultQuery = (List<Chore>)serviceResult.ReturnedObject;
+                    var choresPerDay = new Dictionary<string, List<Chore>>()
+                    {
+                        {"MON", new List<Chore>() },
+                        {"TUES", new List<Chore>() },
+                        {"WED", new List<Chore>() },
+                        {"THURS", new List<Chore>() },
+                        {"FRI", new List<Chore>() },
+                        {"SAT", new List<Chore>() },
+                        {"SUN", new List<Chore>() }
+                    };
+
+                    for (var i = 0; i < resultQuery.Count; i++)
+                    {
+                        var chore = resultQuery[i];
+                        var days = (List<String>)chore.Days;
+                        foreach(String day in days)
+                        {
+                            choresPerDay[day].Add(chore);
+                            Console.Write(chore);
+                        }
+                    }
+                    result.ReturnedObject = choresPerDay;
                     _logger.Log("Group to-do chores fetched successfully", LogLevels.Info, "Service", group.Owner);
                 }
                 else

@@ -54,14 +54,18 @@ const data = {
 export const ChoreList = (props) => {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const { currentGroup, currentUser } = useAuth();
+    const [updateToDo, setUpdateToDo] = useState(false);
+    const [updateHistory, setUpdateHistory] = useState(false);
 
     const tabItemClick = (key) => {
-        console.log('tab click', key);
         if (key == 1) {
             // to do tab
-            // setUpdateToDoList(true)
+            setUpdateToDo(true)
+            setUpdateHistory(false)
         } else {
             // history tab
+            setUpdateToDo(false)
+            setUpdateHistory(true)
         }
     };
 
@@ -85,13 +89,12 @@ export const ChoreList = (props) => {
                 console.log(res.data)
                 if (isSuccessful) {
                     toast('Successfully created chore')
+                    setUpdateToDo(true)
                 } else {
                     toast(res.data['message'])
                 }
             })
             .catch((error => { console.error(error) }));
-
-        // Refresh ChoresToDoTab 
     }
 
     const toast = (title, desc = '') => {
@@ -121,8 +124,8 @@ export const ChoreList = (props) => {
                 </Row>
             </div>
             <Tabs defaultActiveKey="1" onChange={tabItemClick} destroyInactiveTabPane>
-                <TabPane tab="Current To-do" key="1"><ChoreToDoTab toDoList={data}/></TabPane>
-                <TabPane tab="History" key="2"><ChoreHistory/></TabPane>
+                <TabPane tab="Current To-do" key="1"><ChoreToDoTab toDoList={data} update={updateToDo} group={currentGroup}/></TabPane>
+                <TabPane tab="History" key="2"><ChoreHistory update={updateHistory}/></TabPane>
             </Tabs>  </div>
     );
 };

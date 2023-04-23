@@ -51,8 +51,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     connection.Open();
 
-                    var insertChoreSql = @"INSERT INTO Chores (name, group_id, reset_time, notes, assigned_to, repeats, is_completed, created, created_by)
-                                    VALUES (@name, @group_id, @reset_time, @notes, @assigned_to, @repeats, @is_completed, @created, @created_by);
+                    var insertChoreSql = @"INSERT INTO Chores (name, group_id, notes, assigned_to, repeats, is_completed, created, created_by, days)
+                                    VALUES (@name, @group_id, @notes, @assigned_to, @repeats, @is_completed, @created, @created_by, @days);
                                     SELECT LAST_INSERT_ID();";
 
                     var command = connection.CreateCommand();
@@ -61,12 +61,13 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@group_id", chore.GroupId);
                     command.Parameters.AddWithValue("@created", chore.Created);
                     command.Parameters.AddWithValue("@created_by", chore.CreatedBy);
-                    command.Parameters.AddWithValue("@reset_time", chore.ResetTime != null ? chore.ResetTime : null);
                     command.Parameters.AddWithValue("@notes", chore.Notes != null ? chore.Notes : null);
                     command.Parameters.AddWithValue("@repeats", chore.Repeats != null ? chore.Repeats : null);
                     command.Parameters.AddWithValue("@is_completed", chore.IsCompleted == null ? chore.IsCompleted : false);
                     string assignedToJSON = JsonSerializer.Serialize(chore.AssignedTo);
                     command.Parameters.AddWithValue("@assigned_to", assignedToJSON);
+                    string daysJson = JsonSerializer.Serialize(chore.Days);
+                    command.Parameters.AddWithValue("@days", daysJson);
 
                     // Execution of first query for Chore table
                     var choreId = Convert.ToInt32(command.ExecuteScalar());
@@ -304,7 +305,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                             chore.GroupId = reader.GetInt32(reader.GetOrdinal("group_id"));
                             chore.Name = reader.GetString(reader.GetOrdinal("name"));
                             chore.Notes = reader.IsDBNull(reader.GetOrdinal("notes")) ? "" : reader.GetString(reader.GetOrdinal("notes"));
-                            command.Parameters.AddWithValue("@repeats", chore.Repeats != null ? chore.Repeats : null);
+                            chore.Repeats = reader.IsDBNull(reader.GetOrdinal("repeats")) ? "" : reader.GetString(reader.GetOrdinal("repeats"));
                             chore.IsCompleted = reader.GetInt32(reader.GetOrdinal("is_completed")) == 1 ? true : false;
                             chore.ResetTime = reader.IsDBNull(reader.GetOrdinal("reset_time")) ? null : reader.GetDateTime(reader.GetOrdinal("reset_time"));
                             List<UserProfile>? assignedTo = JsonSerializer.Deserialize<List<UserProfile>>(reader.GetString(reader.GetOrdinal("assigned_to")));
