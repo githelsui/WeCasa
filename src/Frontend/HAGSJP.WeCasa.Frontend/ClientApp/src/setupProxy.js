@@ -9,13 +9,16 @@ const context = [
     "/registration",
     "/login",
     "/budgetbar",
+    "/calendar",
     "/logout",
     "/home",
     "/files",
     "/group-settings",
     "/account-settings",
     "/edit-profile",
-    "/chorelist"
+    "/bulletin-board",,
+    "/chorelist",
+    "/grocerylist"
 ];
 
 const onError = (err, req, resp, target) => {

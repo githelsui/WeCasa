@@ -9,7 +9,7 @@ namespace HAGSJP.WeCasa.Logging.Implementations
     public class Logger : ILogger
     {
         private readonly ILoggerDAO _dao;
-        public static string[] Categories = {"view", "business", "server", "data", "data store"};
+        public static string[] Categories = {"view", "controller", "business", "server", "data", "data store"};
         public static char[] specialCharacters = {',', '&', '?', '{', '}', '\\', '(', ')', '[', ']', '-', ';', '~', '|', '$', '!', '>', '*', '%', '_'};
 
 

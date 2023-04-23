@@ -2,14 +2,17 @@ import { Home } from "./components/Home";
 import { Registration } from "./components/Registration/Registration";
 import { Login } from "./components/Login/Login";
 import { BudgetBar } from "./components/BudgetBar/BudgetBar";
+import { CalendarView } from "./components/Calendar/CalendarView";
 import { GroupSettings } from "./components/Group/GroupSettings";
 import { ProfileSettings } from "./components/Profile/ProfileSettings";
 import { AccountSettings } from "./components/Account/AccountSettings";
 import { Files } from "./components/File/Files";
 import { FileView } from "./components/File/FileView";
 import { IconSelectorModal } from "./components/IconSelectorModal";
+import BulletinBoard from "./components/BulletinBoard/BulletinBoard";
 import { ChoreList } from "./components/ChoreList/ChoreList";
-
+import { GroceryList } from "./components/GroceryList/GroceryList";
+import { NotFound } from "./components/NotFound";
 
 const AppRoutes = [
   {
@@ -41,16 +44,16 @@ const AppRoutes = [
     element: <BudgetBar />
     },
     {
+        path: '/calendar',
+        element: <CalendarView />
+    },
+    {
         path: '/account-settings',
         element: <AccountSettings />
     },
     {
      path: '/edit-profile',
      element: <ProfileSettings />
-  },
-  {
-    path: '/account-settings',
-    element: <AccountSettings />
   },
   {
     path: '/files',
@@ -63,10 +66,22 @@ const AppRoutes = [
   {
      path: '/icon-selector-dev',
      element: <IconSelectorModal />
-    },
-    {
+  },
+  {
         path: '/chorelist',
         element: <ChoreList />
+  },
+  {
+      path: '/grocerylist',
+      element: <GroceryList />
+  },
+  {
+    path: '/bulletin',
+    element: <BulletinBoard />
+    },
+    {
+        path: '*',
+        element: <NotFound />
     }
 ];
 

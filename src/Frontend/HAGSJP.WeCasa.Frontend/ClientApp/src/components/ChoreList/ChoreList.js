@@ -1,6 +1,6 @@
 ﻿import React, { Component, useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom'
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../Auth/AuthContext';
 import { Col, Card, Row, Space, Avatar, Button, notification, Tabs } from 'antd';
 import ChoreToDoTab from './ChoreToDoTab'
 import ChoreHistory from './ChoreHistoryTab'
@@ -9,18 +9,63 @@ import * as Styles from '../../styles/ConstStyles.js';
 import axios from 'axios';
 const TabPane = Tabs.TabPane;
 
+const data = {
+    'MON': [{
+        Name: 'chore item 1',
+        Notes: '',
+        Assignments: ['githelsuico@gmail.com'],
+        IsCompleted: false
+    },
+        {
+            Name: 'chore item 2',
+            Notes: 'test notes',
+            Assignments: ['githelsuico@gmail.com, new8@gmail.com'],
+            IsCompleted: true,
+        }],
+    'TUES': [{
+            Name: 'chore item 3',
+            Notes: 'test notes',
+            Assignments: ['new8@gmail.com'],
+            IsCompleted: false
+    }],
+    'WED': [],
+    'THURS': [],
+    'FRI': [],
+    'SAT': [{
+        Name: 'chore item 3',
+        Notes: 'test notes',
+        Assignments: ['new8@gmail.com'],
+        IsCompleted: false
+        },
+        {
+            Name: 'chore item 3',
+            Notes: 'test notes',
+            Assignments: ['new8@gmail.com'],
+            IsCompleted: false
+        }],
+    'SUN': [{
+        Name: 'chore item 3',
+        Notes: 'test notes',
+        Assignments: ['new8@gmail.com'],
+        IsCompleted: false
+    }]
+}
+
 export const ChoreList = (props) => {
     const [showCreateModal, setShowCreateModal] = useState(false);
-    const [fetchedRoommates, setFetchedRoommates] = useState(false);
-    const [membersList, setMembersList] = useState([]);
     const { currentGroup, currentUser } = useAuth();
+    const [updateToDo, setUpdateToDo] = useState(false);
+    const [updateHistory, setUpdateHistory] = useState(false);
 
     const tabItemClick = (key) => {
-        console.log('tab click', key);
         if (key == 1) {
             // to do tab
+            setUpdateToDo(true)
+            setUpdateHistory(false)
         } else {
             // history tab
+            setUpdateToDo(false)
+            setUpdateHistory(true)
         }
     };
 
@@ -43,46 +88,13 @@ export const ChoreList = (props) => {
                 var isSuccessful = res.data['isSuccessful'];
                 console.log(res.data)
                 if (isSuccessful) {
-                   
+                    toast('Successfully created chore')
+                    setUpdateToDo(true)
+                } else {
+                    toast(res.data['message'])
                 }
             })
             .catch((error => { console.error(error) }));
-
-        // Refresh ChoresToDoTab 
-    }
-
-    const fetchCurrentRoommates = () => {
-        // axios call to fetch current group members UserProfiles
-        let groupMemberForm = {
-            GroupId: currentGroup['groupId']
-        }
-
-        axios.post('chorelist/GetCurrentGroupMembers', groupMemberForm)
-            .then(res => {
-                var isSuccessful = res.data['isSuccessful'];
-                if (isSuccessful) {
-                    var memberArrRes = res.data['returnedObject']
-                    console.log(memberArrRes)
-                    var copyArr = cleanArrayCopy(memberArrRes)
-                    setMembersList(copyArr)
-                    if (membersList != null) {
-                        setFetchedRoommates(true)
-                    }
-                } 
-            })
-            .catch((error => { console.error(error) }));
-    }
-
-    const cleanArrayCopy = (array) => {
-        let copy = []
-        for (let i = 0; i < array.length; i++) {
-            var member = array[i]
-            if (member != null && member['username'] != currentUser['username']) {
-                copy.push(array[i])
-            }
-        }
-        setMembersList(copy)
-        return copy
     }
 
     const toast = (title, desc = '') => {
@@ -95,9 +107,7 @@ export const ChoreList = (props) => {
     }
 
     useEffect(() => {
-        setMembersList([])
-        fetchCurrentRoommates()
-        console.log(membersList)
+        // setUpdateToDoList(true) -> trigger update in ChoreToDoTab
     }, []);
 
     return (
@@ -109,13 +119,13 @@ export const ChoreList = (props) => {
                     </Col>
                     <Col span={6}>
                         <Button style={Styles.defaultButtonStyle} onClick={() => setShowCreateModal(true)}>Add task</Button>
-                        <ChoreCreationModal show={showCreateModal} close={() => setShowCreateModal(false)} confirm={attemptChoreCreation} group={currentGroup} currentMembers={membersList} fetchedRoommates={fetchedRoommates} />
+                        <ChoreCreationModal show={showCreateModal} close={() => setShowCreateModal(false)} confirm={attemptChoreCreation} group={currentGroup} user={currentUser} />
                     </Col>
                 </Row>
             </div>
             <Tabs defaultActiveKey="1" onChange={tabItemClick} destroyInactiveTabPane>
-                <TabPane tab="Current To-do" key="1"><ChoreToDoTab/></TabPane>
-                <TabPane tab="History" key="2"><ChoreHistory/></TabPane>
+                <TabPane tab="Current To-do" key="1"><ChoreToDoTab toDoList={data} update={updateToDo} group={currentGroup}/></TabPane>
+                <TabPane tab="History" key="2"><ChoreHistory update={updateHistory}/></TabPane>
             </Tabs>  </div>
     );
 };

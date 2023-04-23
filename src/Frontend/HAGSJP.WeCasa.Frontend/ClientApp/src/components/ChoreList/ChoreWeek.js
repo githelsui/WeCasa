@@ -1,7 +1,6 @@
 ﻿import React, { Component, useState, useEffect } from 'react';
 import { Divider, Modal, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Switch, notification, Card } from 'antd';
 import * as Styles from '../../styles/ConstStyles.js';
-import { useAuth } from '../AuthContext.js';
 import '../../styles/System.css';
 import '../../index.css';
 import ChoreCard from './ChoreCard'
@@ -9,7 +8,68 @@ import axios from 'axios';
 import defaultImage from '../../assets/defaultimgs/wecasatemp.jpg';
 import * as ValidationFuncs from '../../scripts/InputValidation.js';
 
+//dev only
+const data = {
+    'MON': [{
+        Name: 'chore item 1',
+        Notes: '',
+        Assignments: ['githelsuico@gmail.com'],
+        IsCompleted: false
+    },
+    {
+        Name: 'chore item 2',
+        Notes: 'test notes',
+        Assignments: ['githelsuico@gmail.com, new8@gmail.com'],
+        IsCompleted: true,
+    }],
+    'TUES': [{
+        Name: 'chore item 3',
+        Notes: 'test notes',
+        Assignments: ['new8@gmail.com'],
+        IsCompleted: false
+    }],
+    'WED': [],
+    'THURS': [],
+    'FRI': [],
+    'SAT': [{
+        Name: 'chore item 3',
+        Notes: 'test notes',
+        Assignments: ['new8@gmail.com'],
+        IsCompleted: false
+    },
+    {
+        Name: 'chore item 3',
+        Notes: 'test notes',
+        Assignments: ['new8@gmail.com'],
+        IsCompleted: false
+    }],
+    'SUN': [{
+        Name: 'chore item 3',
+        Notes: 'test notes',
+        Assignments: ['new8@gmail.com'],
+        IsCompleted: false
+    }]
+}
+
 export const ChoreWeek = (props) => {
+    const [monChores, setMonChores] = useState([]);
+    const [tuesChores, setTuesChores] = useState([]);
+    const [wedChores, setWedChores] = useState([]);
+    const [thursChores, setThursChores] = useState([]);
+    const [friChores, setFriChores] = useState([]);
+    const [satChores, setSatChores] = useState([]);
+    const [sunChores, setSunChores] = useState([]);
+    
+    useEffect(() => {
+        setMonChores(data['MON'])
+        setTuesChores(data['TUES'])
+        setWedChores(data['WED'])
+        setThursChores(data['THURS'])
+        setFriChores(data['FRI'])
+        setSatChores(data['SAT'])
+        setSunChores(data['SUN'])
+    }, []);
+
     return (<div style={{ paddingTop: 20 }}>
         <Row gutter={[8, 8]} align="center" justify="space-around" className="todo-chores-header">
             <Col span={2}>
@@ -37,44 +97,57 @@ export const ChoreWeek = (props) => {
         <Divider orientation="center" style={{ border: '0.2px solid gray', marginBottom: 0, marginTop: 5 }} />
         <Row gutter={[8, 8]} align="center" justify="space-around" className="todo-chores-board">
             <Col span={2} style={{ paddingTop: 20 }} >
-                <ChoreCard />
-                <ChoreCard/>
+                <div>{monChores.map((item, i) =>
+                    <ChoreCard chore={item}/>)}
+                </div>
             </Col>
             <Col span={1}>
                 <Divider type="vertical" style={{ border: '0.2px solid gray', height: '100%' }} />
             </Col>
             <Col span={2} style={{ paddingTop: 20 }} >
-              // Tuesday chores
+                <div>{tuesChores.map((item, i) =>
+                    <ChoreCard chore={item}/>)}
+                </div>
             </Col>
             <Col span={1}>
                 <Divider type="vertical" style={{ border: '0.2px solid gray', height: '100%' }} />
             </Col>
             <Col span={2} style={{ paddingTop: 20 }} >
-                // Wed chores
+                <div>{wedChores.map((item, i) =>
+                    <ChoreCard chore={item}/>)}
+                </div>
             </Col>
             <Col span={1}>
                 <Divider type="vertical" style={{ border: '0.2px solid gray', height: '100%' }} />
             </Col>
             <Col span={2} style={{ paddingTop: 20 }} >
-                //Thurs chores
+                <div>{thursChores.map((item, i) =>
+                    <ChoreCard chore={item}/>)}
+                </div>
             </Col>
             <Col span={1}>
                 <Divider type="vertical" style={{ border: '0.2px solid gray', height: '100%' }} />
             </Col>
             <Col span={2} style={{ paddingTop: 20 }} >
-                //Fri chores
+                <div>{friChores.map((item, i) =>
+                    <ChoreCard chore={item}/>)}
+                </div>
             </Col>
             <Col span={1}>
                 <Divider type="vertical" style={{ border: '0.2px solid gray', height: '100%' }} />
             </Col>
             <Col span={2} style={{ paddingTop: 20 }} >
-                //Sat chores
+                <div>{satChores.map((item, i) =>
+                    <ChoreCard chore={item}/>)}
+                </div>
             </Col>
             <Col span={1}>
                 <Divider type="vertical" style={{ border: '0.2px solid gray', height: '100%' }} />
             </Col>
             <Col span={2} style={{ paddingTop: 20 }} >
-                //Sun chores
+                <div>{sunChores.map((item, i) =>
+                    <ChoreCard chore={item}/>)}
+                </div>
             </Col>
         </Row>
     </div>);
