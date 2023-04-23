@@ -71,11 +71,11 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("GetGroupToDoChores")]
-        public ChoreResult GetGroupToDoChores([FromBody] ChoreForm choreForm)
+        public ChoreResult GetGroupToDoChores([FromBody] GroupMemberForm groupForm)
         {
             try
             {
-                var result = _manager.GetGroupToDoChores(new GroupModel(choreForm.GroupId));
+                var result = _manager.GetGroupToDoChores(new GroupModel(groupForm.GroupId));
                 if (result.IsSuccessful)
                 {
                     result.ErrorStatus = System.Net.HttpStatusCode.OK;
@@ -95,11 +95,11 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("GetGroupCompletedChores")]
-        public ChoreResult GetGroupCompletedChores([FromBody] ChoreForm choreForm)
+        public ChoreResult GetGroupCompletedChores([FromBody] GroupMemberForm groupForm)
         {
             try
             {
-                var result = _manager.GetGroupCompletedChores(new GroupModel(choreForm.GroupId));
+                var result = _manager.GetGroupCompletedChores(new GroupModel(groupForm.GroupId));
                 if (result.IsSuccessful)
                 {
                     result.ErrorStatus = System.Net.HttpStatusCode.OK;
@@ -119,11 +119,11 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("GetUserToDoChores")]
-        public ChoreResult GetUserToDoChores([FromBody] ChoreForm choreForm)
+        public ChoreResult GetUserToDoChores([FromBody] AccountForm accForm)
         {
             try
             {
-                var result = _manager.GetUserToDoChores(new UserAccount(choreForm.CurrentUser));
+                var result = _manager.GetUserToDoChores(new UserAccount(accForm.Email));
                 if (result.IsSuccessful)
                 {
                     result.ErrorStatus = System.Net.HttpStatusCode.OK;
