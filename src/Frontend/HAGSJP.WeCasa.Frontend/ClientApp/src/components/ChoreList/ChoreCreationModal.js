@@ -10,15 +10,16 @@ import image3 from '../../assets/profileimgs/3.jpg';
 import image4 from '../../assets/profileimgs/4.jpg';
 import image5 from '../../assets/profileimgs/5.jpg';
 import image6 from '../../assets/profileimgs/6.jpg';
+import axios from 'axios';
 
 const ChoreCreationModal = (props) => {
     const profileImages = [image1, image2, image3, image4, image5, image6];
     const [form] = Form.useForm();
+    const [fetchedRoommates, setFetchedRoommates] = useState(false);
     const [assignments, setAssignments] = useState([])
     //Chore properties
     const [selectedAssignments, setSelectedAssignments] = useState([])
     const [hasValidData, setValidData] = useState(true)
-    const [choreNotes, setChoreNotes] = useState('')
     const [choreRepeats, setChoreRepeats] = useState('')
 
     const attemptSubmission = () => {
@@ -37,8 +38,13 @@ const ChoreCreationModal = (props) => {
                     toast('Chore name: ' + nameResult.message);
                 }
 
-                // -> Chore notes
-                var noteResult = ValidationFuncs.validateCharacterLimit(choreNotes)
+                // -> Chore notes (optional)
+                if (values['choreNotes'] == undefined) {
+                    values['choreNotes'] = ''
+                }
+
+                var notes = values['choreNotes']
+                var noteResult = ValidationFuncs.validateCharacterLimit(notes)
                 if (!noteResult.isSuccessful) {
                     setValidData(false)
                     toast('Chore notes: ' + noteResult.message);
@@ -47,6 +53,7 @@ const ChoreCreationModal = (props) => {
                 // -> Chore days (required)
                 if (daysReq == undefined || daysReq.length == 0) {
                     toast('Select the days the chore is set for.')
+                    setValidData(false)
                 }
 
                 // Send data to parent ChoreList component
@@ -54,16 +61,55 @@ const ChoreCreationModal = (props) => {
                     // organize modalConfiguration with chore properties
                     var modalConfig = {
                         ChoreName: name,
-                        ChoreNotes: choreNotes,
+                        ChoreNotes: notes,
                         ChoreDays: daysReq,
                         ChoreRepeats: choreRepeats,
                         ChoreAssignments: selectedAssignments
                     }
+                    console.log(modalConfig)
                     props.confirm(modalConfig)
-                    props.close()
+                    closeForm();
                 }
             })
             .catch((errorInfo) => { });
+    }
+
+    const closeForm = () => {
+        setSelectedAssignments([])
+        setValidData(true)
+        props.close()
+    }
+
+    const fetchCurrentRoommates = () => {
+        // axios call to fetch current group members UserProfiles
+        let groupMemberForm = {
+            GroupId: props.group['groupId']
+        }
+
+        axios.post('chorelist/GetCurrentGroupMembers', groupMemberForm)
+            .then(res => {
+                var isSuccessful = res.data['isSuccessful'];
+                if (isSuccessful) {
+                    var memberArrRes = res.data['returnedObject']
+                    var copyArr = cleanArrayCopy(memberArrRes)
+                    setAssignments(copyArr)
+                    if (assignments.length > 0) {
+                        setFetchedRoommates(true)
+                    }
+                }
+            })
+            .catch((error => { console.error(error) }));
+    }
+
+    const cleanArrayCopy = (array) => {
+        let copy = []
+        for (let i = 0; i < array.length; i++) {
+            var member = array[i]
+            if (member != null && member['username'] != props.user['username']) {
+                copy.push(array[i])
+            }
+        }
+        return copy
     }
 
     //Chore Repeats
@@ -73,9 +119,10 @@ const ChoreCreationModal = (props) => {
 
     //Chore Assignments
     const selectAssignment = (index) => {
-        if (selectedAssignments.includes(index)) {
+        var user = assignments[index]['username']
+        if (selectedAssignments.includes(user)) {
             //Undo assignment selection
-            var copy = selectedAssignments.filter(e => e !== index)
+            var copy = selectedAssignments.filter(e => e !== user)
             setSelectedAssignments(copy)
         } else {
             //Make assignment selection
@@ -85,7 +132,7 @@ const ChoreCreationModal = (props) => {
                     copy.push(selectedAssignments[i])
                 }
             }
-            copy.push(index)
+            copy.push(user)
             setSelectedAssignments(copy)
         }
     }
@@ -100,11 +147,7 @@ const ChoreCreationModal = (props) => {
     }
 
     useEffect(() => {
-        if (props.fetchedRoommates) {
-            setAssignments(props.currentMembers)
-        } else {
-            setAssignments([])
-        }
+        fetchCurrentRoommates()
     }, []);
 
     return (<Modal
@@ -158,7 +201,7 @@ const ChoreCreationModal = (props) => {
                                         border: '0.5px solid #555',
                                     }}
                                         src={profileImages[member['image']]} preview={false} />}
-                                    style={(selectedAssignments.includes(i)) ? { border: '5px solid #555', borderRadius: '50%', width: 50, height: 50, cursor: 'pointer' } : { borderRadius: '50%', width: 50, height: 50, cursor: 'pointer' }}></Card>
+                                        style={(selectedAssignments.includes(member['username']))  ? { border: '5px solid #555', borderRadius: '50%', width: 50, height: 50, cursor: 'pointer' } : { borderRadius: '50%', width: 50, height: 50, cursor: 'pointer' }}></Card>
                                 <p style={{ color: 'gray', fontSize: 10, marginLeft: 10 }}>{member['firstName'] + member['lastName']}</p>
                             </Col>)}
                         </Row>) :
@@ -166,7 +209,7 @@ const ChoreCreationModal = (props) => {
                    
                 </div>
                 <div style={{ marginLeft: 80 }}>
-                    <Button key="cancel" onClick={props.close} type="default" style={Styles.defaultButtonModal}>Exit</Button>
+                    <Button key="cancel" onClick={closeForm} type="default" style={Styles.defaultButtonModal}>Exit</Button>
                     <Button key="create" onClick={attemptSubmission} htmlType="submit" type="primary" style={Styles.primaryButtonModal}>Save</Button>
                 </div>
             </Form>

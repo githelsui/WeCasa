@@ -18,6 +18,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
 		{
             _logger = new Logger(new AccountMariaDAO());
             _service = new ChoreService();
+            _um = new UserManager();
         }
 
         public ChoreResult AddChore(Chore chore, UserAccount userAccount)

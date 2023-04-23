@@ -178,7 +178,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             }
 
             var checkValidName = new Regex(@"\b([A-ZÀ-ÿ][-,a-z. ']*)+");
-            if (!checkValidName.IsMatch(chore.Name)) // Chore name valid characters
+            if (checkValidName.IsMatch(chore.Name)) // Chore name invalid characters
             {
                 result.IsSuccessful = false;
                 result.Message = "Chore name has invalid characters.";

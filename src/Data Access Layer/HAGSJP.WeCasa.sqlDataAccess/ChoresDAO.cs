@@ -77,10 +77,10 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     }
                     else // First query successful
                     {
-                        result = AssignChores(chore);
+                        chore.ChoreId = choreId;
+                        result = AssignChore(chore);
                         if (result.IsSuccessful)
                         {
-                            chore.ChoreId = choreId;
                             result.IsSuccessful = true;
                             result.Message = "Creating chore success.";
                             result.ReturnedObject = chore;
@@ -89,7 +89,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         else
                         {
                             result.IsSuccessful = false;
-                            result.Message = "Failure creating chore. Error assigning chore to users.";
+                            result.Message += "Error assigning chore to users." + result.Message;
                         }
                     }
                 }
@@ -145,7 +145,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     result = result.ValidateSqlResult(rows);
                     if (result.IsSuccessful)
                     {
-                        result = AssignChores(chore);
+                        result = ReassignChore(chore);
+                        //result = AssignChores(chore);
                         if (result.IsSuccessful)
                         {
                             return result;
@@ -166,7 +167,66 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
-        public DAOResult AssignChores(Chore chore)
+        public DAOResult AssignChore(Chore chore)
+        {
+            // Reset chore.AssignedTo for Chores table & Usergroups table
+            var result = new DAOResult();
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
+
+
+                    var command = connection.CreateCommand();
+                    // Creates new assignments in UserChore table
+                    var valuesStr = "";
+                    for (var i = 0; i < chore.AssignedTo.Count; i++)
+                    {
+                        string username = chore.AssignedTo[i].Username;
+                        if (i == chore.AssignedTo.Count - 1)
+                        {
+                            valuesStr += $"({chore.ChoreId}, '{username}', 0)";
+                        }
+                        else
+                        {
+                            valuesStr += $"({chore.ChoreId}, '{username}', 0), ";
+                        }
+                    }
+
+                    var insertSql = string.Format(@"INSERT INTO UserChore (chore_id, username, is_completed) VALUES {0}", valuesStr);
+                    Console.Write(insertSql);
+                    //var insertSql = @"INSERT INTO UserChore (chore_id, username, is_completed) VALUES @values_str;";
+                    //command.Parameters.AddWithValue("@values_str", valuesStr);
+                    command.CommandText = insertSql;
+                    var userChoreInsertRows = command.ExecuteNonQuery();
+                    var userChoreResult = ValidateSqlStatement(userChoreInsertRows);
+                    if (userChoreResult.IsSuccessful)
+                    {
+                        result.IsSuccessful = true;
+                        result.Message = "Assigning chore success.";
+                        result.ReturnedObject = chore;
+                    }
+                    else
+                    {
+                        result.IsSuccessful = false;
+                        result.Message += "Failure assigning chore. ";
+                    }
+                }
+                catch (MySqlException sqlex)
+                {
+                    throw sqlex;
+                }
+                catch (Exception sqlex)
+                {
+                    throw sqlex;
+                }
+                return result;
+            }
+        }
+
+        public DAOResult ReassignChore(Chore chore)
         {
             // Reset chore.AssignedTo for Chores table & Usergroups table
             var result = new DAOResult();
@@ -194,25 +254,9 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     }
                     else // First query successful
                     {
-                        // Execution of second query: Creates new assignments 
-                        var valuesStr = "";
-                        for (var i = 0; i < chore.AssignedTo.Count; i++)
-                        {
-                            string username = chore.AssignedTo[i].Username;
-                            if (i == chore.AssignedTo.Count - 1)
-                            {
-                                valuesStr += $"({chore.ChoreId}, {username}, 0, 1);";
-                            }
-                            else
-                            {
-                                valuesStr += $"({chore.ChoreId}, {username}, 0, 1), ";
-                            }
-                        }
-                        var insertUserChoreSql = string.Format(@"INSERT INTO UserChore (chore_id, username, is_completed, is_assigned) VALUES '{0}'", valuesStr);
-                        command.CommandText = insertUserChoreSql;
-                        var userChoreInsertRows = command.ExecuteNonQuery();
-                        var userChoreResult = ValidateSqlStatement(userChoreInsertRows);
-                        if (userChoreResult.IsSuccessful)
+                        // Execution of second query: Create new assignments in UserChore
+                        result = AssignChore(chore);
+                        if (result.IsSuccessful)
                         {
                             result.IsSuccessful = true;
                             result.Message = "Assigning chore success.";

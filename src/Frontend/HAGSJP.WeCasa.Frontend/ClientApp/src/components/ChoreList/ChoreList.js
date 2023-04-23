@@ -53,14 +53,13 @@ const data = {
 
 export const ChoreList = (props) => {
     const [showCreateModal, setShowCreateModal] = useState(false);
-    const [fetchedRoommates, setFetchedRoommates] = useState(false);
-    const [membersList, setMembersList] = useState([]);
     const { currentGroup, currentUser } = useAuth();
 
     const tabItemClick = (key) => {
         console.log('tab click', key);
         if (key == 1) {
             // to do tab
+            // setUpdateToDoList(true)
         } else {
             // history tab
         }
@@ -85,46 +84,14 @@ export const ChoreList = (props) => {
                 var isSuccessful = res.data['isSuccessful'];
                 console.log(res.data)
                 if (isSuccessful) {
-                   
+                    toast('Successfully created chore')
+                } else {
+                    toast(res.data['message'])
                 }
             })
             .catch((error => { console.error(error) }));
 
         // Refresh ChoresToDoTab 
-    }
-
-    const fetchCurrentRoommates = () => {
-        // axios call to fetch current group members UserProfiles
-        let groupMemberForm = {
-            GroupId: currentGroup['groupId']
-        }
-
-        axios.post('chorelist/GetCurrentGroupMembers', groupMemberForm)
-            .then(res => {
-                var isSuccessful = res.data['isSuccessful'];
-                if (isSuccessful) {
-                    var memberArrRes = res.data['returnedObject']
-                    console.log(memberArrRes)
-                    var copyArr = cleanArrayCopy(memberArrRes)
-                    setMembersList(copyArr)
-                    if (membersList != null) {
-                        setFetchedRoommates(true)
-                    }
-                } 
-            })
-            .catch((error => { console.error(error) }));
-    }
-
-    const cleanArrayCopy = (array) => {
-        let copy = []
-        for (let i = 0; i < array.length; i++) {
-            var member = array[i]
-            if (member != null && member['username'] != currentUser['username']) {
-                copy.push(array[i])
-            }
-        }
-        setMembersList(copy)
-        return copy
     }
 
     const toast = (title, desc = '') => {
@@ -137,9 +104,7 @@ export const ChoreList = (props) => {
     }
 
     useEffect(() => {
-        setMembersList([])
-        fetchCurrentRoommates()
-        console.log(membersList)
+        // setUpdateToDoList(true) -> trigger update in ChoreToDoTab
     }, []);
 
     return (
@@ -151,7 +116,7 @@ export const ChoreList = (props) => {
                     </Col>
                     <Col span={6}>
                         <Button style={Styles.defaultButtonStyle} onClick={() => setShowCreateModal(true)}>Add task</Button>
-                        <ChoreCreationModal show={showCreateModal} close={() => setShowCreateModal(false)} confirm={attemptChoreCreation} group={currentGroup} currentMembers={membersList} fetchedRoommates={fetchedRoommates} />
+                        <ChoreCreationModal show={showCreateModal} close={() => setShowCreateModal(false)} confirm={attemptChoreCreation} group={currentGroup} user={currentUser} />
                     </Col>
                 </Row>
             </div>
