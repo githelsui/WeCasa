@@ -34,6 +34,7 @@ export const GroupMembersTab = (props) => {
 
         axios.post('group-settings/GetGroupMembers', groupMemberForm)
             .then(res => {
+                console.log(res.data);
                 var memberArrRes = res.data['returnedObject']
                 var copyArr = cleanArrayCopy(memberArrRes)
                 setMembersList(copyArr)
@@ -128,7 +129,7 @@ export const GroupMembersTab = (props) => {
                                     removeRoommate(item.username)
                                 }} type="default" style={Styles.removeGroupMemberButton}>X  Remove Member</Button>
                             </List.Item>
-                            <CircularProgressBar percentage={item.progress}></CircularProgressBar>
+                            <CircularProgressBar percentage={item.choreProgress}></CircularProgressBar>
                         </Skeleton>
                     </List.Item>
                 )}

@@ -6,8 +6,8 @@ using MySqlConnector;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
-	public class ChoresDAO : AccountMariaDAO
-	{
+    public class ChoresDAO : AccountMariaDAO
+    {
         private string _connectionString;
         private DAOResult result;
 
@@ -42,7 +42,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         }
 
         public DAOResult CreateChore(Chore chore)
-		{
+        {
             var result = new DAOResult();
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
@@ -103,7 +103,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 }
                 return result;
             }
-		}
+        }
 
         public DAOResult UpdateChore(Chore chore)
         {
@@ -378,6 +378,54 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 }
             }
         }
+        public ChoreResult GetUserProgress(int group_id, string username)
+        {
+            var result = new ChoreResult();
+            var progressReport = new ProgressReport(group_id, username);
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
+
+                    var command = connection.CreateCommand();
+                    var selectSql = @"SELECT COUNT(CASE WHEN is_completed = 1 THEN 1 ELSE NULL) AS completedChores,
+                                                    COUNT(CASE WHEN is_completed = 0 THEN 1 ELSE NULL) AS incompleteChores,
+                                            FROM UserChore 
+                                                INNER JOIN Chores USING chore_id
+                                            WHERE username = @username AND group_id = @group_id 
+                                                AND (MONTH(created) == MONTH(NOW()) AND repeats IS NULL)
+                                                OR repeats = 'Monthly'";
+                    
+                    command.CommandText = selectSql;
+                    command.Parameters.AddWithValue("@username", username);
+                    command.Parameters.AddWithValue("@group_id", group_id);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var completedChores = reader.GetInt32(reader.GetOrdinal("completedChores"));
+                            var incompleteChores = reader.GetInt32(reader.GetOrdinal("incompleteChores"));
+                            progressReport.CompletedChores = completedChores;
+                            progressReport.IncompleteChores = incompleteChores;
+                        }
+                        result.ReturnedObject = progressReport;
+                        result.IsSuccessful = true;
+                    }
+                    return result;
+                }
+                catch (MySqlException sqlex)
+                {
+                    throw sqlex;
+                }
+                catch (Exception sqlex)
+                {
+                    throw sqlex;
+                }
+            }
+        }
+
     }
 }
 

@@ -9,6 +9,7 @@ using System.Net;
 using System;
 using System.Collections;
 using Microsoft.AspNetCore.Identity;
+using HAGSJP.WeCasa.Services.Implementations;
 
 namespace HAGSJP.WeCasa.Managers.Implementations
 {
@@ -149,12 +150,12 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             return result;
         }
 
-        public GroupResult GetGroupMembers(GroupModel group)
+        public async Task<GroupResult> GetGroupMembers(GroupModel group)
         {
             var userManager = new UserManager();
-            var result = new GroupResult();
+            var choreService = new ChoreService();
 
-            result = (_dao.GetGroupMembers(group));
+            var result = _dao.GetGroupMembers(group);
             if (result.IsSuccessful)
             {
                 var usernamesList = result.ReturnedObject;
@@ -164,8 +165,13 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 {
                     Console.Write("Username = " + username);
                     var userAccount = new UserAccount(username);
-                    var userProfile = userManager.GetUserProfile(userAccount);
-                    groupMembersList.Add((UserProfile)userProfile.ReturnedObject);
+                    // getting user info
+                    var userProfile = (UserProfile)userManager.GetUserProfile(userAccount).ReturnedObject;
+                    // getting chore progress
+                    var choreProgress = await choreService.GetUserProgress(username, group.GroupId);
+                    userProfile.ChoreProgress = (ProgressReport)choreProgress.ReturnedObject;
+
+                    groupMembersList.Add(userProfile);
                 }
                 var groupMemberArr = groupMembersList.ToArray();
                 result.ReturnedObject = groupMemberArr;
@@ -174,7 +180,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             else
             {
                 // Logging the error
-                errorLogger.Log("Error fetching group member", LogLevels.Error, "Data Store", group.Owner);
+                await errorLogger.Log("Error fetching group member", LogLevels.Error, "Data Store", group.Owner);
                 result.Message = "Error fetching group member";
                 return result;
             }

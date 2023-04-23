@@ -165,6 +165,35 @@ namespace HAGSJP.WeCasa.Services.Implementations
             }
         }
 
+        public async Task<DAOResult> GetUserProgress(string groupMember, int groupId)
+        {
+            var daoResult = new ChoreResult();
+            var result = new DAOResult();
+            try
+            {
+                daoResult = _dao.GetUserProgress(groupId, groupMember);
+                if (daoResult.IsSuccessful)
+                {
+                    await _logger.Log("User progress fetched successfully", LogLevels.Info, "Data Store", groupMember);
+                }
+                else
+                {
+                    await _logger.Log("User chores fetched failed from Chores", LogLevels.Info, "Data Store", groupMember);
+                }
+                result.IsSuccessful = daoResult.IsSuccessful;
+                result.Message = daoResult.Message;
+                result.ReturnedObject = (ProgressReport)daoResult.ReturnedObject;
+            }
+            catch (Exception exc)
+            {
+                await _logger.Log("Error Message: " + exc.Message, LogLevels.Error, "Data Store", groupId.ToString());
+                result.IsSuccessful = false;
+                result.Message = exc.Message;
+            }
+            return result;
+        }
+
+
         public ChoreResult ValidateChore(Chore chore)
         {
             var result = new ChoreResult();

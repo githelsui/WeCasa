@@ -8,14 +8,19 @@ using HAGSJP.WeCasa.Managers.Implementations;
 using HAGSJP.WeCasa.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace HAGSJP.WeCasa.Frontend.Controllers
 {
     [ApiController]
     [Route("group-settings")]
     public class GroupController : ControllerBase
     {
+        private readonly GroupManager _manager;
+
+        public GroupController()
+        {
+            _manager = new GroupManager();
+        }
+
         [HttpPost]
         [Route("AddGroupMembers")]
         public Result AddGroupMembers([FromBody] GroupMemberForm groupForm)
@@ -23,8 +28,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
             var groupMember = groupForm.GroupMember;
             var groupModel = new GroupModel();
             groupModel.GroupId = groupForm.GroupId;
-            var groupManager = new GroupManager();
-            return groupManager.AddGroupMember(groupModel, groupMember);
+            return _manager.AddGroupMember(groupModel, groupMember);
         }
 
         [HttpPost]
@@ -34,28 +38,27 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
             var groupMember = groupForm.GroupMember;
             var groupModel = new GroupModel();
             groupModel.GroupId = groupForm.GroupId;
-            var groupManager = new GroupManager();
-            return groupManager.RemoveGroupMember(groupModel, groupMember);
+            return _manager.RemoveGroupMember(groupModel, groupMember);
         }
 
         [HttpPost]
         [Route("GetGroupMembers")]
         public async Task<GroupResult> GetGroupMembers([FromBody] GroupMemberForm groupForm)
         {
+            var groupResult = new GroupResult();
             var groupModel = new GroupModel();
-            var result = new GroupResult();
             try
             {
+                // check if progress bar is enabled on group
                 groupModel.GroupId = groupForm.GroupId;
-                var groupManager = new GroupManager();
-                result = groupManager.GetGroupMembers(groupModel);
+                groupResult = await _manager.GetGroupMembers(groupModel);
             }
             catch (Exception ex)
             {
-                result.IsSuccessful = false;
-                result.Message = ex.Message;
+                groupResult.IsSuccessful = false;
+                groupResult.Message = ex.Message;
             }
-            return result;
+            return groupResult;
         }
 
         [HttpPost]
@@ -64,8 +67,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         {
             var group = new GroupModel();
             group.GroupId = groupForm.GroupId;
-            var groupManager = new GroupManager();
-            var result = groupManager.DeleteGroup(group);
+            var result = _manager.DeleteGroup(group);
             return result;
         }
 
@@ -74,8 +76,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         public GroupResult EditGroup([FromBody] GroupForm groupForm)
         {
             var newGroup = new GroupModel(groupForm.GroupId, groupForm.Owner, groupForm.GroupName, groupForm.Icon, groupForm.Features); ;
-            var groupManager = new GroupManager();
-            var result = groupManager.EditGroup(groupForm.GroupId, newGroup);
+            var result = _manager.EditGroup(groupForm.GroupId, newGroup);
             return result;
         }
     }
