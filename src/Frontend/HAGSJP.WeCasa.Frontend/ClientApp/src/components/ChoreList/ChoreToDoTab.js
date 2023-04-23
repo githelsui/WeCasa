@@ -28,7 +28,6 @@ export const ChoreToDoTab = (props) => {
                     }
                     console.log(chores)
                 } else {
-                    toast(res.data['message'])
                     setSuccessFetch(true)
                 }
             })

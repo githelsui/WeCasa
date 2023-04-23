@@ -61,13 +61,13 @@ export const ChoreWeek = (props) => {
     const [sunChores, setSunChores] = useState([]);
     
     useEffect(() => {
-        //setMonChores(props.toDoList['MON'])
-        //setTuesChores(props.toDoList['TUES'])
-        //setWedChores(props.toDoList['WED'])
-        //setThursChores(props.toDoList['THURS'])
-        //setFriChores(props.toDoList['FRI'])
-        //setSatChores(props.toDoList['SAT'])
-        //setSunChores(props.toDoList['SUN'])
+        setMonChores(data['MON'])
+        setTuesChores(data['TUES'])
+        setWedChores(data['WED'])
+        setThursChores(data['THURS'])
+        setFriChores(data['FRI'])
+        setSatChores(data['SAT'])
+        setSunChores(data['SUN'])
     }, []);
 
     return (<div style={{ paddingTop: 20 }}>
