@@ -151,6 +151,7 @@ const ChoreCreationModal = (props) => {
     }, []);
 
     return (<Modal
+        className="chore-creation-model"
         open={props.show}
         closable={false}
         centered="true"

@@ -66,7 +66,7 @@ export const ChoreList = (props) => {
                         <h3 className="mulish-font">Chore List 📋</h3>
                     </Col>
                     <Col span={6}>
-                        <Button style={Styles.defaultButtonStyle} onClick={() => setShowCreateModal(true)}>Add task</Button>
+                        <Button className='add-chore' style={Styles.defaultButtonStyle} onClick={() => setShowCreateModal(true)}>Add task</Button>
                         <ChoreCreationModal show={showCreateModal} close={() => setShowCreateModal(false)} confirm={attemptChoreCreation} group={currentGroup} user={currentUser} />
                     </Col>
                 </Row>
