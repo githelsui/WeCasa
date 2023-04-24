@@ -60,7 +60,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.CommandText = insertChoreSql;
                     command.Parameters.AddWithValue("@name", chore.Name);
                     command.Parameters.AddWithValue("@group_id", chore.GroupId);
-                    command.Parameters.AddWithValue("@created", chore.Created);
+                    command.Parameters.AddWithValue("@created", chore.Created == null ? DateTime.Now : chore.Created);
                     command.Parameters.AddWithValue("@created_by", chore.CreatedBy);
                     command.Parameters.AddWithValue("@reset_time", chore.ResetTime != null ? chore.ResetTime : null);
                     command.Parameters.AddWithValue("@notes", chore.Notes != null ? chore.Notes : null);
@@ -396,7 +396,9 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                                       FROM userchore AS uc
                                          INNER JOIN chores AS c 
                                             ON (uc.chore_id = c.chore_id)
-                                      WHERE username = @username AND group_id = @group_id;";
+                                      WHERE username = @username 
+                                            AND group_id = @group_id
+                                            AND MONTH(c.created) = MONTH(NOW());";
                     
                     command.CommandText = selectSql;
                     command.Parameters.AddWithValue("@username", username);
