@@ -35,19 +35,27 @@ namespace HAGSJP.WeCasa.Managers.Implementations
 
             public Result storeFeedbackTicket(Feedback feedback)
             {
-            var result = _dao.storeFeedbackTicket(feedback);
-            if (result.IsSuccessful)
+            try
             {
-                // Logging the file upload
-                successLogger.Log("Storing feedback was successful", LogLevels.Info, "Data Store", feedback.Email);
-                sgs.SendFeedback();
+                DAOResult result = new DAOResult();
+                result = _dao.storeFeedbackTicket(feedback);
+                if (result.IsSuccessful)
+                {
+                    successLogger.Log("Storing feedback was successful", LogLevels.Info, "Data Store", feedback.Email);
+                    sgs.SendFeedback();
+                }
+                else
+                {
+                    result.IsSuccessful = false;
+                    errorLogger.Log("Storing feedback was unsuccessful", LogLevels.Error, "Data Store", feedback.Email);
+                }
+                return result;
             }
-            else
+            catch (Exception ex) 
             {
-                // Logging the error
-                errorLogger.Log("Storing feedback was unsuccessful", LogLevels.Error, "Data Store", feedback.Email);
+                errorLogger.Log("Error Message: " + ex.Message, LogLevels.Error, "Data Store", feedback.Email);
+                throw ex;
             }
-            return result;
         }
     }
 }
