@@ -63,7 +63,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@created_by", chore.CreatedBy);
                     command.Parameters.AddWithValue("@notes", chore.Notes != null ? chore.Notes : null);
                     command.Parameters.AddWithValue("@repeats", chore.Repeats != null ? chore.Repeats : null);
-                    command.Parameters.AddWithValue("@is_completed", chore.IsCompleted == null ? chore.IsCompleted : false);
+                    command.Parameters.AddWithValue("@is_completed", chore.IsCompleted == null || chore.IsCompleted == false ? 0 : 1);
                     string assignedToJSON = JsonSerializer.Serialize(chore.AssignedTo);
                     command.Parameters.AddWithValue("@assigned_to", assignedToJSON);
                     string daysJson = JsonSerializer.Serialize(chore.Days);
@@ -123,8 +123,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                                             last_updated = @last_updated,
                                             last_updated_by = @last_updated_by,
                                             assigned_to = @assigned_to,
-                                            reset_time = @reset_time,
                                             notes = @notes,
+                                            days = @days,
                                             repeats = @repeats,
                                             is_completed = @is_completed
                                     WHERE chore_id = @chore_id;";
@@ -134,20 +134,20 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@name", chore.Name);
                     command.Parameters.AddWithValue("@last_updated", chore.LastUpdated);
                     command.Parameters.AddWithValue("@last_updated_by", chore.LastUpdatedBy);
-                    command.Parameters.AddWithValue("@reset_time", chore.ResetTime != null ? chore.ResetTime : null);
                     command.Parameters.AddWithValue("@notes", chore.Notes != null ? chore.Notes : null);
                     command.Parameters.AddWithValue("@repeats", chore.Repeats != null ? chore.Repeats : null);
-                    command.Parameters.AddWithValue("@is_completed", chore.IsCompleted == null ? chore.IsCompleted : false);
+                    command.Parameters.AddWithValue("@is_completed", chore.IsCompleted == null || chore.IsCompleted == false ? 0 : 1);
                     command.Parameters.AddWithValue("@chore_id", chore.ChoreId);
                     string assignedToJSON = JsonSerializer.Serialize(chore.AssignedTo);
                     command.Parameters.AddWithValue("@assigned_to", assignedToJSON);
+                    string daysJson = JsonSerializer.Serialize(chore.Days);
+                    command.Parameters.AddWithValue("@days", daysJson);
 
                     var rows = (command.ExecuteNonQuery());
-                    result = result.ValidateSqlResult(rows);
+                    result = ValidateSqlStatement(rows);
                     if (result.IsSuccessful)
                     {
                         result = ReassignChore(chore);
-                        //result = AssignChores(chore);
                         if (result.IsSuccessful)
                         {
                             return result;
@@ -168,7 +168,46 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
-        public DAOResult AssignChore(Chore chore)
+        public DAOResult CompleteChore(Chore chore)
+        {
+            var result = new DAOResult();
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
+
+                    var updateSql = @"UPDATE Chores
+                                        SET
+                                            last_updated = @last_updated,
+                                            last_updated_by = @last_updated_by,
+                                            is_completed = @is_completed
+                                    WHERE chore_id = @chore_id;";
+
+                    var command = connection.CreateCommand();
+                    command.CommandText = updateSql;
+                    command.Parameters.AddWithValue("@last_updated", chore.LastUpdated);
+                    command.Parameters.AddWithValue("@last_updated_by", chore.LastUpdatedBy);
+                    command.Parameters.AddWithValue("@is_completed", (chore.IsCompleted == null || chore.IsCompleted == false) ? 0 : 1);
+                    command.Parameters.AddWithValue("@chore_id", chore.ChoreId);
+
+                    var rows = (command.ExecuteNonQuery());
+                    result = ValidateSqlStatement(rows);
+                    return result;
+                }
+                catch (MySqlException sqlex)
+                {
+                    throw sqlex;
+                }
+                catch (Exception sqlex)
+                {
+                    throw sqlex;
+                }
+            }
+        }
+
+            public DAOResult AssignChore(Chore chore)
         {
             // Reset chore.AssignedTo for Chores table & Usergroups table
             var result = new DAOResult();
@@ -304,12 +343,15 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                             chore.ChoreId = reader.GetInt32(reader.GetOrdinal("chore_id"));
                             chore.GroupId = reader.GetInt32(reader.GetOrdinal("group_id"));
                             chore.Name = reader.GetString(reader.GetOrdinal("name"));
+                            chore.LastUpdatedBy = reader.IsDBNull(reader.GetOrdinal("last_updated_by")) ? "" : reader.GetString(reader.GetOrdinal("last_updated_by"));
+                            chore.LastUpdated = reader.IsDBNull(reader.GetOrdinal("last_updated")) ? null : reader.GetDateTime(reader.GetOrdinal("last_updated"));
                             chore.Notes = reader.IsDBNull(reader.GetOrdinal("notes")) ? "" : reader.GetString(reader.GetOrdinal("notes"));
                             chore.Repeats = reader.IsDBNull(reader.GetOrdinal("repeats")) ? "" : reader.GetString(reader.GetOrdinal("repeats"));
                             chore.IsCompleted = reader.GetInt32(reader.GetOrdinal("is_completed")) == 1 ? true : false;
-                            chore.ResetTime = reader.IsDBNull(reader.GetOrdinal("reset_time")) ? null : reader.GetDateTime(reader.GetOrdinal("reset_time"));
                             List<UserProfile>? assignedTo = JsonSerializer.Deserialize<List<UserProfile>>(reader.GetString(reader.GetOrdinal("assigned_to")));
                             chore.AssignedTo = assignedTo;
+                            List<String>? days = reader.IsDBNull(reader.GetOrdinal("days")) ? new List<String>() : JsonSerializer.Deserialize<List<String>>(reader.GetString(reader.GetOrdinal("days")));
+                            chore.Days = days;
                             chores.Add(chore);
                         }
                         result.IsSuccessful = true;

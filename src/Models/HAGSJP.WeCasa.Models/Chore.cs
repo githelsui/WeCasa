@@ -35,6 +35,16 @@ namespace HAGSJP.WeCasa.Models
             UsernamesAssignedTo = usernamesAssignedTo;
             Repeats = repeats;
         }
+        public Chore(int? choreId, String name, List<String>? days, String? notes, int groupId, List<string> usernamesAssignedTo, String? repeats)
+        {
+            ChoreId = choreId;
+            Name = name;
+            Days = days;
+            Notes = notes;
+            GroupId = groupId;
+            UsernamesAssignedTo = usernamesAssignedTo;
+            Repeats = repeats;
+        }
     }
 }
 

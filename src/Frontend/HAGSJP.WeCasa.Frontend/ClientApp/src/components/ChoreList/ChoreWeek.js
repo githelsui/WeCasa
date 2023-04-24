@@ -8,49 +8,6 @@ import axios from 'axios';
 import defaultImage from '../../assets/defaultimgs/wecasatemp.jpg';
 import * as ValidationFuncs from '../../scripts/InputValidation.js';
 
-//dev only
-const data = {
-    'MON': [{
-        Name: 'chore item 1',
-        Notes: '',
-        Assignments: ['githelsuico@gmail.com'],
-        IsCompleted: false
-    },
-    {
-        Name: 'chore item 2',
-        Notes: 'test notes',
-        Assignments: ['githelsuico@gmail.com, new8@gmail.com'],
-        IsCompleted: true,
-    }],
-    'TUES': [{
-        Name: 'chore item 3',
-        Notes: 'test notes',
-        Assignments: ['new8@gmail.com'],
-        IsCompleted: false
-    }],
-    'WED': [],
-    'THURS': [],
-    'FRI': [],
-    'SAT': [{
-        Name: 'chore item 3',
-        Notes: 'test notes',
-        Assignments: ['new8@gmail.com'],
-        IsCompleted: false
-    },
-    {
-        Name: 'chore item 3',
-        Notes: 'test notes',
-        Assignments: ['new8@gmail.com'],
-        IsCompleted: false
-    }],
-    'SUN': [{
-        Name: 'chore item 3',
-        Notes: 'test notes',
-        Assignments: ['new8@gmail.com'],
-        IsCompleted: false
-    }]
-}
-
 export const ChoreWeek = (props) => {
     const [monChores, setMonChores] = useState([]);
     const [tuesChores, setTuesChores] = useState([]);
@@ -59,15 +16,21 @@ export const ChoreWeek = (props) => {
     const [friChores, setFriChores] = useState([]);
     const [satChores, setSatChores] = useState([]);
     const [sunChores, setSunChores] = useState([]);
+
+    const organizeChores = () => {
+        setMonChores(props.toDoList['MON'] == undefined ? [] : props.toDoList['MON'])
+        setTuesChores(props.toDoList['TUES'] == undefined ? [] : props.toDoList['TUES'])
+        console.log(thursChores)
+        setWedChores(props.toDoList['WED'] == undefined ? [] : props.toDoList['WED'])
+        setThursChores(props.toDoList['THURS'] == undefined ? [] : props.toDoList['THURS'])
+        setFriChores(props.toDoList['FRI'] == undefined ? [] : props.toDoList['FRI'])
+        setSatChores(props.toDoList['SAT'] == undefined ? [] : props.toDoList['SAT'])
+        setSunChores(props.toDoList['SUN'] == undefined ? [] : props.toDoList['SUN'])
+    }
     
     useEffect(() => {
-        setMonChores(data['MON'])
-        setTuesChores(data['TUES'])
-        setWedChores(data['WED'])
-        setThursChores(data['THURS'])
-        setFriChores(data['FRI'])
-        setSatChores(data['SAT'])
-        setSunChores(data['SUN'])
+        organizeChores()
+        
     }, []);
 
     return (<div style={{ paddingTop: 20 }}>

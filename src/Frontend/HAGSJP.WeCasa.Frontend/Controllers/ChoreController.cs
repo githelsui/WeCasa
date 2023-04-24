@@ -45,6 +45,31 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         }
 
         [HttpPost]
+        [Route("CompleteChore")]
+        public ChoreResult CompleteChore([FromBody] ChoreForm choreForm)
+        {
+            try
+            {
+                Chore chore = new Chore(choreForm.ChoreId, choreForm.Name, choreForm.Days, choreForm.Notes, choreForm.GroupId, choreForm.AssignedTo, choreForm.Repeats);
+                var result = _manager.CompleteChore(chore, new UserAccount(choreForm.CurrentUser));
+                if (result.IsSuccessful)
+                {
+                    result.ErrorStatus = System.Net.HttpStatusCode.OK;
+                }
+                else
+                {
+                    result.ErrorStatus = System.Net.HttpStatusCode.BadRequest;
+                }
+                return result;
+
+            }
+            catch (Exception exc)
+            {
+                return new ChoreResult(false, System.Net.HttpStatusCode.Conflict, exc.Message);
+            }
+        }
+
+        [HttpPost]
         [Route("EditChore")]
         public ChoreResult EditChore([FromBody] ChoreForm choreForm)
         {

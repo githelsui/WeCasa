@@ -90,6 +90,33 @@ namespace HAGSJP.WeCasa.Services.Implementations
             }
         }
 
+        public ChoreResult CompleteChore(Chore chore)
+        {
+            try
+            {
+                var result = new ChoreResult();
+                // DAO Operation
+                var daoResult = _dao.CompleteChore(chore);
+                if (daoResult.IsSuccessful)
+                {
+                    result.ReturnedObject = daoResult.ReturnedObject;
+                    _logger.Log("Chore completed successfully", LogLevels.Info, "Data Store", chore.LastUpdatedBy);
+                }
+                else
+                {
+                    _logger.Log("Chore completion failed", LogLevels.Info, "Data Store", chore.LastUpdatedBy);
+                }
+                result.IsSuccessful = daoResult.IsSuccessful;
+                result.Message = daoResult.Message;
+                return result;
+            }
+            catch (Exception exc)
+            {
+                _logger.Log("Error Message: " + exc.Message, LogLevels.Error, "Data Store", chore.CreatedBy, new UserOperation(Operations.ChoreList, 0));
+                throw exc;
+            }
+        }
+
         public ChoreResult GetGroupChores(GroupModel group, int isCompleted)
         {
             try
@@ -97,7 +124,16 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 var result = new ChoreResult();
 
                 // DAO Operation
-                var selectSql = string.Format(@"SELECT * from CHORES WHERE group_id = '{0}' AND is_completed = '{1}'", group.GroupId, isCompleted);
+                var selectSql = "";
+                if (isCompleted == 1)
+                {
+                    selectSql = string.Format(@"SELECT * from CHORES WHERE group_id = '{0}' AND is_completed = '{1}' ORDER BY last_updated DESC ", group.GroupId, isCompleted);
+                }
+                else
+                {
+                    selectSql = string.Format(@"SELECT * from CHORES WHERE group_id = '{0}' AND is_completed = '{1}'", group.GroupId, isCompleted);
+                }
+
                 var daoResult = _dao.GetChores(selectSql);
                 if (daoResult.IsSuccessful)
                 {
@@ -177,7 +213,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 return result;
             }
 
-            var checkValidName = new Regex(@"\b([A-ZÀ-ÿ][-,a-z. ']*)+");
+            var checkValidName = new Regex(@"[^a-zA-Z0-9\s]");
             if (checkValidName.IsMatch(chore.Name)) // Chore name invalid characters
             {
                 result.IsSuccessful = false;
