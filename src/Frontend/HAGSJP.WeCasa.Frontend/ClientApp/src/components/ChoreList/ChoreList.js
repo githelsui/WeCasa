@@ -9,48 +9,6 @@ import * as Styles from '../../styles/ConstStyles.js';
 import axios from 'axios';
 const TabPane = Tabs.TabPane;
 
-const data = {
-    'MON': [{
-        Name: 'chore item 1',
-        Notes: '',
-        Assignments: ['githelsuico@gmail.com'],
-        IsCompleted: false
-    },
-        {
-            Name: 'chore item 2',
-            Notes: 'test notes',
-            Assignments: ['githelsuico@gmail.com, new8@gmail.com'],
-            IsCompleted: true,
-        }],
-    'TUES': [{
-            Name: 'chore item 3',
-            Notes: 'test notes',
-            Assignments: ['new8@gmail.com'],
-            IsCompleted: false
-    }],
-    'WED': [],
-    'THURS': [],
-    'FRI': [],
-    'SAT': [{
-        Name: 'chore item 3',
-        Notes: 'test notes',
-        Assignments: ['new8@gmail.com'],
-        IsCompleted: false
-        },
-        {
-            Name: 'chore item 3',
-            Notes: 'test notes',
-            Assignments: ['new8@gmail.com'],
-            IsCompleted: false
-        }],
-    'SUN': [{
-        Name: 'chore item 3',
-        Notes: 'test notes',
-        Assignments: ['new8@gmail.com'],
-        IsCompleted: false
-    }]
-}
-
 export const ChoreList = (props) => {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const { currentGroup, currentUser } = useAuth();
@@ -106,10 +64,6 @@ export const ChoreList = (props) => {
         });
     }
 
-    useEffect(() => {
-        // setUpdateToDoList(true) -> trigger update in ChoreToDoTab
-    }, []);
-
     return (
         <div>
             <div className="header">
@@ -124,8 +78,8 @@ export const ChoreList = (props) => {
                 </Row>
             </div>
             <Tabs defaultActiveKey="1" onChange={tabItemClick} destroyInactiveTabPane>
-                <TabPane tab="Current To-do" key="1"><ChoreToDoTab toDoList={data} update={updateToDo} group={currentGroup}/></TabPane>
-                <TabPane tab="History" key="2"><ChoreHistory update={updateHistory}/></TabPane>
+                <TabPane tab="Current To-do" key="1"><ChoreToDoTab update={updateToDo} setUpdate={setUpdateToDo} group={currentGroup} currentUser={currentUser}/></TabPane>
+                <TabPane tab="History" key="2"><ChoreHistory update={updateHistory} setUpdate={setUpdateToDo} group={currentGroup} currentUser={currentUser}/></TabPane>
             </Tabs>  </div>
     );
 };

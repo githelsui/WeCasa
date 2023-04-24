@@ -1,5 +1,5 @@
 ﻿import React, { Component, useState, useEffect } from 'react';
-import { Card, Avatar, Button, notification} from 'antd';
+import { Card, Avatar, Button, notification } from 'antd';
 import * as Styles from '../../styles/ConstStyles.js';
 import '../../styles/System.css';
 import '../../index.css';
@@ -18,7 +18,7 @@ import image6 from '../../assets/profileimgs/6.jpg';
 const { Meta } = Card;
 
 
-export const ChoreCard = (props) => {
+export const CompletedChoreCard = (props) => {
     const images = [image1, image2, image3, image4, image5, image6];
 
     const getAssignedUsernames = (assignments) => {
@@ -32,9 +32,9 @@ export const ChoreCard = (props) => {
     }
 
     const assignmentProfileIcons = (assignments) => {
-        return (<div>
-              {assignments.map((user, i) =>
-                <Avatar style={{ borderColor: 'black', marginLeft: -15, marginTop: -15}} className='padding' src={images[user['image']]} />
+        return (<div style={{ width: '20%'}}>
+            {assignments.map((user, i) =>
+                <Avatar style={{ borderColor: 'black', marginLeft: -15, marginTop: -15}} className='padding' src={images[0]} />
             )}
         </div>);
     }
@@ -58,7 +58,7 @@ export const ChoreCard = (props) => {
         console.log(chore)
         let choreForm = {
             CurrentUser: props.user['username'],
-            GroupId: chore['groupId'], 
+            GroupId: chore['groupId'],
             Name: chore['name'],
             Notes: chore['notes'],
             Repeats: chore['repeats'],
@@ -95,16 +95,12 @@ export const ChoreCard = (props) => {
 
     return (
         <div className="padding-bottom">
-        <Card
-            style={{
-                marginBottom: 10,
-                width: 120,
-                borderColor: 'black'
-            }}
-            actions={[
-                <Nudge key="nudge" assignedUser="Assignee" />,
-                <Button shape="circle" icon={<CheckSquareOutlined />} onClick={() => completeChore(props.chore)}  />
-                ]}>
+            <Card
+                style={{
+                    marginBottom: 10,
+                    width: '100%',
+                    borderColor: 'black'
+                }}>
                 {assignmentProfileIcons(props.chore['assignedTo'])}
                 <h6 className="mulish-font" style={{
                     marginTop: 10,
@@ -123,8 +119,8 @@ export const ChoreCard = (props) => {
                     marginLeft: -10,
                     overflowWrap: 'break-word'
                 }}><i>{props.chore['notes']}</i></p>
-        </Card>
-    </div>);
+            </Card>
+        </div>);
 };
 
-export default ChoreCard;
+export default CompletedChoreCard;

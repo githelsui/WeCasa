@@ -118,7 +118,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 chore.LastUpdatedBy = userAccount.Username;
                 chore.IsCompleted = true;
 
-                var serviceResult = _service.EditChore(chore);
+                var serviceResult = _service.CompleteChore(chore);
                 if (serviceResult.IsSuccessful)
                 {
                     result.ReturnedObject = serviceResult.ReturnedObject;
@@ -148,6 +148,19 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 chore.LastUpdated = DateTime.Now;
                 chore.LastUpdatedBy = userAccount.Username;
                 chore.IsCompleted = false;
+
+                var assignedProfilesRes = ReassignChore(chore, chore.UsernamesAssignedTo);
+                if (assignedProfilesRes.IsSuccessful)
+                {
+                    chore.AssignedTo = (List<UserProfile>)assignedProfilesRes.ReturnedObject;
+                }
+                else
+                {
+                    result.IsSuccessful = false;
+                    result.Message = assignedProfilesRes.Message;
+                    return result;
+                }
+
 
                 var serviceResult = _service.EditChore(chore);
                 if (serviceResult.IsSuccessful)
@@ -228,7 +241,23 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 var serviceResult = _service.GetGroupChores(group, 1);
                 if (serviceResult.IsSuccessful)
                 {
-                    result.ReturnedObject = serviceResult.ReturnedObject;
+                    List<Chore> resultQuery = (List<Chore>)serviceResult.ReturnedObject;
+                    var choresPerDay = new Dictionary<string, List<Chore>>();
+                    for (var i = 0; i < resultQuery.Count; i++)
+                    {
+                        var chore = resultQuery[i];
+                        var dateCompleted = chore.LastUpdated;
+                        string key = string.Format("{0:dddd MM/dd/yy}", dateCompleted);
+                        if(choresPerDay.ContainsKey(key))
+                        {
+                            choresPerDay[key].Add(chore);
+                        }
+                        else
+                        {
+                            choresPerDay.Add(key, new List<Chore>() { chore });
+                        }
+                    }
+                    result.ReturnedObject = choresPerDay;
                     _logger.Log("Group completed chores fetched successfully", LogLevels.Info, "Service", group.Owner);
                 }
                 else
