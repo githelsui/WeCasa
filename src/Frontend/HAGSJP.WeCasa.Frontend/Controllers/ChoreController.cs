@@ -21,12 +21,12 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("AddChore")]
-        public ChoreResult AddChore([FromBody] ChoreForm choreForm)
+        public async Task<ChoreResult> AddChore([FromBody] ChoreForm choreForm)
         {
             try
             {
                 Chore chore = new Chore(choreForm.Name, choreForm.Days, choreForm.Notes, choreForm.GroupId, choreForm.AssignedTo, choreForm.Repeats);
-                var result = _manager.AddChore(chore, new UserAccount(choreForm.CurrentUser));
+                var result = await _manager.AddChore(chore, new UserAccount(choreForm.CurrentUser));
                 if(result.IsSuccessful)
                 {
                     result.ErrorStatus = System.Net.HttpStatusCode.OK;
@@ -46,12 +46,12 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("EditChore")]
-        public ChoreResult EditChore([FromBody] ChoreForm choreForm)
+        public async Task<ChoreResult> EditChore([FromBody] ChoreForm choreForm)
         {
             try
             {
                 Chore chore = new Chore(choreForm.Name, choreForm.Days, choreForm.Notes, choreForm.GroupId, choreForm.AssignedTo, choreForm.Repeats);
-                var result = _manager.EditChore(chore, new UserAccount(choreForm.CurrentUser));
+                var result = await _manager.EditChore(chore, new UserAccount(choreForm.CurrentUser));
                 if (result.IsSuccessful)
                 {
                     result.ErrorStatus = System.Net.HttpStatusCode.OK;
@@ -71,11 +71,11 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("GetGroupToDoChores")]
-        public ChoreResult GetGroupToDoChores([FromBody] GroupMemberForm groupForm)
+        public ChoreResult GetGroupToDoChores([FromBody] ChoreForm choreForm)
         {
             try
             {
-                var result = _manager.GetGroupToDoChores(new GroupModel(groupForm.GroupId));
+                var result = _manager.GetGroupToDoChores(new GroupModel(choreForm.GroupId));
                 if (result.IsSuccessful)
                 {
                     result.ErrorStatus = System.Net.HttpStatusCode.OK;
@@ -95,11 +95,11 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("GetGroupCompletedChores")]
-        public ChoreResult GetGroupCompletedChores([FromBody] GroupMemberForm groupForm)
+        public ChoreResult GetGroupCompletedChores([FromBody] ChoreForm choreForm)
         {
             try
             {
-                var result = _manager.GetGroupCompletedChores(new GroupModel(groupForm.GroupId));
+                var result = _manager.GetGroupCompletedChores(new GroupModel(choreForm.GroupId));
                 if (result.IsSuccessful)
                 {
                     result.ErrorStatus = System.Net.HttpStatusCode.OK;
@@ -119,11 +119,11 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("GetUserToDoChores")]
-        public ChoreResult GetUserToDoChores([FromBody] AccountForm accForm)
+        public ChoreResult GetUserToDoChores([FromBody] ChoreForm choreForm)
         {
             try
             {
-                var result = _manager.GetUserToDoChores(new UserAccount(accForm.Email));
+                var result = _manager.GetUserToDoChores(new UserAccount(choreForm.CurrentUser));
                 if (result.IsSuccessful)
                 {
                     result.ErrorStatus = System.Net.HttpStatusCode.OK;
@@ -167,7 +167,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("GetCurrentGroupMembers")]
-        public ChoreResult GetCurrentGroupMembers([FromBody] GroupMemberForm groupForm)
+        public async Task<ChoreResult> GetCurrentGroupMembers([FromBody] GroupMemberForm groupForm)
         {
             try
             {
@@ -175,7 +175,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
                 var groupModel = new GroupModel();
                 groupModel.GroupId = groupForm.GroupId;
                 var groupManager = new GroupManager();
-                var managerResult = groupManager.GetGroupMembers(groupModel);
+                var managerResult = await groupManager.GetGroupMembers(groupModel);
                 if (managerResult.IsSuccessful)
                 {
                     result.ReturnedObject = managerResult.ReturnedObject;

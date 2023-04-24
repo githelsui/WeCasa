@@ -45,20 +45,21 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         [Route("GetGroupMembers")]
         public async Task<GroupResult> GetGroupMembers([FromBody] GroupMemberForm groupForm)
         {
-            var groupResult = new GroupResult();
+            var result = new GroupResult();
             var groupModel = new GroupModel();
             try
             {
                 // check if progress bar is enabled on group
                 groupModel.GroupId = groupForm.GroupId;
-                groupResult = await _manager.GetGroupMembers(groupModel);
+                var groupResult = await _manager.GetGroupMembers(groupModel);
+                result = groupResult;
             }
             catch (Exception ex)
             {
-                groupResult.IsSuccessful = false;
-                groupResult.Message = ex.Message;
+                result.IsSuccessful = false;
+                result.Message = ex.Message;
             }
-            return groupResult;
+            return result;
         }
 
         [HttpPost]

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Xml.XPath;
 using HAGSJP.WeCasa.Models;
 using MySqlConnector;
 
@@ -51,8 +52,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     connection.Open();
 
-                    var insertChoreSql = @"INSERT INTO Chores (name, group_id, notes, assigned_to, repeats, is_completed, created, created_by, days)
-                                    VALUES (@name, @group_id, @notes, @assigned_to, @repeats, @is_completed, @created, @created_by, @days);
+                    var insertChoreSql = @"INSERT INTO Chores (name, group_id, reset_time, notes, assigned_to, repeats, is_completed, created, created_by)
+                                    VALUES (@name, @group_id, @reset_time, @notes, @assigned_to, @repeats, @is_completed, @created, @created_by);
                                     SELECT LAST_INSERT_ID();";
 
                     var command = connection.CreateCommand();
@@ -61,13 +62,12 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@group_id", chore.GroupId);
                     command.Parameters.AddWithValue("@created", chore.Created);
                     command.Parameters.AddWithValue("@created_by", chore.CreatedBy);
+                    command.Parameters.AddWithValue("@reset_time", chore.ResetTime != null ? chore.ResetTime : null);
                     command.Parameters.AddWithValue("@notes", chore.Notes != null ? chore.Notes : null);
                     command.Parameters.AddWithValue("@repeats", chore.Repeats != null ? chore.Repeats : null);
                     command.Parameters.AddWithValue("@is_completed", chore.IsCompleted == null ? chore.IsCompleted : false);
                     string assignedToJSON = JsonSerializer.Serialize(chore.AssignedTo);
                     command.Parameters.AddWithValue("@assigned_to", assignedToJSON);
-                    string daysJson = JsonSerializer.Serialize(chore.Days);
-                    command.Parameters.AddWithValue("@days", daysJson);
 
                     // Execution of first query for Chore table
                     var choreId = Convert.ToInt32(command.ExecuteScalar());
@@ -305,7 +305,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                             chore.GroupId = reader.GetInt32(reader.GetOrdinal("group_id"));
                             chore.Name = reader.GetString(reader.GetOrdinal("name"));
                             chore.Notes = reader.IsDBNull(reader.GetOrdinal("notes")) ? "" : reader.GetString(reader.GetOrdinal("notes"));
-                            chore.Repeats = reader.IsDBNull(reader.GetOrdinal("repeats")) ? "" : reader.GetString(reader.GetOrdinal("repeats"));
+                            command.Parameters.AddWithValue("@repeats", chore.Repeats != null ? chore.Repeats : null);
                             chore.IsCompleted = reader.GetInt32(reader.GetOrdinal("is_completed")) == 1 ? true : false;
                             chore.ResetTime = reader.IsDBNull(reader.GetOrdinal("reset_time")) ? null : reader.GetDateTime(reader.GetOrdinal("reset_time"));
                             List<UserProfile>? assignedTo = JsonSerializer.Deserialize<List<UserProfile>>(reader.GetString(reader.GetOrdinal("assigned_to")));
@@ -379,7 +379,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 }
             }
         }
-        public ChoreResult GetUserProgress(int group_id, string username)
+        public async Task<ChoreResult> GetUserProgress(string username, int group_id)
         {
             var result = new ChoreResult();
             var progressReport = new ProgressReport(group_id, username);
@@ -388,16 +388,15 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             {
                 try
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
 
                     var command = connection.CreateCommand();
-                    var selectSql = @"SELECT COUNT(CASE WHEN is_completed = 1 THEN 1 ELSE NULL) AS completedChores,
-                                                    COUNT(CASE WHEN is_completed = 0 THEN 1 ELSE NULL) AS incompleteChores,
-                                            FROM UserChore 
-                                                INNER JOIN Chores USING chore_id
-                                            WHERE username = @username AND group_id = @group_id 
-                                                AND (MONTH(created) == MONTH(NOW()) AND repeats IS NULL)
-                                                OR repeats = 'Monthly'";
+                    var selectSql = @"SELECT COUNT(CASE WHEN uc.is_completed = 1 THEN 1 ELSE NULL END) AS completedChores,
+                                         COUNT(CASE WHEN uc.is_completed = 0 THEN 1 ELSE NULL END) AS incompleteChores
+                                      FROM userchore AS uc
+                                         INNER JOIN chores AS c 
+                                            ON (uc.chore_id = c.chore_id)
+                                      WHERE username = @username AND group_id = @group_id;";
                     
                     command.CommandText = selectSql;
                     command.Parameters.AddWithValue("@username", username);
@@ -414,16 +413,16 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         result.ReturnedObject = progressReport;
                         result.IsSuccessful = true;
                     }
-                    return result;
                 }
                 catch (MySqlException sqlex)
                 {
-                    throw sqlex;
+                    result.Message = sqlex.Message;
                 }
                 catch (Exception sqlex)
                 {
-                    throw sqlex;
+                    result.Message = sqlex.Message;
                 }
+                return result;
             }
         }
 

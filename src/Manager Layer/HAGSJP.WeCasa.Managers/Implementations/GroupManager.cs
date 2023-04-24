@@ -152,38 +152,46 @@ namespace HAGSJP.WeCasa.Managers.Implementations
 
         public async Task<GroupResult> GetGroupMembers(GroupModel group)
         {
+            var result = new GroupResult();
+            var progressReports = new List<ProgressReport>();
             var userManager = new UserManager();
             var choreService = new ChoreService();
 
-            var result = _dao.GetGroupMembers(group);
-            if (result.IsSuccessful)
+            var groupResult = await _dao.GetGroupMembers(group);
+            if (groupResult.IsSuccessful)
             {
-                var usernamesList = result.ReturnedObject;
+                var usernamesList = groupResult.ReturnedObject;
                 IEnumerable enumerable = usernamesList as IEnumerable;
                 var groupMembersList = new List<UserProfile>();
                 foreach (string username in enumerable)
                 {
-                    Console.Write("Username = " + username);
+                    Console.Write("Username = " + username + "\n");
                     var userAccount = new UserAccount(username);
-                    // getting user info
-                    var userProfile = (UserProfile)userManager.GetUserProfile(userAccount).ReturnedObject;
-                    // getting chore progress
-                    var choreProgress = await choreService.GetUserProgress(username, group.GroupId);
-                    userProfile.ChoreProgress = (ProgressReport)choreProgress.ReturnedObject;
 
+                    // getting user info
+                    var userResult = await userManager.GetUserProfile(userAccount);
+                    var userProfile = (UserProfile)userResult.ReturnedObject;
+                    userProfile.Username = username;
                     groupMembersList.Add(userProfile);
+
+                    // getting chore progress
+                    var choreResult = await choreService.GetUserProgress(username, group.GroupId);
+                    progressReports.Add(choreResult.ChoreProgress);
+                    result.ProgressReports = progressReports;
+
+                    // Concatenating messages from all 3 services
+                    result.Message = groupResult.Message + ", " + userResult.Message + ", " + choreResult.Message;
                 }
                 var groupMemberArr = groupMembersList.ToArray();
                 result.ReturnedObject = groupMemberArr;
-                return result;
             }
             else
             {
                 // Logging the error
                 await errorLogger.Log("Error fetching group member", LogLevels.Error, "Data Store", group.Owner);
                 result.Message = "Error fetching group member";
-                return result;
             }
+            return result;
         }
 
         public Result AddGroupMembers(GroupModel group, string[] groupMembers)

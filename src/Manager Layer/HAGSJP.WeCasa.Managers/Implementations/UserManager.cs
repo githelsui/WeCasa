@@ -189,9 +189,14 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             return (UserStatus) populateResult.ReturnedObject;
         }
 
-        public AuthResult GetUserProfile(UserAccount userAccount)
+        public async Task<AuthResult> GetUserProfile(UserAccount userAccount)
         {
-            return _dao.GetUserProfile(userAccount);
+            var userResult = await _dao.GetUserProfile(userAccount);
+            if (userResult.IsSuccessful)
+            {
+                userResult.Message = "User profile retrieved successfully";
+            }
+            return userResult;
         }
 
             public Result RegisterUser(string firstName, string lastName, string email, string password)
