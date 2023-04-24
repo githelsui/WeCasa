@@ -55,7 +55,7 @@ export const GroupSettings = (props) => {
 
             <Tabs defaultActiveKey="2" onChange={tabItemClick} destroyInactiveTabPane>
                 <TabPane tab="Group Members" id="group-members" key="1"><GroupMembersTab group={currentGroup} /></TabPane>
-                <TabPane tab="Settings" key="2"><GroupSettingsTab group={currentGroup} /></TabPane>
+                <TabPane tab="Settings" id="group-settings" key="2"><GroupSettingsTab group={currentGroup} /></TabPane>
             </Tabs>  </div>
         );
 };

@@ -51,12 +51,13 @@ namespace HAGSJP.WeCasa.Managers.Implementations
 
             stopwatch.Start();
             var createGroupResult = new GroupResult();
-            var createFileBucketResult = new S3Result();
+            //var createFileBucketResult = new S3Result();
 
             createGroupResult = _dao.CreateGroup(group);
-            createFileBucketResult = _s3dao.CreateBucket(group.GroupId.ToString()).Result;
+            //createFileBucketResult = _s3dao.CreateBucket(group.GroupId.ToString()).Result;
 
-            if (createGroupResult.IsSuccessful && createFileBucketResult.IsSuccessful)
+            //if (createGroupResult.IsSuccessful && createFileBucketResult.IsSuccessful)
+            if (createGroupResult.IsSuccessful) 
             {
                 // Logging the group creation
                 successLogger.Log("Group created successfully", LogLevels.Info, "Data Store", group.Owner);
@@ -84,12 +85,24 @@ namespace HAGSJP.WeCasa.Managers.Implementations
 
             stopwatch.Start();
             var deleteGroupResult = new Result();
-            var deleteGroupFiles = new S3Result();
-            var deleteFileBucketResult = new S3Result();
+            //var deleteGroupFiles = new S3Result();
+            //var deleteFileBucketResult = new S3Result();
 
             deleteGroupResult = _dao.DeleteGroup(group);
-            deleteGroupFiles = _s3dao.DeleteAllObjects(group.GroupId.ToString()).Result;
+            if (deleteGroupResult.IsSuccessful)
+            {
+                // Logging the group deletion
+                successLogger.Log("Group deleted successfully", LogLevels.Info, "Data Store", group.Owner);
+            } 
+            else
+            {
+                // Logging the error
+                errorLogger.Log("Error deleting group files.", LogLevels.Error, "Data Store", group.Owner);
+            }
+
+            /*deleteGroupFiles = _s3dao.DeleteAllObjects(group.GroupId.ToString()).Result;
             if (deleteGroupResult.IsSuccessful && deleteGroupFiles.IsSuccessful)
+            if (deleteGroupResult.IsSuccessful)
             {
                 deleteFileBucketResult = _s3dao.DeleteBucket(group.GroupId.ToString()).Result;
                 if (deleteFileBucketResult.IsSuccessful)
@@ -106,7 +119,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             {
                 // Logging the error
                 errorLogger.Log("Error deleting group files.", LogLevels.Error, "Data Store", group.Owner);
-            }
+            }*/
 
             stopwatch.Stop();
             var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);

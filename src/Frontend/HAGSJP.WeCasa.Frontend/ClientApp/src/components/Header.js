@@ -88,7 +88,7 @@ export const Header = () => {
                                 <DropdownMenu>
                                     <DropdownItem disabled>Settings</DropdownItem>
                                     <DropdownItem onClick={() => navigate('/edit-profile')}>Edit Profile</DropdownItem>
-                                    <DropdownItem onClick={() => navigate('/account-settings')}>Account Settings</DropdownItem>
+                                    <DropdownItem id="accountSettings" onClick={() => navigate('/account-settings')}>Account Settings</DropdownItem>
                                     <DropdownItem onClick={() => navigate('/feedback')}>Help</DropdownItem>
                                     <DropdownItem onClick={() => setShowModal(true)}>Logout</DropdownItem>
                                     <LogoutModal show={showModal} close={() => setShowModal(false)} confirm={attemptLogout} />
