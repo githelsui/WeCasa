@@ -24,17 +24,17 @@ export const CircularProgressBar = (props) => {
                 }
             }
         }
-        console.log(report.username," Chore compltetion percentage:",result);
-        return result;    
+        console.log(report.username, " Chore compltetion percentage:", result);
+        return result;
     }
 
     return (
         <div>
-        <div role="circularbar"
-            aria-valuemin="0"
-            aria-valuemax="100"
-                style={{ "--value": calcChoreProgress(report[0]) }}>
-            </div>
+            <div role="circularbar"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                    style={{ "--value": calcChoreProgress(report[0]) }}>
+             </div>
             <div style={{textAlign: "center"}}>
                 <p>chores completed</p>
             </div>

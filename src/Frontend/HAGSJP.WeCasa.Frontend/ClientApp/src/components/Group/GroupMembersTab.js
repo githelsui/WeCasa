@@ -132,8 +132,13 @@ export const GroupMembersTab = (props) => {
                                     removeRoommate(item.username)
                                 }} type="default" style={Styles.removeGroupMemberButton}>X  Remove Member</Button>
                             </List.Item>
-                            <CircularProgressBar report={progressReports.filter(r => r.username === item.username)}></CircularProgressBar>
+                            <div>
+                                {currentGroup.features.includes("Circular Progress Bar") ? (
+                                    <CircularProgressBar report={progressReports.filter(r => r.username === item.username)}></CircularProgressBar>
+                                ) : <div></div>}
+                            </div>
                         </Skeleton>
+                    
                     </List.Item>
                 )}
             />
