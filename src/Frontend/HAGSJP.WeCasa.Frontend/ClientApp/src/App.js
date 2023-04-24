@@ -5,6 +5,7 @@ import AppRoutes from './AppRoutes';
 import { Header } from './components/Header';
 import { NavMenu } from './components/NavMenu';
 import { useAuth } from './components/AuthContext';
+import { Footer } from './components/Footer';
 import './custom.css';
 
 function App() {
@@ -22,7 +23,8 @@ function App() {
             return <Route key={index} {...rest} element={element} />;
           })}
         </Routes>
-        </Container>
+            </Container>
+        <Footer />
       </BrowserRouter>
     );
 }

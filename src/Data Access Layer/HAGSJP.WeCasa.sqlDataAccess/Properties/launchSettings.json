@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "HAGSJP.WeCasa.sqlDataAccess": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:61113;http://localhost:61121"
+    }
+  }
+}

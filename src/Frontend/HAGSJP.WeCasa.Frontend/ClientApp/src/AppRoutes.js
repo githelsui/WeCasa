@@ -10,6 +10,7 @@ import { FileView } from "./components/File/FileView";
 import { IconSelectorModal } from "./components/IconSelectorModal";
 import { ChoreList } from "./components/ChoreList/ChoreList";
 import { GroceryList } from "./components/GroceryList/GroceryList";
+import { Feedback } from "./components/UserFeedback/Feedback"
 
 
 const AppRoutes = [
@@ -72,7 +73,11 @@ const AppRoutes = [
   {
       path: '/grocerylist',
       element: <GroceryList />
-  },
+    },
+    {
+        path: '/uploadfeedback',
+        element: <Feedback />
+    }
 ];
 
 export default AppRoutes;

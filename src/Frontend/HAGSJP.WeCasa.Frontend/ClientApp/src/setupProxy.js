@@ -16,7 +16,8 @@ const context = [
     "/account-settings",
     "/edit-profile",
     "/chorelist",
-    "/grocerylist"
+    "/grocerylist",
+    "/uploadfeedback"
 ];
 
 const onError = (err, req, resp, target) => {
