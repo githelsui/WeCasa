@@ -235,14 +235,81 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                         {"SUN", new List<Chore>() }
                     };
 
+                    var currentDate = DateTime.Now;
+
                     for (var i = 0; i < resultQuery.Count; i++)
                     {
                         var chore = resultQuery[i];
                         var days = (List<String>)chore.Days;
-                        foreach(String day in days)
+                        var isCompleted = chore.IsCompleted;
+
+                        //Account for Repeats property
+                        if (!string.IsNullOrEmpty(chore.Repeats))
                         {
-                            choresPerDay[day].Add(chore);
-                            Console.Write(chore);
+                            if (isCompleted == true)
+                            {
+                                var creationDate = (DateTime)chore.Created;
+                                var lastUpdated = (DateTime)chore.LastUpdated;
+                                TimeSpan timeSpan = currentDate - lastUpdated;
+
+                                if (chore.Repeats == "Monthly")
+                                {
+                                    // only add to currentToDo if 1 month has passed since last updated / completed 
+                                    if ((currentDate.Month - lastUpdated.Month) == 1 && (currentDate.Year == lastUpdated.Year || currentDate.Year == lastUpdated.Year + 1))
+                                    {
+                                        foreach (String day in days)
+                                        {
+                                            choresPerDay[day].Add(chore);
+                                            Console.Write(chore);
+                                        }
+                                    }
+                                }
+
+                                if (chore.Repeats == "Bi-weekly")
+                                {
+                                    int weeks = (int)(timeSpan.TotalDays / 7);
+                                    if (weeks == 2) // Check if two weeks has passed since last completion
+                                    {
+                                        foreach (String day in days)
+                                        {
+                                            choresPerDay[day].Add(chore);
+                                            Console.Write(chore);
+                                        }
+                                    }
+                                }
+
+                                if (chore.Repeats == "Weekly")
+                                {
+                                    int weeks = (int)(timeSpan.TotalDays / 7);
+                                    if (weeks == 1) // Check if a week has passed since last completion
+                                    {
+                                        foreach (String day in days)
+                                        {
+                                            choresPerDay[day].Add(chore);
+                                            Console.Write(chore);
+                                        }
+                                    }
+                                }
+                            }
+                            else //Chore has repeats property and still has not been completed -> add to current todo list for the week
+                            {
+                                foreach (String day in days)
+                                {
+                                    choresPerDay[day].Add(chore);
+                                    Console.Write(chore);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (isCompleted == false)
+                            {
+                                foreach (String day in days)
+                                {
+                                    choresPerDay[day].Add(chore);
+                                    Console.Write(chore);
+                                }
+                            }
                         }
                     }
                     result.ReturnedObject = choresPerDay;

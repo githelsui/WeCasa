@@ -167,10 +167,30 @@ const ChoreEditModal = (props) => {
         setSelectedAssignments(arr)
     }
 
+    const defaultDaysLabel = () => {
+        var days = props.chore['days']
+        var label = ''
+        for (let i = 0; i < days.length; i++) {
+            if (i == days.length - 1) {
+                label += days[i]
+            } else {
+                label += days[i] + ', '
+            }
+        }
+        return label
+    }
+
+    const defaultRepeatsLabel = () => {
+        if (props.chore['repeats'] == '' || props.chore['repeats'] == undefined) {
+            return 'No Repeats'
+        } else {
+            return props.chore['repeats']
+        }
+       
+    }
+
     useEffect(() => {
         fetchCurrentRoommates()
-        //setDefaultDays
-        //setDefaultRepeats
         setDefaultAssignments()
     }, []);
 
@@ -194,8 +214,9 @@ const ChoreEditModal = (props) => {
                     <Input style={Styles.largeTextField} defaultValue={props.chore['notes']}/>
                 </Form.Item>
                 <p className="mulish-font" style={{ marginBottom: 2 }}>Days</p>
+                <p className="mulish-font">Originally set for <i>{defaultDaysLabel()}</i></p>
                 <Form.Item name="choreDaysReq">
-                    <Checkbox.Group defaultValue={["MON", "SUN"]}>
+                    <Checkbox.Group>
                         <Checkbox value="MON" style={{ lineHeight: '32px' }}>Mon</Checkbox>
                         <Checkbox value="TUES" style={{ lineHeight: '32px' }}>Tues</Checkbox>
                         <Checkbox value="WED" style={{ lineHeight: '32px' }}>Wed</Checkbox>
@@ -205,14 +226,15 @@ const ChoreEditModal = (props) => {
                         <Checkbox value="SUN" style={{ lineHeight: '32px' }}>Sun</Checkbox>
                     </Checkbox.Group>
                 </Form.Item>
-                <p className="mulish-font padding-top" style={{ marginBottom: 2 }}>Repeats</p>
+                <p className="mulish-font" style={{ marginBottom: 2 }}>Repeats</p>
+                <p className="mulish-font">Originally set as <i>{defaultRepeatsLabel()}</i></p>
                 <Radio.Group onChange={repeatOnChange} value={choreRepeats}>
                     <Radio value="Monthly" style={{ lineHeight: '32px' }}>Monthly</Radio>
                     <Radio value="Bi-weekly" style={{ lineHeight: '32px' }}>Bi-weekly</Radio>
                     <Radio value="Weekly" style={{ lineHeight: '32px' }}>Weekly</Radio>
                 </Radio.Group>
                 <p className="mulish-font padding-top" style={{ marginBottom: 2 }}>Select members to reassign chore to.</p>
-                <p className="mulish-font"><i>If none are selected, chore will be assigned to you.</i></p>
+                <p className="mulish-font"><i>If none are selected, chore is assigned to you.</i></p>
                 <div className='assignment-selections padding'>
                     {(assignments.length > 0) ?
                         (<Row gutter={24}>

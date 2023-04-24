@@ -68,21 +68,19 @@ export const ChoreCard = (props) => {
             ChoreId: chore['choreId']
         }
 
-        if (!chore['isCompleted']) {
-            axios.post('chorelist/CompleteChore', choreForm)
-                .then(res => {
-                    var isSuccessful = res.data['isSuccessful'];
-                    if (isSuccessful) {
-                        toast('Chore successfully completed. Chore now in History Tab. ')
-                        props.setUpdate(true)
-                    } else {
-                        toast(res.data['message'])
-                    }
-                })
-                .catch((error => {
-                    toast('Error performing operation: Complete Chore')
-                }));
-        }
+        axios.post('chorelist/CompleteChore', choreForm)
+            .then(res => {
+                var isSuccessful = res.data['isSuccessful'];
+                if (isSuccessful) {
+                    toast('Chore successfully completed. Chore now in History Tab. ')
+                    props.setUpdate(true)
+                } else {
+                    toast(res.data['message'])
+                }
+            })
+            .catch((error => {
+                toast('Error performing operation: Complete Chore')
+            }));
     };
 
     const updateChore = (choreForm) => {

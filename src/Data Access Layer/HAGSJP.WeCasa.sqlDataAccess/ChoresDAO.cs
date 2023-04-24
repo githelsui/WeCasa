@@ -416,6 +416,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                             chore.ChoreId = reader.GetInt32(reader.GetOrdinal("chore_id"));
                             chore.GroupId = reader.GetInt32(reader.GetOrdinal("group_id"));
                             chore.Name = reader.GetString(reader.GetOrdinal("name"));
+                            chore.CreatedBy = reader.IsDBNull(reader.GetOrdinal("created_by")) ? "" : reader.GetString(reader.GetOrdinal("created_by"));
+                            chore.Created = reader.IsDBNull(reader.GetOrdinal("created")) ? null : reader.GetDateTime(reader.GetOrdinal("created"));
                             chore.LastUpdatedBy = reader.IsDBNull(reader.GetOrdinal("last_updated_by")) ? "" : reader.GetString(reader.GetOrdinal("last_updated_by"));
                             chore.LastUpdated = reader.IsDBNull(reader.GetOrdinal("last_updated")) ? null : reader.GetDateTime(reader.GetOrdinal("last_updated"));
                             chore.Notes = reader.IsDBNull(reader.GetOrdinal("notes")) ? "" : reader.GetString(reader.GetOrdinal("notes"));

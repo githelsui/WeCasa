@@ -158,7 +158,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 }
                 else
                 {
-                    selectSql = string.Format(@"SELECT * from CHORES WHERE group_id = '{0}' AND is_completed = '{1}'", group.GroupId, isCompleted);
+                    selectSql = string.Format(@"SELECT * from CHORES WHERE group_id = '{0}'", group.GroupId);
                 }
 
                 var daoResult = _dao.GetChores(selectSql);
