@@ -21,5 +21,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\HAGSJP.WeCasa.Logging.csproj" />
     <ProjectReference Include="..\..\Services\HAGSJP.WeCasa.Services\HAGSJP.WeCasa.Services.csproj" />
+    <ProjectReference Include="..\..\Manager Layer\HAGSJP.WeCasa.Managers\HAGSJP.WeCasa.Managers.csproj" />
   </ItemGroup>
 </Project>

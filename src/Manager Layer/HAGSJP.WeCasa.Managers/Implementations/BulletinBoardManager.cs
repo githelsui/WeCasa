@@ -9,11 +9,15 @@ namespace HAGSJP.WeCasa.Managers.Implementations
     {
         private readonly BulletinBoardService _bulletinBoardService;
         private Logger _logger;
+        private RemindersDAO remindersDAO;
+
 
         public BulletinBoardManager() 
         {
             _logger = new Logger(new AccountMariaDAO());
             _bulletinBoardService = new BulletinBoardService();
+            remindersDAO = new RemindersDAO();
+
         }
 
         public List<Note> GetNotes(int groupId)
@@ -21,8 +25,29 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             return _bulletinBoardService.GetNotes(groupId);
         }
 
-        public Result AddNote(Note note)
+        public async Task<Result> AddNote(Note note)
         {
+            var result = _bulletinBoardService.AddNote(note);
+            var groupmod = new GroupModel { GroupId = note.GroupId };
+
+            if (result.IsSuccessful)
+            {
+                var group = new GroupModel { GroupId = note.GroupId };
+                var emails = remindersDAO.GetGroupEmail(groupmod);
+                var usernames = (List<string>)emails.ReturnedObject;
+                var from = "wecasacorporation@gmail.com";
+                var subject = "New note added to the bulletin";
+                var message = note.Message;
+                var rem = "immediately";
+                var evnt = "New note added to the bulletin";
+
+                foreach (var username in usernames)
+                {
+                    var to = username;
+                    await NotificationService.ScheduleReminderEmail(from, to, subject, message, rem, evnt);
+                }
+
+            }
             return ManagerTemplate(() => _bulletinBoardService.AddNote(note), "Add note", note.LastModifiedUser);
         }
 

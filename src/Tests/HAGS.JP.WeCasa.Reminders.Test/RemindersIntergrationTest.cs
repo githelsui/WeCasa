@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using SendGrid.Helpers.Mail;
 using System.Net.Mail;
 using HAGSJP.WeCasa.Models;
+using HAGSJP.WeCasa.Managers;
 
 namespace HAGSJP.WeCasa.Reminders.Test
 {
@@ -17,6 +18,7 @@ namespace HAGSJP.WeCasa.Reminders.Test
         private NotificationService _notificationService;
         private RemindersDAO remindersDAO;
         private GroupModel _testGroup;
+
         [TestInitialize]
         public void Initialize()
         {
@@ -25,7 +27,8 @@ namespace HAGSJP.WeCasa.Reminders.Test
                 GroupName = "Test Group",
                 Owner = "wecasacorp@gmail.com",
                 Features = new List<string> { "all" },
-                Icon = "#668D6A"
+                Icon = "#668D6A",
+                GroupId = 1
             };
             var logger = new Logger(new AccountMariaDAO());
             _notificationService = new NotificationService();
@@ -39,7 +42,7 @@ namespace HAGSJP.WeCasa.Reminders.Test
             Console.WriteLine("P Sending before email...");
             string from = "wecasacorporation@gmail.com";
             DateTime currentTime = DateTime.Now;
-            List<string> to = new List<string>() { "hvkn19@gmail.com", "bly19vy@gmail.com" };
+            string to = "hvkn19@Gmail.com";
             string reminderOption = "immediately";
             string eventType = " a new bill was added.";
             string subject = "Reminder for" + eventType;
@@ -70,6 +73,16 @@ namespace HAGSJP.WeCasa.Reminders.Test
             {
                 Console.WriteLine(username); // Print out retrieved usernames
             }
+
+        [TestMethod]
+            public async Task CalendarReminderTest()
+            {
+                //Arrange
+                //Act
+                //Assert
+            }
+
+
 
 
         }

@@ -7,7 +7,7 @@ namespace HAGSJP.WeCasa.Models
    public class Bill
    {
 
-        public List<string> Usernames { get; set; }
+       public List<string> Usernames { get; set; }
        public string Owner { get; set; }
        public string BillName { get; set; }
        public int GroupId { get; set; }

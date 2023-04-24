@@ -33,4 +33,3 @@ namespace HAGSJP.WeCasa.Models
         public int IsDeleted { get; set; }
     }
 }
-

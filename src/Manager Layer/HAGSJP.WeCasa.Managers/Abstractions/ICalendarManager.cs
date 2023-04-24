@@ -11,6 +11,6 @@ namespace HAGSJP.WeCasa.Managers.Implementations
     public interface ICalendarManager
     {
         public Result GetEvents(GroupModel group, DateTime date);
-        public Result AddEvent(Event e);
+        public Task<Result> AddEventAsync(Event evnt);
     }
 }
