@@ -134,7 +134,7 @@ export const GroupMembersTab = (props) => {
                             </List.Item>
                             <div>
                                 {currentGroup.features.includes("Circular Progress Bar") ? (
-                                    <CircularProgressBar report={progressReports.filter(r => r.username === item.username)}></CircularProgressBar>
+                                    <CircularProgressBar id={`${item}-progressBar`} report={progressReports.filter(r => r.username === item.username)}></CircularProgressBar>
                                 ) : <div></div>}
                             </div>
                         </Skeleton>

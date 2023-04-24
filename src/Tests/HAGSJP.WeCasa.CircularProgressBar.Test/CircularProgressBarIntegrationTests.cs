@@ -75,6 +75,12 @@ namespace HAGSJP.WeCasa.CircularProgressBar.Test
             Assert.IsTrue(result.Result.IsSuccessful);
         }
 
+        [TestMethod]
+        public void ShouldLogErrors()
+        {
+            throw new NotImplementedException();
+        }
+
         [TestCleanup]
         public void Cleanup()
         {
