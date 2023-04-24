@@ -147,6 +147,12 @@ export const ChoreToDoTab = (props) => {
     }
 
     useEffect(() => {
+        getCurrentDay()
+    }, []);
+
+
+    // Initial fetch
+    useEffect(() => {
         fetchData()
     }, [count]);
 
@@ -161,81 +167,81 @@ export const ChoreToDoTab = (props) => {
 
     return (<div style={{ paddingTop: 20 }}>
         <Row gutter={[8, 8]} align="center" justify="space-around" className="todo-chores-header">
-            <Col span={2}>
+            <Col span={2} align="center">
                 <p className="mulish-font" style={{ borderRadius: 5, backgroundColor: 'gray', color: 'white', width: '50%', padding: 5 }}>MON</p>
             </Col>
-            <Col span={2}>
+            <Col span={2} align="center">
                 <p className="mulish-font" style={{ padding: 5 }}>TUES</p>
             </Col>
-            <Col span={2}>
+            <Col span={2} align="center">
                 <p className="mulish-font" style={{ padding: 5 }}>WED</p>
             </Col>
-            <Col span={2}>
+            <Col span={2} align="center">
                 <p className="mulish-font" style={{ padding: 5 }}>THURS</p>
             </Col>
-            <Col span={2}>
+            <Col span={2} align="center">
                 <p className="mulish-font" style={{ padding: 5 }}>FRI</p>
             </Col>
-            <Col span={2}>
+            <Col span={2} align="center">
                 <p className="mulish-font" style={{ padding: 5 }}>SAT</p>
             </Col>
-            <Col span={2}>
+            <Col span={2} align="center">
                 <p className="mulish-font" style={{ padding: 5 }}>SUN</p>
             </Col>
         </Row>
         <Divider orientation="center" style={{ border: '0.2px solid gray', marginBottom: 0, marginTop: 5 }} />
         <Row gutter={[8, 8]} align="center" justify="space-around" className="todo-chores-board">
-            <Col span={2} style={{ paddingTop: 20 }} >
+            <Col span={2} style={{ paddingTop: 20, marginRight: 10  }} >
                 <div>{monChores.map((item, i) =>
                     <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate} />)}
                 </div>
             </Col>
-            <Col span={1}>
+            <Col span={1} style={{ marginRight: -40}} >
                 <Divider type="vertical" style={{ border: '0.2px solid gray', height: '100%' }} />
             </Col>
-            <Col span={2} style={{ paddingTop: 20 }} >
+            <Col span={2} style={{ paddingTop: 20, marginRight: 10 }} >
                 <div>{tuesChores.map((item, i) =>
-                    <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate}/>)}
+                    <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate} />)}
                 </div>
             </Col>
-            <Col span={1}>
+            <Col span={1} style={{ marginRight: -40 }} >
                 <Divider type="vertical" style={{ border: '0.2px solid gray', height: '100%' }} />
             </Col>
-            <Col span={2} style={{ paddingTop: 20 }} >
+            <Col span={2} style={{ paddingTop: 20, marginRight: 10 }} >
                 <div>{wedChores.map((item, i) =>
-                    <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate}/>)}
+                    <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate} />)}
                 </div>
             </Col>
-            <Col span={1}>
+            <Col span={1} style={{ marginRight: -40 }} >
                 <Divider type="vertical" style={{ border: '0.2px solid gray', height: '100%' }} />
             </Col>
-            <Col span={2} style={{ paddingTop: 20 }} >
+            <Col span={2} style={{ paddingTop: 20, marginRight: 10 }} >
                 <div>{thursChores.map((item, i) =>
-                    <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate}/>)}
+                    <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate} />)}
                 </div>
             </Col>
-            <Col span={1}>
+            <Col span={1} style={{ marginRight: -40 }} >
                 <Divider type="vertical" style={{ border: '0.2px solid gray', height: '100%' }} />
             </Col>
-            <Col span={2} style={{ paddingTop: 20 }} >
+            <Col span={2} style={{ paddingTop: 20, marginRight: 10 }} >
                 <div>{friChores.map((item, i) =>
-                    <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate}/>)}
+                    <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate} />)}
                 </div>
             </Col>
-            <Col span={1}>
+            <Col span={1} style={{ marginRight: -40 }} >
                 <Divider type="vertical" style={{ border: '0.2px solid gray', height: '100%' }} />
             </Col>
-            <Col span={2} style={{ paddingTop: 20 }} >
+            <Col span={2} style={{ paddingTop: 20, marginRight: 10 }} >
                 <div>{satChores.map((item, i) =>
-                    <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate}/>)}
+                    <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate} />)}
                 </div>
             </Col>
-            <Col span={1}>
+            <Col span={1} style={{ marginRight: -40 }} >
                 <Divider type="vertical" style={{ border: '0.2px solid gray', height: '100%' }} />
             </Col>
-            <Col span={2} style={{ paddingTop: 20 }} >
+            <Col span={2} style={{ paddingTop: 20, marginRight: 10 }} >
                 <div>{sunChores.map((item, i) =>
-                    <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate}/>)}
+                    <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate} />)}
                 </div>
             </Col>
         </Row>
