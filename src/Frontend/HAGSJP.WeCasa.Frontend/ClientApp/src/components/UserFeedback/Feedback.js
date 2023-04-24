@@ -1,10 +1,16 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, Input, CustomInput } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, Input} from 'reactstrap';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 export const Feedback = () => {
     const location = useLocation();
     const [modal, setModal] = useState(false);
+    const [feedbackType, setFeedbackType] = useState('Report an Issue');
+
+    function handleFeedbackTypeChange(event) {
+        setFeedbackType(event.target.value);
+    }
 
     useEffect(() => {
         if (location.pathname === '/uploadfeedback') {
@@ -14,59 +20,69 @@ export const Feedback = () => {
 
     const toggle = () => setModal(!modal);
 
-    function FeedbackModal(props) {
-        const [feedbackType, setFeedbackType] = useState('Report an Issue');
-
-        function handleFeedbackTypeChange(event) {
-            setFeedbackType(event.target.value);
-        }
-
-        return (
-            <Modal isOpen={isOpen} toggle={toggle}>
+    return (
+        <div>
+            <Modal isOpen={modal} toggle={toggle}>
                 <ModalHeader toggle={toggle}>Submit a User Feedback Ticket</ModalHeader>
                 <ModalBody>
-                    <div className="form-group">
-                        <label>Please specify feedback type:</label><br />
-                        <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="radio" name="feedbackType" value="review" checked={feedbackType === "review"} onChange={handleFeedbackTypeChange} />
-                            <label className="form-check-label">Review</label>
+                    <FormGroup>
+                        <Label>Please specify feedback type:</Label>
+                        <div>
+                            <Label htmlFor="review">
+                                <input type="radio" name="feedbackType" id="review" value="Review" checked={feedbackType === 'Review'} onChange={handleFeedbackTypeChange} />
+                                {' '}
+                                Review
+                            </Label>
                         </div>
-                        <div className="form-check form-check-inline">
-                            <input className="form-check-input" type="radio" name="feedbackType" value="reportIssue" checked={feedbackType === "reportIssue"} onChange={handleFeedbackTypeChange} />
-                            <label className="form-check-label">Report an Issue</label>
+                        <div>
+                            <Label htmlFor="reportIssue">
+                                <input type="radio" name="feedbackType" id="reportIssue" value="Report an Issue" checked={feedbackType === 'Report an Issue'} onChange={handleFeedbackTypeChange} />
+                                {' '}
+                                Report an Issue
+                            </Label>
                         </div>
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="firstName">First Name:</label>
-                        <input type="text" className="form-control" id="firstName" value={firstName} onChange={(event) => setFirstName(event.target.value)} />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="lastName">Last Name:</label>
-                        <input type="text" className="form-control" id="lastName" value={lastName} onChange={(event) => setLastName(event.target.value)} />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="email">Email:</label>
-                        <input type="email" className="form-control" id="email" value={email} onChange={(event) => setEmail(event.target.value)} />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="feedbackMessage">User Feedback Message:</label>
-                        <textarea className="form-control" id="feedbackMessage" rows="5" value={feedbackMessage} onChange={(event) => setFeedbackMessage(event.target.value)}></textarea>
-                    </div>
-                    {feedbackType === "review" && (
-                        <div className="form-group">
-                            <label htmlFor="rating">Rating:</label>
-                            <input type="range" className="form-control-range" id="rating" min="0" max="5" step="0.5" value={rating} onChange={handleRatingChange} />
-                            <div className="text-center">{rating}</div>
-                        </div>
-                    )}
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="firstName">First Name:</Label>
+                        <Input type="text" name="firstName" id="firstName" placeholder="First Name" />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="lastName">Last Name:</Label>
+                        <Input type="text" name="lastName" id="lastName" placeholder="Last Name" />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="email">Email:</Label>
+                        <Input type="email" name="email" id="email" placeholder="Email" />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="feedback">User Feedback Message:</Label>
+                        <Input type="textarea" name="feedback" id="feedback" placeholder="Enter your feedback here" />
+                    </FormGroup>
+                    {feedbackType === 'Review' &&
+                        <FormGroup>
+                            <Label for="rating">Rating</Label>
+                            <Input type="select" name="rating" id="rating">
+                                <option value="0.5">0.5 stars</option>
+                                <option value="0.5">0.5 stars</option>
+                                <option value="1.5">1.5 stars</option>
+                                <option value="2">2 stars</option>
+                                <option value="2.5">2.5 stars</option>
+                                <option value="3">3 stars</option>
+                                <option value="3.5">3.5 stars</option>
+                                <option value="4">4 stars</option>
+                                <option value="4.5">4.5 stars</option>
+                                <option value="5">5 stars</option>
+                            </Input>
+                        </FormGroup>
+                    }
                 </ModalBody>
                 <ModalFooter>
                     <Button color="primary" onClick={toggle}>Submit</Button>{' '}
                     <Button color="secondary" onClick={toggle}>Cancel</Button>
                 </ModalFooter>
             </Modal>
-        );
-    }
+        </div>
+    );
 };
 
 export default Feedback;

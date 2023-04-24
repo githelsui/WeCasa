@@ -13,7 +13,6 @@ namespace HAGSJP.WeCasa.Services.Implementations
     {
         public async Task SendFeedback()
         {
-            var apiKey = "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";
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress("wecasacorporation@gmail.com", "WeCasa Corp");
             var subjectLine = "Test Feedback!";
