@@ -7,7 +7,6 @@ import axios from 'axios';
 import defaultImage from '../../assets/defaultimgs/wecasatemp.jpg';
 import * as ValidationFuncs from '../../scripts/InputValidation.js';
 import { SendOutlined, EllipsisOutlined, SettingOutlined, CheckSquareOutlined } from '@ant-design/icons';
-import IconStack from './IconStack'
 import Nudge from '../Nudge/Nudge';
 import image1 from '../../assets/profileimgs/1.jpg';
 import image2 from '../../assets/profileimgs/2.jpg';
@@ -34,7 +33,7 @@ export const CompletedChoreCard = (props) => {
     const assignmentProfileIcons = (assignments) => {
         return (<div style={{ width: '20%'}}>
             {assignments.map((user, i) =>
-                <Avatar style={{ borderColor: 'black', marginLeft: -15, marginTop: -15}} className='padding' src={images[0]} />
+                <Avatar style={{ borderColor: 'black', marginLeft: -15, marginTop: -15}} className='padding' src={images[user['image']]} />
             )}
         </div>);
     }

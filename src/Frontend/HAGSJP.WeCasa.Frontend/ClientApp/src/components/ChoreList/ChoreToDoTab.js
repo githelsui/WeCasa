@@ -54,8 +54,7 @@ export const ChoreToDoTab = (props) => {
     const [count, setCount] = useState(0); 
     const [checkChores, setCheckChores] = useState(null) 
     const [chores, setChores] = useState([])
-    const [initialFetch, setInitialFetch] = useState(false);
-    const [successfulFetch, setSuccessFetch] = useState(false);
+    const [successfulFetch, setSuccessFetch] = useState(false); //initial fetch
     const [error, setError] = useState(true);
     // Display
     const [monChores, setMonChores] = useState([]);
@@ -131,31 +130,7 @@ export const ChoreToDoTab = (props) => {
 
     const fetchData = () => {
         console.log('fetching data...')
-        // initial fetch
-        if (!initialFetch) {
-            if (!successfulFetch) {
-                fetchChores()
-                organizeChores()
-                setCount(count + 1);
-            }
-
-            // fetch returned backend error -> output message only once
-            if (successfulFetch && error) {
-                toast('Refresh page. Error fetching data.')
-            }
-
-            if (checkChores != null) {
-                setInitialFetch(true)
-            }
-        } else {
-            resetStates()
-        }
-    }
-
-    const refreshList = () => {
-        console.log('refreshing data...')
-
-        if (!successfulFetch || props.update) {
+        if (!successfulFetch) {
             fetchChores()
             organizeChores()
             setCount(count + 1);
@@ -165,6 +140,10 @@ export const ChoreToDoTab = (props) => {
         if (successfulFetch && error) {
             toast('Refresh page. Error fetching data.')
         }
+
+        if (checkChores != null) {
+            props.setUpdate(false)
+        }
     }
 
     useEffect(() => {
@@ -173,8 +152,11 @@ export const ChoreToDoTab = (props) => {
 
     //Any changes to chore list
     useEffect(() => {
-        console.log(props.update)
-        refreshList()
+        if (props.update & successfulFetch) {
+            console.log('refreshing data...')
+            resetStates()
+            setCount(count + 1);
+        }
     }, [props.update]);
 
     return (<div style={{ paddingTop: 20 }}>
@@ -205,7 +187,7 @@ export const ChoreToDoTab = (props) => {
         <Row gutter={[8, 8]} align="center" justify="space-around" className="todo-chores-board">
             <Col span={2} style={{ paddingTop: 20 }} >
                 <div>{monChores.map((item, i) =>
-                    <ChoreCard chore={item} user={props.currentUser} fetchData={fetchData}/>)}
+                    <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate} />)}
                 </div>
             </Col>
             <Col span={1}>
@@ -213,7 +195,7 @@ export const ChoreToDoTab = (props) => {
             </Col>
             <Col span={2} style={{ paddingTop: 20 }} >
                 <div>{tuesChores.map((item, i) =>
-                    <ChoreCard chore={item} user={props.currentUser} fetchData={fetchData}/>)}
+                    <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate}/>)}
                 </div>
             </Col>
             <Col span={1}>
@@ -221,7 +203,7 @@ export const ChoreToDoTab = (props) => {
             </Col>
             <Col span={2} style={{ paddingTop: 20 }} >
                 <div>{wedChores.map((item, i) =>
-                    <ChoreCard chore={item} user={props.currentUser} fetchData={fetchData}/>)}
+                    <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate}/>)}
                 </div>
             </Col>
             <Col span={1}>
@@ -229,7 +211,7 @@ export const ChoreToDoTab = (props) => {
             </Col>
             <Col span={2} style={{ paddingTop: 20 }} >
                 <div>{thursChores.map((item, i) =>
-                    <ChoreCard chore={item} user={props.currentUser} fetchData={fetchData}/>)}
+                    <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate}/>)}
                 </div>
             </Col>
             <Col span={1}>
@@ -237,7 +219,7 @@ export const ChoreToDoTab = (props) => {
             </Col>
             <Col span={2} style={{ paddingTop: 20 }} >
                 <div>{friChores.map((item, i) =>
-                    <ChoreCard chore={item} user={props.currentUser} fetchData={fetchData}/>)}
+                    <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate}/>)}
                 </div>
             </Col>
             <Col span={1}>
@@ -245,7 +227,7 @@ export const ChoreToDoTab = (props) => {
             </Col>
             <Col span={2} style={{ paddingTop: 20 }} >
                 <div>{satChores.map((item, i) =>
-                    <ChoreCard chore={item} user={props.currentUser} fetchData={fetchData}/>)}
+                    <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate}/>)}
                 </div>
             </Col>
             <Col span={1}>
@@ -253,7 +235,7 @@ export const ChoreToDoTab = (props) => {
             </Col>
             <Col span={2} style={{ paddingTop: 20 }} >
                 <div>{sunChores.map((item, i) =>
-                    <ChoreCard chore={item} user={props.currentUser} fetchData={fetchData}/>)}
+                    <ChoreCard chore={item} user={props.currentUser} setUpdate={props.setUpdate}/>)}
                 </div>
             </Col>
         </Row>

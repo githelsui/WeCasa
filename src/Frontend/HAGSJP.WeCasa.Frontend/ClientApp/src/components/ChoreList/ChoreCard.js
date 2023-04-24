@@ -7,7 +7,6 @@ import axios from 'axios';
 import defaultImage from '../../assets/defaultimgs/wecasatemp.jpg';
 import * as ValidationFuncs from '../../scripts/InputValidation.js';
 import { SendOutlined, EllipsisOutlined, SettingOutlined, CheckSquareOutlined } from '@ant-design/icons';
-import IconStack from './IconStack'
 import Nudge from '../Nudge/Nudge';
 import image1 from '../../assets/profileimgs/1.jpg';
 import image2 from '../../assets/profileimgs/2.jpg';
@@ -15,11 +14,13 @@ import image3 from '../../assets/profileimgs/3.jpg';
 import image4 from '../../assets/profileimgs/4.jpg';
 import image5 from '../../assets/profileimgs/5.jpg';
 import image6 from '../../assets/profileimgs/6.jpg';
+import ChoreEditModal from './ChoreEditModal'
 const { Meta } = Card;
 
 
 export const ChoreCard = (props) => {
     const images = [image1, image2, image3, image4, image5, image6];
+    const [showEditModal, setShowEditModal] = useState(false);
 
     const getAssignedUsernames = (assignments) => {
         var arr = []
@@ -73,15 +74,60 @@ export const ChoreCard = (props) => {
                     var isSuccessful = res.data['isSuccessful'];
                     if (isSuccessful) {
                         toast('Chore successfully completed. Chore now in History Tab. ')
-                        props.fetchData()
+                        props.setUpdate(true)
                     } else {
                         toast(res.data['message'])
                     }
                 })
                 .catch((error => {
-                    toast('Error performing operation.')
+                    toast('Error performing operation: Complete Chore')
                 }));
         }
+    };
+
+    const updateChore = (choreForm) => {
+        console.log(choreForm)
+
+        axios.post('chorelist/EditChore', choreForm)
+            .then(res => {
+                var isSuccessful = res.data['isSuccessful'];
+                if (isSuccessful) {
+                    toast('Chore successfully updated.')
+                    props.setUpdate(true)
+                } else {
+                    toast(res.data['message'])
+                }
+            })
+            .catch((error => {
+                toast('Error performing operation: Edit Chore.')
+            }));
+    };
+
+    const deleteChore = () => {
+        let choreForm = {
+            CurrentUser: props.user['username'],
+            GroupId: props.chore['groupId'],
+            Name: props.chore['name'],
+            Notes: props.chore['notes'],
+            Repeats: props.chore['repeats'],
+            Days: props.chore['days'],
+            AssignedTo: getAssignedUsernames(props.chore['assignedTo']),
+            ChoreId: props.chore['choreId']
+        }
+
+        axios.post('chorelist/DeleteChore', choreForm)
+            .then(res => {
+                var isSuccessful = res.data['isSuccessful'];
+                if (isSuccessful) {
+                    toast('Chore was deleted.')
+                    props.setUpdate(true)
+                } else {
+                    toast(res.data['message'])
+                }
+            })
+            .catch((error => {
+                toast('Error performing operation: Delete Chore.')
+            }));
     };
 
     const toast = (title, desc = '') => {
@@ -103,6 +149,7 @@ export const ChoreCard = (props) => {
             }}
             actions={[
                 <Nudge key="nudge" assignedUser="Assignee" />,
+                <Button shape="circle" icon={<SettingOutlined />} onClick={() => setShowEditModal(true)}/>,
                 <Button shape="circle" icon={<CheckSquareOutlined />} onClick={() => completeChore(props.chore)}  />
                 ]}>
                 {assignmentProfileIcons(props.chore['assignedTo'])}
@@ -123,7 +170,8 @@ export const ChoreCard = (props) => {
                     marginLeft: -10,
                     overflowWrap: 'break-word'
                 }}><i>{props.chore['notes']}</i></p>
-        </Card>
+            </Card>
+            <ChoreEditModal show={showEditModal} close={() => setShowEditModal(false)} confirm={updateChore} deleteChore={deleteChore} user={props.user} chore={props.chore}/>
     </div>);
 };
 

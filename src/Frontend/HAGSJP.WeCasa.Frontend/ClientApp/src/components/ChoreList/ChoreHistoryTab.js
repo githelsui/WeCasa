@@ -35,7 +35,6 @@ export const ChoreHistoryTab = (props) => {
     const [chores, setChores] = useState([])
     const [successfulFetch, setSuccessFetch] = useState(false);
     const [error, setError] = useState(true);
-    // Display
 
     const fetchChores = () => {
         let groupForm = {
@@ -45,7 +44,6 @@ export const ChoreHistoryTab = (props) => {
         axios.post('chorelist/GetGroupCompletedChores', groupForm)
             .then(res => {
                 var isSuccessful = res.data['isSuccessful'];
-                console.log(res.data['returnedObject'])
                 if (isSuccessful) {
                     var items = res.data['returnedObject']
                     setCheckChores(items)
@@ -55,7 +53,6 @@ export const ChoreHistoryTab = (props) => {
                         setSuccessFetch(true)
                         setError(false)
                     }
-                    console.log(chores)
                 } else {
                     props.setUpdate(false)
                     setSuccessFetch(true)
@@ -80,11 +77,6 @@ export const ChoreHistoryTab = (props) => {
         });
     }
 
-    const getCurrentDay = () => {
-        // fetch current day
-        // update label on display
-    }
-
     const resetStates = () => {
         setSuccessFetch(false)
         setError(false)
@@ -92,7 +84,6 @@ export const ChoreHistoryTab = (props) => {
     }
 
     const fetchData = () => {
-        console.log('update')
         // initial fetch
         if (!successfulFetch) {
             fetchChores()

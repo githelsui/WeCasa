@@ -41,6 +41,23 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             return result;
         }
 
+        public DAOResult ValidateInsertStatements(int rows)
+        {
+            var result = new DAOResult();
+
+            if (rows > 0)
+            {
+                result.IsSuccessful = true;
+                result.Message = string.Empty;
+
+                return result;
+            }
+            result.IsSuccessful = false;
+            result.Message = $"Rows affected were 0. Sql insert unsuccessful.";
+
+            return result;
+        }
+
         public DAOResult CreateChore(Chore chore)
 		{
             var result = new DAOResult();
@@ -90,7 +107,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         else
                         {
                             result.IsSuccessful = false;
-                            result.Message += "Error assigning chore to users." + result.Message;
+                            result.Message += "Error assigning chore to users.";
                         }
                     }
                 }
@@ -144,7 +161,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@days", daysJson);
 
                     var rows = (command.ExecuteNonQuery());
-                    result = ValidateSqlStatement(rows);
+                    result = ValidateInsertStatements(rows);
                     if (result.IsSuccessful)
                     {
                         result = ReassignChore(chore);
@@ -237,20 +254,16 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                     var insertSql = string.Format(@"INSERT INTO UserChore (chore_id, username, is_completed) VALUES {0}", valuesStr);
                     Console.Write(insertSql);
-                    //var insertSql = @"INSERT INTO UserChore (chore_id, username, is_completed) VALUES @values_str;";
-                    //command.Parameters.AddWithValue("@values_str", valuesStr);
                     command.CommandText = insertSql;
-                    var userChoreInsertRows = command.ExecuteNonQuery();
-                    var userChoreResult = ValidateSqlStatement(userChoreInsertRows);
-                    if (userChoreResult.IsSuccessful)
+                    var rows = (command.ExecuteNonQuery());
+                    result = ValidateInsertStatements(rows);
+                    if (result.IsSuccessful)
                     {
-                        result.IsSuccessful = true;
                         result.Message = "Assigning chore success.";
                         result.ReturnedObject = chore;
                     }
                     else
                     {
-                        result.IsSuccessful = false;
                         result.Message += "Failure assigning chore. ";
                     }
                 }
@@ -286,7 +299,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                     // Execution of first query: Resets old assignments if old assignments exist in UserChore table
                     var resetSqlRows = command.ExecuteNonQuery();
-                    var resetSqlRowsResult = ValidateSqlStatement(resetSqlRows);
+                    var resetSqlRowsResult = ValidateInsertStatements(resetSqlRows);
                     if (!resetSqlRowsResult.IsSuccessful)
                     {
                         result.IsSuccessful = false;
@@ -306,6 +319,66 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         {
                             result.IsSuccessful = false;
                             result.Message += "Failure assigning chore. ";
+                        }
+                    }
+                }
+                catch (MySqlException sqlex)
+                {
+                    throw sqlex;
+                }
+                catch (Exception sqlex)
+                {
+                    throw sqlex;
+                }
+                return result;
+            }
+        }
+
+        public DAOResult DeleteChore(Chore chore)
+        {
+            var result = new DAOResult();
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
+
+                    var deleteChoreSql = @"DELETE FROM Chores
+                                     WHERE chore_id = @chore_id;";
+
+                    var command = connection.CreateCommand();
+                    command.CommandText = deleteChoreSql;
+                    command.Parameters.AddWithValue("@chore_id", chore.ChoreId);
+
+                    // Execution of first query
+                    var resetSqlRows = command.ExecuteNonQuery();
+                    var resetSqlRowsResult = ValidateInsertStatements(resetSqlRows);
+                    if (!resetSqlRowsResult.IsSuccessful)
+                    {
+                        result.IsSuccessful = false;
+                        result.Message += "Failure deleting chore.";
+                    }
+                    else // First query successful
+                    {
+                        // Execution of second query
+                        var deleteUserChoreSql = @"DELETE FROM UserChore
+                                     WHERE chore_id = @chore_id;";
+                        command = connection.CreateCommand();
+                        command.CommandText = deleteUserChoreSql;
+                        command.Parameters.AddWithValue("@chore_id", chore.ChoreId);
+                        resetSqlRows = command.ExecuteNonQuery();
+                        resetSqlRowsResult = ValidateInsertStatements(resetSqlRows);
+                        if (resetSqlRowsResult.IsSuccessful)
+                        {
+                            result.IsSuccessful = true;
+                            result.Message = "Deleting chore assignments success.";
+                            result.ReturnedObject = chore;
+                        }
+                        else
+                        {
+                            result.IsSuccessful = false;
+                            result.Message += "Failure deleting chore assignments. ";
                         }
                     }
                 }

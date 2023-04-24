@@ -139,6 +139,37 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             }
         }
 
+        public ChoreResult DeleteChore(Chore chore, UserAccount userAccount)
+        {
+            try
+            {
+                var result = new ChoreResult();
+
+                chore.LastUpdated = DateTime.Now;
+                chore.LastUpdatedBy = userAccount.Username;
+                chore.IsCompleted = true;
+
+                var serviceResult = _service.DeleteChore(chore);
+                if (serviceResult.IsSuccessful)
+                {
+                    result.ReturnedObject = serviceResult.ReturnedObject;
+                    _logger.Log("Chore deletion successful", LogLevels.Info, "Data Store", userAccount.Username);
+                }
+                else
+                {
+                    _logger.Log("Chore deletion error: " + result.ErrorStatus + "\n" + "Message: " + result.Message, LogLevels.Error, "Service", userAccount.Username);
+                }
+                result.IsSuccessful = serviceResult.IsSuccessful;
+                result.Message = serviceResult.Message;
+                return result;
+            }
+            catch (Exception exc)
+            {
+                _logger.Log("Error Message: " + exc.Message, LogLevels.Error, "Service", userAccount.Username, new UserOperation(Operations.ChoreList, 0));
+                throw exc;
+            }
+        }
+
         public ChoreResult UndoChore(Chore chore, UserAccount userAccount)
         {
             try

@@ -17,13 +17,7 @@ export const ChoreList = (props) => {
 
     const tabItemClick = (key) => {
         if (key == 1) {
-            // to do tab
-            setUpdateToDo(true)
-            setUpdateHistory(false)
         } else {
-            // history tab
-            setUpdateToDo(false)
-            setUpdateHistory(true)
         }
     };
 

@@ -186,9 +186,9 @@ const ChoreCreationModal = (props) => {
                     <Radio value="Monthly" style={{ lineHeight: '32px' }}>Monthly</Radio>
                     <Radio value="Bi-weekly" style={{ lineHeight: '32px' }}>Bi-weekly</Radio>
                     <Radio value="Weekly" style={{ lineHeight: '32px' }}>Weekly</Radio>
-                    <Radio value="Daily" style={{ lineHeight: '32px' }}>Daily</Radio>
                 </Radio.Group>
-                <p className="mulish-font padding-top" style={{ marginBottom: 2 }}>Select members to assign chore to</p>
+                <p className="mulish-font padding-top" style={{ marginBottom: 2 }}>Select members to assign chore to.</p>
+                <p className="mulish-font"><i>If none are selected, chore will be assigned to you.</i></p>
                 <div className='assignment-selections padding'>
                     {(assignments.length > 0) ?
                         (<Row gutter={24}>
@@ -202,7 +202,7 @@ const ChoreCreationModal = (props) => {
                                     }}
                                         src={profileImages[member['image']]} preview={false} />}
                                         style={(selectedAssignments.includes(member['username']))  ? { border: '5px solid #555', borderRadius: '50%', width: 50, height: 50, cursor: 'pointer' } : { borderRadius: '50%', width: 50, height: 50, cursor: 'pointer' }}></Card>
-                                <p style={{ color: 'gray', fontSize: 10, marginLeft: 10 }}>{member['firstName'] + member['lastName']}</p>
+                                <p style={{ color: 'gray', fontSize: 10, marginLeft: 10 }}>{member['firstName'] + ' ' + member['lastName']}</p>
                             </Col>)}
                         </Row>) :
                         (<p className='mulish-font'>Chore will be assigned to self</p>)}
