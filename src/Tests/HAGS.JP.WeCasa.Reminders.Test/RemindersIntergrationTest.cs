@@ -9,6 +9,7 @@ using SendGrid.Helpers.Mail;
 using System.Net.Mail;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Managers;
+using HAGSJP.WeCasa.Managers.Implementations;
 
 namespace HAGSJP.WeCasa.Reminders.Test
 {
@@ -74,13 +75,30 @@ namespace HAGSJP.WeCasa.Reminders.Test
                 Console.WriteLine(username); // Print out retrieved usernames
             }
 
-        [TestMethod]
+            /*[TestMethod]
             public async Task CalendarReminderTest()
             {
-                //Arrange
-                //Act
-                //Assert
-            }
+                // Arrange
+                var evnt = new Event
+                {
+                    EventName = "Test Event",
+                    Description = "This is a test event",
+                    GroupId = 1,
+                    Reminder = "immediately",
+                    EventDate = DateTime.UtcNow
+                };
+
+                var calendarManager = new CalendarManager();
+
+                // Act
+                var result = await calendarManager.AddEventAsync(evnt);
+                var emailResult = await calendarManager.AddEventAsync(evnt);
+
+                // Assert
+                Assert.IsTrue(result.IsSuccessful);
+
+                // Add any additional assertions here, such as checking that the email was sent to all the usernames
+            } */
 
 
 

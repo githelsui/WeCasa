@@ -12,6 +12,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
         private CalendarService _service;
         private NotificationService _notificationService;
         private RemindersDAO remindersDAO;
+        private bool isEmailSent;
 
         public CalendarManager()
         {
@@ -35,6 +36,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
         public async Task<Result> AddEventAsync(Event evnt)
         {
             var result = _service.AddEvent(evnt);
+            bool isEmailSend = false;
 
             if (result.IsSuccessful & evnt.Reminder != null)
             {
@@ -56,13 +58,18 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 string eventType = "event from calendar is coming up";
                 string subject = "Reminder for" + eventType;
                 string message = $"This is a reminder for" + eventType;
+
                 foreach (var username in usernames)
                 {
                         string to = username;
-                        await NotificationService.ScheduleReminderEmail(from, to, subject, message, reminderOption, eventType);
-
+                        var emailResult = await NotificationService.ScheduleReminderEmail(from, to, subject, message, reminderOption, eventType);
+                    if (emailResult.IsSuccessful) ;
+                    {
+                        isEmailSent = true;
                     }
+
                 }
+            }
                 return result;
         }
     }

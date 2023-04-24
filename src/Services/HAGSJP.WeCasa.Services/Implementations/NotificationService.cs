@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HAGSJP.WeCasa.Models;
+using Azure;
+using System.Net;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
@@ -40,13 +42,13 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 case "immediately":
                     sendDate = DateTime.UtcNow;
                     break;
-                case "2 minutes after":
-                    sendDate = DateTime.UtcNow.AddMinutes(2);
+                case "30 minutes":
+                    sendDate = DateTime.UtcNow.AddMinutes(-30);
                     break;
-                case "a day before":
+                case "A day":
                     sendDate = DateTime.UtcNow.AddDays(-1);
                     break;
-                case "a week before":
+                case "A week":
                     sendDate = DateTime.UtcNow.AddDays(-7);
                     break;
                 default:
@@ -61,6 +63,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             try
             {
                 var response = await client.SendEmailAsync(emailMessage);
+                Console.WriteLine("Response code: " + response.StatusCode);
                 // Log success
                 _logger.Log("Email sent successfully", LogLevels.Info, "Data Store", to);
             }
@@ -69,7 +72,12 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 // Log error
                 _logger.Log("Error sending email: " + ex.Message, LogLevels.Error, "Data Store", to);
             }
+
+
+
         }
+
+
     }
 }
 
