@@ -334,7 +334,7 @@ export const AccountSettings = () => {
                             <Divider plain>
                             </Divider>
                             <NavItem>
-                                <NavLink style={{ color:"#ff2929" }} onClick={() => setShowModal(true)}>
+                                <NavLink id="deleteAccount" style={{ color:"#ff2929" }} onClick={() => setShowModal(true)}>
                                     Delete Account
                                 </NavLink>
                             </NavItem>
@@ -349,7 +349,7 @@ export const AccountSettings = () => {
                         {displaySettings()}
                     </Col>
                 </Row>
-                <DeleteAccountModal show={showModal} close={() => setShowModal(false)} confirm={attemptDeleteAcc} />
+                <DeleteAccountModal id="delete-account-modal" show={showModal} close={() => setShowModal(false)} confirm={attemptDeleteAcc} />
             </div>
         </div>
     );

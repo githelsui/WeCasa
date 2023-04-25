@@ -10,12 +10,6 @@
     }
 }
 
-@property --percentage {
-    syntax: '<number>';
-    inherits: true;
-    initial-value: 0;
-}
-
 [role="circularbar"] {
     --percentage: var(--value);
     --text: black;

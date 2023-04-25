@@ -36,7 +36,6 @@ export const AddGroceryModal = (props) => {
 
                 // -> Grocery notes (optional)
                 if (values['groceryItemNotes'] == undefined) {
-                    console.log('what')
                     values['groceryItemNotes'] = ''
                 }
 

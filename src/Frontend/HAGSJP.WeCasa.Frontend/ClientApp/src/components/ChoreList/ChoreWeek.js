@@ -16,17 +16,21 @@ export const ChoreWeek = (props) => {
     const [friChores, setFriChores] = useState([]);
     const [satChores, setSatChores] = useState([]);
     const [sunChores, setSunChores] = useState([]);
+
+    const organizeChores = () => {
+        setMonChores(props.toDoList['MON'] == undefined ? [] : props.toDoList['MON'])
+        setTuesChores(props.toDoList['TUES'] == undefined ? [] : props.toDoList['TUES'])
+        console.log(thursChores)
+        setWedChores(props.toDoList['WED'] == undefined ? [] : props.toDoList['WED'])
+        setThursChores(props.toDoList['THURS'] == undefined ? [] : props.toDoList['THURS'])
+        setFriChores(props.toDoList['FRI'] == undefined ? [] : props.toDoList['FRI'])
+        setSatChores(props.toDoList['SAT'] == undefined ? [] : props.toDoList['SAT'])
+        setSunChores(props.toDoList['SUN'] == undefined ? [] : props.toDoList['SUN'])
+    }
     
     useEffect(() => {
-        console.log('test')
-        console.log(props.toDoList)
-        setMonChores(props.toDoList['MON'])
-        setTuesChores(props.toDoList['TUES'])
-        setWedChores(props.toDoList['WED'])
-        setThursChores(props.toDoList['THURS'])
-        setFriChores(props.toDoList['FRI'])
-        setSatChores(props.toDoList['SAT'])
-        setSunChores(props.toDoList['SUN'])
+        organizeChores()
+        
     }, []);
 
     return (<div style={{ paddingTop: 20 }}>

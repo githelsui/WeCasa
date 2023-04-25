@@ -476,13 +476,13 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
-        public AuthResult GetUserProfile(UserAccount userAccount)
+        public async Task<AuthResult> GetUserProfile(UserAccount userAccount)
         {
             AuthResult result = new AuthResult();
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
 
                 // Select SQL statement
                 var selectSql = @"SELECT  * 

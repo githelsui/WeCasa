@@ -36,6 +36,9 @@ Obj/
 *.VisualState.xml
 TestResult.xml
 
+# NightwatchJS test output
+tests_output/
+
 # Build Results of an ATL Project
 [Dd]ebugPS/
 [Rr]eleasePS/
