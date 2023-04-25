@@ -170,7 +170,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             }
         }
 
-        public ChoreResult UndoChore(Chore chore, UserAccount userAccount)
+        public async Task<ChoreResult> UndoChore(Chore chore, UserAccount userAccount)
         {
             try
             {
@@ -180,7 +180,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 chore.LastUpdatedBy = userAccount.Username;
                 chore.IsCompleted = false;
 
-                var assignedProfilesRes = ReassignChore(chore, chore.UsernamesAssignedTo);
+                var assignedProfilesRes = await ReassignChore(chore, chore.UsernamesAssignedTo);
                 if (assignedProfilesRes.IsSuccessful)
                 {
                     chore.AssignedTo = (List<UserProfile>)assignedProfilesRes.ReturnedObject;

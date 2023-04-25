@@ -78,7 +78,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.CommandText = insertChoreSql;
                     command.Parameters.AddWithValue("@name", chore.Name);
                     command.Parameters.AddWithValue("@group_id", chore.GroupId);
-                    command.Parameters.AddWithValue("@created", chore.Created);
+                    command.Parameters.AddWithValue("@created", chore.Created != null ? chore.Created : DateTime.Now);
                     command.Parameters.AddWithValue("@created_by", chore.CreatedBy);
                     command.Parameters.AddWithValue("@notes", chore.Notes != null ? chore.Notes : null);
                     command.Parameters.AddWithValue("@repeats", chore.Repeats != null ? chore.Repeats : null);

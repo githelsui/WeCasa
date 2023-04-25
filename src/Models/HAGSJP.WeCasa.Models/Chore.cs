@@ -27,10 +27,11 @@ namespace HAGSJP.WeCasa.Models
         [JsonConstructor]
         public Chore(){}
 
-        public Chore(String name, int groupId)
+        public Chore(String name, int groupId, string createdBy)
         {
             Name = name;
             GroupId = groupId;
+            CreatedBy = createdBy;
         }
 
         public Chore(String name, List<String>? days, String? notes, int groupId, List<string> usernamesAssignedTo, String? repeats)

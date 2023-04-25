@@ -71,12 +71,12 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("EditChore")]
-        public ChoreResult EditChore([FromBody] ChoreForm choreForm)
+        public async Task<ChoreResult> EditChore([FromBody] ChoreForm choreForm)
         {
             try
             {
                 Chore chore = new Chore(choreForm.Name, choreForm.Days, choreForm.Notes, choreForm.GroupId, choreForm.AssignedTo, choreForm.Repeats);
-                var result = _manager.EditChore(chore, new UserAccount(choreForm.CurrentUser));
+                var result = await _manager.EditChore(chore, new UserAccount(choreForm.CurrentUser));
                 if (result.IsSuccessful)
                 {
                     result.ErrorStatus = System.Net.HttpStatusCode.OK;
