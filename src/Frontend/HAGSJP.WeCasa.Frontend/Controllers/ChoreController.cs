@@ -121,7 +121,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("GetGroupToDoChores")]
-        public ChoreResult GetGroupToDoChores([FromBody] GroupForm groupForm)
+        public ChoreResult GetGroupToDoChores([FromBody] GroupMemberForm groupForm)
         {
             try
             {
