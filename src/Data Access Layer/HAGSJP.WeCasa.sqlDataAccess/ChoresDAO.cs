@@ -6,10 +6,12 @@ using MySqlConnector;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
-	public class ChoresDAO : AccountMariaDAO
-	{
+    public class ChoresDAO : AccountMariaDAO
+    {
         private string _connectionString;
         private DAOResult result;
+
+        public ChoresDAO() { }
 
         public MySqlConnectionStringBuilder BuildConnectionString()
         {
@@ -59,7 +61,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         }
 
         public DAOResult CreateChore(Chore chore)
-		{
+        {
             var result = new DAOResult();
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
@@ -76,7 +78,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.CommandText = insertChoreSql;
                     command.Parameters.AddWithValue("@name", chore.Name);
                     command.Parameters.AddWithValue("@group_id", chore.GroupId);
-                    command.Parameters.AddWithValue("@created", chore.Created);
+                    command.Parameters.AddWithValue("@created", chore.Created != null ? chore.Created : DateTime.Now);
                     command.Parameters.AddWithValue("@created_by", chore.CreatedBy);
                     command.Parameters.AddWithValue("@notes", chore.Notes != null ? chore.Notes : null);
                     command.Parameters.AddWithValue("@repeats", chore.Repeats != null ? chore.Repeats : null);
@@ -121,7 +123,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 }
                 return result;
             }
-		}
+        }
 
         public DAOResult UpdateChore(Chore chore)
         {
@@ -224,7 +226,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
-            public DAOResult AssignChore(Chore chore)
+        public DAOResult AssignChore(Chore chore)
         {
             // Reset chore.AssignedTo for Chores table & Usergroups table
             var result = new DAOResult();
@@ -473,7 +475,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         }
                     }
 
-                    if(choreIds.Count > 0)
+                    if (choreIds.Count > 0)
                     {
                         result.ReturnedObject = choreIds;
                         result.IsSuccessful = true;
@@ -496,6 +498,55 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 }
             }
         }
+        public async Task<ChoreResult> GetUserProgress(string username, int group_id)
+        {
+            var result = new ChoreResult();
+            var progressReport = new ProgressReport(group_id, username);
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                try
+                {
+                    await connection.OpenAsync();
+
+                    var command = connection.CreateCommand();
+                    var selectSql = @"SELECT COUNT(CASE WHEN uc.is_completed = 1 THEN 1 ELSE NULL END) AS completedChores,
+                                         COUNT(CASE WHEN uc.is_completed = 0 THEN 1 ELSE NULL END) AS incompleteChores
+                                      FROM userchore AS uc
+                                         INNER JOIN chores AS c 
+                                            ON (uc.chore_id = c.chore_id)
+                                      WHERE username = @username 
+                                            AND group_id = @group_id
+                                            AND MONTH(c.created) = MONTH(NOW());";
+                    
+                    command.CommandText = selectSql;
+                    command.Parameters.AddWithValue("@username", username);
+                    command.Parameters.AddWithValue("@group_id", group_id);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var completedChores = reader.GetInt32(reader.GetOrdinal("completedChores"));
+                            var incompleteChores = reader.GetInt32(reader.GetOrdinal("incompleteChores"));
+                            progressReport.CompletedChores = completedChores;
+                            progressReport.IncompleteChores = incompleteChores;
+                        }
+                        result.ReturnedObject = progressReport;
+                        result.IsSuccessful = true;
+                    }
+                }
+                catch (MySqlException sqlex)
+                {
+                    result.Message = sqlex.Message;
+                }
+                catch (Exception sqlex)
+                {
+                    result.Message = sqlex.Message;
+                }
+                return result;
+            }
+        }
+
     }
 }
 

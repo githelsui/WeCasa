@@ -22,7 +22,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             _um = new UserManager();
         }
 
-        public ChoreResult AddChore(Chore chore, UserAccount userAccount)
+        public async Task<ChoreResult> AddChore(Chore chore, UserAccount userAccount)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 chore.CreatedBy = userAccount.Username;
                 chore.IsCompleted = false;
 
-                var assignedProfilesRes = ReassignChore(chore, chore.UsernamesAssignedTo);
+                var assignedProfilesRes = await ReassignChore(chore, chore.UsernamesAssignedTo);
                 if (assignedProfilesRes.IsSuccessful)
                 {
                     chore.AssignedTo = (List<UserProfile>)assignedProfilesRes.ReturnedObject;
@@ -65,7 +65,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             }
         }
 
-        public ChoreResult EditChore(Chore chore, UserAccount userAccount)
+        public async Task<ChoreResult> EditChore(Chore chore, UserAccount userAccount)
         {
             try
             {
@@ -75,7 +75,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 chore.LastUpdatedBy = userAccount.Username;
                 chore.IsCompleted = false;
 
-                var assignedProfilesRes = ReassignChore(chore, chore.UsernamesAssignedTo);
+                var assignedProfilesRes = await ReassignChore(chore, chore.UsernamesAssignedTo);
                 if (assignedProfilesRes.IsSuccessful)
                 {
                     chore.AssignedTo = (List<UserProfile>)assignedProfilesRes.ReturnedObject;
@@ -170,7 +170,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             }
         }
 
-        public ChoreResult UndoChore(Chore chore, UserAccount userAccount)
+        public async Task<ChoreResult> UndoChore(Chore chore, UserAccount userAccount)
         {
             try
             {
@@ -180,7 +180,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 chore.LastUpdatedBy = userAccount.Username;
                 chore.IsCompleted = false;
 
-                var assignedProfilesRes = ReassignChore(chore, chore.UsernamesAssignedTo);
+                var assignedProfilesRes = await ReassignChore(chore, chore.UsernamesAssignedTo);
                 if (assignedProfilesRes.IsSuccessful)
                 {
                     chore.AssignedTo = (List<UserProfile>)assignedProfilesRes.ReturnedObject;
@@ -428,7 +428,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
         }
 
         //Assignment Validation
-        private ChoreResult ReassignChore(Chore chore, List<String> newAssignments)
+        private async Task<ChoreResult> ReassignChore(Chore chore, List<String> newAssignments)
         {
             var result = new ChoreResult();
 
@@ -452,7 +452,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 }
                 else // Populate AssignedTo with UserProfile (profile icons)
                 {
-                    var userProfileResult = _um.GetUserProfile(new UserAccount(username));
+                    var userProfileResult = await _um.GetUserProfile(new UserAccount(username));
                     if (userProfileResult.IsSuccessful)
                     {
                         assignedTo.Add((UserProfile)userProfileResult.ReturnedObject);

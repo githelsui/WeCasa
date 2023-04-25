@@ -146,6 +146,7 @@ export const Groups = (props) => {
                         <Col span={24}>
                             <Card hoverable style={{ marginTop: 16, marginLeft: 150, marginRight: 150, background: "#ececec", fontFamily: 'Mulish' }}>
                                 <Meta
+                                    id="createGroup"
                                     onClick={() => setShowModal(true)}
                                     avatar={<PlusCircleOutlined />}
                                     title="Create Group"
@@ -155,7 +156,7 @@ export const Groups = (props) => {
                             </Card>
                         </Col>
                     </Row>
-                    <CreateGroupModal show={showModal} close={() => setShowModal(false)} confirm={attemptGroupCreation} reject={failureGroupView} user={currentUser} onInvitationListUpdated={handleGroupMembersChange}/>
+                    <CreateGroupModal id="createGroupModal" show={showModal} close={() => setShowModal(false)} confirm={attemptGroupCreation} reject={failureGroupView} user={currentUser} onInvitationListUpdated={handleGroupMembersChange}/>
               </div>
         </div>
     );

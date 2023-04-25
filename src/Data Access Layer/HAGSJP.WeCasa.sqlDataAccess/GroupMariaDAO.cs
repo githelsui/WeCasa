@@ -290,12 +290,12 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
         }
 
-        public GroupResult GetGroupMembers(GroupModel group)
+        public async Task<GroupResult> GetGroupMembers(GroupModel group)
         {
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 var result = new GroupResult();
 
                 // Select SQL statement
@@ -317,6 +317,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     var groupMemberArr = groupMembers.ToArray();
                     result.IsSuccessful = true;
                     result.ReturnedObject = groupMemberArr;
+                    result.Message = "Group members retrieved successfully";
                     return result;
                 }
                 result.IsSuccessful = false;

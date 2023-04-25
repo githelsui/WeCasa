@@ -9,6 +9,7 @@ using System.Net;
 using System;
 using System.Collections;
 using Microsoft.AspNetCore.Identity;
+using HAGSJP.WeCasa.Services.Implementations;
 
 namespace HAGSJP.WeCasa.Managers.Implementations
 {
@@ -50,12 +51,13 @@ namespace HAGSJP.WeCasa.Managers.Implementations
 
             stopwatch.Start();
             var createGroupResult = new GroupResult();
-            var createFileBucketResult = new S3Result();
+            //var createFileBucketResult = new S3Result();
 
             createGroupResult = _dao.CreateGroup(group);
-            createFileBucketResult = _s3dao.CreateBucket(group.GroupId.ToString()).Result;
+            //createFileBucketResult = _s3dao.CreateBucket(group.GroupId.ToString()).Result;
 
-            if (createGroupResult.IsSuccessful && createFileBucketResult.IsSuccessful)
+            //if (createGroupResult.IsSuccessful && createFileBucketResult.IsSuccessful)
+            if (createGroupResult.IsSuccessful) 
             {
                 // Logging the group creation
                 successLogger.Log("Group created successfully", LogLevels.Info, "Data Store", group.Owner);
@@ -83,12 +85,24 @@ namespace HAGSJP.WeCasa.Managers.Implementations
 
             stopwatch.Start();
             var deleteGroupResult = new Result();
-            var deleteGroupFiles = new S3Result();
-            var deleteFileBucketResult = new S3Result();
+            //var deleteGroupFiles = new S3Result();
+            //var deleteFileBucketResult = new S3Result();
 
             deleteGroupResult = _dao.DeleteGroup(group);
-            deleteGroupFiles = _s3dao.DeleteAllObjects(group.GroupId.ToString()).Result;
+            if (deleteGroupResult.IsSuccessful)
+            {
+                // Logging the group deletion
+                successLogger.Log("Group deleted successfully", LogLevels.Info, "Data Store", group.Owner);
+            } 
+            else
+            {
+                // Logging the error
+                errorLogger.Log("Error deleting group files.", LogLevels.Error, "Data Store", group.Owner);
+            }
+
+            /*deleteGroupFiles = _s3dao.DeleteAllObjects(group.GroupId.ToString()).Result;
             if (deleteGroupResult.IsSuccessful && deleteGroupFiles.IsSuccessful)
+            if (deleteGroupResult.IsSuccessful)
             {
                 deleteFileBucketResult = _s3dao.DeleteBucket(group.GroupId.ToString()).Result;
                 if (deleteFileBucketResult.IsSuccessful)
@@ -105,7 +119,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             {
                 // Logging the error
                 errorLogger.Log("Error deleting group files.", LogLevels.Error, "Data Store", group.Owner);
-            }
+            }*/
 
             stopwatch.Stop();
             var actual = Decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
@@ -149,35 +163,48 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             return result;
         }
 
-        public GroupResult GetGroupMembers(GroupModel group)
+        public async Task<GroupResult> GetGroupMembers(GroupModel group)
         {
-            var userManager = new UserManager();
             var result = new GroupResult();
+            var progressReports = new List<ProgressReport>();
+            var userManager = new UserManager();
+            var choreService = new ChoreService();
 
-            result = (_dao.GetGroupMembers(group));
-            if (result.IsSuccessful)
+            var groupResult = await _dao.GetGroupMembers(group);
+            if (groupResult.IsSuccessful)
             {
-                var usernamesList = result.ReturnedObject;
+                var usernamesList = groupResult.ReturnedObject;
                 IEnumerable enumerable = usernamesList as IEnumerable;
                 var groupMembersList = new List<UserProfile>();
                 foreach (string username in enumerable)
                 {
-                    Console.Write("Username = " + username);
+                    Console.Write("Username = " + username + "\n");
                     var userAccount = new UserAccount(username);
-                    var userProfile = userManager.GetUserProfile(userAccount);
-                    groupMembersList.Add((UserProfile)userProfile.ReturnedObject);
+
+                    // getting user info
+                    var userResult = await userManager.GetUserProfile(userAccount);
+                    var userProfile = (UserProfile)userResult.ReturnedObject;
+                    userProfile.Username = username;
+                    groupMembersList.Add(userProfile);
+
+                    // getting chore progress
+                    var choreResult = await choreService.GetUserProgress(username, group.GroupId);
+                    progressReports.Add(choreResult.ChoreProgress);
+                    result.ProgressReports = progressReports;
+
+                    // Concatenating messages from all 3 services
+                    result.Message = groupResult.Message + ", " + userResult.Message + ", " + choreResult.Message;
                 }
                 var groupMemberArr = groupMembersList.ToArray();
                 result.ReturnedObject = groupMemberArr;
-                return result;
             }
             else
             {
                 // Logging the error
-                errorLogger.Log("Error fetching group member", LogLevels.Error, "Data Store", group.Owner);
+                await errorLogger.Log("Error fetching group member", LogLevels.Error, "Data Store", group.Owner);
                 result.Message = "Error fetching group member";
-                return result;
             }
+            return result;
         }
 
         public Result AddGroupMembers(GroupModel group, string[] groupMembers)

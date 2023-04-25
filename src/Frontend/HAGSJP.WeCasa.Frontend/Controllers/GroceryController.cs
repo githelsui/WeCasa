@@ -74,7 +74,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("GetCurrentGroupMembers")]
-        public GroceryResult GetCurrentGroupMembers([FromBody] GroupMemberForm groupForm)
+        public async Task<GroceryResult> GetCurrentGroupMembers([FromBody] GroupMemberForm groupForm)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
                 var groupModel = new GroupModel();
                 groupModel.GroupId = groupForm.GroupId;
                 var groupManager = new GroupManager();
-                var managerResult = groupManager.GetGroupMembers(groupModel);
+                var managerResult = await groupManager.GetGroupMembers(groupModel);
                 if (managerResult.IsSuccessful)
                 {
                     result.ReturnedObject = managerResult.ReturnedObject;

@@ -12,6 +12,7 @@ import { UserOutlined } from '@ant-design/icons';
 
 export const GroupMembersTab = (props) => {
     const [membersList, setMembersList] = useState([]);
+    const [progressReports, setProgressReports] = useState([]);
     const { currentUser, currentGroup } = useAuth();
     const [showInviteModal, setShowInviteModal] = useState(false);
     const [daysUntilRefresh, setDaysUntilRefresh] = useState(0);
@@ -35,8 +36,11 @@ export const GroupMembersTab = (props) => {
         axios.post('group-settings/GetGroupMembers', groupMemberForm)
             .then(res => {
                 var memberArrRes = res.data['returnedObject']
-                var copyArr = cleanArrayCopy(memberArrRes)
-                setMembersList(copyArr)
+                var progressReports = res.data['progressReports']
+                var copyMemberArr = cleanArrayCopy(memberArrRes)
+                var copyProgressArr = cleanArrayCopy(progressReports)
+                setMembersList(copyMemberArr)
+                setProgressReports(copyProgressArr)
             })
             .catch((error => { console.error(error) }));
     }
@@ -128,8 +132,13 @@ export const GroupMembersTab = (props) => {
                                     removeRoommate(item.username)
                                 }} type="default" style={Styles.removeGroupMemberButton}>X  Remove Member</Button>
                             </List.Item>
-                            <CircularProgressBar percentage={item.progress}></CircularProgressBar>
+                            <div>
+                                {currentGroup.features.includes("Circular Progress Bar") ? (
+                                    <CircularProgressBar id={`${item}-progressBar`} report={progressReports.filter(r => r.username === item.username)}></CircularProgressBar>
+                                ) : <div></div>}
+                            </div>
                         </Skeleton>
+                    
                     </List.Item>
                 )}
             />
