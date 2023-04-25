@@ -4,6 +4,7 @@ using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Services.Implementations;
 using Amazon.S3;
 using HAGSJP.WeCasa.sqlDataAccess;
+using System.Net;
 
 namespace HAGSJP.WeCasa.Managers.Implementations
 {
@@ -12,13 +13,16 @@ namespace HAGSJP.WeCasa.Managers.Implementations
         private CalendarService _service;
         private NotificationService _notificationService;
         private RemindersDAO remindersDAO;
-        private bool isEmailSent;
+        public bool isEmailSent;
+        private Logger _log;
 
         public CalendarManager()
         {
             _service = new CalendarService();
             _notificationService = new NotificationService();
             remindersDAO = new RemindersDAO();
+            var _logger = new Logger(new AccountMariaDAO());
+
         }
 
         public CalendarManager(CalendarService cs, NotificationService ns)
@@ -33,14 +37,16 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             return result;
         }
 
-        public async Task<Result> AddEventAsync(Event evnt)
+        public async Task<Result> AddEvent(Event evnt)
         {
-            var result = _service.AddEvent(evnt);
-            bool isEmailSend = false;
 
-            if (result.IsSuccessful & evnt.Reminder != null)
+            var result = _service.AddEvent(evnt);
+            
+
+            if (result.IsSuccessful && evnt.Reminder != null)
             {
                 // Send notification for the new event
+                Console.WriteLine("result is successfull and reminder is not null");
                 var group = new GroupModel { GroupId = evnt.GroupId };
                 var from = "wecasacorporation@gmail.com";
                 var groupModel = new GroupModel
@@ -50,27 +56,48 @@ namespace HAGSJP.WeCasa.Managers.Implementations
 
                 // Get usernames from the group
                 var rsult = remindersDAO.GetGroupEmail(groupModel);
+                Console.WriteLine("DAO successfully got emails");
 
                 // Get emails associated with each username
                 var usernames = (List<string>)rsult.ReturnedObject;
                 var eventDate = evnt.EventDate;
                 string reminderOption = evnt.Reminder;
                 string eventType = "event from calendar is coming up";
-                string subject = "Reminder for" + eventType;
-                string message = $"This is a reminder for" + eventType;
+                string subject = "Reminder for " + eventType;
+                string message = $"This is a reminder for " + eventType;
 
                 foreach (var username in usernames)
                 {
-                        string to = username;
-                        var emailResult = await NotificationService.ScheduleReminderEmail(from, to, subject, message, reminderOption, eventType);
-                    if (emailResult.IsSuccessful) ;
+                    try
                     {
-                        isEmailSent = true;
-                    }
+                        string to = username;
+                        var response = await NotificationService.ScheduleReminderEmail(from, to, subject, message, reminderOption, eventType);
+                        if (response == true)
+                        {
+                            _log.Log("Success sending email from Calendar", LogLevels.Info, "Data Store", to);
 
+                        }
+                        else
+                        {
+                            // Log error if email was not sent successfully
+                            _log.Log("Error sending email from Calendar", LogLevels.Error, "Data Store", to);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log error
+                        _log.Log("Error sending email from Calendar", LogLevels.Error, "Data Store", username);
+                        throw;
+
+                    }
                 }
             }
-                return result;
+
+            return result;
+
         }
+
     }
 }
+    
+

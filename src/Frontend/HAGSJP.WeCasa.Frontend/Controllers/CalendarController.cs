@@ -47,7 +47,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
             try
             {
                 Event e = new Event(eventForm.EventName, eventForm.Description, eventForm.EventDate, eventForm.GroupId, eventForm.Repeats, eventForm.Type, eventForm.Reminder, eventForm.Color, eventForm.CreatedBy);
-                result = await _manager.AddEventAsync(e);
+                result = await _manager.AddEvent(e);
             }
             catch (Exception ex)
             {

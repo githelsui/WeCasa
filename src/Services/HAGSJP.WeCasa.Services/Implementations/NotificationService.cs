@@ -25,7 +25,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         }
 
         //Method to send email
-        public static async Task ScheduleReminderEmail(string from, string to, string subject, string message, string reminderOption, string eventType)
+        public static async Task<bool> ScheduleReminderEmail(string from, string to, string subject, string message, string reminderOption, string eventType)
         {
             var apiKey = "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";
             var client = new SendGridClient(apiKey);
@@ -34,6 +34,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var emailFrom = new EmailAddress(from);
             var emailTo = new EmailAddress(to);
             var emailMessage = MailHelper.CreateSingleEmail(emailFrom, emailTo, subject, message, message);
+            bool isSent = false;
 
             // Calculate the send date based on the selected reminder option
             DateTime sendDate;
@@ -66,13 +67,15 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 Console.WriteLine("Response code: " + response.StatusCode);
                 // Log success
                 _logger.Log("Email sent successfully", LogLevels.Info, "Data Store", to);
+
+                return true;
             }
             catch (Exception ex)
             {
                 // Log error
                 _logger.Log("Error sending email: " + ex.Message, LogLevels.Error, "Data Store", to);
+                throw;
             }
-
 
 
         }

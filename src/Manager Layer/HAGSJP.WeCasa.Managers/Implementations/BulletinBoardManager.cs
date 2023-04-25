@@ -10,7 +10,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
         private readonly BulletinBoardService _bulletinBoardService;
         private Logger _logger;
         private RemindersDAO remindersDAO;
-
+        private Result response;
 
         public BulletinBoardManager() 
         {
@@ -44,7 +44,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 foreach (var username in usernames)
                 {
                     var to = username;
-                    await NotificationService.ScheduleReminderEmail(from, to, subject, message, rem, evnt);
+                    var response = await NotificationService.ScheduleReminderEmail(from, to, subject, message, rem, evnt);
                 }
 
             }

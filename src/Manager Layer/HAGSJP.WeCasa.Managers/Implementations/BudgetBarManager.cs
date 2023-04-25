@@ -107,6 +107,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                     result = _dao.InsertBill(bill);
                     if (result.IsSuccessful)
                     {
+                        Console.WriteLine("insert bill was successful")
                         var group = new GroupModel { GroupId = bill.GroupId };
                         var emails = remindersDAO.GetGroupEmail(group);
                         var usernames = (List<string>)emails.ReturnedObject;

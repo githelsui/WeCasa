@@ -6,6 +6,7 @@ using HAGSJP.WeCasa.Services.Implementations;
 using MySqlX.XDevAPI.CRUD;
 using MySqlX.XDevAPI.Common;
 using System.Collections.Generic;
+using System.Text;
 
 namespace HAGSJP.WeCasa.Managers.Implementations
 {
@@ -14,12 +15,16 @@ namespace HAGSJP.WeCasa.Managers.Implementations
         private readonly UserManager _um;
         private readonly ChoreService _service;
         private Logger _logger;
+        private RemindersDAO remindersDAO;
+
 
         public ChoreManager()
 		{
             _logger = new Logger(new AccountMariaDAO());
             _service = new ChoreService();
             _um = new UserManager();
+            remindersDAO = new RemindersDAO();
+
         }
 
         public ChoreResult AddChore(Chore chore, UserAccount userAccount)
@@ -228,6 +233,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 var serviceResult = _service.GetGroupChores(group, 1);
                 if (serviceResult.IsSuccessful)
                 {
+                    Console.WriteLine("getting group chores success");
                     result.ReturnedObject = serviceResult.ReturnedObject;
                     _logger.Log("Group completed chores fetched successfully", LogLevels.Info, "Service", group.Owner);
                 }
@@ -245,6 +251,8 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 throw exc;
             }
         }
+
+        
 
         public ChoreResult GetUserToDoChores(UserAccount user)
         {
@@ -299,6 +307,78 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 throw exc;
             }
         }
+
+       /* public async Task<ChoreResult> IncompleteTaskSummary(GroupModel group, UserAccount user, Chore chore)
+        {
+            try
+            {
+                // Get the list of incomplete chores for the group
+                var result = GetGroupToDoChores(group);
+                if (!result.IsSuccessful)
+                {
+                    // If there was an error fetching the chores, return the result as-is
+                    return result;
+                }
+
+                // Get the list of completed chores for the group
+                var completedChores = GetGroupCompletedChores(group);
+                if (!completedChores.IsSuccessful)
+                {
+                    // If there was an error fetching the completed chores, return the result as-is
+                    return completedChores;
+                }
+                var result = GetGroupToDoChores(group);
+                var incompleteChores = result.Where(c => !completedChores.ReturnedObject.Select(cc => cc.ChoreId).Contains(c.ChoreId)).ToList();
+                // Filter the list of chores to only include incomplete ones
+                if (incompleteChores.Count == 0)
+                {
+                    // If there are no incomplete chores, return a successful result with a message indicating so
+                    return new ChoreResult
+                    {
+                        IsSuccessful = true,
+                        Message = "There are no incomplete chores for group " + group.GroupName
+                    };
+                }
+             
+                // Generate the email message body
+                var message = $"The following chores are incomplete for group {group.GroupName}: \n";
+                foreach (var incompleteChore in incompleteChores)
+                {
+                    message += $"\n- {incompleteChore.Name}";
+                }
+                var from = "wecasacorporation@gmail.com";
+                var subject = "Weekly Incomplete Task Summary";
+                var rem = "immediately";
+                var evnt = "Incomplete Task Summary";
+                var emails = remindersDAO.GetGroupEmail(group);
+                var usernames = (List<string>)emails.ReturnedObject;
+
+                foreach (var username in usernames)
+                {
+                    var to = username;
+                    var response = await NotificationService.ScheduleReminderEmail(from, to, subject, message, rem, evnt);
+                }
+
+                // Log success
+                _logger.Log($"Incomplete chore reminder email sent successfully to all users in group {group.GroupName}", LogLevels.Info, "Service", user.Username);
+
+                // Return a successful result with the email response
+                return new ChoreResult
+                {
+                    IsSuccessful = true,
+                    Message = $"Incomplete chore reminder email sent to all users in group {group.GroupName}",
+                };
+            }
+            catch (Exception exc)
+            {
+                _logger.Log($"Error sending incomplete chore reminder email to all users in group {group.GroupName}: {exc.Message}", LogLevels.Error, "Service", user.Username, new UserOperation(Operations.ChoreList, 0));
+                throw;
+            }
+        }*/
+
+
+
+
 
         //Assignment Validation
         private ChoreResult ReassignChore(Chore chore, List<String> newAssignments)

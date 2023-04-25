@@ -26,7 +26,7 @@ namespace HAGSJP.WeCasa.Models
 
         [JsonConstructor]
         public Chore(){}
-        public Chore(String name, List<String>? days, String? notes, int groupId, List<string> usernamesAssignedTo, String? repeats)
+        public Chore(String name, List<String>? days, String? notes, int groupId, List<string> usernamesAssignedTo, String? repeats, Boolean isCompleted )
         {
             Name = name;
             Days = days;
@@ -34,6 +34,7 @@ namespace HAGSJP.WeCasa.Models
             GroupId = groupId;
             UsernamesAssignedTo = usernamesAssignedTo;
             Repeats = repeats;
+            IsCompleted = isCompleted;
         }
     }
 }
