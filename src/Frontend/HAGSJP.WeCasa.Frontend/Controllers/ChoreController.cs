@@ -75,7 +75,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         {
             try
             {
-                Chore chore = new Chore(choreForm.Name, choreForm.Days, choreForm.Notes, choreForm.GroupId, choreForm.AssignedTo, choreForm.Repeats);
+                Chore chore = new Chore(choreForm.ChoreId, choreForm.Name, choreForm.Days, choreForm.Notes, choreForm.GroupId, choreForm.AssignedTo, choreForm.Repeats);
                 var result = await _manager.EditChore(chore, new UserAccount(choreForm.CurrentUser));
                 if (result.IsSuccessful)
                 {
@@ -121,7 +121,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("GetGroupToDoChores")]
-        public ChoreResult GetGroupToDoChores([FromBody] GroupForm groupForm)
+        public ChoreResult GetGroupToDoChores([FromBody] GroupMemberForm groupForm)
         {
             try
             {
