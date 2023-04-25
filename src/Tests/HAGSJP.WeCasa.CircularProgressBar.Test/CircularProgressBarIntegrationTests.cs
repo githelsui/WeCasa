@@ -16,6 +16,7 @@ namespace HAGSJP.WeCasa.CircularProgressBar.Test
         private AccountMariaDAO _daoAccount;
         private GroupMariaDAO _daoGroup;
         private ChoresDAO _dao;
+        private Chore _chore;
 
         [TestInitialize]
         public void Initialize()
@@ -35,6 +36,11 @@ namespace HAGSJP.WeCasa.CircularProgressBar.Test
                 Icon = "#668D6A"
             };
             _groupManager = new GroupManager();
+            _daoAccount = new AccountMariaDAO();
+            _daoGroup = new GroupMariaDAO();
+            _dao = new ChoresDAO();
+            _chore = new Chore("Test chore", _testGroup.GroupId);
+
             var createGroupResult = _daoGroup.CreateGroup(_testGroup);
             var testAccountResult = _daoAccount.PersistUser(_userAccount, _userAccount.Password, "saltsaltsalt");
             _testGroup.GroupId = createGroupResult.GroupId;
@@ -42,19 +48,49 @@ namespace HAGSJP.WeCasa.CircularProgressBar.Test
         }
 
         [TestMethod]
-        public void ShouldUpdateOnTaskCompletion()
+        public async Task ShouldUpdateOnNewChore()
         {
-            throw new NotImplementedException();
+            // Arrange
+            var systemUnderTest = new ChoreService();
+            var expectedComplete = 0;
+            var expectedIncomplete = 1;
+
+            // Act
+            var choreResult = systemUnderTest.AddChore(_chore);
+            var result = new ChoreResult();
+            result = await systemUnderTest.GetUserProgress(_userAccount.Username, _testGroup.GroupId);
+            var actual = result.ChoreProgress;
+            
+            // Assert
+            Assert.IsTrue(choreResult.IsSuccessful);
+            Assert.IsTrue(result.IsSuccessful);
+            Assert.IsTrue(expectedComplete == actual.CompletedChores);
+            Assert.IsTrue(expectedIncomplete == actual.IncompleteChores);
         }
 
         [TestMethod]
-        public void ShouldUpdateAtStartOfMonth()
+        public async Task ShouldUpdateOnTaskCompletion()
         {
-            throw new NotImplementedException();
+            // Arrange
+            var systemUnderTest = new ChoreService();
+            _chore.IsCompleted = true;
+            var expectedComplete = 1;
+            var expectedIncomplete = 1;
+
+            // Act 
+            var choreResult = systemUnderTest.EditChore(_chore);
+            var result = await systemUnderTest.GetUserProgress(_userAccount.Username, _testGroup.GroupId);
+            var actual = result.ChoreProgress;
+
+            // Assert
+            Assert.IsTrue(choreResult.IsSuccessful);
+            Assert.IsTrue(result.IsSuccessful);
+            Assert.IsTrue(expectedComplete == actual.CompletedChores);
+            Assert.IsTrue(expectedIncomplete == actual.IncompleteChores);
         }
 
         [TestMethod]
-        public void ShouldGetUserProgressWithin3Sec()
+        public async Task ShouldGetUserProgressWithin3Sec()
         {
             // Arrange
             var stopwatch = new Stopwatch();
@@ -63,7 +99,7 @@ namespace HAGSJP.WeCasa.CircularProgressBar.Test
 
             // Act
             stopwatch.Start();
-            var result = systemUnderTest.GetUserProgress(_userAccount.Username, _testGroup.GroupId);
+            var result = await systemUnderTest.GetUserProgress(_userAccount.Username, _testGroup.GroupId);
             stopwatch.Stop();
 
             var actual = decimal.Divide(stopwatch.ElapsedMilliseconds, 60_000);
@@ -72,13 +108,7 @@ namespace HAGSJP.WeCasa.CircularProgressBar.Test
             Assert.IsNotNull(actual);
             Assert.IsTrue(actual >= 0);
             Assert.IsTrue(actual <= expected);
-            Assert.IsTrue(result.Result.IsSuccessful);
-        }
-
-        [TestMethod]
-        public void ShouldLogErrors()
-        {
-            throw new NotImplementedException();
+            Assert.IsTrue(result.IsSuccessful);
         }
 
         [TestCleanup]
