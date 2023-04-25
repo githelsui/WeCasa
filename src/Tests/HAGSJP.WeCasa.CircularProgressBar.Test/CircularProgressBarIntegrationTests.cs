@@ -31,7 +31,7 @@ namespace HAGSJP.WeCasa.CircularProgressBar.Test
             _testGroup = new GroupModel()
             {
                 GroupName = "Test Group 1",
-                Owner = "wecasacorp@gmail.com",
+                Owner = "circularprogressintegrationtest@gmail.com",
                 Features = new List<string> { "Circular Progress Bar" },
                 Icon = "#668D6A"
             };
@@ -39,10 +39,10 @@ namespace HAGSJP.WeCasa.CircularProgressBar.Test
             _daoAccount = new AccountMariaDAO();
             _daoGroup = new GroupMariaDAO();
             _dao = new ChoresDAO();
-            _chore = new Chore("Test chore", _testGroup.GroupId);
+            _chore = new Chore("Test chore", _testGroup.GroupId, _userAccount.Username);
 
-            var createGroupResult = _daoGroup.CreateGroup(_testGroup);
             var testAccountResult = _daoAccount.PersistUser(_userAccount, _userAccount.Password, "saltsaltsalt");
+            var createGroupResult = _daoGroup.CreateGroup(_testGroup);
             _testGroup.GroupId = createGroupResult.GroupId;
             var addUserResult = _daoGroup.AddGroupMember(_testGroup, _userAccount.Username);
         }
@@ -114,6 +114,7 @@ namespace HAGSJP.WeCasa.CircularProgressBar.Test
         [TestCleanup]
         public void Cleanup()
         {
+            _dao.DeleteChore(_chore);
             _daoGroup.DeleteGroup(_testGroup);
             _daoAccount.DeleteUser(_userAccount);
         }
