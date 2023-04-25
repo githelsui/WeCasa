@@ -89,7 +89,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             }
         }
 
-        public async Task<Result> InsertBill(Bill bill)
+        public Result InsertBill(Bill bill)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                     result = _dao.InsertBill(bill);
                     if (result.IsSuccessful)
                     {
-                        Console.WriteLine("insert bill was successful")
+                        Console.WriteLine("insert bill was successful");
                         var group = new GroupModel { GroupId = bill.GroupId };
                         var emails = remindersDAO.GetGroupEmail(group);
                         var usernames = (List<string>)emails.ReturnedObject;
@@ -122,7 +122,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                             if (i != 0)
                             {
                                 var to = usernames[i];
-                                await NotificationService.ScheduleReminderEmail(from, to, subject, message, rem, evnt);
+                                NotificationService.ScheduleReminderEmail(from, to, subject, message, rem, evnt);
                             }
                         }
                         _logger.Log("Add bill was successful " + bill.Amount, LogLevels.Info, "Data Store", bill.Owner);

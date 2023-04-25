@@ -187,7 +187,7 @@ namespace HAGSJP.WeCasa.Reminders.Test
             var systemUnderTest = new BulletinBoardManager();
            
             //Act
-            var testResult = await systemUnderTest.AddNote(_testNote);
+            var testResult = systemUnderTest.AddNote(_testNote);
 
             //Assert
             Assert.IsTrue(testResult.IsSuccessful);
@@ -201,7 +201,7 @@ namespace HAGSJP.WeCasa.Reminders.Test
             var systemUnderTest = new BudgetBarManager();
             
             //Act
-            var testResult = await _budgetBarManager.InsertBill(_testbill);
+            var testResult = _budgetBarManager.InsertBill(_testbill);
             //Assert
             Assert.IsTrue(testResult.IsSuccessful);
 

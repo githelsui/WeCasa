@@ -25,7 +25,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             return _bulletinBoardService.GetNotes(groupId);
         }
 
-        public async Task<Result> AddNote(Note note)
+        public Result AddNote(Note note)
         {
             var result = _bulletinBoardService.AddNote(note);
             var groupmod = new GroupModel { GroupId = note.GroupId };
@@ -44,7 +44,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 foreach (var username in usernames)
                 {
                     var to = username;
-                    var response = await NotificationService.ScheduleReminderEmail(from, to, subject, message, rem, evnt);
+                    var response = NotificationService.ScheduleReminderEmail(from, to, subject, message, rem, evnt);
                 }
 
             }

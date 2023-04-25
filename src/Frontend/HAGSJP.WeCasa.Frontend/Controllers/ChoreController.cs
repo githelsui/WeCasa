@@ -3,6 +3,7 @@ using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.sqlDataAccess;
 using HAGSJP.WeCasa.Logging.Implementations;
 using HAGSJP.WeCasa.Managers.Implementations;
+using System.Text.RegularExpressions;
 
 namespace HAGSJP.WeCasa.Frontend.Controllers
 {
@@ -21,13 +22,13 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("AddChore")]
-        public ChoreResult AddChore([FromBody] ChoreForm choreForm)
+        public async Task<ChoreResult> AddChore([FromBody] ChoreForm choreForm)
         {
             try
             {
-                Chore chore = new Chore(choreForm.Name, choreForm.Days, choreForm.Notes, choreForm.GroupId, choreForm.AssignedTo, choreForm.Repeats);
-                var result = _manager.AddChore(chore, new UserAccount(choreForm.CurrentUser));
-                if(result.IsSuccessful)
+                Chore chore = new Chore(choreForm.Name, choreForm.Days, choreForm.Notes, choreForm.GroupId, choreForm.AssignedTo, choreForm.Repeats, false);
+                var result =  _manager.AddChore(chore, new UserAccount(choreForm.CurrentUser));
+                if (result.IsSuccessful)
                 {
                     result.ErrorStatus = System.Net.HttpStatusCode.OK;
                 }
@@ -38,7 +39,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
                 return result;
 
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 return new ChoreResult(false, System.Net.HttpStatusCode.Conflict, exc.Message);
             }
@@ -50,7 +51,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         {
             try
             {
-                Chore chore = new Chore(choreForm.Name, choreForm.Days, choreForm.Notes, choreForm.GroupId, choreForm.AssignedTo, choreForm.Repeats);
+                Chore chore = new Chore(choreForm.Name, choreForm.Days, choreForm.Notes, choreForm.GroupId, choreForm.AssignedTo, choreForm.Repeats, (bool)choreForm.IsCompleted);
                 var result = _manager.EditChore(chore, new UserAccount(choreForm.CurrentUser));
                 if (result.IsSuccessful)
                 {
