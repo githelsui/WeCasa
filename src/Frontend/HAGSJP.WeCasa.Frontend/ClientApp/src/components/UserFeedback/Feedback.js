@@ -1,86 +1,117 @@
-﻿import React, { useState, useEffect } from 'react';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, Input} from 'reactstrap';
-import { useLocation } from 'react-router-dom';
+﻿import React, { useState } from 'react';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, Input } from 'reactstrap';
 import axios from 'axios';
 
 export const Feedback = () => {
-    const location = useLocation();
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [feedbackMessage, setFeedbackMessage] = useState('');
+    const [feedbackRating, setRating] = useState(0);
     const [modal, setModal] = useState(false);
     const [feedbackType, setFeedbackType] = useState('Report an Issue');
+    const toggle = () => setModal(!modal);
+    const submitFormData = () => {
+        let request = {
+            submissionDate: new Date().toISOString(),
+            feedbackType: feedbackType,
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            feedbackMessage: feedbackMessage,
+            feedbackRating: feedbackRating,
+            resolvedStatus: 0,
+            resolvedDate: null
+        }
+        console.log("REQUEST", request)
+        const feedbackTypeRadioButtons = document.querySelectorAll('[name="feedbackType"]');
+
+        feedbackTypeRadioButtons.forEach((radioButton) => {
+            radioButton.addEventListener('change', (event) => {
+                const selectedValue = event.target.value;
+
+                if (selectedValue === 'review') {
+                    feedbackType = true; // Set feedbackType to true for "review"
+                } else if (selectedValue === 'issue') {
+                    feedbackType = false; // Set feedbackType to false for "issue"
+                } else {
+                    feedbackType = null; // Set feedbackType to null for no selection
+                }
+            });
+        });
+
+        axios.post('/uploadfeedback', request)
+            .then((response) => {
+                console.log(response.data); // Handle successful response from server
+            })
+            .catch((error) => {
+                console.error(error); // Handle error response from server
+            });
+    };
 
     function handleFeedbackTypeChange(event) {
         setFeedbackType(event.target.value);
     }
 
-    useEffect(() => {
-        if (location.pathname === '/uploadfeedback') {
-            setModal(true);
-        }
-    }, [location.pathname]);
-
-    const toggle = () => setModal(!modal);
-
     return (
-        <div>
-            <Modal isOpen={modal} toggle={toggle}>
-                <ModalHeader toggle={toggle}>Submit a User Feedback Ticket</ModalHeader>
-                <ModalBody>
-                    <FormGroup>
-                        <Label>Please specify feedback type:</Label>
-                        <div>
-                            <Label htmlFor="review">
-                                <input type="radio" name="feedbackType" id="review" value="Review" checked={feedbackType === 'Review'} onChange={handleFeedbackTypeChange} />
-                                {' '}
-                                Review
-                            </Label>
-                        </div>
-                        <div>
-                            <Label htmlFor="reportIssue">
-                                <input type="radio" name="feedbackType" id="reportIssue" value="Report an Issue" checked={feedbackType === 'Report an Issue'} onChange={handleFeedbackTypeChange} />
-                                {' '}
-                                Report an Issue
-                            </Label>
-                        </div>
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="firstName">First Name:</Label>
-                        <Input type="text" name="firstName" id="firstName" placeholder="First Name" />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="lastName">Last Name:</Label>
-                        <Input type="text" name="lastName" id="lastName" placeholder="Last Name" />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="email">Email:</Label>
-                        <Input type="email" name="email" id="email" placeholder="Email" />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="feedback">User Feedback Message:</Label>
-                        <Input type="textarea" name="feedback" id="feedback" placeholder="Enter your feedback here" />
-                    </FormGroup>
-                    {feedbackType === 'Review' &&
+        <div id="feedback-component">
+            <p>The development team at WeCasa is dedicated to providing the best experience possible for its users, and we value your feedback!</p>
+            <p>By taking the time to leave us a review or report an issue, you are directly impacting the future of our application along with its surrounding community.</p>
+            <p>Thank you!</p>
+            <Button color="primary" onClick={toggle}>Submit a Feedback Ticket</Button>
+            <div>
+                <Modal isOpen={modal} toggle={toggle}>
+                    <ModalHeader toggle={toggle}>Submit a User Feedback Ticket</ModalHeader>
+                    <ModalBody>
                         <FormGroup>
-                            <Label for="rating">Rating</Label>
-                            <Input type="select" name="rating" id="rating">
-                                <option value="0.5">0.5 stars</option>
-                                <option value="0.5">0.5 stars</option>
-                                <option value="1.5">1.5 stars</option>
-                                <option value="2">2 stars</option>
-                                <option value="2.5">2.5 stars</option>
-                                <option value="3">3 stars</option>
-                                <option value="3.5">3.5 stars</option>
-                                <option value="4">4 stars</option>
-                                <option value="4.5">4.5 stars</option>
-                                <option value="5">5 stars</option>
-                            </Input>
+                            <Label>Please specify feedback type:</Label>
+                            <div>
+                                <Label htmlFor="review">
+                                    <input type="radio" name="feedbackType" id="review" value="Review" checked={feedbackType === 'Review'} onChange={handleFeedbackTypeChange} />
+                                    {' '}
+                                    Review
+                                </Label>
+                            </div>
+                            <div>
+                                <Label htmlFor="reportIssue">
+                                    <input type="radio" name="feedbackType" id="reportIssue" value="Issue" checked={feedbackType === 'Issue'} onChange={handleFeedbackTypeChange} />
+                                    {' '}
+                                    Report an Issue
+                                </Label>
+                            </div>
                         </FormGroup>
-                    }
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="primary" onClick={toggle}>Submit</Button>{' '}
-                    <Button color="secondary" onClick={toggle}>Cancel</Button>
-                </ModalFooter>
-            </Modal>
+                        <FormGroup>
+                            <Label for="firstName">First Name:</Label>
+                            <Input type="text" name="firstName" id="firstName" placeholder="First Name" onChange={e => setFirstName(e.target.value)} />
+                        </FormGroup>
+                        <FormGroup>
+                            <Label for="lastName">Last Name:</Label>
+                            <Input type="text" name="lastName" id="lastName" placeholder="Last Name" onChange={e => setLastName(e.target.value)} />
+                        </FormGroup>
+                        <FormGroup>
+                            <Label for="email">Email:</Label>
+                            <Input type="email" name="email" id="email" placeholder="Email" onChange={e => setEmail(e.target.value)} />
+                        </FormGroup>
+                        <FormGroup>
+                            <Label for="feedback">User Feedback Message:</Label>
+                            <Input type="textarea" name="feedbackMessage" id="feedbackMessage" placeholder="Enter your Feedback Here (200 Character Limit)" onChange={e => setFeedbackMessage(e.target.value)} />
+                        </FormGroup>
+                        {feedbackType === 'Review' &&
+                            <FormGroup>
+                                <Label for="rating">Rating </Label>
+                                <input type="range" name="feedbackRating" id="feedbackRating" min="0" max="5" step="0.5" value={feedbackRating} onChange={e => setRating(e.target.value)} />
+                                <p>{feedbackRating} stars</p>
+                            </FormGroup>
+                        }
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="primary" onClick={toggle, submitFormData}>Submit</Button>{''}
+                        <Button color="secondary" onClick={toggle}>Cancel</Button>
+                    </ModalFooter>
+                </Modal>
+            </div>
+            <p></p>
+            <p>For further assistance, email us directly at wecasa@gmail.com</p>
         </div>
     );
 };
