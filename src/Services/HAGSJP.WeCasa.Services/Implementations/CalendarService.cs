@@ -21,30 +21,30 @@ namespace HAGSJP.WeCasa.Services.Implementations
             errorLogger = new Logger(_dao);
         }
 
-        public DAOResult GetEvents(GroupModel group, DateTime date)
+        public async Task<DAOResult> GetEvents(GroupModel group, DateTime date)
         {
-            var getEventsResult = _dao.GetEvents(group.GroupId, date);
+            var getEventsResult = await _dao.GetEvents(group.GroupId, date);
             if (getEventsResult.IsSuccessful)
             {
-                successLogger.Log("Successfully retrieved calendar events", LogLevels.Info, "Data Store", group.GroupId.ToString());
+                await successLogger.Log("Successfully retrieved calendar events", LogLevels.Info, "Data Store", group.GroupId.ToString());
             }
             else
             {
-                errorLogger.Log("Error getting calendar events", LogLevels.Error, "Data Store", group.GroupId.ToString());
+                await errorLogger.Log("Error getting calendar events", LogLevels.Error, "Data Store", group.GroupId.ToString());
             }
 
             return getEventsResult;
         }
-        public DAOResult AddEvent(Event evnt)
+        public async Task<DAOResult> AddEvent(Event evnt)
         {
-            var addEventResult = _dao.AddEvent(evnt);
+            var addEventResult = await _dao.AddEvent(evnt);
             if (addEventResult.IsSuccessful)
             {
-                successLogger.Log("Event created successfully", LogLevels.Info, "Data Store", evnt.GroupId.ToString());
+                await successLogger.Log("Event created successfully", LogLevels.Info, "Data Store", evnt.GroupId.ToString());
             }
             else
             {
-                errorLogger.Log("Error creating an event", LogLevels.Error, "Data Store", evnt.GroupId.ToString());
+                await errorLogger.Log("Error creating an event", LogLevels.Error, "Data Store", evnt.GroupId.ToString());
             }
 
             return addEventResult;

@@ -10,10 +10,9 @@ const reminderOptions = ['30 minutes', 'A day', 'A week'];
 
 const AddEventModal = (props) => {
     const [loading, setLoading] = useState(false);
-    const [eventDate, setEventDate] = useState(props.date);
-    const [eventDateTime, setEventDateTime] = useState('');
+    const [eventDate, setEventDate] = useState('');
     const [repeat, setRepeat] = useState('');
-    const [eventType, setEventType] = useState('');
+    const [eventType, setEventType] = useState('public');
     const [reminder, setReminder] = useState('');
     const [eventColor, setEventColor] = useState('');
     const [form] = Form.useForm();
@@ -21,10 +20,6 @@ const AddEventModal = (props) => {
 
     const onDateChange = (date, dateString) => {
         setEventDate(dateString);
-    }
-
-    const onTimeChange = (time, timeString) => {
-        setEventDateTime(time);
     }
 
     const onRepeatChange = (e) => {
@@ -40,13 +35,16 @@ const AddEventModal = (props) => {
     }
 
     const attemptSubmission = () => {
+        form.setFieldsValue({
+            eventDate: eventDate
+        });
         form.validateFields()
             .then((values) => {
                 props.confirm(values)
                 setLoading(true)
 
             })
-            .catch((errorInfo) => { });
+            .catch((errorInfo) => { console.log(errorInfo) });
     }
 
     const displayEventColors = () => {
@@ -100,14 +98,14 @@ const AddEventModal = (props) => {
                         <h6 className="mulish-font">Date and Time</h6>
                         <div className="datetime-row padding-bottom">
                             <Row gutter={24} style={{ display: 'flex', flexDirection: 'horizontal' }}>
-                                    <Col span={8}>
-                                        <DatePicker onChange={onDateChange} />
-                                    </Col>
-                                <Col span={8}>
-                                    <Form.Item name="eventDate" value={eventDateTime}>
-                                        <TimePicker onChange={onTimeChange} />
+                                <Col span={16}>
+                                    <Form.Item name="eventDate">
+                                        <DatePicker format="YYYY-MM-DD hh:mm:ss"
+                                            showTime={true}
+                                            onChange={onDateChange}
+                                         />
                                     </Form.Item>
-                                    </Col>
+                                </Col>
                             </Row>
                         </div>
 
@@ -127,7 +125,10 @@ const AddEventModal = (props) => {
                             <Row gutter={24} style={{display:'flex', flexDirection:'horizontal'}}>
                                 <Col span={18}>
                                     <Form.Item name="type" value={eventType}>
-                                        <Radio.Group options={eventTypeOptions} value={eventType} onChange={onTypeChange} />
+                                        <Radio.Group onChange={onRepeatChange} defaultValue={'public'}>
+                                            <Radio value={'private'}>Private</Radio>
+                                            <Radio value={'public'}>Public</Radio>
+                                        </Radio.Group>
                                     </Form.Item>
                                 </Col>
                             </Row>

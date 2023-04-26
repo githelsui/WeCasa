@@ -42,7 +42,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             return result;
         }
 
-        public DAOResult AddEvent(Event e)
+        public async Task<DAOResult> AddEvent(Event e)
 		{
             var result = new DAOResult();
             _connectionString = BuildConnectionString().ConnectionString;
@@ -50,7 +50,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             {
                 try
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
                     var insertEventSql =
                         @"INSERT INTO Events (
                                             group_id, 
@@ -83,6 +83,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@type", e.Type);
                     command.Parameters.AddWithValue("@reminder", e.Reminder);
                     command.Parameters.AddWithValue("@color", e.Color);
+                    command.Parameters.AddWithValue("@created_by", e.CreatedBy);
 
                     var rows = (command.ExecuteNonQuery());
                     result = ValidateSqlStatement(rows);
@@ -90,7 +91,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 catch (MySqlException sqlex)
                 {
                     result.IsSuccessful = false;
-                    result.Message = "An error occurred.";
+                    result.Message = sqlex.Message;
                 }
                 return result;
             }
@@ -102,7 +103,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         }
 
         
-        public DAOResult GetEvents(int group_id, DateTime date)
+        public async Task<DAOResult> GetEvents(int group_id, DateTime date)
         {
             var result = new DAOResult();
             List<Event> events = new List<Event>();
@@ -111,7 +112,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             {
                 try
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
 
                     var command = connection.CreateCommand();
                     command.CommandText = @"SELECT * FROM Events
@@ -143,7 +144,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 catch (MySqlException sqlex)
                 {
                     result.IsSuccessful = false;
-                    result.Message = "An error occurred.";
+                    result.Message = sqlex.Message;
                 }
                 return result;
             }

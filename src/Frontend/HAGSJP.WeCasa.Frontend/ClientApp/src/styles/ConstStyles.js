@@ -182,6 +182,7 @@ export const calendarViewToggle = {
     fontFamily: 'Mulish',
     width: '100px',
     border: '1px solid #717171',
+    color: '#717171',
     borderRadius: '10px',
     boxSizing: 'border-box',
     justifyContent: 'center',

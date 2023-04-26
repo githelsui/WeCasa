@@ -18,14 +18,14 @@ namespace HAGSJP.WeCasa.Managers.Implementations
         {
             _service = cs;
         }
-        public Result GetEvents(GroupModel group, DateTime date)
+        public async Task<Result> GetEvents(GroupModel group, DateTime date)
         {
-            var result = _service.GetEvents(group, date);
+            var result = await _service.GetEvents(group, date);
             return result;
         }
-        public Result AddEvent(Event evnt)
+        public async Task<Result> AddEvent(Event evnt)
         {
-            var result = _service.AddEvent(evnt);
+            var result = await _service.AddEvent(evnt);
             return result;
         }
 

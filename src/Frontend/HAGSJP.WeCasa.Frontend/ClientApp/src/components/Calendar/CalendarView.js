@@ -14,6 +14,13 @@ import AddEventModal from './AddEventModal.js';
 // http://github.com/react-component/calendar/issues/221
 // http://ant.design/components/calendar
 
+const viewOptions = [
+    { label: 'Day', value: 'day' },
+    { label: 'Week', value: 'week' },
+    { label: 'Month', value: 'month' },
+    { label: 'Year', value: 'year' }
+];
+
 export const CalendarView = () => {
     const { currentUser, currentGroup } = useAuth();
     const [value, setValue] = useState(new Date());
@@ -47,19 +54,19 @@ export const CalendarView = () => {
     }
 
     const addCalendarEvent = (eventConfig) => {
-        console.log("adding event...", eventConfig);
         let newEvent = {
             EventName: eventConfig.eventName,
-            Description: eventConfig.description,
-            GroupId: currentGroup['groupId'],
-            EventDate: eventConfig.eventDateTime,
-            Repeats: eventConfig.repeats,
-            Type: eventConfig.type,
-            Reminder: eventConfig.reminder,
+            Description: (eventConfig.description == null) ? "" : eventConfig.description,
+            GroupId: currentGroup.groupId,
+            EventDate: eventConfig.eventDate,
+            Repeats: (eventConfig.repeats == null) ? "never" : eventConfig.repeats,
+            Type: (eventConfig.type == null) ? "public" : eventConfig.type,
+            Reminder: (eventConfig.reminder == null) ? "none" : eventConfig.reminder,
             Color: (eventConfig.color == null) ? "#0256D4" : eventConfig.color,
-            CreatedBy: currentUser['username']
+            CreatedBy: currentUser.username
         }
-        /*axios.post('calendar/AddGroupEvents', newEvent)
+        console.log("adding event...", newEvent);
+        axios.post('calendar/AddGroupEvent', newEvent)
             .then(res => {
                 var isSuccessful = res.data['IsSuccessful']
                 if (isSuccessful) {
@@ -73,12 +80,12 @@ export const CalendarView = () => {
             })
             .catch((error) => {
                 console.error(error)
-            });*/
+            });
     }
 
     const onPanelChange = (value, mode) => {
+        console.log(mode);
         setMode(mode);
-        console.log(value.format('YYYY-MM-DD'), mode);
     };
 
     const onSelectDate = (value) => {
@@ -142,16 +149,16 @@ export const CalendarView = () => {
                 </div>
                 <Row gutter={24}>
                     <Col span={16}>
-                        <Radio.Group
-                            style={Styles.calendarViewToggleGroup}
-                            onChange={(e) => onTypeChange(e.target.value)}
-                            value={type}
-                        >
-                            <Radio.Button style={Styles.calendarViewToggle} value="day">Day</Radio.Button>
-                            <Radio.Button style={Styles.calendarViewToggle} value="week">Week</Radio.Button>
-                            <Radio.Button style={Styles.calendarViewToggle} value="month">Month</Radio.Button>
-                            <Radio.Button style={Styles.calendarViewToggle} value="year">Year</Radio.Button>
-                        </Radio.Group>
+                        <div style={Styles.calendarViewToggleGroup}>
+                            {viewOptions.map((option) => (
+                                <Button
+                                    style={Styles.calendarViewToggle}
+                                    key={option.value}
+                                    onClick={() => onPanelChange(option.value)}
+                                    type={mode === option.value ? 'primary' : 'default'}
+                                    value={option.label}
+                                />))}
+                        </div>
                     </Col>
                     <Col span={4} offset={4}>
                         <Button
@@ -242,7 +249,7 @@ export const CalendarView = () => {
                 style={{ fontFamily: 'Mulish' }}
                 headerRender={headerRender}
                 onPanelChange={onPanelChange} />
-            <AddEventModal show={showModal} close={() => setShowModal(false)} confirm={addCalendarEvent} reject={failureCalendarView} date={value} />
+            <AddEventModal show={showModal} close={() => setShowModal(false)} confirm={addCalendarEvent} reject={failureCalendarView} />
         </div>
     );
 };
