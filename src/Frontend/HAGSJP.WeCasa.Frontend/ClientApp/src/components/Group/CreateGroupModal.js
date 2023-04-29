@@ -225,7 +225,7 @@ const CreateGroupModal = (props) => {
                             </Col>
                             <Col span={6}>
                                 <Form.Item name="circularProgressBar" valuePropName="checked" initialValue={true}>
-                                    <Switch defaultChecked="true" checkedChildren="ON" unCheckedChildren="OFF" />
+                                    <Switch id="progressSwitch" defaultChecked="true" checkedChildren="ON" unCheckedChildren="OFF" />
                                 </Form.Item>
                             </Col>
                         </Row>

@@ -6,10 +6,12 @@ using MySqlConnector;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
-	public class ChoresDAO : AccountMariaDAO
-	{
+    public class ChoresDAO : AccountMariaDAO
+    {
         private string _connectionString;
         private DAOResult result;
+
+        public ChoresDAO() { }
 
         public MySqlConnectionStringBuilder BuildConnectionString()
         {
@@ -41,8 +43,25 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             return result;
         }
 
+        public DAOResult ValidateInsertStatements(int rows)
+        {
+            var result = new DAOResult();
+
+            if (rows > 0)
+            {
+                result.IsSuccessful = true;
+                result.Message = string.Empty;
+
+                return result;
+            }
+            result.IsSuccessful = false;
+            result.Message = $"Rows affected were 0. Sql insert unsuccessful.";
+
+            return result;
+        }
+
         public DAOResult CreateChore(Chore chore)
-		{
+        {
             var result = new DAOResult();
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
@@ -59,11 +78,11 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.CommandText = insertChoreSql;
                     command.Parameters.AddWithValue("@name", chore.Name);
                     command.Parameters.AddWithValue("@group_id", chore.GroupId);
-                    command.Parameters.AddWithValue("@created", chore.Created);
+                    command.Parameters.AddWithValue("@created", chore.Created != null ? chore.Created : DateTime.Now);
                     command.Parameters.AddWithValue("@created_by", chore.CreatedBy);
                     command.Parameters.AddWithValue("@notes", chore.Notes != null ? chore.Notes : null);
                     command.Parameters.AddWithValue("@repeats", chore.Repeats != null ? chore.Repeats : null);
-                    command.Parameters.AddWithValue("@is_completed", chore.IsCompleted == null ? chore.IsCompleted : false);
+                    command.Parameters.AddWithValue("@is_completed", chore.IsCompleted == null || chore.IsCompleted == false ? 0 : 1);
                     string assignedToJSON = JsonSerializer.Serialize(chore.AssignedTo);
                     command.Parameters.AddWithValue("@assigned_to", assignedToJSON);
                     string daysJson = JsonSerializer.Serialize(chore.Days);
@@ -90,7 +109,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         else
                         {
                             result.IsSuccessful = false;
-                            result.Message += "Error assigning chore to users." + result.Message;
+                            result.Message += "Error assigning chore to users.";
                         }
                     }
                 }
@@ -104,7 +123,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 }
                 return result;
             }
-		}
+        }
 
         public DAOResult UpdateChore(Chore chore)
         {
@@ -123,8 +142,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                                             last_updated = @last_updated,
                                             last_updated_by = @last_updated_by,
                                             assigned_to = @assigned_to,
-                                            reset_time = @reset_time,
                                             notes = @notes,
+                                            days = @days,
                                             repeats = @repeats,
                                             is_completed = @is_completed
                                     WHERE chore_id = @chore_id;";
@@ -134,20 +153,20 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@name", chore.Name);
                     command.Parameters.AddWithValue("@last_updated", chore.LastUpdated);
                     command.Parameters.AddWithValue("@last_updated_by", chore.LastUpdatedBy);
-                    command.Parameters.AddWithValue("@reset_time", chore.ResetTime != null ? chore.ResetTime : null);
                     command.Parameters.AddWithValue("@notes", chore.Notes != null ? chore.Notes : null);
                     command.Parameters.AddWithValue("@repeats", chore.Repeats != null ? chore.Repeats : null);
-                    command.Parameters.AddWithValue("@is_completed", chore.IsCompleted == null ? chore.IsCompleted : false);
+                    command.Parameters.AddWithValue("@is_completed", chore.IsCompleted == null || chore.IsCompleted == false ? 0 : 1);
                     command.Parameters.AddWithValue("@chore_id", chore.ChoreId);
                     string assignedToJSON = JsonSerializer.Serialize(chore.AssignedTo);
                     command.Parameters.AddWithValue("@assigned_to", assignedToJSON);
+                    string daysJson = JsonSerializer.Serialize(chore.Days);
+                    command.Parameters.AddWithValue("@days", daysJson);
 
                     var rows = (command.ExecuteNonQuery());
-                    result = result.ValidateSqlResult(rows);
+                    result = ValidateInsertStatements(rows);
                     if (result.IsSuccessful)
                     {
                         result = ReassignChore(chore);
-                        //result = AssignChores(chore);
                         if (result.IsSuccessful)
                         {
                             return result;
@@ -155,6 +174,45 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     }
                     result.IsSuccessful = false;
                     result.Message += "Failed to update chore. ";
+                    return result;
+                }
+                catch (MySqlException sqlex)
+                {
+                    throw sqlex;
+                }
+                catch (Exception sqlex)
+                {
+                    throw sqlex;
+                }
+            }
+        }
+
+        public DAOResult CompleteChore(Chore chore)
+        {
+            var result = new DAOResult();
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
+
+                    var updateSql = @"UPDATE Chores
+                                        SET
+                                            last_updated = @last_updated,
+                                            last_updated_by = @last_updated_by,
+                                            is_completed = @is_completed
+                                    WHERE chore_id = @chore_id;";
+
+                    var command = connection.CreateCommand();
+                    command.CommandText = updateSql;
+                    command.Parameters.AddWithValue("@last_updated", chore.LastUpdated);
+                    command.Parameters.AddWithValue("@last_updated_by", chore.LastUpdatedBy);
+                    command.Parameters.AddWithValue("@is_completed", (chore.IsCompleted == null || chore.IsCompleted == false) ? 0 : 1);
+                    command.Parameters.AddWithValue("@chore_id", chore.ChoreId);
+
+                    var rows = (command.ExecuteNonQuery());
+                    result = ValidateSqlStatement(rows);
                     return result;
                 }
                 catch (MySqlException sqlex)
@@ -198,20 +256,16 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                     var insertSql = string.Format(@"INSERT INTO UserChore (chore_id, username, is_completed) VALUES {0}", valuesStr);
                     Console.Write(insertSql);
-                    //var insertSql = @"INSERT INTO UserChore (chore_id, username, is_completed) VALUES @values_str;";
-                    //command.Parameters.AddWithValue("@values_str", valuesStr);
                     command.CommandText = insertSql;
-                    var userChoreInsertRows = command.ExecuteNonQuery();
-                    var userChoreResult = ValidateSqlStatement(userChoreInsertRows);
-                    if (userChoreResult.IsSuccessful)
+                    var rows = (command.ExecuteNonQuery());
+                    result = ValidateInsertStatements(rows);
+                    if (result.IsSuccessful)
                     {
-                        result.IsSuccessful = true;
                         result.Message = "Assigning chore success.";
                         result.ReturnedObject = chore;
                     }
                     else
                     {
-                        result.IsSuccessful = false;
                         result.Message += "Failure assigning chore. ";
                     }
                 }
@@ -247,7 +301,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                     // Execution of first query: Resets old assignments if old assignments exist in UserChore table
                     var resetSqlRows = command.ExecuteNonQuery();
-                    var resetSqlRowsResult = ValidateSqlStatement(resetSqlRows);
+                    var resetSqlRowsResult = ValidateInsertStatements(resetSqlRows);
                     if (!resetSqlRowsResult.IsSuccessful)
                     {
                         result.IsSuccessful = false;
@@ -267,6 +321,66 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         {
                             result.IsSuccessful = false;
                             result.Message += "Failure assigning chore. ";
+                        }
+                    }
+                }
+                catch (MySqlException sqlex)
+                {
+                    throw sqlex;
+                }
+                catch (Exception sqlex)
+                {
+                    throw sqlex;
+                }
+                return result;
+            }
+        }
+
+        public DAOResult DeleteChore(Chore chore)
+        {
+            var result = new DAOResult();
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
+
+                    var deleteChoreSql = @"DELETE FROM Chores
+                                     WHERE chore_id = @chore_id;";
+
+                    var command = connection.CreateCommand();
+                    command.CommandText = deleteChoreSql;
+                    command.Parameters.AddWithValue("@chore_id", chore.ChoreId);
+
+                    // Execution of first query
+                    var resetSqlRows = command.ExecuteNonQuery();
+                    var resetSqlRowsResult = ValidateInsertStatements(resetSqlRows);
+                    if (!resetSqlRowsResult.IsSuccessful)
+                    {
+                        result.IsSuccessful = false;
+                        result.Message += "Failure deleting chore.";
+                    }
+                    else // First query successful
+                    {
+                        // Execution of second query
+                        var deleteUserChoreSql = @"DELETE FROM UserChore
+                                     WHERE chore_id = @chore_id;";
+                        command = connection.CreateCommand();
+                        command.CommandText = deleteUserChoreSql;
+                        command.Parameters.AddWithValue("@chore_id", chore.ChoreId);
+                        resetSqlRows = command.ExecuteNonQuery();
+                        resetSqlRowsResult = ValidateInsertStatements(resetSqlRows);
+                        if (resetSqlRowsResult.IsSuccessful)
+                        {
+                            result.IsSuccessful = true;
+                            result.Message = "Deleting chore assignments success.";
+                            result.ReturnedObject = chore;
+                        }
+                        else
+                        {
+                            result.IsSuccessful = false;
+                            result.Message += "Failure deleting chore assignments. ";
                         }
                     }
                 }
@@ -304,12 +418,17 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                             chore.ChoreId = reader.GetInt32(reader.GetOrdinal("chore_id"));
                             chore.GroupId = reader.GetInt32(reader.GetOrdinal("group_id"));
                             chore.Name = reader.GetString(reader.GetOrdinal("name"));
+                            chore.CreatedBy = reader.IsDBNull(reader.GetOrdinal("created_by")) ? "" : reader.GetString(reader.GetOrdinal("created_by"));
+                            chore.Created = reader.IsDBNull(reader.GetOrdinal("created")) ? null : reader.GetDateTime(reader.GetOrdinal("created"));
+                            chore.LastUpdatedBy = reader.IsDBNull(reader.GetOrdinal("last_updated_by")) ? "" : reader.GetString(reader.GetOrdinal("last_updated_by"));
+                            chore.LastUpdated = reader.IsDBNull(reader.GetOrdinal("last_updated")) ? null : reader.GetDateTime(reader.GetOrdinal("last_updated"));
                             chore.Notes = reader.IsDBNull(reader.GetOrdinal("notes")) ? "" : reader.GetString(reader.GetOrdinal("notes"));
                             chore.Repeats = reader.IsDBNull(reader.GetOrdinal("repeats")) ? "" : reader.GetString(reader.GetOrdinal("repeats"));
                             chore.IsCompleted = reader.GetInt32(reader.GetOrdinal("is_completed")) == 1 ? true : false;
-                            chore.ResetTime = reader.IsDBNull(reader.GetOrdinal("reset_time")) ? null : reader.GetDateTime(reader.GetOrdinal("reset_time"));
                             List<UserProfile>? assignedTo = JsonSerializer.Deserialize<List<UserProfile>>(reader.GetString(reader.GetOrdinal("assigned_to")));
                             chore.AssignedTo = assignedTo;
+                            List<String>? days = reader.IsDBNull(reader.GetOrdinal("days")) ? new List<String>() : JsonSerializer.Deserialize<List<String>>(reader.GetString(reader.GetOrdinal("days")));
+                            chore.Days = days;
                             chores.Add(chore);
                         }
                         result.IsSuccessful = true;
@@ -356,7 +475,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         }
                     }
 
-                    if(choreIds.Count > 0)
+                    if (choreIds.Count > 0)
                     {
                         result.ReturnedObject = choreIds;
                         result.IsSuccessful = true;
@@ -379,6 +498,55 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 }
             }
         }
+        public async Task<ChoreResult> GetUserProgress(string username, int group_id)
+        {
+            var result = new ChoreResult();
+            var progressReport = new ProgressReport(group_id, username);
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                try
+                {
+                    await connection.OpenAsync();
+
+                    var command = connection.CreateCommand();
+                    var selectSql = @"SELECT COUNT(CASE WHEN uc.is_completed = 1 THEN 1 ELSE NULL END) AS completedChores,
+                                         COUNT(CASE WHEN uc.is_completed = 0 THEN 1 ELSE NULL END) AS incompleteChores
+                                      FROM userchore AS uc
+                                         INNER JOIN chores AS c 
+                                            ON (uc.chore_id = c.chore_id)
+                                      WHERE username = @username 
+                                            AND group_id = @group_id
+                                            AND MONTH(c.created) = MONTH(NOW());";
+                    
+                    command.CommandText = selectSql;
+                    command.Parameters.AddWithValue("@username", username);
+                    command.Parameters.AddWithValue("@group_id", group_id);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var completedChores = reader.GetInt32(reader.GetOrdinal("completedChores"));
+                            var incompleteChores = reader.GetInt32(reader.GetOrdinal("incompleteChores"));
+                            progressReport.CompletedChores = completedChores;
+                            progressReport.IncompleteChores = incompleteChores;
+                        }
+                        result.ReturnedObject = progressReport;
+                        result.IsSuccessful = true;
+                    }
+                }
+                catch (MySqlException sqlex)
+                {
+                    result.Message = sqlex.Message;
+                }
+                catch (Exception sqlex)
+                {
+                    result.Message = sqlex.Message;
+                }
+                return result;
+            }
+        }
+
     }
 }
 

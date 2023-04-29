@@ -7,6 +7,8 @@ namespace HAGSJP.WeCasa.Models
 	{
         public Object? ReturnedObject { get; set; }
 
+        public ProgressReport ChoreProgress { get; set; }
+
         public ChoreResult() {}
 
         public ChoreResult(bool isSuccessful, HttpStatusCode errorStatus, string? message)
