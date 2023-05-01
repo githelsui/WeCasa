@@ -1,6 +1,6 @@
 import React, { Component, useState, useEffect } from 'react';
 import { useAuth } from '../Auth/AuthContext';
-import { Calendar, Col, Row, Select, Button, Table, Radio, notification } from 'antd';
+import { Calendar, Col, Row, Select, Button, Table, Radio, Badge, notification } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs';
 import axios from 'axios';
@@ -31,16 +31,18 @@ export const CalendarView = () => {
     const [collapsed, setCollapsed] = useState(true);
     dayjs.extend(dayLocaleData);
 
-    // useEffect(() => { getDayEvents(selectedDate);}, []);
+    useEffect(() => { getEvents();}, []);
 
-    const getDayEvents = (value) => {
-        console.log(value);
-        let groupId = currentGroup['groupId'];
-        axios.get('calendar/GetGroupEvents', { params: { groupId } })
+    const getEvents = () => {
+        let groupForm = {
+            GroupId: currentGroup['groupId']
+        }
+        axios.post('calendar/GetGroupEvents', groupForm)
             .then(res => {
-                var isSuccessful = res.data['IsSuccessful']
+                var isSuccessful = res.data['isSuccessful']
+                console.log(res.data);
                 if (isSuccessful) {
-                    events = res.data['returnedObject']
+                    let events = res.data['returnedObject']
                     setEvents(events);
                     successCalendarView(res.data['message']);
                 }
@@ -149,16 +151,26 @@ export const CalendarView = () => {
                 </div>
                 <Row gutter={24}>
                     <Col span={16}>
-                        <div style={Styles.calendarViewToggleGroup}>
-                            {viewOptions.map((option) => (
-                                <Button
-                                    style={Styles.calendarViewToggle}
-                                    key={option.value}
-                                    onClick={() => onPanelChange(option.value)}
-                                    type={mode === option.value ? 'primary' : 'default'}
-                                    value={option.label}
-                                />))}
-                        </div>
+                        <Radio.Group
+                            style={Styles.calendarViewToggleGroup}
+                            onChange={(e) => onTypeChange(e.target.value)}
+                            value={type}>
+                            <Radio.Button style={Styles.calendarViewToggle}
+                                value="day">Day
+                            </Radio.Button>
+                            <Radio.Button style={Styles.calendarViewToggle}
+                                value="week">Week
+                            </Radio.Button>
+                            <Radio.Button style=
+                            {Styles.calendarViewToggle}
+                                value="month">Month
+                            </Radio.Button>
+                            <Radio.Button style=
+                                {Styles.calendarViewToggle}
+                                value="year">Year
+                            </Radio.Button>
+                        </Radio.Group>
+                            
                     </Col>
                     <Col span={4} offset={4}>
                         <Button
@@ -177,24 +189,19 @@ export const CalendarView = () => {
     }
 
     const dateCellRender = (value) => {
+        console.log(value);
         return (
-            <div className={Styles.dayViewContainer}>
-                <Table
-                    rowKey={record => record.id}
-                    dataSource={getDayHoursEvents(value)}
-                    columns={dayColumns}
-                    pagination={false}
-                    showHeader={false}
-                />
-                <hr
-                    className={Styles.currentTime}
-                    style={{ top: `%{currentTimePercentage}%` }}
-                />
-            </div>
+            <ul className="events">
+                {events.map((event) => (
+                    <li key={event.content}>
+                        <Badge status={event.type} text={event.eventName} />
+                    </li>
+                ))}
+            </ul>
         );
     }
 
-    const getDayHoursEvents = (value) => {
+    /*const getDayHoursEvents = (value) => {
         //const dayList = getDayEvents(value);
         const dayList = [];
         const endDate = value.clone().endOf('date').unix();
@@ -207,7 +214,7 @@ export const CalendarView = () => {
             });
         }
         return events;
-    }
+    }*/
 
     const successCalendarView = (successMessage) => {
         notification.open({
@@ -227,7 +234,7 @@ export const CalendarView = () => {
         });
     }
 
-    const dayColumns = [
+    /*const dayColumns = [
         {
             title: '',
             dataIndex: 'hour',
@@ -240,7 +247,13 @@ export const CalendarView = () => {
             key: 'events',
             render: text => dateCellRender(text),
         }
-    ];
+    ];*/
+
+    const cellRender = (current, info) => {
+        if (info.type === 'month') return dateCellRender(current);
+        if (info.type === 'year') return dateCellRender(current);
+        return info.originNode;
+    };
 
     return (
         <div style={Styles.body}>
@@ -248,6 +261,7 @@ export const CalendarView = () => {
                 onSelect={onSelectDate}
                 style={{ fontFamily: 'Mulish' }}
                 headerRender={headerRender}
+                cellRender={cellRender}
                 onPanelChange={onPanelChange} />
             <AddEventModal show={showModal} close={() => setShowModal(false)} confirm={addCalendarEvent} reject={failureCalendarView} />
         </div>

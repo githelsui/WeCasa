@@ -21,9 +21,9 @@ namespace HAGSJP.WeCasa.Services.Implementations
             errorLogger = new Logger(_dao);
         }
 
-        public async Task<DAOResult> GetEvents(GroupModel group, DateTime date)
+        public async Task<DAOResult> GetEvents(GroupModel group)
         {
-            var getEventsResult = await _dao.GetEvents(group.GroupId, date);
+            var getEventsResult = await _dao.GetEvents(group.GroupId);
             if (getEventsResult.IsSuccessful)
             {
                 await successLogger.Log("Successfully retrieved calendar events", LogLevels.Info, "Data Store", group.GroupId.ToString());

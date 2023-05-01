@@ -10,7 +10,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
 {
     public interface ICalendarManager
     {
-        public Task<Result> GetEvents(GroupModel group, DateTime date);
+        public Task<DAOResult> GetEvents(GroupModel group);
         public Task<Result> AddEvent(Event e);
     }
 }

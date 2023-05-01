@@ -23,14 +23,13 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("GetGroupEvents")]
-        public async Task<Result> GetGroupEvents([FromQuery] int groupId)
+        public async Task<DAOResult> GetGroupEvents([FromBody] GroupForm groupForm)
         {
-            var result = new Result();
-            DateTime date = new DateTime();
+            var result = new DAOResult();
             try
             {
-                GroupModel group = new GroupModel(groupId);
-                result = await _manager.GetEvents(group, date);
+                GroupModel group = new GroupModel(groupForm.GroupId);
+                result = await _manager.GetEvents(group);
             }
             catch (Exception ex)
             {

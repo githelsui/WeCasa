@@ -102,8 +102,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             
         }
 
-        
-        public async Task<DAOResult> GetEvents(int group_id, DateTime date)
+        // Returns all group events in the last year
+        public async Task<DAOResult> GetEvents(int group_id)
         {
             var result = new DAOResult();
             List<Event> events = new List<Event>();
@@ -117,10 +117,9 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     var command = connection.CreateCommand();
                     command.CommandText = @"SELECT * FROM Events
                                             WHERE group_id = @group_id
-                                            AND ABS(DATEDIFF(event_date, @event_date)) <= 365;";
+                                            AND ABS(DATEDIFF(event_date, NOW())) <= 365;";
 
                     command.Parameters.AddWithValue("@group_id", group_id);
-                    command.Parameters.AddWithValue("@event_date", date);
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
@@ -136,10 +135,13 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                             e.Color = reader.GetString(reader.GetOrdinal("color"));
                             events.Add(e);
                         }
-                        result.ReturnedObject = events;
                     }
                     result.IsSuccessful = true;
-                    result.Message = "No events found.";
+                    result.ReturnedObject = events;
+                    if (events.Count == 0)
+                    {
+                        result.Message = "No events found.";
+                    }
                 }
                 catch (MySqlException sqlex)
                 {

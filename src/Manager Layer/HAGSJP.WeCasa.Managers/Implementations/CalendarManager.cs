@@ -18,9 +18,9 @@ namespace HAGSJP.WeCasa.Managers.Implementations
         {
             _service = cs;
         }
-        public async Task<Result> GetEvents(GroupModel group, DateTime date)
+        public async Task<DAOResult> GetEvents(GroupModel group)
         {
-            var result = await _service.GetEvents(group, date);
+            var result = await _service.GetEvents(group);
             return result;
         }
         public async Task<Result> AddEvent(Event evnt)
