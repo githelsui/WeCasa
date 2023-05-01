@@ -8,18 +8,13 @@ import axios from 'axios';
 import 'dayjs/locale/zh-cn';
 import dayLocaleData from 'dayjs/plugin/localeData';
 import '../../styles/System.css';
+import '../../styles/Calendar.css';
 import * as Styles from '../../styles/ConstStyles.js';
 import AddEventModal from './AddEventModal.js';
 // References:
 // http://github.com/react-component/calendar/issues/221
 // http://ant.design/components/calendar
 
-const viewOptions = [
-    { label: 'Day', value: 'day' },
-    { label: 'Week', value: 'week' },
-    { label: 'Month', value: 'month' },
-    { label: 'Year', value: 'year' }
-];
 
 export const CalendarView = () => {
     const { currentUser, currentGroup } = useAuth();
@@ -40,11 +35,10 @@ export const CalendarView = () => {
         axios.post('calendar/GetGroupEvents', groupForm)
             .then(res => {
                 var isSuccessful = res.data['isSuccessful']
-                console.log(res.data);
                 if (isSuccessful) {
                     let events = res.data['returnedObject']
                     setEvents(events);
-                    successCalendarView(res.data['message']);
+                    console.log(events);
                 }
                 else {
                     failureCalendarView(res.data['message']);
@@ -72,8 +66,7 @@ export const CalendarView = () => {
             .then(res => {
                 var isSuccessful = res.data['IsSuccessful']
                 if (isSuccessful) {
-                    events = res.data['returnedObject']
-                    setEvents(events);
+                    // refresh events
                     successCalendarView(res.data['message']);
                 }
                 else {
@@ -93,6 +86,10 @@ export const CalendarView = () => {
     const onSelectDate = (value) => {
         setValue(value);
         setSelectedDate(value);
+    }
+
+    const viewEvent = (event) => {
+        console.log(event);
     }
 
     const headerRender = ({ value, type, onChange, onTypeChange }) => {
@@ -188,33 +185,28 @@ export const CalendarView = () => {
         );
     }
 
+    const isSameDay = (eventDate, value) => {
+        let sameDay = (
+            (dayjs(eventDate).diff(value, 'day') === 0)
+            && (dayjs(eventDate).diff(value, 'month') === 0)
+            && (dayjs(eventDate).diff(value, 'year') === 0)
+        )
+        console.log(sameDay);
+        return sameDay;
+    }
+
     const dateCellRender = (value) => {
-        console.log(value);
         return (
             <ul className="events">
                 {events.map((event) => (
-                    <li key={event.content}>
-                        <Badge status={event.type} text={event.eventName} />
-                    </li>
+                    isSameDay(event.eventDate, value) ? 
+                        (<li key={event.eventId} onClick={() => viewEvent(event)}>
+                            <Badge status={event.type} color={event.color} text={event.eventName} />
+                    </li>) : null
                 ))}
             </ul>
         );
     }
-
-    /*const getDayHoursEvents = (value) => {
-        //const dayList = getDayEvents(value);
-        const dayList = [];
-        const endDate = value.clone().endOf('date').unix();
-        const events = [];
-        for (let hour = value.clone().startOf('date'); hour.unix() < endDate; hour.add(1, 'h')) {
-            events.push({
-                id: hour.unix(),
-                hour: hour.format('hh a'),
-                events: dayList ? dayList.filter(event => hour.unix() <= event.startTime && event.endTime < hour.clone().add(1, 'h').unix()) : <div />,
-            });
-        }
-        return events;
-    }*/
 
     const successCalendarView = (successMessage) => {
         notification.open({
@@ -234,6 +226,21 @@ export const CalendarView = () => {
         });
     }
 
+    /*const getDayHoursEvents = (value) => {
+    //const dayList = getDayEvents(value);
+    const dayList = [];
+    const endDate = value.clone().endOf('date').unix();
+    const events = [];
+    for (let hour = value.clone().startOf('date'); hour.unix() < endDate; hour.add(1, 'h')) {
+        events.push({
+            id: hour.unix(),
+            hour: hour.format('hh a'),
+            events: dayList ? dayList.filter(event => hour.unix() <= event.startTime && event.endTime < hour.clone().add(1, 'h').unix()) : <div />,
+        });
+    }
+    return events;
+}*/
+
     /*const dayColumns = [
         {
             title: '',
@@ -250,9 +257,7 @@ export const CalendarView = () => {
     ];*/
 
     const cellRender = (current, info) => {
-        if (info.type === 'month') return dateCellRender(current);
-        if (info.type === 'year') return dateCellRender(current);
-        return info.originNode;
+        return dateCellRender(current);
     };
 
     return (
@@ -261,7 +266,7 @@ export const CalendarView = () => {
                 onSelect={onSelectDate}
                 style={{ fontFamily: 'Mulish' }}
                 headerRender={headerRender}
-                cellRender={cellRender}
+                dateCellRender={cellRender}
                 onPanelChange={onPanelChange} />
             <AddEventModal show={showModal} close={() => setShowModal(false)} confirm={addCalendarEvent} reject={failureCalendarView} />
         </div>

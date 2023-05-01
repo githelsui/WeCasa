@@ -103,9 +103,9 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         }
 
         // Returns all group events in the last year
-        public async Task<DAOResult> GetEvents(int group_id)
+        public async Task<CalendarResult> GetEvents(int group_id)
         {
-            var result = new DAOResult();
+            var result = new CalendarResult();
             List<Event> events = new List<Event>();
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))

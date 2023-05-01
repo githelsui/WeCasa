@@ -21,7 +21,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             errorLogger = new Logger(_dao);
         }
 
-        public async Task<DAOResult> GetEvents(GroupModel group)
+        public async Task<CalendarResult> GetEvents(GroupModel group)
         {
             var getEventsResult = await _dao.GetEvents(group.GroupId);
             if (getEventsResult.IsSuccessful)

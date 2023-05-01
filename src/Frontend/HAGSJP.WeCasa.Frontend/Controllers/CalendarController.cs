@@ -23,9 +23,9 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("GetGroupEvents")]
-        public async Task<DAOResult> GetGroupEvents([FromBody] GroupForm groupForm)
+        public async Task<CalendarResult> GetGroupEvents([FromBody] GroupForm groupForm)
         {
-            var result = new DAOResult();
+            var result = new CalendarResult();
             try
             {
                 GroupModel group = new GroupModel(groupForm.GroupId);
