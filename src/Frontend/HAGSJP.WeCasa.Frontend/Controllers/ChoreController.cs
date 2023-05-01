@@ -12,11 +12,13 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
     {
         private readonly Logger _logger;
         private readonly ChoreManager _manager;
+        private readonly GroupManager _groupManager;
 
         public ChoreController()
         {
             _logger = new Logger(new AccountMariaDAO());
             _manager = new ChoreManager();
+            _groupManager = new GroupManager();
         }
 
         [HttpPost]
@@ -219,13 +221,12 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         [Route("GetCurrentGroupMembers")]
         public async Task<ChoreResult> GetCurrentGroupMembers([FromBody] GroupMemberForm groupForm)
         {
+            var result = new ChoreResult();
+            var groupModel = new GroupModel();
+            groupModel.GroupId = groupForm.GroupId;
             try
             {
-                var result = new ChoreResult();
-                var groupModel = new GroupModel();
-                groupModel.GroupId = groupForm.GroupId;
-                var groupManager = new GroupManager();
-                var managerResult = await groupManager.GetGroupMembers(groupModel);
+                var managerResult = await _groupManager.GetGroupMembers(groupModel);
                 if (managerResult.IsSuccessful)
                 {
                     result.ReturnedObject = managerResult.ReturnedObject;

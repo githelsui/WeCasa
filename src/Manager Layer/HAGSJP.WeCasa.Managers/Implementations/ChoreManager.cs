@@ -6,6 +6,7 @@ using HAGSJP.WeCasa.Services.Implementations;
 using MySqlX.XDevAPI.CRUD;
 using MySqlX.XDevAPI.Common;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace HAGSJP.WeCasa.Managers.Implementations
 {
