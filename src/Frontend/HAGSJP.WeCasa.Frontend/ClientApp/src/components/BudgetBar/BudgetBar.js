@@ -293,7 +293,7 @@ export const BudgetBar = () => {
           <BudgetForm budget={budget} setBudget={setBudget} group={group} style="margin-top: 20px"/>
           <p><strong>Total Budget: ${budget}</strong></p>
           <Progress percent={(groupTotal/budget)*100} strokeColor = {color[0]} showInfo={false} strokeWidth="30px"/>
-          <MultiColorProgressBar  readings={users} />
+          <MultiColorProgressBar readings={users} />
           <Button style={Styles.addFormButton} onClick={()=>setShowAddForm(!showAddForm)}>Add Bill</Button>
           {showAddForm && (<BillForm handleCurrentTable={handleCurrentTable} activeBills={activeBills} setActiveBills={setActiveBills} budget={budget} groupTotal={groupTotal} user={user} group={group} members={users}/>)}
           <Tabs defaultActiveKey="1" items={tabs} /> 

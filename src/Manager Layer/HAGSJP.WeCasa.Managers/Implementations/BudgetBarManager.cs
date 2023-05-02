@@ -123,7 +123,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             }
         }
 
-         public Result UpdateBill(Bill bill)
+        public Result UpdateBill(Bill bill)
         {
             try
             {
