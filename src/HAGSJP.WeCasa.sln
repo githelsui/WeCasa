@@ -42,9 +42,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HAGSJP.WeCasa.Authorization.Test", "Tests\HAGSJP.WeCasa.Authorization.Test\HAGSJP.WeCasa.Authorization.Test.csproj", "{8F9C36F5-06E9-4C2B-91A4-5E91EE5405DB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{7B12BBB6-DEBA-49C3-94B8-93310D37F25F}"
-	ProjectSection(SolutionItems) = preProject
-		Frontend\HAGSJP.WeCasa.Frontend\ClientApp\tests\nightwatch.conf.js = Frontend\HAGSJP.WeCasa.Frontend\ClientApp\tests\nightwatch.conf.js
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HAGSJP.WeCasa.Frontend", "Frontend\HAGSJP.WeCasa.Frontend\HAGSJP.WeCasa.Frontend.csproj", "{DA12407B-882C-4998-B0DD-4EB2300FDABD}"
 EndProject
@@ -61,6 +58,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HAGSJP.WeCasa.Managers", "Manager Layer\HAGSJP.WeCasa.Managers\HAGSJP.WeCasa.Managers.csproj", "{D6EDBD0F-0D04-4D08-B97B-030503320920}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HAGSJP.WeCasa.BulletinBoard.Test", "Tests\HAGSJP.WeCasa.BulletinBoard.Test\HAGSJP.WeCasa.BulletinBoard.Test.csproj", "{55D44AB8-4C27-4128-986A-05A5911F6599}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HAGSJP.WeCasa.CircularProgressBar.Test", "Tests\HAGSJP.WeCasa.CircularProgressBar.Test\HAGSJP.WeCasa.CircularProgressBar.Test.csproj", "{AABBF17C-A66A-4AA8-90C3-DE3BDFC32C39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -264,6 +263,18 @@ Global
 		{55D44AB8-4C27-4128-986A-05A5911F6599}.Release|x64.Build.0 = Release|Any CPU
 		{55D44AB8-4C27-4128-986A-05A5911F6599}.Release|x86.ActiveCfg = Release|Any CPU
 		{55D44AB8-4C27-4128-986A-05A5911F6599}.Release|x86.Build.0 = Release|Any CPU
+		{AABBF17C-A66A-4AA8-90C3-DE3BDFC32C39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AABBF17C-A66A-4AA8-90C3-DE3BDFC32C39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AABBF17C-A66A-4AA8-90C3-DE3BDFC32C39}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{AABBF17C-A66A-4AA8-90C3-DE3BDFC32C39}.Debug|x64.Build.0 = Debug|Any CPU
+		{AABBF17C-A66A-4AA8-90C3-DE3BDFC32C39}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AABBF17C-A66A-4AA8-90C3-DE3BDFC32C39}.Debug|x86.Build.0 = Debug|Any CPU
+		{AABBF17C-A66A-4AA8-90C3-DE3BDFC32C39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AABBF17C-A66A-4AA8-90C3-DE3BDFC32C39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AABBF17C-A66A-4AA8-90C3-DE3BDFC32C39}.Release|x64.ActiveCfg = Release|Any CPU
+		{AABBF17C-A66A-4AA8-90C3-DE3BDFC32C39}.Release|x64.Build.0 = Release|Any CPU
+		{AABBF17C-A66A-4AA8-90C3-DE3BDFC32C39}.Release|x86.ActiveCfg = Release|Any CPU
+		{AABBF17C-A66A-4AA8-90C3-DE3BDFC32C39}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -285,6 +296,7 @@ Global
 		{9D9D561B-5BB4-42B9-A5A2-4BF7BCCD799D} = {FA68C185-B42C-4FA9-8838-62444C65BA73}
 		{D6EDBD0F-0D04-4D08-B97B-030503320920} = {E406FE81-8D0A-4E89-9CA1-53ACE10F2AC6}
 		{55D44AB8-4C27-4128-986A-05A5911F6599} = {FA68C185-B42C-4FA9-8838-62444C65BA73}
+		{AABBF17C-A66A-4AA8-90C3-DE3BDFC32C39} = {FA68C185-B42C-4FA9-8838-62444C65BA73}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4FB761CF-DFD6-4CA0-9D7D-2C94092BB747}

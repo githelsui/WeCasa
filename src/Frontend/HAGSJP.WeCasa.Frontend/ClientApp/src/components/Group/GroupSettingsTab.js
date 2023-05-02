@@ -2,7 +2,7 @@
 import { Modal, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Switch, notification, Card } from 'antd';
 import * as Styles from '../../styles/ConstStyles.js';
 import GroupDeletionModal from './GroupDeletionModal.js';
-import { useAuth } from '../AuthContext.js';
+import { useAuth } from '../Auth/AuthContext.js';
 import '../../styles/System.css';
 import '../../index.css';
 import axios from 'axios';
@@ -252,7 +252,7 @@ export const GroupSettingsTab = (props) => {
                             <Form.Item name="circularProgressBar"
                                 valuePropName="checked"
                                 initialValue={currentGroup.features.includes("Circular Progress Bar") || currentGroup.features.includes("all") ? true : false}>
-                                <Switch defaultChecked="false" checkedChildren="ON" unCheckedChildren="OFF" />
+                                <Switch id="progressBarSwitch" defaultChecked="false" checkedChildren="ON" unCheckedChildren="OFF" />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -263,11 +263,11 @@ export const GroupSettingsTab = (props) => {
                 </div>
                 <div className="group-deletion-section">
                     {(currentUser["username"] == currentGroup["owner"]) ?
-                    (<div><Button type="primary" style={Styles.deleteButtonStyle} onClick={() => setShowModal(true)}>Delete Group</Button>
-                        <GroupDeletionModal show={showModal} close={() => setShowModal(false)} confirm={deleteGroup} /></div>
+                    (<div><Button type="primary" id="deleteGroup" style={Styles.deleteButtonStyle} onClick={() => setShowModal(true)}>Delete Group</Button>
+                        <GroupDeletionModal id="deleteGroupModal" show={showModal} close={() => setShowModal(false)} confirm={deleteGroup} /></div>
                     ) :
-                    (<div><Button type="primary" style={Styles.deleteButtonStyle} onClick={() => setShowModal(true)}>Leave Group</Button>
-                        <GroupDeletionModal show={showModal} close={() => setShowModal(false)} confirm={leaveGroup} /></div>
+                    (<div><Button type="primary" id="leaveGroup" style={Styles.deleteButtonStyle} onClick={() => setShowModal(true)}>Leave Group</Button>
+                        <GroupDeletionModal id="leaveGroupModal" show={showModal} close={() => setShowModal(false)} confirm={leaveGroup} /></div>
                     )}
                 </div>
             </Form>

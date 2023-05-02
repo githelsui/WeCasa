@@ -4,7 +4,7 @@ import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import AppRoutes from './AppRoutes';
 import { Header } from './components/Header';
 import { NavMenu } from './components/NavMenu';
-import { useAuth } from './components/AuthContext';
+import { useAuth } from './components/Auth/AuthContext';
 import './custom.css';
 
 function App() {

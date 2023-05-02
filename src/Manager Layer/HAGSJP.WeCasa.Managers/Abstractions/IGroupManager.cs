@@ -15,7 +15,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
         public GroupResult EditGroup(int groupId, GroupModel newGroup);
         public Result DeleteGroup(GroupModel group);
         public Result AddGroupMember(GroupModel group, string newGroupMember);
-        public GroupResult GetGroupMembers(GroupModel group);
+        public Task<GroupResult> GetGroupMembers(GroupModel group);
         public Result RemoveGroupMember(GroupModel group, string groupMember);
         public Result ValidateGroupMemberInvitation(string newGroupMember);
     }

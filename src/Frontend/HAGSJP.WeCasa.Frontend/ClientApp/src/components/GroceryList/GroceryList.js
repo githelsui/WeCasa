@@ -1,7 +1,7 @@
 ﻿import React, { Component, useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom'
-import { useAuth } from '../AuthContext';
-import { Col, Card, Row, Space, Avatar, Button, notification, Tabs, Checkbox } from 'antd';
+import { useAuth } from '../Auth/AuthContext';
+import { Col, Card, Row, Space, Avatar, Button, notification, Tabs, Checkbox, Spin } from 'antd';
 import * as Styles from '../../styles/ConstStyles.js';
 import axios from 'axios';
 import AddGroceryModal from './AddGroceryModal'
@@ -29,7 +29,7 @@ export const GroceryList = (props) => {
     const [count, setCount] = useState(0); //For rerendering
     const [showAddModal, setShowAddModal] = useState(false);
     const { currentGroup, currentUser } = useAuth();
-    const [groceryItems, setGroceryItems] = useState([])
+    const [groceryItems, setGroceryItems] = useState(null)
     const [successfulFetch, setSuccessFetch] = useState(false);
 
     const addGroceryItem = (modalConfig) => {
@@ -79,7 +79,7 @@ export const GroceryList = (props) => {
                     var items = res.data['returnedObject']
                     console.log(items)
                     setGroceryItems(items)
-                    if (groceryItems.length > 0) {
+                    if (groceryItems != null) {
                         setSuccessFetch(true)
                     }
                     console.log(groceryItems)
@@ -137,17 +137,19 @@ export const GroceryList = (props) => {
             </Row>
             </div>
             <div className="grocery-board">
-
-                {(groceryItems.length > 0 && successfulFetch) ?
-                    (<div>{groceryItems.map((item, i) =>
-                        <Row gutter={24,24}>
-                            <Checkbox defaultChecked={item['isPurchased']} onClick={() => itemPurchased(item)}>
-                                <h6 className="mulish-font">
-                                    {item['name']} <i> {(assignmentLabel(item['assignments']))}</i>
-                                </h6>
-                            </Checkbox></Row>)}
-                       </div>) :
-                    (<p className='mulish-font'>No grocery items for this group</p>)}
+                <Spin spinning={!successfulFetch}>
+                {(successfulFetch && groceryItems != null) ?
+                        (<div>{(groceryItems.length > 0) ? (<div>{groceryItems.map((item, i) =>
+                                    <Row gutter={24, 24}>
+                                        <Checkbox defaultChecked={item['isPurchased']} onClick={() => itemPurchased(item)}>
+                                            <h5 className="mulish-font">
+                                                {item['name']} <i> {(assignmentLabel(item['assignments']))}</i>
+                                            </h5>
+                                        </Checkbox></Row>)}
+                        </div>) : (<h5 className='mulish-font'>No grocery items for this group</h5>)}
+                        </div>):
+                        (<p className='mulish-font'>Fetching grocery items</p>)}
+                    </Spin>
             </div>
         </div>
     );

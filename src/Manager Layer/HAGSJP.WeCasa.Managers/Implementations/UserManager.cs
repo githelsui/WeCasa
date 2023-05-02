@@ -189,9 +189,27 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             return (UserStatus) populateResult.ReturnedObject;
         }
 
-        public AuthResult GetUserProfile(UserAccount userAccount)
+        public async Task<AuthResult> GetUserProfile(UserAccount userAccount)
         {
-            return _dao.GetUserProfile(userAccount);
+            var result = new AuthResult();
+            try
+            {
+                var daoResult = await _dao.GetUserProfile(userAccount);
+                if (!daoResult.IsSuccessful)
+                {
+                    await errorLogger.Log("User profile fetched failed from Users", LogLevels.Info, "Data Store", userAccount.Username);
+                }
+                result.IsSuccessful = daoResult.IsSuccessful;
+                result.Message = daoResult.Message;
+                result.ReturnedObject = (UserProfile)daoResult.ReturnedObject;
+            }
+            catch(Exception exc)
+            {
+                await errorLogger.Log("Error Message: " + exc.Message, LogLevels.Error, "Data Store", userAccount.Username.ToString());
+                result.IsSuccessful = false;
+                result.Message = exc.Message;
+            }
+            return result;
         }
 
             public Result RegisterUser(string firstName, string lastName, string email, string password)

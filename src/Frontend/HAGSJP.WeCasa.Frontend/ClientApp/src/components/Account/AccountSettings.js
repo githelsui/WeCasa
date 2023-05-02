@@ -7,7 +7,7 @@ import * as Styles from '../../styles/ConstStyles.js';
 import '../../styles/System.css';
 import '../../index.css';
 import axios from 'axios';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../Auth/AuthContext';
 import image1 from '../../assets/profileimgs/1.jpg';
 import image2 from '../../assets/profileimgs/2.jpg';
 import image3 from '../../assets/profileimgs/3.jpg';
@@ -334,7 +334,7 @@ export const AccountSettings = () => {
                             <Divider plain>
                             </Divider>
                             <NavItem>
-                                <NavLink style={{ color:"#ff2929" }} onClick={() => setShowModal(true)}>
+                                <NavLink id="deleteAccount" style={{ color:"#ff2929" }} onClick={() => setShowModal(true)}>
                                     Delete Account
                                 </NavLink>
                             </NavItem>
@@ -349,7 +349,7 @@ export const AccountSettings = () => {
                         {displaySettings()}
                     </Col>
                 </Row>
-                <DeleteAccountModal show={showModal} close={() => setShowModal(false)} confirm={attemptDeleteAcc} />
+                <DeleteAccountModal id="delete-account-modal" show={showModal} close={() => setShowModal(false)} confirm={attemptDeleteAcc} />
             </div>
         </div>
     );

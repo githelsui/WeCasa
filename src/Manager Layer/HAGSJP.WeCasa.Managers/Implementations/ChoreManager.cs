@@ -5,6 +5,8 @@ using HAGSJP.WeCasa.sqlDataAccess;
 using HAGSJP.WeCasa.Services.Implementations;
 using MySqlX.XDevAPI.CRUD;
 using MySqlX.XDevAPI.Common;
+using System.Collections.Generic;
+using System.Collections;
 
 namespace HAGSJP.WeCasa.Managers.Implementations
 {
@@ -18,9 +20,10 @@ namespace HAGSJP.WeCasa.Managers.Implementations
 		{
             _logger = new Logger(new AccountMariaDAO());
             _service = new ChoreService();
+            _um = new UserManager();
         }
 
-        public ChoreResult AddChore(Chore chore, UserAccount userAccount)
+        public async Task<ChoreResult> AddChore(Chore chore, UserAccount userAccount)
         {
             try
             {
@@ -30,7 +33,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 chore.CreatedBy = userAccount.Username;
                 chore.IsCompleted = false;
 
-                var assignedProfilesRes = ReassignChore(chore, chore.UsernamesAssignedTo);
+                var assignedProfilesRes = await ReassignChore(chore, chore.UsernamesAssignedTo);
                 if (assignedProfilesRes.IsSuccessful)
                 {
                     chore.AssignedTo = (List<UserProfile>)assignedProfilesRes.ReturnedObject;
@@ -63,7 +66,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             }
         }
 
-        public ChoreResult EditChore(Chore chore, UserAccount userAccount)
+        public async Task<ChoreResult> EditChore(Chore chore, UserAccount userAccount)
         {
             try
             {
@@ -73,7 +76,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 chore.LastUpdatedBy = userAccount.Username;
                 chore.IsCompleted = false;
 
-                var assignedProfilesRes = ReassignChore(chore, chore.UsernamesAssignedTo);
+                var assignedProfilesRes = await ReassignChore(chore, chore.UsernamesAssignedTo);
                 if (assignedProfilesRes.IsSuccessful)
                 {
                     chore.AssignedTo = (List<UserProfile>)assignedProfilesRes.ReturnedObject;
@@ -116,7 +119,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 chore.LastUpdatedBy = userAccount.Username;
                 chore.IsCompleted = true;
 
-                var serviceResult = _service.EditChore(chore);
+                var serviceResult = _service.CompleteChore(chore);
                 if (serviceResult.IsSuccessful)
                 {
                     result.ReturnedObject = serviceResult.ReturnedObject;
@@ -137,7 +140,38 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             }
         }
 
-        public ChoreResult UndoChore(Chore chore, UserAccount userAccount)
+        public ChoreResult DeleteChore(Chore chore, UserAccount userAccount)
+        {
+            try
+            {
+                var result = new ChoreResult();
+
+                chore.LastUpdated = DateTime.Now;
+                chore.LastUpdatedBy = userAccount.Username;
+                chore.IsCompleted = true;
+
+                var serviceResult = _service.DeleteChore(chore);
+                if (serviceResult.IsSuccessful)
+                {
+                    result.ReturnedObject = serviceResult.ReturnedObject;
+                    _logger.Log("Chore deletion successful", LogLevels.Info, "Data Store", userAccount.Username);
+                }
+                else
+                {
+                    _logger.Log("Chore deletion error: " + result.ErrorStatus + "\n" + "Message: " + result.Message, LogLevels.Error, "Service", userAccount.Username);
+                }
+                result.IsSuccessful = serviceResult.IsSuccessful;
+                result.Message = serviceResult.Message;
+                return result;
+            }
+            catch (Exception exc)
+            {
+                _logger.Log("Error Message: " + exc.Message, LogLevels.Error, "Service", userAccount.Username, new UserOperation(Operations.ChoreList, 0));
+                throw exc;
+            }
+        }
+
+        public async Task<ChoreResult> UndoChore(Chore chore, UserAccount userAccount)
         {
             try
             {
@@ -146,6 +180,19 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 chore.LastUpdated = DateTime.Now;
                 chore.LastUpdatedBy = userAccount.Username;
                 chore.IsCompleted = false;
+
+                var assignedProfilesRes = await ReassignChore(chore, chore.UsernamesAssignedTo);
+                if (assignedProfilesRes.IsSuccessful)
+                {
+                    chore.AssignedTo = (List<UserProfile>)assignedProfilesRes.ReturnedObject;
+                }
+                else
+                {
+                    result.IsSuccessful = false;
+                    result.Message = assignedProfilesRes.Message;
+                    return result;
+                }
+
 
                 var serviceResult = _service.EditChore(chore);
                 if (serviceResult.IsSuccessful)
@@ -177,7 +224,96 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 var serviceResult = _service.GetGroupChores(group, 0);
                 if (serviceResult.IsSuccessful)
                 {
-                    result.ReturnedObject = serviceResult.ReturnedObject;
+                    List<Chore> resultQuery = (List<Chore>)serviceResult.ReturnedObject;
+                    var choresPerDay = new Dictionary<string, List<Chore>>()
+                    {
+                        {"MON", new List<Chore>() },
+                        {"TUES", new List<Chore>() },
+                        {"WED", new List<Chore>() },
+                        {"THURS", new List<Chore>() },
+                        {"FRI", new List<Chore>() },
+                        {"SAT", new List<Chore>() },
+                        {"SUN", new List<Chore>() }
+                    };
+
+                    var currentDate = DateTime.Now;
+
+                    for (var i = 0; i < resultQuery.Count; i++)
+                    {
+                        var chore = resultQuery[i];
+                        var days = (List<String>)chore.Days;
+                        var isCompleted = chore.IsCompleted;
+
+                        //Account for Repeats property
+                        if (!string.IsNullOrEmpty(chore.Repeats))
+                        {
+                            if (isCompleted == true)
+                            {
+                                var creationDate = (DateTime)chore.Created;
+                                var lastUpdated = (DateTime)chore.LastUpdated;
+                                TimeSpan timeSpan = currentDate - lastUpdated;
+
+                                if (chore.Repeats == "Monthly")
+                                {
+                                    // only add to currentToDo if 1 month has passed since last updated / completed 
+                                    if ((currentDate.Month - lastUpdated.Month) == 1 && (currentDate.Year == lastUpdated.Year || currentDate.Year == lastUpdated.Year + 1))
+                                    {
+                                        foreach (String day in days)
+                                        {
+                                            choresPerDay[day].Add(chore);
+                                            Console.Write(chore);
+                                        }
+                                    }
+                                }
+
+                                if (chore.Repeats == "Bi-weekly")
+                                {
+                                    int weeks = (int)(timeSpan.TotalDays / 7);
+                                    if (weeks == 2) // Check if two weeks has passed since last completion
+                                    {
+                                        foreach (String day in days)
+                                        {
+                                            choresPerDay[day].Add(chore);
+                                            Console.Write(chore);
+                                        }
+                                    }
+                                }
+
+                                if (chore.Repeats == "Weekly")
+                                {
+                                    int weeks = (int)(timeSpan.TotalDays / 7);
+                                    if (weeks == 1) // Check if a week has passed since last completion
+                                    {
+                                        foreach (String day in days)
+                                        {
+                                            choresPerDay[day].Add(chore);
+                                            Console.Write(chore);
+                                        }
+                                    }
+                                }
+                            }
+                            else //Chore has repeats property and still has not been completed -> add to current todo list for the week
+                            {
+                                foreach (String day in days)
+                                {
+                                    choresPerDay[day].Add(chore);
+                                    Console.Write(chore);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (isCompleted == false)
+                            {
+                                foreach (String day in days)
+                                {
+                                    choresPerDay[day].Add(chore);
+                                    Console.Write(chore);
+                                }
+                            }
+                        }
+                    }
+                    result.ReturnedObject = choresPerDay;
                     _logger.Log("Group to-do chores fetched successfully", LogLevels.Info, "Service", group.Owner);
                 }
                 else
@@ -204,7 +340,23 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 var serviceResult = _service.GetGroupChores(group, 1);
                 if (serviceResult.IsSuccessful)
                 {
-                    result.ReturnedObject = serviceResult.ReturnedObject;
+                    List<Chore> resultQuery = (List<Chore>)serviceResult.ReturnedObject;
+                    var choresPerDay = new Dictionary<string, List<Chore>>();
+                    for (var i = 0; i < resultQuery.Count; i++)
+                    {
+                        var chore = resultQuery[i];
+                        var dateCompleted = chore.LastUpdated;
+                        string key = string.Format("{0:dddd MM/dd/yy}", dateCompleted);
+                        if(choresPerDay.ContainsKey(key))
+                        {
+                            choresPerDay[key].Add(chore);
+                        }
+                        else
+                        {
+                            choresPerDay.Add(key, new List<Chore>() { chore });
+                        }
+                    }
+                    result.ReturnedObject = choresPerDay;
                     _logger.Log("Group completed chores fetched successfully", LogLevels.Info, "Service", group.Owner);
                 }
                 else
@@ -277,7 +429,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
         }
 
         //Assignment Validation
-        private ChoreResult ReassignChore(Chore chore, List<String> newAssignments)
+        private async Task<ChoreResult> ReassignChore(Chore chore, List<String> newAssignments)
         {
             var result = new ChoreResult();
 
@@ -301,7 +453,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 }
                 else // Populate AssignedTo with UserProfile (profile icons)
                 {
-                    var userProfileResult = _um.GetUserProfile(new UserAccount(username));
+                    var userProfileResult = await _um.GetUserProfile(new UserAccount(username));
                     if (userProfileResult.IsSuccessful)
                     {
                         assignedTo.Add((UserProfile)userProfileResult.ReturnedObject);

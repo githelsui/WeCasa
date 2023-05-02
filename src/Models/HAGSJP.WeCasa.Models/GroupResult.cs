@@ -7,6 +7,7 @@ namespace HAGSJP.WeCasa.Models
     {
         public Object? ReturnedObject { get; set; }
         public List<GroupModel> Groups { get; set; }
+        public List<ProgressReport> ProgressReports { get; set; }
         public int GroupId { get; set; }
         public GroupResult() { }
 

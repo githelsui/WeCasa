@@ -2,7 +2,7 @@ import React, { Component, useState, useEffect } from 'react';
 import { Collapse, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import LogoutModal from './Logout/LogoutModal'
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from './AuthContext';
+import { useAuth } from './Auth/AuthContext';
 import '../styles/NavMenu.css';
 import axios from 'axios'
 import { notification, Avatar } from 'antd';
@@ -26,6 +26,7 @@ export const Header = () => {
         let account = {
             Username: currentUser['username']
         }
+        document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
         axios.post('home/AttemptLogout', account)
             .then(res => {
                 console.log(res.data)
@@ -87,7 +88,7 @@ export const Header = () => {
                                 <DropdownMenu>
                                     <DropdownItem disabled>Settings</DropdownItem>
                                     <DropdownItem onClick={() => navigate('/edit-profile')}>Edit Profile</DropdownItem>
-                                    <DropdownItem onClick={() => navigate('/account-settings')}>Account Settings</DropdownItem>
+                                    <DropdownItem id="accountSettings" onClick={() => navigate('/account-settings')}>Account Settings</DropdownItem>
                                     <DropdownItem onClick={() => navigate('/feedback')}>Help</DropdownItem>
                                     <DropdownItem onClick={() => setShowModal(true)}>Logout</DropdownItem>
                                     <LogoutModal show={showModal} close={() => setShowModal(false)} confirm={attemptLogout} />
