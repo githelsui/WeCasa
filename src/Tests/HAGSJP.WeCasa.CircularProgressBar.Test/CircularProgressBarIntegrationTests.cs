@@ -14,6 +14,7 @@ namespace HAGSJP.WeCasa.CircularProgressBar.Test
         private GroupManager _groupManager;
         private ChoreManager _choreManager;
         private Chore _chore;
+        private List<string> _usernames;
 
         [TestInitialize]
         public void Initialize()
@@ -27,9 +28,20 @@ namespace HAGSJP.WeCasa.CircularProgressBar.Test
                 Features = new List<string> { "Circular Progress Bar" },
                 Icon = "#668D6A"
             };
-            _chore = new Chore("Test chore", _testGroup.GroupId, _testGroup.Owner);
+            // Creating test group
             var createGroupResult = _groupManager.CreateGroup(_testGroup);
-            _testGroup.GroupId = createGroupResult.GroupId;
+            _testGroup.GroupId = (int)createGroupResult.GroupId;
+
+            // Creating test chore
+            _chore = new Chore(
+                "Test chore",
+                _testGroup.GroupId,
+                _testGroup.Owner
+            );
+            _usernames = new List<string>();
+            // Assigning group owner to the new chore
+            _usernames.Add(_testGroup.Owner);
+            _chore.UsernamesAssignedTo = _usernames;
         }
 
         [TestMethod]
@@ -37,7 +49,6 @@ namespace HAGSJP.WeCasa.CircularProgressBar.Test
         {
             // Arrange
             var systemUnderTest = new ChoreService();
-            var ua = new UserAccount(_testGroup.Owner);
             var expectedComplete = 0;
             var expectedIncomplete = 1;
 
@@ -98,7 +109,10 @@ namespace HAGSJP.WeCasa.CircularProgressBar.Test
         [TestCleanup]
         public void Cleanup()
         {
-            // delete chore and userchore
+            UserAccount ua = new UserAccount(_testGroup.Owner);
+            // Deleting chore and chore assignments
+            _choreManager.DeleteChore(_chore, ua);
+            // Deleting group
             _groupManager.DeleteGroup(_testGroup);
         }
     }
