@@ -145,7 +145,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                                             notes = @notes,
                                             days = @days,
                                             repeats = @repeats,
-                                            is_completed = @is_completed
                                     WHERE chore_id = @chore_id;";
 
                     var command = connection.CreateCommand();
@@ -155,7 +154,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@last_updated_by", chore.LastUpdatedBy);
                     command.Parameters.AddWithValue("@notes", chore.Notes != null ? chore.Notes : null);
                     command.Parameters.AddWithValue("@repeats", chore.Repeats != null ? chore.Repeats : null);
-                    command.Parameters.AddWithValue("@is_completed", chore.IsCompleted == null || chore.IsCompleted == false ? 0 : 1);
                     command.Parameters.AddWithValue("@chore_id", chore.ChoreId);
                     string assignedToJSON = JsonSerializer.Serialize(chore.AssignedTo);
                     command.Parameters.AddWithValue("@assigned_to", assignedToJSON);
@@ -199,15 +197,13 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
                     var updateSql = @"UPDATE Chores
                                         SET
-                                            last_updated = @last_updated,
-                                            last_updated_by = @last_updated_by,
+                                            last_completed = @last_completed,
                                             is_completed = @is_completed
                                     WHERE chore_id = @chore_id;";
 
                     var command = connection.CreateCommand();
                     command.CommandText = updateSql;
-                    command.Parameters.AddWithValue("@last_updated", chore.LastUpdated);
-                    command.Parameters.AddWithValue("@last_updated_by", chore.LastUpdatedBy);
+                    command.Parameters.AddWithValue("@last_completed", chore.LastCompleted);
                     command.Parameters.AddWithValue("@is_completed", (chore.IsCompleted == null || chore.IsCompleted == false) ? 0 : 1);
                     command.Parameters.AddWithValue("@chore_id", chore.ChoreId);
 

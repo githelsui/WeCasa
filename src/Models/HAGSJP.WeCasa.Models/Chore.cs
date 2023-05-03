@@ -22,7 +22,8 @@ namespace HAGSJP.WeCasa.Models
         public String? CreatedBy { get; set; } 
         public DateTime? LastUpdated { get; set; }
         public String? LastUpdatedBy { get; set; }
-        
+        public DateTime? LastCompleted { get; set; }
+
 
         [JsonConstructor]
         public Chore(){}
