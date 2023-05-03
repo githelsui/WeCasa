@@ -145,11 +145,11 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("GetGroupCompletedChores")]
-        public ChoreResult GetGroupCompletedChores([FromBody] ChoreForm choreForm)
+        public ChoreResult GetGroupCompletedChores([FromBody] GroupMemberForm groupForm)
         {
             try
             {
-                var result = _manager.GetGroupCompletedChores(new GroupModel(choreForm.GroupId));
+                var result = _manager.GetGroupCompletedChores(new GroupModel(groupForm.GroupId));
                 if (result.IsSuccessful)
                 {
                     result.ErrorStatus = System.Net.HttpStatusCode.OK;
