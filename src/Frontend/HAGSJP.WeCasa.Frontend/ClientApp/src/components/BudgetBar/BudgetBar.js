@@ -39,7 +39,7 @@ export const BudgetBar = () => {
     )
   }
 
-  useEffect(() => {
+  const getBudgetBar = () => {
     axios.get(`budgetbar/${group.groupId}`).then((response) => { 
        var res = response.data
        setBudget(res["budget"])
@@ -50,7 +50,7 @@ export const BudgetBar = () => {
          const newObj =   {
            username: item.username,
            name: item.firstName,
-           value: Math.floor(res["userTotals"][item.username]/res["groupTotal"] * 100),
+           value: res["groupTotal"] === 0 ? 0 : Math.floor(res["userTotals"][item.username]/res["groupTotal"] * 100),
            color: color[colorCounter++]
          }
          newUserList.push(newObj)
@@ -101,7 +101,12 @@ export const BudgetBar = () => {
  }).catch( (error) => {
    console.log(error)
    errorPage()});
- }, []);
+ };
+
+ useEffect(() => {
+  getBudgetBar();
+  console.log("USERS", users)
+ }, [])
   
   const handleRestoreButton = (bill) => {
     const billId = bill.billID
@@ -113,6 +118,7 @@ export const BudgetBar = () => {
         } else {
           console.log('Restore Failed')
         }
+        getBudgetBar()
       }).catch((error => { console.error(error) }));
       const billToRestore = deletedBills.filter(deletedBills => deletedBills.billID === billId)
       const newList =  [...activeBills, billToRestore[0]];
@@ -175,7 +181,8 @@ export const BudgetBar = () => {
    '#7e7e7e', '#c4bdac', '#e5e3d7', '#cbc3ba','#a88e7a', '#cbdae1', '#a88e7a', '#ebcfc4', '#a6a998', '#d9c2b0'
   ]
 
-  const handleDelete = (billId) => {
+  const handleDelete = (deleteBill) => {
+    const billId = deleteBill.billID
     axios.delete(`budgetbar/Delete/${billId}`).then((response) => { 
       let res = response
       if (res) {
@@ -183,6 +190,7 @@ export const BudgetBar = () => {
       } else {
         console.log('Delete Failed')
       }
+      getBudgetBar()
     }).catch(() => { alert('Delete Failed') });
     const billToDelete = activeBills.filter(activeBills => activeBills.billID === billId)
     const newList =  [...deletedBills, billToDelete[0]];
@@ -205,7 +213,7 @@ export const BudgetBar = () => {
             setEditBill(bill)
             }}/> }
            {(user===bill.owner) &&  <DeleteOutlined onClick={()=>setDeleteBill(bill)}/> }
-          {deleteBill && <DeletionModal message='Are you sure you want to delete this bill?' show={deleteBill} close={()=>setDeleteBill(false)} confirm={()=>handleDelete(deleteBill.billID)} />}
+          {deleteBill && <DeletionModal message='Are you sure you want to delete this bill?' show={deleteBill} close={()=>setDeleteBill(false)} confirm={()=>handleDelete(deleteBill)} />}
           {showEditForm && <EditBillForm handleCurrentTable={handleCurrentTable} activeBills={activeBills} setActiveBills={setActiveBills} show={showEditForm} bill={editBill} members={users} close={()=>setShowEditForm(false)} setOpen={setShowEditForm}/> }
         </Space>
         )}    
@@ -290,7 +298,7 @@ export const BudgetBar = () => {
           <Progress percent={(groupTotal/budget)*100} strokeColor = {color[0]} showInfo={false} strokeWidth="30px"/>
           <MultiColorProgressBar readings={users} />
           <Button style={Styles.addFormButton} onClick={()=>setShowAddForm(!showAddForm)}>Add Bill</Button>
-          {showAddForm && (<BillForm handleCurrentTable={handleCurrentTable} activeBills={activeBills} setActiveBills={setActiveBills} budget={budget} groupTotal={groupTotal} user={user} group={group} members={users}/>)}
+          {showAddForm && (<BillForm handleCurrentTable={handleCurrentTable} activeBills={activeBills} setActiveBills={setActiveBills} budget={budget} setGroupTotal={setGroupTotal} groupTotal={groupTotal} user={user} group={group} members={users}/>)}
           <Tabs defaultActiveKey="1" items={tabs} /> 
         </div>
       : errorPage()

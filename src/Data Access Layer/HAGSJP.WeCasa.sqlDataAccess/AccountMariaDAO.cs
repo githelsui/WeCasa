@@ -537,8 +537,11 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     connection.Open();
                     Dictionary<string, string> groupMembers = new Dictionary<string, string>();
 
-                    var insertSql = @"SELECT * from USERS 
-                                            WHERE group_id = @groupId;";
+                    var insertSql = @"SELECT Users.username, Users.first_name
+                                        FROM Users
+                                        JOIN UserGroups
+                                        ON Users.username = UserGroups.username
+                                        WHERE UserGroups.group_id = @groupId;";
                     var command = connection.CreateCommand();
                     command.CommandText = insertSql;
                     command.Parameters.AddWithValue("@groupId", groupId);

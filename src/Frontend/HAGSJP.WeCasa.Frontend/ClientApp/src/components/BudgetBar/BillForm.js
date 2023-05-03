@@ -54,6 +54,7 @@ export const BillForm = (props) => {
       axios.post('budgetbar/AddBill', request).then(res => {
           var response = res.data;
           console.log(response);
+          props.setGroupTotal(props.groupTotal + amount)
       })
       .catch((error => { console.error(error) }));
       request.date = formattedDate

@@ -174,5 +174,3 @@ export const ChoreCard = (props) => {
 };
 
 export default ChoreCard;
-
-export default ChoreCard;

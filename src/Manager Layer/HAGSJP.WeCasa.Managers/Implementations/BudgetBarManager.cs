@@ -38,6 +38,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 // Get first name for all members
                 foreach(var name in names)
                 {
+                    // key is username, value is first name
                     BudgetBarUser bbUser = new BudgetBarUser(name.Key, name.Value);
                     budgetBarUsers.Add(bbUser);
                     userTotals.Add(name.Key, 0);
