@@ -11,6 +11,7 @@ import '../../styles/System.css';
 import '../../styles/Calendar.css';
 import * as Styles from '../../styles/ConstStyles.js';
 import AddEventModal from './AddEventModal.js';
+import EditEventModal from './EditEventModal.js';
 // References:
 // http://github.com/react-component/calendar/issues/221
 // http://ant.design/components/calendar
@@ -22,11 +23,13 @@ export const CalendarView = () => {
     const [events, setEvents] = useState([]);
     const [mode, setMode] = useState('month');
     const [selectedDate, setSelectedDate] = useState(value);
-    const [showModal, setShowModal] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
     const [collapsed, setCollapsed] = useState(true);
     dayjs.extend(dayLocaleData);
 
-    useEffect(() => { getEvents();}, []);
+    useEffect(() => { refreshCalendar();}, []);
 
     const getEvents = () => {
         let groupForm = {
@@ -38,7 +41,6 @@ export const CalendarView = () => {
                 if (isSuccessful) {
                     let events = res.data['returnedObject']
                     setEvents(events);
-                    console.log(events);
                 }
                 else {
                     failureCalendarView(res.data['message']);
@@ -47,6 +49,12 @@ export const CalendarView = () => {
             .catch((error) => {
                 console.error(error)
             });
+    }
+
+    const refreshCalendar = () => {
+        setShowAddModal(false);
+        setShowEditModal(false);
+        getEvents();
     }
 
     const addCalendarEvent = (eventConfig) => {
@@ -66,7 +74,6 @@ export const CalendarView = () => {
             .then(res => {
                 var isSuccessful = res.data['IsSuccessful']
                 if (isSuccessful) {
-                    // refresh events
                     successCalendarView(res.data['message']);
                 }
                 else {
@@ -75,7 +82,41 @@ export const CalendarView = () => {
             })
             .catch((error) => {
                 console.error(error)
-            });
+        });
+    }
+
+    const editCalendarEvent = (eventConfig) => {
+        console.log(eventConfig);
+        /*let newEvent = {
+            EventName: eventConfig.eventName,
+            Description: (eventConfig.description == null) ? "" : eventConfig.description,
+            GroupId: currentGroup.groupId,
+            EventDate: eventConfig.eventDate,
+            Repeats: (eventConfig.repeats == null) ? "never" : eventConfig.repeats,
+            Type: (eventConfig.type == null) ? "public" : eventConfig.type,
+            Reminder: (eventConfig.reminder == null) ? "none" : eventConfig.reminder,
+            Color: (eventConfig.color == null) ? "#0256D4" : eventConfig.color,
+            CreatedBy: currentUser.username
+        }
+        console.log("updating event...", newEvent);
+        axios.post('calendar/EditGroupEvent', newEvent)
+            .then(res => {
+                var isSuccessful = res.data['IsSuccessful']
+                if (isSuccessful) {
+                    getEvents(); // refresh events
+                    successCalendarView(res.data['message']);
+                }
+                else {
+                    failureCalendarView(res.data['message']);
+                }
+            })
+            .catch((error) => {
+                console.error(error)
+            });*/
+    }
+
+    const displayAddEventSettings = () => {
+        setShowAddModal(true);
     }
 
     const onPanelChange = (value, mode) => {
@@ -88,8 +129,9 @@ export const CalendarView = () => {
         setSelectedDate(value);
     }
 
-    const viewEvent = (event) => {
-        console.log(event);
+    const selectEvent = (event) => {
+        setSelectedEvent(event);
+        setShowEditModal(true);
     }
 
     const headerRender = ({ value, type, onChange, onTypeChange }) => {
@@ -176,7 +218,7 @@ export const CalendarView = () => {
                             shape="round"
                             icon={<PlusCircleOutlined />}
                             size={'large'}
-                            onClick={() => setShowModal(true)}>
+                            onClick={() => displayAddEventSettings()}>
                             Add event
                         </Button>
                     </Col>
@@ -186,12 +228,11 @@ export const CalendarView = () => {
     }
 
     const isSameDay = (eventDate, value) => {
-        let sameDay = (
-            (dayjs(eventDate).diff(value, 'day') === 0)
-            && (dayjs(eventDate).diff(value, 'month') === 0)
-            && (dayjs(eventDate).diff(value, 'year') === 0)
-        )
-        console.log(sameDay);
+        let date = new Date(eventDate);
+        date.setHours(0, 0, 0, 0);
+        let compareDate = new Date(Date.UTC(value.year(), value.month(), value.date()));
+        compareDate.setHours(0, 0, 0, 0);
+        let sameDay = (date.valueOf() == compareDate.valueOf()) ? true : false;
         return sameDay;
     }
 
@@ -200,7 +241,7 @@ export const CalendarView = () => {
             <ul className="events">
                 {events.map((event) => (
                     isSameDay(event.eventDate, value) ? 
-                        (<li key={event.eventId} onClick={() => viewEvent(event)}>
+                        (<li className="event" key={event.eventId} onClick={() => selectEvent(event)}>
                             <Badge status={event.type} color={event.color} text={event.eventName} />
                     </li>) : null
                 ))}
@@ -262,13 +303,15 @@ export const CalendarView = () => {
 
     return (
         <div style={Styles.body}>
-            <Calendar
-                onSelect={onSelectDate}
-                style={{ fontFamily: 'Mulish' }}
-                headerRender={headerRender}
-                dateCellRender={cellRender}
-                onPanelChange={onPanelChange} />
-            <AddEventModal show={showModal} close={() => setShowModal(false)} confirm={addCalendarEvent} reject={failureCalendarView} />
+            <div>
+                <Calendar
+                    style={{ fontFamily: 'Mulish' }}
+                    headerRender={headerRender}
+                    dateCellRender={cellRender}
+                    onPanelChange={onPanelChange} />
+                </div>
+            <AddEventModal show={showAddModal} close={() => refreshCalendar()} confirm={addCalendarEvent}/>
+            <EditEventModal show={showEditModal} close={() => refreshCalendar()} event={selectedEvent} confirm={editCalendarEvent} />
         </div>
     );
 };

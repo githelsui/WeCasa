@@ -125,6 +125,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         while (reader.Read())
                         {
                             Event e = new Event();
+                            e.EventId = reader.GetInt32(reader.GetOrdinal("event_id"));
                             e.GroupId = reader.GetInt32(reader.GetOrdinal("group_id"));
                             e.EventName = reader.GetString(reader.GetOrdinal("event_name"));
                             e.Description = reader.GetString(reader.GetOrdinal("description"));

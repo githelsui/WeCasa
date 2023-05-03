@@ -1,6 +1,7 @@
 ﻿import React, { Component, useState } from 'react';
 import { Modal, DatePicker, TimePicker, Button, Row, Col, Image, Space, Card, Input, Form, Radio, Spin } from 'antd';
 import * as Styles from '../../styles/ConstStyles';
+import DeletionModal from '../DeletionModal.js';
 import config from '../../appsettings.json'
 
 const repeatOptions = ['Monthly', 'Bi-weekly', 'Weekly', 'Daily'];
@@ -8,15 +9,16 @@ const eventTypeOptions = ['Private', 'Public'];
 const reminderOptions = ['30 minutes', 'A day', 'A week'];
 
 
-const AddEventModal = (props) => {
-    const [loading, setLoading] = useState(false);
+const EditEventModal = (props) => {
     const [eventDate, setEventDate] = useState('');
+    const [showModal, setShowModal] = useState(false);
     const [repeat, setRepeat] = useState('');
-    const [eventType, setEventType] = useState('public');
+    const [eventType, setEventType] = useState('');
     const [reminder, setReminder] = useState('');
     const [eventColor, setEventColor] = useState('');
     const [form] = Form.useForm();
     const eventColors = ['#0256D4', '#F4B105', '#FFEE58', '#FF2929', '#10B364'];
+    const event = props.event;
 
     const onDateChange = (date, dateString) => {
         setEventDate(dateString);
@@ -36,14 +38,19 @@ const AddEventModal = (props) => {
 
     const attemptSubmission = () => {
         form.setFieldsValue({
-            eventDate: eventDate
+            eventDate: eventDate,
+            color: eventColor
         });
         form.validateFields()
             .then((values) => {
                 props.confirm(values);
-                setLoading(true)
             })
             .catch((errorInfo) => { console.log(errorInfo) });
+    }
+
+    const deleteEvent = () => {
+        console.log('deleting event...');
+        setShowModal(false);
     }
 
     const displayEventColors = () => {
@@ -66,21 +73,20 @@ const AddEventModal = (props) => {
     return (
         <Modal
             open={props.show}
-            closable={false}
+            closable={true}
+            onCancel={props.close}
             centered="true"
             footer={null}
             maskClosable="false"
         >
-
             <div className="padding">
-                <Spin spinning={loading}>
-                        <h2 className="mulish-font"><b>Add Event</b></h2>
+                    <h2 className="mulish-font"><b>Edit Event</b></h2>
                     <h6 className="mulish-font">Name</h6>
                     <Form id="eventCreationForm" onFinish={attemptSubmission} form={form}>
                         <Row gutter={[24, 24]} align="middle">
                             <Col span={16} className="event-name-input">
                                 <Form.Item name="eventName">
-                                    <Input style={Styles.eventInputFieldStyle} required placeholder="Event Name" />
+                                    <Input style={Styles.eventInputFieldStyle} placeholder={event == null ? "" : event.eventName}/>
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -89,7 +95,7 @@ const AddEventModal = (props) => {
                         <Row gutter={[24, 24]}>
                             <Col span={18} className="description-field">
                                 <Form.Item name="description">
-                                    <Input style={Styles.eventDescTextField} placeholder="Description" />
+                                    <Input style={Styles.eventDescTextField} placeholder={event == null ? "" : event.description}/>
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -102,6 +108,7 @@ const AddEventModal = (props) => {
                                         <DatePicker format="YYYY-MM-DD hh:mm:ss"
                                             showTime={true}
                                             onChange={onDateChange}
+                                            placeholder={event == null ? "" : new Date(event.eventDate).toLocaleString()}
                                          />
                                     </Form.Item>
                                 </Col>
@@ -113,7 +120,7 @@ const AddEventModal = (props) => {
                             <Row gutter={24} style={{ display: 'flex', flexDirection: 'horizontal' }} >
                                 <Col span={20}>
                                     <Form.Item name="repeat" value={repeat}>
-                                        <Radio.Group options={repeatOptions} onChange={onRepeatChange} />
+                                        <Radio.Group options={repeatOptions} onChange={onRepeatChange} defaultValue={(event == null || event.repeat == "never") ? null : event.repeat} />
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -124,7 +131,7 @@ const AddEventModal = (props) => {
                             <Row gutter={24} style={{display:'flex', flexDirection:'horizontal'}}>
                                 <Col span={18}>
                                     <Form.Item name="type" value={eventType}>
-                                        <Radio.Group onChange={onTypeChange} defaultValue={'public'}>
+                                        <Radio.Group onChange={onTypeChange} defaultValue={event != null ? event.type : null}>
                                             <Radio value={'private'}>Private</Radio>
                                             <Radio value={'public'}>Public</Radio>
                                         </Radio.Group>
@@ -138,7 +145,7 @@ const AddEventModal = (props) => {
                             <Row gutter={24} style={{ display: 'flex', flexDirection: 'horizontal' }}>
                                 <Col span={18}>
                                     <Form.Item name="reminder" value={reminder}>
-                                        <Radio.Group options={reminderOptions} value={reminder} onChange={onReminderChange} />
+                                        <Radio.Group options={reminderOptions} value={reminder} onChange={onReminderChange} defaultValue={(event == null || event.reminder == "none") ? null : event.reminder} />
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -148,18 +155,18 @@ const AddEventModal = (props) => {
                         <div className="tag-row padding-bottom">
                             <Row gutter={24} style={{ display: 'flex', flexDirection: 'horizontal' }}>
                                 {displayEventColors()}
-                                <Form.Item name="color" value={eventColor}></Form.Item>
+                                <Form.Item name="color"></Form.Item>
                             </Row>
                         </div>
                         <Row gutter={24} style={{alignItems:'center', justifyContent:'center', gap:'30px'}} > 
-                            <Button key="cancel" onClick={props.close} type="default" style={Styles.defaultButtonModal}>Exit</Button>
+                            <Button key="delete" onClick={() => setShowModal(true)} type="default" style={Styles.deleteButtonLeft}>Delete Event</Button>
                             <Button key="create" htmlType="submit" type="primary" style={Styles.primaryButtonModal}>Save</Button>
                         </Row>
                     </Form>
-                </Spin>
+                <DeletionModal show={showModal} close={() => setShowModal(false)} message="Are you sure you want to delete the event?" confirm={deleteEvent} />
             </div>
         </Modal>
     );
 }
 
-export default AddEventModal;
+export default EditEventModal;

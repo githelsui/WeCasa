@@ -282,3 +282,12 @@ export const deleteButtonModal = {
     marginRight: '12%',
     marginTop: -10
 }
+
+export const deleteButtonLeft = {
+    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+    fontFamily: 'Mulish',
+    width: '35%',
+    fontWeight: 'bold',
+    backgroundColor: '#bd0d25',
+    color: '#FFFFFF',
+}

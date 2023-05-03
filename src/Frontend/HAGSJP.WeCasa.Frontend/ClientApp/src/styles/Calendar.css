@@ -22,7 +22,7 @@
     }
 
 
-ul li:hover {
+.event:hover {
     background-color: #d9d9d9;
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
