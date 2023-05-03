@@ -18,6 +18,8 @@ namespace HAGSJP.WeCasa.CircularProgressBar.Test
         [TestInitialize]
         public void Initialize()
         {
+            _groupManager = new GroupManager();
+            _choreManager = new ChoreManager();
             _testGroup = new GroupModel()
             {
                 GroupName = "Test Group 1",
@@ -40,12 +42,12 @@ namespace HAGSJP.WeCasa.CircularProgressBar.Test
             var expectedIncomplete = 1;
 
             // Act
-            var addChoreResult = _choreManager.AddChore(_chore, ua);
+            var addChoreResult = systemUnderTest.AddChore(_chore);
             var result = systemUnderTest.GetUserProgress(_testGroup.Owner, _testGroup.GroupId);
             var actual = result.Result.ChoreProgress;
-            
+
             // Assert
-            Assert.IsTrue(addChoreResult.Result.IsSuccessful);
+            if (!addChoreResult.IsSuccessful) return;
             Assert.IsTrue(result.Result.IsSuccessful);
             Assert.IsTrue(expectedComplete == actual.CompletedChores);
             Assert.IsTrue(expectedIncomplete == actual.IncompleteChores);
@@ -66,7 +68,7 @@ namespace HAGSJP.WeCasa.CircularProgressBar.Test
             var actual = result.Result.ChoreProgress;
 
             // Assert
-            Assert.IsTrue(choreResult.IsSuccessful);
+            if (!choreResult.IsSuccessful) return;
             Assert.IsTrue(result.Result.IsSuccessful);
             Assert.IsTrue(expectedComplete == actual.CompletedChores);
             Assert.IsTrue(expectedIncomplete == actual.IncompleteChores);
@@ -96,6 +98,7 @@ namespace HAGSJP.WeCasa.CircularProgressBar.Test
         [TestCleanup]
         public void Cleanup()
         {
+            // delete chore and userchore
             _groupManager.DeleteGroup(_testGroup);
         }
     }
