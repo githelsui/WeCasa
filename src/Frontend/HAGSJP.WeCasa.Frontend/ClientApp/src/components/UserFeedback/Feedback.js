@@ -9,7 +9,7 @@ export const Feedback = () => {
     const [feedbackMessage, setFeedbackMessage] = useState('');
     const [feedbackRating, setRating] = useState(0);
     const [modal, setModal] = useState(false);
-    const [feedbackType, setFeedbackType] = useState('Report an Issue');
+    const [feedbackType, setFeedbackType] = useState(null);
     const toggle = () => setModal(!modal);
     const submitFormData = () => {
         let request = {
@@ -22,23 +22,9 @@ export const Feedback = () => {
             feedbackRating: feedbackRating,
             resolvedStatus: 0,
             resolvedDate: null
-        }
+        };
         console.log("REQUEST", request)
         const feedbackTypeRadioButtons = document.querySelectorAll('[name="feedbackType"]');
-
-        feedbackTypeRadioButtons.forEach((radioButton) => {
-            radioButton.addEventListener('change', (event) => {
-                const selectedValue = event.target.value;
-
-                if (selectedValue === 'review') {
-                    feedbackType = true; // Set feedbackType to true for "review"
-                } else if (selectedValue === 'issue') {
-                    feedbackType = false; // Set feedbackType to false for "issue"
-                } else {
-                    feedbackType = null; // Set feedbackType to null for no selection
-                }
-            });
-        });
 
         axios.post('/uploadfeedback', request)
             .then((response) => {
@@ -50,7 +36,14 @@ export const Feedback = () => {
     };
 
     function handleFeedbackTypeChange(event) {
-        setFeedbackType(event.target.value);
+        const selectedValue = event.target.value;
+        if (selectedValue === 'Review') {
+            setFeedbackType(1); // Set feedbackType to true for "Review"
+        } else if (selectedValue === 'Issue') {
+            setFeedbackType(0); // Set feedbackType to false for "Issue"
+        } else {
+            setFeedbackType(null); // Set feedbackType to null for no selection
+        }
     }
 
     return (
@@ -67,14 +60,14 @@ export const Feedback = () => {
                             <Label>Please specify feedback type:</Label>
                             <div>
                                 <Label htmlFor="review">
-                                    <input type="radio" name="feedbackType" id="review" value="Review" checked={feedbackType === 'Review'} onChange={handleFeedbackTypeChange} />
+                                    <input type="radio" name="feedbackType" id="review" value="Review" checked={feedbackType === 1} onChange={handleFeedbackTypeChange} />
                                     {' '}
                                     Review
                                 </Label>
                             </div>
                             <div>
                                 <Label htmlFor="reportIssue">
-                                    <input type="radio" name="feedbackType" id="reportIssue" value="Issue" checked={feedbackType === 'Issue'} onChange={handleFeedbackTypeChange} />
+                                    <input type="radio" name="feedbackType" id="issue" value="Issue" checked={feedbackType === 0} onChange={handleFeedbackTypeChange} />
                                     {' '}
                                     Report an Issue
                                 </Label>
@@ -96,7 +89,7 @@ export const Feedback = () => {
                             <Label for="feedback">User Feedback Message:</Label>
                             <Input type="textarea" name="feedbackMessage" id="feedbackMessage" placeholder="Enter your Feedback Here (200 Character Limit)" onChange={e => setFeedbackMessage(e.target.value)} />
                         </FormGroup>
-                        {feedbackType === 'Review' &&
+                        {feedbackType === 1 &&
                             <FormGroup>
                                 <Label for="rating">Rating </Label>
                                 <input type="range" name="feedbackRating" id="feedbackRating" min="0" max="5" step="0.5" value={feedbackRating} onChange={e => setRating(e.target.value)} />
