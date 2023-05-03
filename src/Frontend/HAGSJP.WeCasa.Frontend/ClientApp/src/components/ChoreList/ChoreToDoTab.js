@@ -73,7 +73,6 @@ export const ChoreToDoTab = (props) => {
     const organizeChores = () => {
         setMonChores(chores['MON'] == undefined ? [] : chores['MON'])
         setTuesChores(chores['TUES'] == undefined ? [] : chores['TUES'])
-        console.log(thursChores)
         setWedChores(chores['WED'] == undefined ? [] : chores['WED'])
         setThursChores(chores['THURS'] == undefined ? [] : chores['THURS'])
         setFriChores(chores['FRI'] == undefined ? [] : chores['FRI'])
@@ -83,7 +82,8 @@ export const ChoreToDoTab = (props) => {
 
     const fetchChores = () => {
         let groupForm = {
-            GroupId: props.group['groupId']
+            GroupId: props.group['groupId'],
+            CurrentDate: weekDates[0]
         }
 
         axios.post('chorelist/GetGroupToDoChores', groupForm)
@@ -151,6 +151,9 @@ export const ChoreToDoTab = (props) => {
         setCurrWeek(currWeek + 1);
         console.log("current week = " + currWeek)
         getWeekDates()
+        console.log("Successful Fetch: " + successfulFetch)
+        console.log("props.update: " + props.update)
+        props.setUpdate(true)
     }
 
     const previousWeek = () => {
@@ -158,6 +161,9 @@ export const ChoreToDoTab = (props) => {
         setCurrWeek(currWeek - 1);
         console.log("current week = " + currWeek)
         getWeekDates()
+        console.log("Successful Fetch: " + successfulFetch)
+        console.log("props.update: " + props.update)
+        props.setUpdate(true)
     }
 
     const resetStates = () => {

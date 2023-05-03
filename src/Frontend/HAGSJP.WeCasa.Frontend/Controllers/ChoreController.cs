@@ -123,11 +123,12 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("GetGroupToDoChores")]
-        public ChoreResult GetGroupToDoChores([FromBody] GroupMemberForm groupForm)
+        public ChoreResult GetGroupToDoChores([FromBody] ChoreForm groupForm)
         {
             try
             {
-                var result = _manager.GetGroupToDoChores(new GroupModel(groupForm.GroupId));
+                var currDate = (groupForm.CurrentDate != null) ? DateTime.Parse(groupForm.CurrentDate) : DateTime.Now;
+                var result = _manager.GetGroupToDoChores(new GroupModel(groupForm.GroupId), currDate);
                 if (result.IsSuccessful)
                 {
                     result.ErrorStatus = System.Net.HttpStatusCode.OK;
