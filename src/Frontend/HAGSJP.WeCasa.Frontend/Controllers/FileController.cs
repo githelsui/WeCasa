@@ -42,6 +42,9 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
             var file = fileForm.File;
             var groupId = fileForm.GroupId;
             var owner = fileForm.Owner;
+            Console.Write("YAYAYA FILE FORM " + fileForm);
+
+            Console.Write("FILE NAME " + file + " groupId" + groupId + " owner "+ owner);
             var result = fm.UploadFile(file, groupId, owner);
             return result;
         }

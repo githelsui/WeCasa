@@ -45,7 +45,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
         }
 
         public S3Result UploadFile(IFormFile file, string groupId, string username)
-        {
+        {            
             var result = _dao.UploadFile(file, groupId, username).Result;
             if (result.IsSuccessful)
             {

@@ -19,8 +19,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
     {
         // Configuring AWS S3 client for hagsjp.wecasa.s3 user
         private AmazonS3Client _client = new AmazonS3Client(
-            "AKIA2K6ZUAG776LYYGGL",
-            "",
+            "AKIA2K6ZUAG7Z53JDGGO",
+            "Vfw/kQv9KZmee6Xbtu396XBV6XS4RRF7QPViBfnX",
             Amazon.RegionEndpoint.USEast2
         );
         private string _bucketName = "wecasa-group-files-";
