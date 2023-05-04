@@ -240,7 +240,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     connection.Open();
 
-
                     var command = connection.CreateCommand();
 
                     // Creates new assignments in UserChore table
@@ -411,7 +410,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     connection.Open();
 
                     var resetSql = @"DELETE FROM UserChore
-                                     WHERE chore_id = @chore_id;";
+                                     WHERE chore_id = @chore_id
+                                     AND is_completed = 0;";
 
                     var command = connection.CreateCommand();
                     command.CommandText = resetSql;
@@ -603,7 +603,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                                             INNER JOIN userchore AS uc
                                                 ON (c.chore_id = uc.chore_id)
                                             WHERE uc.is_completed = 1
-                                              AND c.group_id = @group_id;";
+                                              AND c.group_id = @group_id
+                                            ORDER BY uc.chore_date DESC;";
 
                     command.Parameters.AddWithValue("@group_id", group.GroupId);
 
