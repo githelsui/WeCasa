@@ -146,8 +146,26 @@ const ChoreCreationModal = (props) => {
         });
     }
 
+    const testFetchIncompleteChoresPerUser = () => {
+        console.log("TEST INCOMPLETE CHORES PER USER!!!")
+        let groupMemberForm = {
+            GroupId: props.group['groupId']
+        }
+
+        axios.post('chorelist/GetUserIncompleteChores', groupMemberForm)
+            .then(res => {
+                var isSuccessful = res.data['isSuccessful'];
+                if (isSuccessful) {
+                    var arr = res.data['returnedObject']
+                    console.log(arr)
+                }
+            })
+            .catch((error => { console.error(error) }));
+    }
+
     useEffect(() => {
         fetchCurrentRoommates()
+        testFetchIncompleteChoresPerUser()
     }, []);
 
     return (<Modal

@@ -174,36 +174,13 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         }
 
         [HttpPost]
-        [Route("GetUserToDoChores")]
-        public ChoreResult GetUserToDoChores([FromBody] ChoreForm choreForm)
+        [Route("GetUserIncompleteChores")]
+        public async Task<ChoreResult> GetUserIncompleteChores([FromBody] GroupMemberForm groupForm)
         {
             try
             {
-                var result = _manager.GetUserToDoChores(new UserAccount(choreForm.CurrentUser));
-                if (result.IsSuccessful)
-                {
-                    result.ErrorStatus = System.Net.HttpStatusCode.OK;
-                }
-                else
-                {
-                    result.ErrorStatus = System.Net.HttpStatusCode.BadRequest;
-                }
-                return result;
-
-            }
-            catch (Exception exc)
-            {
-                return new ChoreResult(false, System.Net.HttpStatusCode.Conflict, exc.Message);
-            }
-        }
-
-        [HttpPost]
-        [Route("GetUserCompletedChores")]
-        public ChoreResult GetUserCompletedChores([FromBody] ChoreForm choreForm)
-        {
-            try
-            {
-                var result = _manager.GetUserCompletedChores(new UserAccount(choreForm.CurrentUser));
+                var group = new GroupModel(groupForm.GroupId, "githelsuico@gmail.com");
+                var result = await _manager.GetGroupIncompleteChores(group);
                 if (result.IsSuccessful)
                 {
                     result.ErrorStatus = System.Net.HttpStatusCode.OK;

@@ -197,40 +197,21 @@ namespace HAGSJP.WeCasa.Services.Implementations
             }
         }
 
-        public ChoreResult GetUserChores(UserAccount user, int isCompleted)
+        public ChoreResult GetUserIncompleteChores(UserAccount user)
         {
             try
             {
                 var result = new ChoreResult();
 
-                // DAO Operations
-                // Preparation of first sql query from UserChore table
-                var selectSql = string.Format(@"SELECT * from USERCHORE WHERE username = '{0}' AND is_completed = '{1}'", user.Username, isCompleted);
-                var daoResult = _dao.GetUserChores(selectSql);
-                
+                var daoResult = _dao.GetUserIncompleteChores(user);
                 if (daoResult.IsSuccessful)
                 {
-                    List<int> choreIds = (List<int>)daoResult.ReturnedObject;
-                    if(choreIds.Count > 0)
-                    {
-                        // Preparation of second sql query from Chores table
-                        string choreIdsStr = string.Join(",", choreIds);
-                        var selectChoreSql = string.Format(@"SELECT * from CHORES WHERE chore_id IN ('{0}')", choreIdsStr);
-                        daoResult = _dao.GetChores(selectChoreSql);
-                        if (daoResult.IsSuccessful)
-                        {
-                            result.ReturnedObject = daoResult.ReturnedObject;
-                            _logger.Log("User chores fetched successfully", LogLevels.Info, "Data Store", user.Username);
-                        }
-                        else
-                        {
-                            _logger.Log("User chores fetched failed from Chores", LogLevels.Info, "Data Store", user.Username);
-                        }
-                    }
+                    result.ReturnedObject = daoResult.ReturnedObject;
+                    _logger.Log("Group incomplete chores fetched successfully", LogLevels.Info, "Data Store", user.Username);
                 }
                 else
                 {
-                    _logger.Log("User chores fetched failed from UserChore", LogLevels.Info, "Data Store", user.Username);
+                    _logger.Log("Chore fetch error: " + result.ErrorStatus + "\n" + "Message: " + result.Message, LogLevels.Error, "Data Store", user.Username);
                 }
                 result.IsSuccessful = daoResult.IsSuccessful;
                 result.Message = daoResult.Message;

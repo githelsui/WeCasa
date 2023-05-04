@@ -8,6 +8,9 @@ using MySqlX.XDevAPI.Common;
 using System.Collections.Generic;
 using System.Collections;
 using System.Globalization;
+using Mysqlx.Session;
+using static Mysqlx.Expect.Open.Types.Condition.Types;
+using System.Diagnostics.Metrics;
 
 namespace HAGSJP.WeCasa.Managers.Implementations
 {
@@ -15,6 +18,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
 	{
         private readonly UserManager _um;
         private readonly ChoreService _service;
+        private readonly GroupManager _groupManager;
         private Logger _logger;
 
         public ChoreManager()
@@ -22,6 +26,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             _logger = new Logger(new AccountMariaDAO());
             _service = new ChoreService();
             _um = new UserManager();
+            _groupManager = new GroupManager();
         }
 
         public async Task<ChoreResult> AddChore(Chore chore, UserAccount userAccount)
@@ -350,59 +355,82 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             }
         }
 
-        public ChoreResult GetUserToDoChores(UserAccount user)
+        public async Task<ChoreResult> GetGroupIncompleteChores(GroupModel group)
         {
             try
             {
                 var result = new ChoreResult();
+                var choresByUser = new Dictionary<string, List<Chore>>();
 
-                var serviceResult = _service.GetUserChores(user, 0);
-                if (serviceResult.IsSuccessful)
+                var groupMembersResult = await _groupManager.GetGroupMembers(group);
+                if (groupMembersResult.IsSuccessful)
                 {
-                    result.ReturnedObject = serviceResult.ReturnedObject;
-                    _logger.Log("Group completed chores fetched successfully", LogLevels.Info, "Service", user.Username);
+                    var serviceResult = new ChoreResult();
+
+                    var groupMembers = groupMembersResult.ReturnedObject;
+                    IEnumerable enumerable = groupMembers as IEnumerable;
+                    foreach(UserProfile userProfile in enumerable)
+                    {
+                        var username = userProfile.Username;
+                        var userAccount = new UserAccount(username);
+                        serviceResult = _service.GetUserIncompleteChores(userAccount);
+                        if (serviceResult.IsSuccessful)
+                        {
+                            var incompleteChores = serviceResult.ReturnedObject;
+                            choresByUser.Add(username, (List<Chore>)incompleteChores);
+                        }
+                        else
+                        {
+                            result.IsSuccessful = serviceResult.IsSuccessful;
+                            result.Message = serviceResult.Message;
+                            _logger.Log("Group incomplete chores fetch error: " + result.ErrorStatus + "\n" + "Message: " + result.Message, LogLevels.Error, "Service", userAccount.Username);
+                            return result;
+                        }
+                    }
+                    result.IsSuccessful = serviceResult.IsSuccessful;
+                    result.Message = serviceResult.Message;
                 }
                 else
                 {
-                    _logger.Log("Chore fetch error: " + result.ErrorStatus + "\n" + "Message: " + result.Message, LogLevels.Error, "Service", user.Username);
+                    result.IsSuccessful = groupMembersResult.IsSuccessful;
+                    result.Message = groupMembersResult.Message;
+                    _logger.Log("Group members list fetch error: " + result.ErrorStatus + "\n" + "Message: " + result.Message, LogLevels.Error, "Service", group.Owner);
                 }
-                result.IsSuccessful = serviceResult.IsSuccessful;
-                result.Message = serviceResult.Message;
                 return result;
             }
             catch (Exception exc)
             {
-                _logger.Log("Error Message: " + exc.Message, LogLevels.Error, "Service", user.Username, new UserOperation(Operations.ChoreList, 0));
+                _logger.Log("Error Message: " + exc.Message, LogLevels.Error, "Service", group.Owner, new UserOperation(Operations.ChoreList, 0));
                 throw exc;
             }
         }
 
-        public ChoreResult GetUserCompletedChores(UserAccount user)
-        {
-            try
-            {
-                var result = new ChoreResult();
+        //public ChoreResult GetUserIncompleteChores(UserAccount user)
+        //{
+        //    try
+        //    {
+        //        var result = new ChoreResult();
 
-                var serviceResult = _service.GetUserChores(user, 1);
-                if (serviceResult.IsSuccessful)
-                {
-                    result.ReturnedObject = serviceResult.ReturnedObject;
-                    _logger.Log("User's completed chores fetched successfully", LogLevels.Info, "Service", user.Username);
-                }
-                else
-                {
-                    _logger.Log("Chore fetch error: " + result.ErrorStatus + "\n" + "Message: " + result.Message, LogLevels.Error, "Service", user.Username);
-                }
-                result.IsSuccessful = serviceResult.IsSuccessful;
-                result.Message = serviceResult.Message;
-                return result;
-            }
-            catch (Exception exc)
-            {
-                _logger.Log("Error Message: " + exc.Message, LogLevels.Error, "Service", user.Username, new UserOperation(Operations.ChoreList, 0));
-                throw exc;
-            }
-        }
+        //        var serviceResult = _service.GetUserIncompleteChores(user);
+        //        if (serviceResult.IsSuccessful)
+        //        {
+        //            result.ReturnedObject = serviceResult.ReturnedObject;
+        //            _logger.Log("Group incomplete chores fetched successfully", LogLevels.Info, "Manager", user.Username);
+        //        }
+        //        else
+        //        {
+        //            _logger.Log("Chore fetch error: " + result.ErrorStatus + "\n" + "Message: " + result.Message, LogLevels.Error, "Service", user.Username);
+        //        }
+        //        result.IsSuccessful = serviceResult.IsSuccessful;
+        //        result.Message = serviceResult.Message;
+        //        return result;
+        //    }
+        //    catch (Exception exc)
+        //    {
+        //        _logger.Log("Error Message: " + exc.Message, LogLevels.Error, "Service", user.Username, new UserOperation(Operations.ChoreList, 0));
+        //        throw exc;
+        //    }
+        //}
 
         //Assignment Validation
         private async Task<ChoreResult> ReassignChore(Chore chore, List<String> newAssignments)
