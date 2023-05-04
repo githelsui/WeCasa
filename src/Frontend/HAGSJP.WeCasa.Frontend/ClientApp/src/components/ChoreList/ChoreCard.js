@@ -65,7 +65,8 @@ export const ChoreCard = (props) => {
             Repeats: chore['repeats'],
             Days: chore['days'],
             AssignedTo: getAssignedUsernames(chore['assignedTo']),
-            ChoreId: chore['choreId']
+            ChoreId: chore['choreId'],
+            ChoreDate: chore['choreDate']
         }
 
         axios.post('chorelist/CompleteChore', choreForm)
@@ -110,7 +111,8 @@ export const ChoreCard = (props) => {
             Repeats: props.chore['repeats'],
             Days: props.chore['days'],
             AssignedTo: getAssignedUsernames(props.chore['assignedTo']),
-            ChoreId: props.chore['choreId']
+            ChoreId: props.chore['choreId'],
+            ChoreDate: props.chore['choreDate']
         }
 
         axios.post('chorelist/DeleteChore', choreForm)

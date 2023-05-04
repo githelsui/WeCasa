@@ -16,6 +16,7 @@ namespace HAGSJP.WeCasa.Models
         public List<UserProfile>? AssignedTo { get; set; }
         public List<String>? UsernamesAssignedTo { get; set; }
         public List<String>? Days { get; set; } //day string
+        public DateTime? ChoreDate { get; set; } //property for UserChore column chore_date
 
         // Assigned in Manager layer 
         public DateTime? Created { get; set; }  
