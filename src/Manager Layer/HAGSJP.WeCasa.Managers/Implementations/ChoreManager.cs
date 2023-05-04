@@ -355,6 +355,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             }
         }
 
+        //Returns list of incomplete chores by username in given group
         public async Task<ChoreResult> GetGroupIncompleteChores(GroupModel group)
         {
             try
@@ -387,6 +388,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                             return result;
                         }
                     }
+                    result.ReturnedObject = choresByUser;
                     result.IsSuccessful = serviceResult.IsSuccessful;
                     result.Message = serviceResult.Message;
                 }
@@ -404,33 +406,6 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 throw exc;
             }
         }
-
-        //public ChoreResult GetUserIncompleteChores(UserAccount user)
-        //{
-        //    try
-        //    {
-        //        var result = new ChoreResult();
-
-        //        var serviceResult = _service.GetUserIncompleteChores(user);
-        //        if (serviceResult.IsSuccessful)
-        //        {
-        //            result.ReturnedObject = serviceResult.ReturnedObject;
-        //            _logger.Log("Group incomplete chores fetched successfully", LogLevels.Info, "Manager", user.Username);
-        //        }
-        //        else
-        //        {
-        //            _logger.Log("Chore fetch error: " + result.ErrorStatus + "\n" + "Message: " + result.Message, LogLevels.Error, "Service", user.Username);
-        //        }
-        //        result.IsSuccessful = serviceResult.IsSuccessful;
-        //        result.Message = serviceResult.Message;
-        //        return result;
-        //    }
-        //    catch (Exception exc)
-        //    {
-        //        _logger.Log("Error Message: " + exc.Message, LogLevels.Error, "Service", user.Username, new UserOperation(Operations.ChoreList, 0));
-        //        throw exc;
-        //    }
-        //}
 
         //Assignment Validation
         private async Task<ChoreResult> ReassignChore(Chore chore, List<String> newAssignments)
