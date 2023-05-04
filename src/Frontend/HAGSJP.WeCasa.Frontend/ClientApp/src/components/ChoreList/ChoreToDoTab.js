@@ -237,19 +237,19 @@ export const ChoreToDoTab = (props) => {
             </Col>
             <Col span={2} align="center">
                 <p className="mulish-font" style={(currDate != null && currDate == 3) ? { borderRadius: 5, backgroundColor: '#525252', color: 'white', padding: 4 } : { padding: 5 }}>THURS</p>
-                <p className="mulish-font" style={{ marginTop: -10, fontSize: 15 }}>{weekDates[0]}</p>
+                <p className="mulish-font" style={{ marginTop: -10, fontSize: 15 }}>{weekDates[3]}</p>
             </Col>
             <Col span={2} align="center">
                 <p className="mulish-font" style={(currDate != null && currDate == 4) ? { borderRadius: 5, backgroundColor: '#525252', color: 'white', padding: 4 } : { padding: 5 }}>FRI</p>
-                <p className="mulish-font" style={{ marginTop: -10, fontSize: 15 }}>{weekDates[0]}</p>
+                <p className="mulish-font" style={{ marginTop: -10, fontSize: 15 }}>{weekDates[4]}</p>
             </Col>
             <Col span={2} align="center">
                 <p className="mulish-font" style={(currDate != null && currDate == 5) ? { borderRadius: 5, backgroundColor: '#525252', color: 'white', padding: 4 } : { padding: 5 }}>SAT</p>
-                <p className="mulish-font" style={{ marginTop: -10, fontSize: 15 }}>{weekDates[0]}</p>
+                <p className="mulish-font" style={{ marginTop: -10, fontSize: 15 }}>{weekDates[5]}</p>
             </Col>
             <Col span={2} align="center">
                 <p className="mulish-font" style={(currDate != null && currDate == 6) ? { borderRadius: 5, backgroundColor: '#525252', color: 'white', padding: 4 } : { padding: 5 }}>SUN</p>
-                <p className="mulish-font" style={{ marginTop: -10, fontSize: 15}}>{weekDates[0]}</p>
+                <p className="mulish-font" style={{ marginTop: -10, fontSize: 15}}>{weekDates[6]}</p>
             </Col>
         </Row>
         <Divider orientation="center" style={{ border: '0.2px solid gray', marginBottom: 0, marginTop: 5 }} />

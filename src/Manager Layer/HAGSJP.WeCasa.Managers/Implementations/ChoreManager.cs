@@ -220,7 +220,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             {
                 var result = new ChoreResult();
 
-                var serviceResult = _service.GetGroupChores(group, 0);
+                var serviceResult = _service.GetGroupWeeklyToDoChores(group, currentDate); //Returns list of chores based on current week
                 if (serviceResult.IsSuccessful)
                 {
                     List<Chore> resultQuery = (List<Chore>)serviceResult.ReturnedObject;
@@ -240,83 +240,51 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                         var chore = resultQuery[i];
                         var days = (List<String>)chore.Days;
                         var isCompleted = (bool)chore.IsCompleted;
+                        DateTime choreDate = (DateTime)chore.ChoreDate;
+                        var day = choreDate.DayOfWeek;
+                        var key = "";
 
-                        //Account for Repeats property
-                        if (!string.IsNullOrEmpty(chore.Repeats))
+                        if(day == DayOfWeek.Monday)
                         {
-                                var creationDate = (DateTime)chore.Created;
-                                var completedDate = (chore.LastCompleted != null) ? (DateTime)chore.LastCompleted : creationDate;
-                                TimeSpan timeSpan = currentDate - completedDate;
-
-                            // check if currentDate is within the same week as CreatedBy property -> chore was created for that week
-                            if (WithinSameWeek(currentDate, creationDate) && !isCompleted)
-                            {
-                                foreach (String day in days)
-                                {
-                                    choresPerDay[day].Add(chore);
-                                    Console.Write(chore);
-                                }
-                            }
-                            else
-                            {
-                                if (chore.Repeats == "Monthly")
-                                {
-                                    // only add to currentToDo if 1 month has passed since last updated / completed
-                                    if ((currentDate.Month - completedDate.Month) == 1 && (currentDate.Year == completedDate.Year || currentDate.Year == completedDate.Year + 1))
-                                    {
-                                        if (!(WithinSameWeek(currentDate, completedDate) && isCompleted))
-                                        {
-                                            foreach (String day in days)
-                                            {
-                                                choresPerDay[day].Add(chore);
-                                                Console.Write(chore);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (chore.Repeats == "Bi-weekly")
-                                {
-                                    int weeks = (int)(timeSpan.TotalDays / 7) + 1; // +1 in order to not count the current week
-                                    if (weeks % 2 == 0) // Check if two weeks has passed since last completion
-                                    {
-                                        //chore is already completed for this specific week
-                                        //!(true && true) -> false || false
-                                        if (!(WithinSameWeek(currentDate, completedDate) && isCompleted))
-                                        {
-                                            foreach (String day in days)
-                                            {
-                                                choresPerDay[day].Add(chore);
-                                                Console.Write(chore);
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (chore.Repeats == "Weekly")
-                                {
-                                    if (!(WithinSameWeek(currentDate, completedDate) && isCompleted))
-                                    {
-                                        foreach (String day in days)
-                                        {
-                                            choresPerDay[day].Add(chore);
-                                            Console.Write(chore);
-                                        }
-                                    }
-                                }
-                            }
+                            key = "MON";
                         }
-                        else //Chore only occurs during that week it was created for 
+
+                        if(day == DayOfWeek.Tuesday)
                         {
-                            if (isCompleted == false)
-                            {
-                                foreach (String day in days)
-                                {
-                                    choresPerDay[day].Add(chore);
-                                    Console.Write(chore);
-                                }
-                            }
+                            key = "TUES";
                         }
+
+                        if (day == DayOfWeek.Wednesday)
+                        {
+                            key = "WED";
+                        }
+
+                        if (day == DayOfWeek.Thursday)
+                        {
+                            key = "THURS";
+                        }
+
+                        if (day == DayOfWeek.Friday)
+                        {
+                            key = "FRI";
+                        }
+
+                        if (day == DayOfWeek.Saturday)
+                        {
+                            key = "SAT";
+                        }
+
+                        if (day == DayOfWeek.Sunday)
+                        {
+                            key = "SUN";
+                        }
+
+                        //if a chore with choreId & choreDate doesnt already exist in choresPerDay[key] then
+                        if (NoDuplicateChores(choresPerDay[key], chore))
+                        {
+                            choresPerDay[key].Add(chore);
+                        }
+
                     }
                     result.ReturnedObject = choresPerDay;
                     _logger.Log("Group to-do chores fetched successfully", LogLevels.Info, "Service", group.Owner);
@@ -342,7 +310,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             {
                 var result = new ChoreResult();
 
-                var serviceResult = _service.GetGroupChores(group, 1);
+                var serviceResult = _service.GetGroupCompletedChores(group);
                 if (serviceResult.IsSuccessful)
                 {
                     List<Chore> resultQuery = (List<Chore>)serviceResult.ReturnedObject;
@@ -350,11 +318,14 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                     for (var i = 0; i < resultQuery.Count; i++)
                     {
                         var chore = resultQuery[i];
-                        var dateCompleted = chore.LastUpdated;
+                        var dateCompleted = chore.ChoreDate;
                         string key = string.Format("{0:dddd MM/dd/yy}", dateCompleted);
                         if(choresPerDay.ContainsKey(key))
                         {
-                            choresPerDay[key].Add(chore);
+                            if (NoDuplicateChores(choresPerDay[key], chore))
+                            {
+                                choresPerDay[key].Add(chore);
+                            }
                         }
                         else
                         {
@@ -478,21 +449,21 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             return result;
         }
 
-        private bool WithinSameWeek(DateTime currrentDate, DateTime otherDate)
+        // Used for chore with multiple assignments
+        private bool NoDuplicateChores(List<Chore> chores, Chore chore)
         {
-            CultureInfo culture = CultureInfo.CurrentCulture;
-            Calendar calendar = culture.Calendar;
-            int week1 = calendar.GetWeekOfYear(currrentDate, culture.DateTimeFormat.CalendarWeekRule, culture.DateTimeFormat.FirstDayOfWeek);
-            int week2 = calendar.GetWeekOfYear(otherDate, culture.DateTimeFormat.CalendarWeekRule, culture.DateTimeFormat.FirstDayOfWeek);
-
-            if (week1 == week2)
+            //if a chore with choreId & choreDate doesnt already exist in choresPerDay[key] then
+            for(var i = 0; i < chores.Count; i++)
             {
-                return true;
+                var currChore = chores[i];
+                var choreDate = (DateTime)chore.ChoreDate;
+                var currChoreDate = (DateTime)currChore.ChoreDate;
+                if (chore.ChoreId == currChore.ChoreId && choreDate.ToString("yyyy-MM-dd") == currChoreDate.ToString("yyyy-MM-dd") && choreDate.DayOfWeek == currChoreDate.DayOfWeek)
+                {
+                    return false;
+                }
             }
-            else
-            {
-                return false;
-            }
+            return true;
         }
     }
 }

@@ -53,6 +53,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
             try
             {
                 Chore chore = new Chore(choreForm.ChoreId, choreForm.Name, choreForm.Days, choreForm.Notes, choreForm.GroupId, choreForm.AssignedTo, choreForm.Repeats);
+                chore.ChoreDate = choreForm.ChoreDate;
                 var result = _manager.CompleteChore(chore, new UserAccount(choreForm.CurrentUser));
                 if (result.IsSuccessful)
                 {
@@ -78,6 +79,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
             try
             {
                 Chore chore = new Chore(choreForm.ChoreId, choreForm.Name, choreForm.Days, choreForm.Notes, choreForm.GroupId, choreForm.AssignedTo, choreForm.Repeats);
+                chore.ChoreDate = choreForm.ChoreDate;
                 var result = await _manager.EditChore(chore, new UserAccount(choreForm.CurrentUser));
                 if (result.IsSuccessful)
                 {
@@ -103,6 +105,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
             try
             {
                 Chore chore = new Chore(choreForm.ChoreId, choreForm.Name, choreForm.Days, choreForm.Notes, choreForm.GroupId, choreForm.AssignedTo, choreForm.Repeats);
+                chore.ChoreDate = choreForm.ChoreDate;
                 var result = _manager.DeleteChore(chore, new UserAccount(choreForm.CurrentUser));
                 if (result.IsSuccessful)
                 {

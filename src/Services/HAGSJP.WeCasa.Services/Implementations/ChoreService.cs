@@ -144,24 +144,39 @@ namespace HAGSJP.WeCasa.Services.Implementations
             }
         }
 
-        public ChoreResult GetGroupChores(GroupModel group, int isCompleted)
+        public ChoreResult GetGroupCompletedChores(GroupModel group)
         {
             try
             {
                 var result = new ChoreResult();
 
-                // DAO Operation
-                var selectSql = "";
-                if (isCompleted == 1)
+                var daoResult = _dao.GetGroupCompletedChores(group);
+                if (daoResult.IsSuccessful)
                 {
-                    selectSql = string.Format(@"SELECT * from CHORES WHERE group_id = '{0}' AND is_completed = '{1}' ORDER BY last_updated DESC ", group.GroupId, isCompleted);
+                    result.ReturnedObject = daoResult.ReturnedObject;
+                    _logger.Log("Group completed chores fetched successfully", LogLevels.Info, "Data Store", group.Owner);
                 }
                 else
                 {
-                    selectSql = string.Format(@"SELECT * from CHORES WHERE group_id = '{0}'", group.GroupId);
+                    _logger.Log("Group completed chores fetch failed", LogLevels.Info, "Data Store", group.Owner);
                 }
+                result.IsSuccessful = daoResult.IsSuccessful;
+                result.Message = daoResult.Message;
+                return result;
+            }
+            catch (Exception exc)
+            {
+                _logger.Log("Error Message: " + exc.Message, LogLevels.Error, "Data Store", group.Owner, new UserOperation(Operations.ChoreList, 0));
+                throw exc;
+            }
+        }
 
-                var daoResult = _dao.GetChores(selectSql);
+        public ChoreResult GetGroupWeeklyToDoChores(GroupModel group, DateTime currentDate)
+        {
+            try
+            {
+                var result = new ChoreResult();
+                var daoResult = _dao.GetGroupWeeklyToDoChores(group, currentDate);
                 if (daoResult.IsSuccessful)
                 {
                     result.ReturnedObject = daoResult.ReturnedObject;

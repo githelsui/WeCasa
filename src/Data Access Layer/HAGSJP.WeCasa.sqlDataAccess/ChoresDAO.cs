@@ -197,20 +197,21 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     connection.Open();
 
-                    var updateSql = @"UPDATE Chores
+                    var updateSql = @"UPDATE UserChore
                                         SET
-                                            last_completed = @last_completed,
                                             is_completed = @is_completed
-                                    WHERE chore_id = @chore_id;";
+                                    WHERE chore_id = @chore_id
+                                    AND chore_date = @chore_date;";
 
                     var command = connection.CreateCommand();
                     command.CommandText = updateSql;
-                    command.Parameters.AddWithValue("@last_completed", chore.LastCompleted);
                     command.Parameters.AddWithValue("@is_completed", (chore.IsCompleted == null || chore.IsCompleted == false) ? 0 : 1);
                     command.Parameters.AddWithValue("@chore_id", chore.ChoreId);
+                    DateTime choreDate = (DateTime)chore.ChoreDate;
+                    command.Parameters.AddWithValue("@chore_date", choreDate.ToString("yyyy-MM-dd"));
 
                     var rows = (command.ExecuteNonQuery());
-                    result = ValidateSqlStatement(rows);
+                    result = ValidateInsertStatements(rows);
                     return result;
                 }
                 catch (MySqlException sqlex)
@@ -281,7 +282,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     var date = choreDates[j].Date;
 
                     SqlDateTime sqlDate = new SqlDateTime(date.Year, date.Month, date.Day);
-                    if (j == choreDates.Count - 1)
+                    if (i == chore.AssignedTo.Count - 1 && j == choreDates.Count - 1)
                     {
                         //yyyy-MM-dd
                         //YYYY-MM-DD
@@ -506,6 +507,141 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     throw sqlex;
                 }
                 return result;
+            }
+        }
+
+        //Accounts for repeated chores
+        public DAOResult GetGroupWeeklyToDoChores(GroupModel group, DateTime currentDate)
+        {
+            var result = new DAOResult();
+            List<Chore> chores = new List<Chore>();
+            DayOfWeek currentDayOfWeek = currentDate.DayOfWeek;
+            DateTime mondayDate = currentDate.AddDays(-(int)currentDayOfWeek + 1);
+            DateTime sundayDate = mondayDate.AddDays(6);
+
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
+
+                    var command = connection.CreateCommand();
+                    command.CommandText = @"SELECT * from CHORES AS c
+                                            INNER JOIN userchore AS uc
+                                                ON (c.chore_id = uc.chore_id)
+                                            WHERE uc.is_completed = 0
+                                              AND c.group_id = @group_id
+                                              AND @monday_date <= uc.chore_date
+                                              AND @sunday_date >= uc.chore_date;";
+
+                    command.Parameters.AddWithValue("@group_id", group.GroupId);
+                    command.Parameters.AddWithValue("@monday_date", mondayDate);
+                    command.Parameters.AddWithValue("@sunday_date", sundayDate);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Chore chore = new Chore();
+                            chore.ChoreId = reader.GetInt32(reader.GetOrdinal("chore_id"));
+                            chore.GroupId = reader.GetInt32(reader.GetOrdinal("group_id"));
+                            chore.Name = reader.GetString(reader.GetOrdinal("name"));
+                            chore.ChoreDate = reader.IsDBNull(reader.GetOrdinal("chore_date")) ? null : reader.GetDateTime(reader.GetOrdinal("chore_date")).Date;
+                            chore.CreatedBy = reader.IsDBNull(reader.GetOrdinal("created_by")) ? "" : reader.GetString(reader.GetOrdinal("created_by"));
+                            chore.Created = reader.IsDBNull(reader.GetOrdinal("created")) ? null : reader.GetDateTime(reader.GetOrdinal("created"));
+                            chore.LastUpdatedBy = reader.IsDBNull(reader.GetOrdinal("last_updated_by")) ? "" : reader.GetString(reader.GetOrdinal("last_updated_by"));
+                            chore.LastUpdated = reader.IsDBNull(reader.GetOrdinal("last_updated")) ? null : reader.GetDateTime(reader.GetOrdinal("last_updated"));
+                            chore.Notes = reader.IsDBNull(reader.GetOrdinal("notes")) ? "" : reader.GetString(reader.GetOrdinal("notes"));
+                            chore.Repeats = reader.IsDBNull(reader.GetOrdinal("repeats")) ? "" : reader.GetString(reader.GetOrdinal("repeats"));
+                            chore.IsCompleted = reader.GetInt32(reader.GetOrdinal("is_completed")) == 1 ? true : false;
+                            List<UserProfile>? assignedTo = JsonSerializer.Deserialize<List<UserProfile>>(reader.GetString(reader.GetOrdinal("assigned_to")));
+                            chore.AssignedTo = assignedTo;
+                            List<String>? days = reader.IsDBNull(reader.GetOrdinal("days")) ? new List<String>() : JsonSerializer.Deserialize<List<String>>(reader.GetString(reader.GetOrdinal("days")));
+                            chore.Days = days;
+                            chores.Add(chore);
+                        }
+                        result.IsSuccessful = true;
+                        result.ReturnedObject = chores;
+                        return result;
+                    }
+                    result.IsSuccessful = false;
+                    result.Message = "Cannot find chores.";
+                    return result;
+
+                }
+                catch (MySqlException sqlex)
+                {
+                    throw sqlex;
+                }
+                catch (Exception sqlex)
+                {
+                    throw sqlex;
+                }
+            }
+        }
+
+        //Accounts for repeated chores
+        public DAOResult GetGroupCompletedChores(GroupModel group)
+        {
+            var result = new DAOResult();
+            List<Chore> chores = new List<Chore>();
+
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
+
+                    var command = connection.CreateCommand();
+                    command.CommandText = @"SELECT * from CHORES AS c
+                                            INNER JOIN userchore AS uc
+                                                ON (c.chore_id = uc.chore_id)
+                                            WHERE uc.is_completed = 1
+                                              AND c.group_id = @group_id;";
+
+                    command.Parameters.AddWithValue("@group_id", group.GroupId);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Chore chore = new Chore();
+                            chore.ChoreId = reader.GetInt32(reader.GetOrdinal("chore_id"));
+                            chore.GroupId = reader.GetInt32(reader.GetOrdinal("group_id"));
+                            chore.Name = reader.GetString(reader.GetOrdinal("name"));
+                            chore.ChoreDate = reader.IsDBNull(reader.GetOrdinal("chore_date")) ? null : reader.GetDateTime(reader.GetOrdinal("chore_date")).Date;
+                            chore.CreatedBy = reader.IsDBNull(reader.GetOrdinal("created_by")) ? "" : reader.GetString(reader.GetOrdinal("created_by"));
+                            chore.Created = reader.IsDBNull(reader.GetOrdinal("created")) ? null : reader.GetDateTime(reader.GetOrdinal("created"));
+                            chore.LastUpdatedBy = reader.IsDBNull(reader.GetOrdinal("last_updated_by")) ? "" : reader.GetString(reader.GetOrdinal("last_updated_by"));
+                            chore.LastUpdated = reader.IsDBNull(reader.GetOrdinal("last_updated")) ? null : reader.GetDateTime(reader.GetOrdinal("last_updated"));
+                            chore.Notes = reader.IsDBNull(reader.GetOrdinal("notes")) ? "" : reader.GetString(reader.GetOrdinal("notes"));
+                            chore.Repeats = reader.IsDBNull(reader.GetOrdinal("repeats")) ? "" : reader.GetString(reader.GetOrdinal("repeats"));
+                            chore.IsCompleted = reader.GetInt32(reader.GetOrdinal("is_completed")) == 1 ? true : false;
+                            List<UserProfile>? assignedTo = JsonSerializer.Deserialize<List<UserProfile>>(reader.GetString(reader.GetOrdinal("assigned_to")));
+                            chore.AssignedTo = assignedTo;
+                            List<String>? days = reader.IsDBNull(reader.GetOrdinal("days")) ? new List<String>() : JsonSerializer.Deserialize<List<String>>(reader.GetString(reader.GetOrdinal("days")));
+                            chore.Days = days;
+                            chores.Add(chore);
+                        }
+                        result.IsSuccessful = true;
+                        result.ReturnedObject = chores;
+                        return result;
+                    }
+                    result.IsSuccessful = false;
+                    result.Message = "Cannot find chores.";
+                    return result;
+
+                }
+                catch (MySqlException sqlex)
+                {
+                    throw sqlex;
+                }
+                catch (Exception sqlex)
+                {
+                    throw sqlex;
+                }
             }
         }
 

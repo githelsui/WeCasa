@@ -16,5 +16,6 @@ public class ChoreForm
     public List<string>? Days { get; set; }
     public List<string>? AssignedTo { get; set; }
     public string? CurrentDate { get; set; }
+    public DateTime? ChoreDate { get; set; } //property for UserChore column chore_date
 }
 
