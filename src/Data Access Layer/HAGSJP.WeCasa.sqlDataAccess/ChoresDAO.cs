@@ -483,7 +483,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     {
                         // Execution of second query
                         var deleteUserChoreSql = @"DELETE FROM UserChore
-                                     WHERE chore_id = @chore_id;";
+                                     WHERE chore_id = @chore_id
+                                     AND is_completed = 0;";
                         command = connection.CreateCommand();
                         command.CommandText = deleteUserChoreSql;
                         command.Parameters.AddWithValue("@chore_id", chore.ChoreId);
