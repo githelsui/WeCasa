@@ -70,7 +70,8 @@ const ChoreEditModal = (props) => {
                         Repeats: choreRepeats,
                         Days: daysReq,
                         AssignedTo: (selectedAssignments.length == 0 ? [props.user['username']] : selectedAssignments),
-                        ChoreId: props.chore['choreId']
+                        ChoreId: props.chore['choreId'],
+                        ChoreDate: props.chore['choreDate']
                     }
                     console.log(choreForm)
                     props.confirm(choreForm)

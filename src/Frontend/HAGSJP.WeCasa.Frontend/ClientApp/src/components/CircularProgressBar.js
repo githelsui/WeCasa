@@ -7,6 +7,7 @@ export const CircularProgressBar = (props) => {
     const report = props.report;
 
     const calcChoreProgress = (report) => {
+        console.log(report);
         var result;
         if (report == null || report.length == 0 || report.length > 1) {
             result = "-";
@@ -17,8 +18,8 @@ export const CircularProgressBar = (props) => {
                 result = (parseInt(report.completedChores) / (parseInt(report.completedChores) + parseInt(report.incompleteChores))) * 100;
                 if (Number.isInteger(result)) {
                     return result;
-                } else if (Number.isNAN) {
-                    result = '-';
+                } else if (Number.isNaN(result)) {
+                    result = "-";
                 } else {
                     result = result.toFixed(0);
                 }
@@ -28,16 +29,22 @@ export const CircularProgressBar = (props) => {
         return result;
     }
 
+    const value = calcChoreProgress(report[0]);
+
     return (
         <div>
             <div role="circularbar"
                 aria-valuemin="0"
                 aria-valuemax="100"
-                    style={{ "--value": calcChoreProgress(report[0]) }}>
-             </div>
-            <div style={{textAlign: "center"}}>
-                <p>chores completed</p>
+                style={{ "--value": value }}>
             </div>
+            {value == "-" ? 
+                (<div style={{ textAlign: "center" }}>
+                    <p>No chores assigned :(</p>
+                </div>) : (
+                <div style={{ textAlign: "center" }}>
+                    <p>chores completed</p>
+                </div>)}    
         </div>
     );
 };

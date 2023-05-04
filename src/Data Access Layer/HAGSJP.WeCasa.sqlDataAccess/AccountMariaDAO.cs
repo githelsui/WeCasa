@@ -479,48 +479,55 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public async Task<AuthResult> GetUserProfile(UserAccount userAccount)
         {
             AuthResult result = new AuthResult();
+            var userProfile = new UserProfile();
+            userProfile.Username = userAccount.Username;
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
             {
-                await connection.OpenAsync();
+                try
+                {
+                    await connection.OpenAsync();
 
-                // Select SQL statement
-                var selectSql = @"SELECT  * 
+                    // Select SQL statement
+                    var selectSql = @"SELECT  first_name, last_name, image 
                                     FROM  `Users` 
                                     WHERE `username` = @username";
 
-                var command = connection.CreateCommand();
-                command.CommandText = selectSql;
-                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
+                    var command = connection.CreateCommand();
+                    command.CommandText = selectSql;
+                    command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
 
-                // Execution of SQL
-                using (var reader = command.ExecuteReader())
-                {
-                    if (reader.Read())
+                    // Execution of SQL
+                    using (var reader = command.ExecuteReader())
                     {
-                        UserProfile userProfile = new UserProfile();
-                        userProfile.Username = userAccount.Username;
-                        userProfile.FirstName = reader.GetString(reader.GetOrdinal("first_name"));
-                        userProfile.LastName = reader.GetString(reader.GetOrdinal("last_name"));
-                        userProfile.Image = reader.GetInt32(reader.GetOrdinal("image"));
-                        result.ErrorStatus = System.Net.HttpStatusCode.Found;
+                        while (reader.Read())
+                        {
+                            
+                            userProfile.FirstName = reader.GetString(reader.GetOrdinal("first_name"));
+                            userProfile.LastName = reader.GetString(reader.GetOrdinal("last_name"));
+                            userProfile.Image = reader.GetInt32(reader.GetOrdinal("image"));
+                            //result.ErrorStatus = System.Net.HttpStatusCode.Found;
+                          
+                        }
                         result.Message = "User information was found";
                         result.IsSuccessful = true;
-                        result.ReturnedObject = userProfile;
-                        return result;
-                    }
-                    else
-                    {
-                        result.ErrorStatus = System.Net.HttpStatusCode.NotFound;
-                        result.Message = "User information was not found";
-                        result.IsSuccessful = false;
-                        return result;
+                        result.ReturnedObject = (UserProfile)userProfile;
                     }
                 }
+                catch(MySqlException sqlex)
+                {
+                    result.Message = sqlex.Message;
+                }
+                catch (Exception sqlex)
+                {
+                    result.Message = sqlex.Message;
+                }
+                return result;
             }
+           
         }
 
-                public Dictionary<string, string> GetFirstNames(int groupId)
+        public Dictionary<string, string> GetFirstNames(int groupId)
         {
            _connectionString = BuildConnectionString().ConnectionString;
             using(var connection = new MySqlConnection(_connectionString))

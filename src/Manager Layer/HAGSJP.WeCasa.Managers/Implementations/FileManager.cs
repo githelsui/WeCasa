@@ -44,34 +44,34 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             return result;
         }
 
-        public S3Result UploadFile(IFormFile file, string groupId, string username)
+        public S3Result UploadFile(IFormFile file, string groupId, string prefix)
         {
-            var result = _dao.UploadFile(file, groupId, username).Result;
+            var result = _dao.UploadFile(file, groupId, prefix).Result;
             if (result.IsSuccessful)
             {
                 // Logging the file upload
-                successLogger.Log("File uploaded successfully", LogLevels.Info, "Data Store", username, new UserOperation(Operations.FileUpload, 1));
+                successLogger.Log("File uploaded successfully", LogLevels.Info, "Data Store", prefix, new UserOperation(Operations.FileUpload, 1));
             }
             else
             {
                 // Logging the error
-                errorLogger.Log("Error uploading a file", LogLevels.Error, "Data Store", username, new UserOperation(Operations.FileUpload, 0));
+                errorLogger.Log("Error uploading a file", LogLevels.Error, "Data Store", prefix, new UserOperation(Operations.FileUpload, 0));
             }
             return result;
         }
 
-        public S3Result DeleteFile(string fileName, string groupId, string username)
+        public S3Result DeleteFile(string fileName, string groupId, string prefix)
         {
-            var result = _dao.DeleteFile(fileName, groupId, username).Result;
+            var result = _dao.DeleteFile(fileName, groupId, prefix).Result;
             if (result.IsSuccessful)
             {
                 // Logging the file deletion
-                successLogger.Log("File deleted successfully", LogLevels.Info, "Data Store", username, new UserOperation(Operations.FileDeletion, 1));
+                successLogger.Log("File deleted successfully", LogLevels.Info, "Data Store", prefix, new UserOperation(Operations.FileDeletion, 1));
             }
             else
             {
                 // Logging the error
-                errorLogger.Log("Error deleting a file", LogLevels.Error, "Data Store", username, new UserOperation(Operations.FileDeletion, 0));
+                errorLogger.Log("Error deleting a file", LogLevels.Error, "Data Store", prefix, new UserOperation(Operations.FileDeletion, 0));
             }
             return result;
         }
