@@ -51,9 +51,9 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     connection.Open();
 
-                    var insertSql = @"INSERT INTO feedback (submission_date, first_name, last_name, email, feedback_type, feedback_msg, rating, resolved_status, resolved_date)
-                    VALUES (@submission_date, @first_name, @last_name, @email, @feedback_type, @feedback_msg, @rating, @resolved_status, @resolved_date)
-                    SELECT LAST_INSERT_ID();";
+                    var insertSql = @"INSERT INTO feedback (submission_date, first_name, last_name, email, feedback_type, feedback_msg, feedback_rating, resolved_status, resolved_date)
+                    VALUES (@submission_date, @first_name, @last_name, @email, @feedback_type, @feedback_msg, @feedback_rating, @resolved_status, @resolved_date)";
+                    
 
                     var command = connection.CreateCommand();
                     command.CommandText = insertSql;
@@ -63,7 +63,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@last_name", feedback.LastName);
                     command.Parameters.AddWithValue("@email", feedback.Email);
                     command.Parameters.AddWithValue("@feedback_type", feedback.FeedbackType);
-                    command.Parameters.AddWithValue("@rating", feedback.FeedbackRating);
+                    command.Parameters.AddWithValue("@feedback_msg", feedback.FeedbackMessage);
+                    command.Parameters.AddWithValue("@feedback_rating", feedback.FeedbackRating);
                     command.Parameters.AddWithValue("@resolved_status", feedback.ResolvedStatus);
                     command.Parameters.AddWithValue("@resolved_date", feedback.ResolvedDate);
 

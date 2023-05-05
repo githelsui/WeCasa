@@ -14,7 +14,7 @@ export const Footer = () => {
             <Navbar className={Styles.defaultHeaderStyle} container light>
                 <ul className="navbar-nav flex-grow">
                     <NavItem>
-                        <NavLink tag={Link} className="text-dark" to="/uploadfeedback">Contact Us</NavLink>
+                        <NavLink tag={Link} className="text-dark" to="/feedback">Contact Us</NavLink>
                     </NavItem>
                 </ul>
             </Navbar>

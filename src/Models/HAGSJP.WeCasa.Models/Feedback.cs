@@ -13,7 +13,7 @@ namespace HAGSJP.WeCasa.Models
         public String Email { get; set; }
         public Boolean FeedbackType { get; set; }
         public String FeedbackMessage { get; set; }
-        public float FeedbackRating { get; set; }
+        public float? FeedbackRating { get; set; }
         public Boolean ResolvedStatus { get; set; }
         public DateTime? ResolvedDate { get; set; }
     }

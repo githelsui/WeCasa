@@ -19,7 +19,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         }
 
         [HttpPost]
-        [Route("uploadfeedback")]
+        [Route("upload")]
         public Task<IActionResult> Post([FromBody]Feedback feedback)
         {
             try 

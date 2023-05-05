@@ -13,20 +13,20 @@ export const Feedback = () => {
     const toggle = () => setModal(!modal);
     const submitFormData = () => {
         let request = {
+            feedbackId: 0,
             submissionDate: new Date().toISOString(),
-            feedbackType: feedbackType,
             firstName: firstName,
             lastName: lastName,
             email: email,
+            feedbackType: feedbackType,
             feedbackMessage: feedbackMessage,
             feedbackRating: feedbackRating,
-            resolvedStatus: 0,
+            resolvedStatus: false,
             resolvedDate: null
         };
         console.log("REQUEST", request)
-        const feedbackTypeRadioButtons = document.querySelectorAll('[name="feedbackType"]');
 
-        axios.post('/uploadfeedback', request)
+        axios.post('feedback/upload', request)
             .then((response) => {
                 console.log(response.data); // Handle successful response from server
             })
@@ -38,9 +38,9 @@ export const Feedback = () => {
     function handleFeedbackTypeChange(event) {
         const selectedValue = event.target.value;
         if (selectedValue === 'Review') {
-            setFeedbackType(1); // Set feedbackType to true for "Review"
+            setFeedbackType(true); // Set feedbackType to true for "Review"
         } else if (selectedValue === 'Issue') {
-            setFeedbackType(0); // Set feedbackType to false for "Issue"
+            setFeedbackType(false); // Set feedbackType to false for "Issue"
         } else {
             setFeedbackType(null); // Set feedbackType to null for no selection
         }
@@ -60,14 +60,14 @@ export const Feedback = () => {
                             <Label>Please specify feedback type:</Label>
                             <div>
                                 <Label htmlFor="review">
-                                    <input type="radio" name="feedbackType" id="review" value="Review" checked={feedbackType === 1} onChange={handleFeedbackTypeChange} />
+                                    <input type="radio" name="feedbackType" id="review" value="Review" checked={feedbackType === true} onChange={handleFeedbackTypeChange} />
                                     {' '}
                                     Review
                                 </Label>
                             </div>
                             <div>
-                                <Label htmlFor="reportIssue">
-                                    <input type="radio" name="feedbackType" id="issue" value="Issue" checked={feedbackType === 0} onChange={handleFeedbackTypeChange} />
+                                <Label htmlFor="issue">
+                                    <input type="radio" name="feedbackType" id="issue" value="Issue" checked={feedbackType === false} onChange={handleFeedbackTypeChange} />
                                     {' '}
                                     Report an Issue
                                 </Label>
@@ -89,7 +89,7 @@ export const Feedback = () => {
                             <Label for="feedback">User Feedback Message:</Label>
                             <Input type="textarea" name="feedbackMessage" id="feedbackMessage" placeholder="Enter your Feedback Here (200 Character Limit)" onChange={e => setFeedbackMessage(e.target.value)} />
                         </FormGroup>
-                        {feedbackType === 1 &&
+                        {feedbackType === true &&
                             <FormGroup>
                                 <Label for="rating">Rating </Label>
                                 <input type="range" name="feedbackRating" id="feedbackRating" min="0" max="5" step="0.5" value={feedbackRating} onChange={e => setRating(e.target.value)} />

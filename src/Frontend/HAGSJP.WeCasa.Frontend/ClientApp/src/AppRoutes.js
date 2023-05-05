@@ -75,7 +75,7 @@ const AppRoutes = [
       element: <GroceryList />
     },
     {
-        path: '/uploadfeedback',
+        path: '/feedback',
         element: <Feedback />
     }
 ];
