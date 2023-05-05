@@ -14,7 +14,7 @@ const AddEventModal = (props) => {
     const [repeat, setRepeat] = useState('');
     const [eventType, setEventType] = useState('public');
     const [reminder, setReminder] = useState('');
-    const [eventColor, setEventColor] = useState('');
+    const [eventColor, setEventColor] = useState(0);
     const [form] = Form.useForm();
     const eventColors = ['#0256D4', '#F4B105', '#FFEE58', '#FF2929', '#10B364'];
 
@@ -37,7 +37,7 @@ const AddEventModal = (props) => {
     const attemptSubmission = () => {
         form.setFieldsValue({
             eventDate: eventDate,
-            color: eventColor
+            color: eventColors[eventColor]
         });
         form.validateFields()
             .then((values) => {

@@ -15,8 +15,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public MySqlConnectionStringBuilder BuildConnectionString()
         {
-            var connectionString = ConfigurationManager.ConnectionStrings["MariaDBConnection"].ConnectionString;
-            Console.WriteLine($"Connection string: {connectionString}");
+            /*var connectionString = ConfigurationManager.ConnectionStrings["MariaDBConnection"].ConnectionString;
+            Console.WriteLine($"Connection string: {connectionString}");*/
 
             var builder = new MySqlConnectionStringBuilder
             {
@@ -110,24 +110,20 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 try
                 {
                     await connection.OpenAsync();
-                    var insertEventSql =
+                    var updateEventSql =
                         @"UPDATE Events 
-                            SET group_id = @group_id, 
-                                event_name = @event_name, 
+                            SET event_name = @event_name, 
                                 description = @description, 
                                 event_date = @event_date, 
                                 repeats = @repeats, 
                                 type = @type, 
                                 reminder = @reminder, 
-                                color = @color, 
-                                created_by @created_by
-                            WHERE event_id = @event_id
-                        );";
+                                color = @color
+                            WHERE event_id = @event_id;";
 
                     var command = connection.CreateCommand();
-                    command.CommandText = insertEventSql;
+                    command.CommandText = updateEventSql;
                     command.Parameters.AddWithValue("@event_id", e.EventId);
-                    command.Parameters.AddWithValue("@group_id", e.GroupId);
                     command.Parameters.AddWithValue("@event_name", e.EventName);
                     command.Parameters.AddWithValue("@description", e.Description);
                     command.Parameters.AddWithValue("@event_date", e.EventDate);
@@ -135,7 +131,6 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@type", e.Type);
                     command.Parameters.AddWithValue("@reminder", e.Reminder);
                     command.Parameters.AddWithValue("@color", e.Color);
-                    command.Parameters.AddWithValue("@created_by", e.CreatedBy);
 
                     var rows = (command.ExecuteNonQuery());
                     result = ValidateSqlStatement(rows);

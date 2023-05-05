@@ -53,8 +53,6 @@ export const CalendarView = () => {
     }
 
     const refreshCalendar = () => {
-        setShowAddModal(false);
-        setShowEditModal(false);
         //getEvents();
     }
 
@@ -73,7 +71,7 @@ export const CalendarView = () => {
         console.log("adding event...", newEvent);
         axios.post('calendar/AddGroupEvent', newEvent)
             .then(res => {
-                var isSuccessful = res.data['IsSuccessful']
+                var isSuccessful = res.data['isSuccessful']
                 if (isSuccessful) {
                     refreshCalendar();
                     successCalendarView(res.data['message']);
@@ -103,7 +101,7 @@ export const CalendarView = () => {
         console.log("updating event...", newEvent);
         axios.post('calendar/EditGroupEvent', newEvent)
             .then(res => {
-                var isSuccessful = res.data['IsSuccessful']
+                var isSuccessful = res.data['isSuccessful']
                 if (isSuccessful) {
                     refreshCalendar();
                     successCalendarView(res.data['message']);
@@ -282,8 +280,8 @@ export const CalendarView = () => {
                     dateCellRender={cellRender}
                     onPanelChange={onPanelChange} />
                 </div>
-            <AddEventModal show={showAddModal} close={() => refreshCalendar()} confirm={addCalendarEvent}/>
-            <EditEventModal show={showEditModal} close={() => refreshCalendar()} event={selectedEvent} confirm={editCalendarEvent} />
+            <AddEventModal show={showAddModal} close={() => setShowAddModal(false)} confirm={addCalendarEvent}/>
+            <EditEventModal show={showEditModal} close={() => setShowEditModal(false)} event={selectedEvent} confirm={editCalendarEvent} />
         </div>
     );
 };

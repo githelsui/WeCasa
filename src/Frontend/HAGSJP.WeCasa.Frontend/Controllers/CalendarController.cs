@@ -63,10 +63,10 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         public async Task<Result> EditGroupEvent([FromBody] EventForm eventForm)
         {
             var result = new Result();
-            DateTime eventDate = DateTime.ParseExact(eventForm.EventDate, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            DateTime eventDate = DateTime.ParseExact(eventForm.EventDate, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
             try
             {
-                Event e = new Event(eventForm.EventName, eventForm.Description, eventDate, eventForm.GroupId, eventForm.Repeats, eventForm.Type, eventForm.Reminder, eventForm.Color, eventForm.CreatedBy);
+                Event e = new Event(eventForm.EventId, eventForm.EventName, eventForm.Description, eventDate, eventForm.GroupId, eventForm.Repeats, eventForm.Type, eventForm.Reminder, eventForm.Color, eventForm.CreatedBy);
                 result = await _manager.EditEvent(e);
             }
             catch (Exception ex)
@@ -82,10 +82,10 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         public async Task<Result> DeleteGroupEvent([FromBody] EventForm eventForm)
         {
             var result = new Result();
-            DateTime eventDate = DateTime.ParseExact(eventForm.EventDate, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            DateTime eventDate = DateTime.ParseExact(eventForm.EventDate, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
             try
             {
-                Event e = new Event(eventForm.EventName, eventForm.Description, eventDate, eventForm.GroupId, eventForm.Repeats, eventForm.Type, eventForm.Reminder, eventForm.Color, eventForm.CreatedBy);
+                Event e = new Event(eventForm.EventId, eventForm.EventName, eventForm.Description, eventDate, eventForm.GroupId, eventForm.Repeats, eventForm.Type, eventForm.Reminder, eventForm.Color, eventForm.CreatedBy);
                 result = await _manager.DeleteEvent(e);
             }
             catch (Exception ex)
