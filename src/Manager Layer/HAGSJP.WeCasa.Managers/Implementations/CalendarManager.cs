@@ -48,7 +48,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 // Send notification for the new event
                 Console.WriteLine("result is successfull and reminder is not null");
                 var group = new GroupModel { GroupId = evnt.GroupId };
-                var from = "wecasacorporation@gmail.com";
+                var from = "wecasacsulb@gmail.com";
                 var groupModel = new GroupModel
                 {
                     GroupId = evnt.GroupId

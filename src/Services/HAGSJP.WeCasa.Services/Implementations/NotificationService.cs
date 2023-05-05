@@ -27,7 +27,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
         //Method to send email
         public static async Task<bool> ScheduleReminderEmail(string from, string to, string subject, string message, string reminderOption, string eventType)
         {
-            var apiKey = "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";
+            var apiKey = "";
             var client = new SendGridClient(apiKey);
 
             // Create email message
@@ -52,6 +52,9 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 case "A week":
                     sendDate = DateTime.UtcNow.AddDays(-7);
                     break;
+                case "Every Sunday":
+                    sendDate = GetNextSunday();
+                    break;
                 default:
                     throw new ArgumentException("Invalid reminder option");
             }
@@ -68,16 +71,24 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 // Log success
                 _logger.Log("Email sent successfully", LogLevels.Info, "Data Store", to);
 
-                return true;
+                isSent = true;
+                return isSent;
             }
             catch (Exception ex)
             {
                 // Log error
                 _logger.Log("Error sending email: " + ex.Message, LogLevels.Error, "Data Store", to);
-                throw;
+                return isSent;
             }
 
 
+        }
+
+        static DateTime GetNextSunday()
+        {
+            var today = DateTime.Today;
+            var daysUntilSunday = ((int)DayOfWeek.Sunday - (int)today.DayOfWeek + 7) % 7;
+            return today.AddDays(daysUntilSunday);
         }
 
 

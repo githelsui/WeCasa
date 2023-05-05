@@ -111,7 +111,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                         var group = new GroupModel { GroupId = bill.GroupId };
                         var emails = remindersDAO.GetGroupEmail(group);
                         var usernames = (List<string>)emails.ReturnedObject;
-                        var from = "wecasacorporation@gmail.com";
+                        var from = "wecasacsulb@gmail.com";
                         var subject = "New bill shared with you";
                         var message = "New bill has been share with you in WeCasa";
                         var rem = "immediately";
@@ -119,11 +119,13 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                         List<string> recipient = new List<string>();
                         for (int i = 0; i < usernames.Count; i++)
                         {
-                            if (i != 0)
-                            {
+                            
+                                Console.WriteLine(usernames.Count);
                                 var to = usernames[i];
+                                Console.WriteLine("Sending to: "+ to);
                                 NotificationService.ScheduleReminderEmail(from, to, subject, message, rem, evnt);
-                            }
+                                Console.WriteLine("Sent: " + to);
+
                         }
                         _logger.Log("Add bill was successful " + bill.Amount, LogLevels.Info, "Data Store", bill.Owner);
                     }

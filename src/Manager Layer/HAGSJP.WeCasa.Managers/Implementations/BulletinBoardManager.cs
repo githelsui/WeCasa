@@ -35,7 +35,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 var group = new GroupModel { GroupId = note.GroupId };
                 var emails = remindersDAO.GetGroupEmail(groupmod);
                 var usernames = (List<string>)emails.ReturnedObject;
-                var from = "wecasacorporation@gmail.com";
+                var from = "wecasacsulb@gmail.com";
                 var subject = "New note added to the bulletin";
                 var message = note.Message;
                 var rem = "immediately";
@@ -44,7 +44,10 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 foreach (var username in usernames)
                 {
                     var to = username;
+                    Console.WriteLine("Sending to: " + to);
                     var response = NotificationService.ScheduleReminderEmail(from, to, subject, message, rem, evnt);
+                    Console.WriteLine("Sent to: " + to);
+
                 }
 
             }

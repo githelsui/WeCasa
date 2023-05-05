@@ -14,15 +14,17 @@ using System.Diagnostics.Metrics;
 
 namespace HAGSJP.WeCasa.Managers.Implementations
 {
-	public class ChoreManager
-	{
+    public class ChoreManager
+    {
         private readonly UserManager _um;
         private readonly ChoreService _service;
         private readonly GroupManager _groupManager;
         private Logger _logger;
+        private RemindersDAO remindersDao;
+
 
         public ChoreManager()
-		{
+        {
             _logger = new Logger(new AccountMariaDAO());
             _service = new ChoreService();
             _um = new UserManager();
@@ -59,7 +61,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 }
                 else
                 {
-                    _logger.Log( "Add chore error: " + result.ErrorStatus  + "\n" +"Message: " + result.Message, LogLevels.Error, "Service", userAccount.Username);
+                    _logger.Log("Add chore error: " + result.ErrorStatus + "\n" + "Message: " + result.Message, LogLevels.Error, "Service", userAccount.Username);
                 }
                 result.IsSuccessful = serviceResult.IsSuccessful;
                 result.Message = serviceResult.Message;
@@ -249,12 +251,12 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                         var day = choreDate.DayOfWeek;
                         var key = "";
 
-                        if(day == DayOfWeek.Monday)
+                        if (day == DayOfWeek.Monday)
                         {
                             key = "MON";
                         }
 
-                        if(day == DayOfWeek.Tuesday)
+                        if (day == DayOfWeek.Tuesday)
                         {
                             key = "TUES";
                         }
@@ -325,7 +327,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                         var chore = resultQuery[i];
                         var dateCompleted = chore.ChoreDate;
                         string key = string.Format("{0:dddd MM/dd/yy}", dateCompleted);
-                        if(choresPerDay.ContainsKey(key))
+                        if (choresPerDay.ContainsKey(key))
                         {
                             if (NoDuplicateChores(choresPerDay[key], chore))
                             {
@@ -356,6 +358,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
         }
 
         //Returns list of incomplete chores by username in given group
+        //incomplete task summary
         public async Task<ChoreResult> GetGroupIncompleteChores(GroupModel group)
         {
             try
@@ -368,17 +371,33 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 {
                     var serviceResult = new ChoreResult();
 
+                    //how is it retrieving the group members here?
+                    
+
                     var groupMembers = groupMembersResult.ReturnedObject;
                     IEnumerable enumerable = groupMembers as IEnumerable;
-                    foreach(UserProfile userProfile in enumerable)
+                    // var usernames = (List<string>)emails.ReturnedObject;
+
+
+                    var message = "";
+                    foreach (UserProfile userProfile in enumerable)
                     {
                         var username = userProfile.Username;
+                        Console.WriteLine(userProfile.Username);
+                       // only recieving one back right now which is wecasacorp@gmail.com
+                        var firstName = userProfile.FirstName;
                         var userAccount = new UserAccount(username);
                         serviceResult = _service.GetUserIncompleteChores(userAccount);
+
+
                         if (serviceResult.IsSuccessful)
                         {
-                            var incompleteChores = serviceResult.ReturnedObject;
-                            choresByUser.Add(username, (List<Chore>)incompleteChores);
+                            var incompleteChores = (List<Chore>)serviceResult.ReturnedObject;
+                            choresByUser.Add(username, incompleteChores);
+                            if (incompleteChores.Count() > 0)
+                            {
+                                message += firstName + " has " + incompleteChores.Count.ToString() + " incomplete chores.\n";
+                            }
                         }
                         else
                         {
@@ -388,6 +407,34 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                             return result;
                         }
                     }
+
+                    // Prepare email
+                    var from = "wecasacsulb@gmail.com";
+                    var subject = "Incomplete Task Summary";
+                    var rem = "Every Sunday";
+                    var evnt = "Chore List";
+                    if (message == "")
+                    {
+                        message = "Group has no incomplete chores.";
+                    }
+
+                   // Console.WriteLine(message);
+
+
+                    // Sending email
+                    foreach (UserProfile userProfile in enumerable)
+                    {
+
+                        var username = userProfile.Username;
+
+                        var to = username;
+                        Console.WriteLine("Sending to: " + to);
+                        var response = NotificationService.ScheduleReminderEmail(from, to, subject, message, rem, evnt);
+                        Console.WriteLine("Sent: " + to);
+
+
+                    }
+
                     result.ReturnedObject = choresByUser;
                     result.IsSuccessful = serviceResult.IsSuccessful;
                     result.Message = serviceResult.Message;
@@ -456,7 +503,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
         private bool NoDuplicateChores(List<Chore> chores, Chore chore)
         {
             //if a chore with choreId & choreDate doesnt already exist in choresPerDay[key] then
-            for(var i = 0; i < chores.Count; i++)
+            for (var i = 0; i < chores.Count; i++)
             {
                 var currChore = chores[i];
                 var choreDate = (DateTime)chore.ChoreDate;
@@ -468,6 +515,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             }
             return true;
         }
+
     }
 }
 
