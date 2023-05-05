@@ -29,5 +29,17 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             return result;
         }
 
+        public async Task<Result> EditEvent(Event evnt)
+        {
+            var result = await _service.EditEvent(evnt);
+            return result;
+        }
+
+        public async Task<Result> DeleteEvent(Event evnt)
+        {
+            var result = await _service.DeleteEvent(evnt);
+            return result;
+        }
+
     }
 }

@@ -2,6 +2,7 @@
 import { Modal, DatePicker, TimePicker, Button, Row, Col, Image, Space, Card, Input, Form, Radio, Spin } from 'antd';
 import * as Styles from '../../styles/ConstStyles';
 import DeletionModal from '../DeletionModal.js';
+import * as ValidationFuncs from '../../scripts/InputValidation.js';
 import config from '../../appsettings.json'
 
 const repeatOptions = ['Monthly', 'Bi-weekly', 'Weekly', 'Daily'];
@@ -11,17 +12,25 @@ const reminderOptions = ['30 minutes', 'A day', 'A week'];
 
 const EditEventModal = (props) => {
     const [eventDate, setEventDate] = useState('');
+    const [descChanged, setDescChanged] = useState(false);
+    const [dateChanged, setDateChanged] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [repeat, setRepeat] = useState('');
     const [eventType, setEventType] = useState('');
     const [reminder, setReminder] = useState('');
     const [eventColor, setEventColor] = useState('');
+    const [colorChanged, setColorChanged] = useState(false);
     const [form] = Form.useForm();
     const eventColors = ['#0256D4', '#F4B105', '#FFEE58', '#FF2929', '#10B364'];
     const event = props.event;
 
     const onDateChange = (date, dateString) => {
         setEventDate(dateString);
+        setDateChanged(true);
+    }
+
+    const onDescChange = (e) => {
+        setDescChanged(true);
     }
 
     const onRepeatChange = (e) => {
@@ -36,11 +45,44 @@ const EditEventModal = (props) => {
         setReminder(e.target.value);
     }
 
+    const onColorChange = (c) => {
+        setEventColor(c);
+        setColorChanged(true);
+    }
+
     const attemptSubmission = () => {
-        form.setFieldsValue({
-            eventDate: eventDate,
-            color: eventColor
-        });
+        if (props.event == null) {
+            return;
+        }
+        // Populating untouched fields
+        if (form.getFieldValue('eventName') == null) {
+            form.setFieldsValue({
+                eventName: event.eventName
+            });
+        }
+        if (form.getFieldValue('description') == null && !descChanged) {
+            form.setFieldsValue({
+                description: event.description
+            });
+        }
+        if (dateChanged) {
+            form.setFieldsValue({
+                eventDate: eventDate
+            });
+        } else {
+            form.setFieldsValue({
+                eventDate: event.eventDate
+            });
+        }
+        if (colorChanged) {
+            form.setFieldsValue({
+                color: eventColors[eventColor]
+            });
+        } else {
+            form.setFieldsValue({
+                color: event.eventColor
+            });
+        }
         form.validateFields()
             .then((values) => {
                 props.confirm(values);
@@ -59,7 +101,7 @@ const EditEventModal = (props) => {
                 <div key={i}>
                     <Col span={5} style={{ marginLeft: 10 }}>
                         <Card
-                            onClick={() => setEventColor(i)}
+                            onClick={() => onColorChange(i)}
                             bordered={true}
                             hoverable
                             style={(eventColor == i) ? {
@@ -87,7 +129,7 @@ const EditEventModal = (props) => {
                             <Col span={16} className="event-name-input">
                                 <Form.Item name="eventName">
                                     <Input style={Styles.eventInputFieldStyle} placeholder={event == null ? "" : event.eventName}/>
-                                </Form.Item>
+                            </Form.Item>
                             </Col>
                         </Row>
 
@@ -95,7 +137,7 @@ const EditEventModal = (props) => {
                         <Row gutter={[24, 24]}>
                             <Col span={18} className="description-field">
                                 <Form.Item name="description">
-                                    <Input style={Styles.eventDescTextField} placeholder={event == null ? "" : event.description}/>
+                                <Input style={Styles.eventDescTextField} onChange={onDescChange} placeholder={event == null ? "" : event.description} maxLength="255"/>
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -104,12 +146,12 @@ const EditEventModal = (props) => {
                         <div className="datetime-row padding-bottom">
                             <Row gutter={24} style={{ display: 'flex', flexDirection: 'horizontal' }}>
                                 <Col span={16}>
-                                    <Form.Item name="eventDate">
-                                        <DatePicker format="YYYY-MM-DD hh:mm:ss"
-                                            showTime={true}
-                                            onChange={onDateChange}
-                                            placeholder={event == null ? "" : new Date(event.eventDate).toLocaleString()}
-                                         />
+                                <Form.Item name="eventDate" value={eventDate}>
+                                    <DatePicker format="YYYY-MM-DD hh:mm:ss"
+                                        showTime={true}
+                                        onChange={onDateChange}
+                                        placeholder={event == null ? "" : new Date(event.eventDate).toLocaleString()}
+                                        />
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -119,7 +161,7 @@ const EditEventModal = (props) => {
                         <div className="repeats-row padding-bottom">
                             <Row gutter={24} style={{ display: 'flex', flexDirection: 'horizontal' }} >
                                 <Col span={20}>
-                                    <Form.Item name="repeat" value={repeat}>
+                                    <Form.Item name="repeats" value={repeat}>
                                         <Radio.Group options={repeatOptions} onChange={onRepeatChange} defaultValue={(event == null || event.repeat == "never") ? null : event.repeat} />
                                     </Form.Item>
                                 </Col>

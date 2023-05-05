@@ -29,7 +29,8 @@ export const CalendarView = () => {
     const [collapsed, setCollapsed] = useState(true);
     dayjs.extend(dayLocaleData);
 
-    useEffect(() => { refreshCalendar();}, []);
+    //useEffect(() => { refreshCalendar();}, []);
+    useEffect(() => { getEvents(); }, []);
 
     const getEvents = () => {
         let groupForm = {
@@ -54,7 +55,7 @@ export const CalendarView = () => {
     const refreshCalendar = () => {
         setShowAddModal(false);
         setShowEditModal(false);
-        getEvents();
+        //getEvents();
     }
 
     const addCalendarEvent = (eventConfig) => {
@@ -74,6 +75,7 @@ export const CalendarView = () => {
             .then(res => {
                 var isSuccessful = res.data['IsSuccessful']
                 if (isSuccessful) {
+                    refreshCalendar();
                     successCalendarView(res.data['message']);
                 }
                 else {
@@ -86,16 +88,16 @@ export const CalendarView = () => {
     }
 
     const editCalendarEvent = (eventConfig) => {
-        console.log(eventConfig);
-        /*let newEvent = {
+        let newEvent = {
+            EventId: selectedEvent.eventId,
             EventName: eventConfig.eventName,
-            Description: (eventConfig.description == null) ? "" : eventConfig.description,
+            Description: eventConfig.description,
             GroupId: currentGroup.groupId,
             EventDate: eventConfig.eventDate,
             Repeats: (eventConfig.repeats == null) ? "never" : eventConfig.repeats,
             Type: (eventConfig.type == null) ? "public" : eventConfig.type,
             Reminder: (eventConfig.reminder == null) ? "none" : eventConfig.reminder,
-            Color: (eventConfig.color == null) ? "#0256D4" : eventConfig.color,
+            Color: eventConfig.color,
             CreatedBy: currentUser.username
         }
         console.log("updating event...", newEvent);
@@ -103,7 +105,7 @@ export const CalendarView = () => {
             .then(res => {
                 var isSuccessful = res.data['IsSuccessful']
                 if (isSuccessful) {
-                    getEvents(); // refresh events
+                    refreshCalendar();
                     successCalendarView(res.data['message']);
                 }
                 else {
@@ -112,7 +114,7 @@ export const CalendarView = () => {
             })
             .catch((error) => {
                 console.error(error)
-            });*/
+            });
     }
 
     const displayAddEventSettings = () => {
@@ -201,7 +203,7 @@ export const CalendarView = () => {
                                 value="week">Week
                             </Radio.Button>
                             <Radio.Button style=
-                            {Styles.calendarViewToggle}
+                                {Styles.calendarViewToggle}
                                 value="month">Month
                             </Radio.Button>
                             <Radio.Button style=
@@ -230,7 +232,7 @@ export const CalendarView = () => {
     const isSameDay = (eventDate, value) => {
         let date = new Date(eventDate);
         date.setHours(0, 0, 0, 0);
-        let compareDate = new Date(Date.UTC(value.year(), value.month(), value.date()));
+        let compareDate = new Date(Date.UTC(value.year(), value.month(), value.date()+1));
         compareDate.setHours(0, 0, 0, 0);
         let sameDay = (date.valueOf() == compareDate.valueOf()) ? true : false;
         return sameDay;
@@ -266,36 +268,6 @@ export const CalendarView = () => {
             placement: "topLeft"
         });
     }
-
-    /*const getDayHoursEvents = (value) => {
-    //const dayList = getDayEvents(value);
-    const dayList = [];
-    const endDate = value.clone().endOf('date').unix();
-    const events = [];
-    for (let hour = value.clone().startOf('date'); hour.unix() < endDate; hour.add(1, 'h')) {
-        events.push({
-            id: hour.unix(),
-            hour: hour.format('hh a'),
-            events: dayList ? dayList.filter(event => hour.unix() <= event.startTime && event.endTime < hour.clone().add(1, 'h').unix()) : <div />,
-        });
-    }
-    return events;
-}*/
-
-    /*const dayColumns = [
-        {
-            title: '',
-            dataIndex: 'hour',
-            key: 'hour',
-            className: Styles.hourColumn,
-        },
-        {
-            title: '',
-            dataIndex: 'events',
-            key: 'events',
-            render: text => dateCellRender(text),
-        }
-    ];*/
 
     const cellRender = (current, info) => {
         return dateCellRender(current);

@@ -12,5 +12,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
     {
         public Task<CalendarResult> GetEvents(GroupModel group);
         public Task<Result> AddEvent(Event e);
+        public Task<Result> EditEvent(Event e);
+        public Task<Result> DeleteEvent(Event e);
     }
 }

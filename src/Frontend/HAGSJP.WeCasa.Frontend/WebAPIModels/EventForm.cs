@@ -7,6 +7,7 @@ public class EventForm
     [JsonConstructor]
     public EventForm() { }
 
+    public int EventId { get; set; }
     public string EventName { get; set; }
     public string Description { get; set; }
     public string EventDate { get; set; }

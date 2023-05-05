@@ -36,7 +36,8 @@ const AddEventModal = (props) => {
 
     const attemptSubmission = () => {
         form.setFieldsValue({
-            eventDate: eventDate
+            eventDate: eventDate,
+            color: eventColor
         });
         form.validateFields()
             .then((values) => {
@@ -80,7 +81,7 @@ const AddEventModal = (props) => {
                         <Row gutter={[24, 24]} align="middle">
                             <Col span={16} className="event-name-input">
                                 <Form.Item name="eventName">
-                                    <Input style={Styles.eventInputFieldStyle} required placeholder="Event Name" />
+                                    <Input style={Styles.eventInputFieldStyle} required placeholder="Event Name" maxLength="50" />
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -89,7 +90,7 @@ const AddEventModal = (props) => {
                         <Row gutter={[24, 24]}>
                             <Col span={18} className="description-field">
                                 <Form.Item name="description">
-                                    <Input style={Styles.eventDescTextField} placeholder="Description" />
+                                    <Input style={Styles.eventDescTextField} placeholder="Description" maxLength="255" />
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -148,7 +149,7 @@ const AddEventModal = (props) => {
                         <div className="tag-row padding-bottom">
                             <Row gutter={24} style={{ display: 'flex', flexDirection: 'horizontal' }}>
                                 {displayEventColors()}
-                                <Form.Item name="color" value={eventColor}></Form.Item>
+                                <Form.Item name="color"></Form.Item>
                             </Row>
                         </div>
                         <Row gutter={24} style={{alignItems:'center', justifyContent:'center', gap:'30px'}} > 

@@ -49,6 +49,34 @@ namespace HAGSJP.WeCasa.Services.Implementations
 
             return addEventResult;
         }
+        public async Task<DAOResult> EditEvent(Event evnt)
+        {
+            var addEventResult = await _dao.UpdateEvent(evnt);
+            if (addEventResult.IsSuccessful)
+            {
+                await successLogger.Log("Event updated successfully", LogLevels.Info, "Data Store", evnt.GroupId.ToString());
+            }
+            else
+            {
+                await errorLogger.Log("Error updating an event", LogLevels.Error, "Data Store", evnt.GroupId.ToString());
+            }
+
+            return addEventResult;
+        }
+        public async Task<DAOResult> DeleteEvent(Event evnt)
+        {
+            var addEventResult = await _dao.DeleteEvent(evnt);
+            if (addEventResult.IsSuccessful)
+            {
+                await successLogger.Log("Event deleted successfully", LogLevels.Info, "Data Store", evnt.GroupId.ToString());
+            }
+            else
+            {
+                await errorLogger.Log("Error deleting an event", LogLevels.Error, "Data Store", evnt.GroupId.ToString());
+            }
+
+            return addEventResult;
+        }
     }
 }
 

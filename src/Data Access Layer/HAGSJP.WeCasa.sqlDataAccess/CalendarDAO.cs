@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using HAGSJP.WeCasa.Models;
@@ -14,6 +15,9 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public MySqlConnectionStringBuilder BuildConnectionString()
         {
+            var connectionString = ConfigurationManager.ConnectionStrings["MariaDBConnection"].ConnectionString;
+            Console.WriteLine($"Connection string: {connectionString}");
+
             var builder = new MySqlConnectionStringBuilder
             {
                 Server = "localhost",
@@ -97,9 +101,80 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             }
 		}
 
-        public void UpdateEvent(Event e)
+        public async Task<DAOResult> UpdateEvent(Event e)
         {
-            
+            var result = new DAOResult();
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                try
+                {
+                    await connection.OpenAsync();
+                    var insertEventSql =
+                        @"UPDATE Events 
+                            SET group_id = @group_id, 
+                                event_name = @event_name, 
+                                description = @description, 
+                                event_date = @event_date, 
+                                repeats = @repeats, 
+                                type = @type, 
+                                reminder = @reminder, 
+                                color = @color, 
+                                created_by @created_by
+                            WHERE event_id = @event_id
+                        );";
+
+                    var command = connection.CreateCommand();
+                    command.CommandText = insertEventSql;
+                    command.Parameters.AddWithValue("@event_id", e.EventId);
+                    command.Parameters.AddWithValue("@group_id", e.GroupId);
+                    command.Parameters.AddWithValue("@event_name", e.EventName);
+                    command.Parameters.AddWithValue("@description", e.Description);
+                    command.Parameters.AddWithValue("@event_date", e.EventDate);
+                    command.Parameters.AddWithValue("@repeats", e.Repeats);
+                    command.Parameters.AddWithValue("@type", e.Type);
+                    command.Parameters.AddWithValue("@reminder", e.Reminder);
+                    command.Parameters.AddWithValue("@color", e.Color);
+                    command.Parameters.AddWithValue("@created_by", e.CreatedBy);
+
+                    var rows = (command.ExecuteNonQuery());
+                    result = ValidateSqlStatement(rows);
+                }
+                catch (MySqlException sqlex)
+                {
+                    result.IsSuccessful = false;
+                    result.Message = sqlex.Message;
+                }
+                return result;
+            }
+        }
+
+        public async Task<DAOResult> DeleteEvent(Event e)
+        {
+            var result = new DAOResult();
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                try
+                {
+                    await connection.OpenAsync();
+                    var deleteEventSql =
+                        @"DELETE FROM Events WHERE event_id = @event_id;";
+
+                    var command = connection.CreateCommand();
+                    command.CommandText = deleteEventSql;
+                    command.Parameters.AddWithValue("@event_id", e.EventId);
+
+                    var rows = (command.ExecuteNonQuery());
+                    result = ValidateSqlStatement(rows);
+                }
+                catch (MySqlException sqlex)
+                {
+                    result.IsSuccessful = false;
+                    result.Message = sqlex.Message;
+                }
+            }
+            return result;
         }
 
         // Returns all group events in the last year
