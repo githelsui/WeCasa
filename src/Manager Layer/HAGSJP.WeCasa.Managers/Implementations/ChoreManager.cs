@@ -356,6 +356,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
         }
 
         //Returns list of incomplete chores by username in given group
+        // Incomplete Task Summary
         public async Task<ChoreResult> GetGroupIncompleteChores(GroupModel group)
         {
             try
@@ -370,15 +371,22 @@ namespace HAGSJP.WeCasa.Managers.Implementations
 
                     var groupMembers = groupMembersResult.ReturnedObject;
                     IEnumerable enumerable = groupMembers as IEnumerable;
+
+                    var message = "";
                     foreach(UserProfile userProfile in enumerable)
                     {
                         var username = userProfile.Username;
+                        var firstName = userProfile.FirstName;
                         var userAccount = new UserAccount(username);
                         serviceResult = _service.GetUserIncompleteChores(userAccount);
                         if (serviceResult.IsSuccessful)
                         {
-                            var incompleteChores = serviceResult.ReturnedObject;
-                            choresByUser.Add(username, (List<Chore>)incompleteChores);
+                            var incompleteChores = (List<Chore>)serviceResult.ReturnedObject;
+                            choresByUser.Add(username, incompleteChores);
+                            if(incompleteChores.Count() > 0)
+                            {
+                                message += firstName + " has " + incompleteChores.Count.ToString() + " incomplete chores.\n";
+                            }
                         }
                         else
                         {
@@ -388,6 +396,26 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                             return result;
                         }
                     }
+
+                    // Prepare email
+                    var from = "wecasacsulb@gmail.com";
+                    var subject = "Incomplete Task Summary";
+                    var rem = "immediately";
+                    var evnt = "Chore List";
+                    if (message == "")
+                    {
+                        message = "Group has no incomplete chores.";
+                    }
+
+                    // Sending email
+                    foreach (UserProfile userProfile in enumerable)
+                    {
+                        var username = userProfile.Username;
+                        var to = username;
+                        //var response = NotificationService.ScheduleReminderEmail(from, to, subject, message, rem, evnt);
+
+                    }
+
                     result.ReturnedObject = choresByUser;
                     result.IsSuccessful = serviceResult.IsSuccessful;
                     result.Message = serviceResult.Message;
