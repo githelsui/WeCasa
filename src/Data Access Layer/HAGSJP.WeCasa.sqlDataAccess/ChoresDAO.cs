@@ -838,8 +838,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     await connection.OpenAsync();
 
                     var command = connection.CreateCommand();
-                    var selectSql = @"SELECT COUNT(CASE WHEN c.is_completed = 1 THEN 1 ELSE NULL END) AS completedChores,
-                                         COUNT(CASE WHEN c.is_completed = 0 THEN 1 ELSE NULL END) AS incompleteChores
+                    var selectSql = @"SELECT COUNT(CASE WHEN uc.is_completed = 1 THEN 1 ELSE NULL END) AS completedChores,
+                                         COUNT(CASE WHEN uc.is_completed = 0 THEN 1 ELSE NULL END) AS incompleteChores
                                       FROM userchore AS uc
                                          INNER JOIN chores AS c 
                                             ON (uc.chore_id = c.chore_id)
