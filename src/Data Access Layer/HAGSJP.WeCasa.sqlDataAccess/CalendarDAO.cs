@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using HAGSJP.WeCasa.Models;
@@ -14,6 +15,9 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public MySqlConnectionStringBuilder BuildConnectionString()
         {
+            /*var connectionString = ConfigurationManager.ConnectionStrings["MariaDBConnection"].ConnectionString;
+            Console.WriteLine($"Connection string: {connectionString}");*/
+
             var builder = new MySqlConnectionStringBuilder
             {
                 Server = "localhost",
@@ -42,7 +46,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             return result;
         }
 
-        public DAOResult AddEvent(Event e)
+        public async Task<DAOResult> AddEvent(Event e)
 		{
             var result = new DAOResult();
             _connectionString = BuildConnectionString().ConnectionString;
@@ -50,7 +54,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             {
                 try
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
                     var insertEventSql =
                         @"INSERT INTO Events (
                                             group_id, 
@@ -83,6 +87,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     command.Parameters.AddWithValue("@type", e.Type);
                     command.Parameters.AddWithValue("@reminder", e.Reminder);
                     command.Parameters.AddWithValue("@color", e.Color);
+                    command.Parameters.AddWithValue("@created_by", e.CreatedBy);
 
                     var rows = (command.ExecuteNonQuery());
                     result = ValidateSqlStatement(rows);
@@ -90,41 +95,107 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 catch (MySqlException sqlex)
                 {
                     result.IsSuccessful = false;
-                    result.Message = "An error occurred.";
+                    result.Message = sqlex.Message;
                 }
                 return result;
             }
 		}
 
-        public void UpdateEvent(Event e)
-        {
-            
-        }
-
-        
-        public DAOResult GetEvents(int group_id, DateTime date)
+        public async Task<DAOResult> UpdateEvent(Event e)
         {
             var result = new DAOResult();
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                try
+                {
+                    await connection.OpenAsync();
+                    var updateEventSql =
+                        @"UPDATE Events 
+                            SET event_name = @event_name, 
+                                description = @description, 
+                                event_date = @event_date, 
+                                repeats = @repeats, 
+                                type = @type, 
+                                reminder = @reminder, 
+                                color = @color
+                            WHERE event_id = @event_id;";
+
+                    var command = connection.CreateCommand();
+                    command.CommandText = updateEventSql;
+                    command.Parameters.AddWithValue("@event_id", e.EventId);
+                    command.Parameters.AddWithValue("@event_name", e.EventName);
+                    command.Parameters.AddWithValue("@description", e.Description);
+                    command.Parameters.AddWithValue("@event_date", e.EventDate);
+                    command.Parameters.AddWithValue("@repeats", e.Repeats);
+                    command.Parameters.AddWithValue("@type", e.Type);
+                    command.Parameters.AddWithValue("@reminder", e.Reminder);
+                    command.Parameters.AddWithValue("@color", e.Color);
+
+                    var rows = (command.ExecuteNonQuery());
+                    result = ValidateSqlStatement(rows);
+                }
+                catch (MySqlException sqlex)
+                {
+                    result.IsSuccessful = false;
+                    result.Message = sqlex.Message;
+                }
+                return result;
+            }
+        }
+
+        public async Task<DAOResult> DeleteEvent(Event e)
+        {
+            var result = new DAOResult();
+            _connectionString = BuildConnectionString().ConnectionString;
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                try
+                {
+                    await connection.OpenAsync();
+                    var deleteEventSql =
+                        @"DELETE FROM Events WHERE event_id = @event_id;";
+
+                    var command = connection.CreateCommand();
+                    command.CommandText = deleteEventSql;
+                    command.Parameters.AddWithValue("@event_id", e.EventId);
+
+                    var rows = (command.ExecuteNonQuery());
+                    result = ValidateSqlStatement(rows);
+                }
+                catch (MySqlException sqlex)
+                {
+                    result.IsSuccessful = false;
+                    result.Message = sqlex.Message;
+                }
+            }
+            return result;
+        }
+
+        // Returns all group events in the last year
+        public async Task<CalendarResult> GetEvents(int group_id)
+        {
+            var result = new CalendarResult();
             List<Event> events = new List<Event>();
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
 
                     var command = connection.CreateCommand();
                     command.CommandText = @"SELECT * FROM Events
                                             WHERE group_id = @group_id
-                                            AND ABS(DATEDIFF(event_date, @event_date)) <= 365;";
+                                            AND ABS(DATEDIFF(event_date, NOW())) <= 365;";
 
                     command.Parameters.AddWithValue("@group_id", group_id);
-                    command.Parameters.AddWithValue("@event_date", date);
                     using (var reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
                             Event e = new Event();
+                            e.EventId = reader.GetInt32(reader.GetOrdinal("event_id"));
                             e.GroupId = reader.GetInt32(reader.GetOrdinal("group_id"));
                             e.EventName = reader.GetString(reader.GetOrdinal("event_name"));
                             e.Description = reader.GetString(reader.GetOrdinal("description"));
@@ -135,15 +206,18 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                             e.Color = reader.GetString(reader.GetOrdinal("color"));
                             events.Add(e);
                         }
-                        result.ReturnedObject = events;
                     }
                     result.IsSuccessful = true;
-                    result.Message = "No events found.";
+                    result.ReturnedObject = events;
+                    if (events.Count == 0)
+                    {
+                        result.Message = "No events found.";
+                    }
                 }
                 catch (MySqlException sqlex)
                 {
                     result.IsSuccessful = false;
-                    result.Message = "An error occurred.";
+                    result.Message = sqlex.Message;
                 }
                 return result;
             }

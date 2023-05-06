@@ -1,18 +1,21 @@
 import React, { Component, useState, useEffect } from 'react';
 import { useAuth } from '../Auth/AuthContext';
-import { Calendar, Col, Row, Select, Button, Table, Radio, notification } from 'antd';
+import { Calendar, Col, Row, Select, Button, Table, Radio, Badge, notification } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs';
 import axios from 'axios';
 //import { google } from 'google-auth-library';
-import 'dayjs/locale/zh-cn';
 import dayLocaleData from 'dayjs/plugin/localeData';
+import 'dayjs/locale/en';
 import '../../styles/System.css';
+import '../../styles/Calendar.css';
 import * as Styles from '../../styles/ConstStyles.js';
 import AddEventModal from './AddEventModal.js';
+import EditEventModal from './EditEventModal.js';
 // References:
 // http://github.com/react-component/calendar/issues/221
 // http://ant.design/components/calendar
+
 
 export const CalendarView = () => {
     const { currentUser, currentGroup } = useAuth();
@@ -20,70 +23,100 @@ export const CalendarView = () => {
     const [events, setEvents] = useState([]);
     const [mode, setMode] = useState('month');
     const [selectedDate, setSelectedDate] = useState(value);
-    const [showModal, setShowModal] = useState(false);
-    const [collapsed, setCollapsed] = useState(true);
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
     dayjs.extend(dayLocaleData);
 
-    // useEffect(() => { getDayEvents(selectedDate);}, []);
+    useEffect(() => { refreshCalendar();}, []);
 
-    const getDayEvents = (value) => {
-        console.log(value);
-        let groupId = currentGroup['groupId'];
-        axios.get('calendar/GetGroupEvents', { params: { groupId } })
+    const getEvents = () => {
+        let groupForm = {
+            GroupId: currentGroup['groupId']
+        }
+        axios.post('calendar/GetGroupEvents', groupForm)
             .then(res => {
-                var isSuccessful = res.data['IsSuccessful']
+                var isSuccessful = res.data['isSuccessful']
                 if (isSuccessful) {
-                    events = res.data['returnedObject']
+                    let events = res.data['returnedObject']
                     setEvents(events);
-                    successCalendarView(res.data['message']);
                 }
                 else {
                     failureCalendarView(res.data['message']);
                 }
             })
-            .catch((error) => {
-                console.error(error)
-            });
+    }
+
+    const refreshCalendar = () => {
+        getEvents();
     }
 
     const addCalendarEvent = (eventConfig) => {
-        console.log("adding event...", eventConfig);
+        setShowAddModal(false)
         let newEvent = {
             EventName: eventConfig.eventName,
-            Description: eventConfig.description,
-            GroupId: currentGroup['groupId'],
-            EventDate: eventConfig.eventDateTime,
-            Repeats: eventConfig.repeats,
-            Type: eventConfig.type,
-            Reminder: eventConfig.reminder,
+            Description: (eventConfig.description == null) ? "" : eventConfig.description,
+            GroupId: currentGroup.groupId,
+            EventDate: eventConfig.eventDate,
+            Repeats: (eventConfig.repeats == null) ? "never" : eventConfig.repeats,
+            Type: (eventConfig.type == null) ? "public" : eventConfig.type,
+            Reminder: (eventConfig.reminder == null) ? "none" : eventConfig.reminder,
             Color: (eventConfig.color == null) ? "#0256D4" : eventConfig.color,
-            CreatedBy: currentUser['username']
+            CreatedBy: currentUser.username
         }
-        /*axios.post('calendar/AddGroupEvents', newEvent)
+        console.log("adding event...", newEvent);
+        axios.post('calendar/AddGroupEvent', newEvent)
             .then(res => {
-                var isSuccessful = res.data['IsSuccessful']
+                var isSuccessful = res.data['isSuccessful']
                 if (isSuccessful) {
-                    events = res.data['returnedObject']
-                    setEvents(events);
                     successCalendarView(res.data['message']);
                 }
                 else {
                     failureCalendarView(res.data['message']);
                 }
             })
-            .catch((error) => {
-                console.error(error)
-            });*/
+    }
+
+    const editCalendarEvent = (eventConfig) => {
+        setShowEditModal(false);
+        let newEvent = {
+            EventId: selectedEvent.eventId,
+            EventName: eventConfig.eventName,
+            Description: eventConfig.description,
+            GroupId: currentGroup.groupId,
+            EventDate: eventConfig.eventDate,
+            Repeats: (eventConfig.repeats == null) ? "never" : eventConfig.repeats,
+            Type: (eventConfig.type == null) ? "public" : eventConfig.type,
+            Reminder: (eventConfig.reminder == null) ? "none" : eventConfig.reminder,
+            Color: eventConfig.color,
+            CreatedBy: currentUser.username
+        }
+        console.log("updating event...", newEvent);
+        axios.post('calendar/EditGroupEvent', newEvent)
+            .then(res => {
+                var isSuccessful = res.data['isSuccessful']
+                if (isSuccessful) {
+                    successCalendarView(res.data['message']);
+                }
+                else {
+                    failureCalendarView(res.data['message']);
+                }
+            })
     }
 
     const onPanelChange = (value, mode) => {
+        console.log(mode);
         setMode(mode);
-        console.log(value.format('YYYY-MM-DD'), mode);
     };
 
     const onSelectDate = (value) => {
         setValue(value);
         setSelectedDate(value);
+    }
+
+    const selectEvent = (event) => {
+        setSelectedEvent(event);
+        setShowEditModal(true);
     }
 
     const headerRender = ({ value, type, onChange, onTypeChange }) => {
@@ -145,13 +178,23 @@ export const CalendarView = () => {
                         <Radio.Group
                             style={Styles.calendarViewToggleGroup}
                             onChange={(e) => onTypeChange(e.target.value)}
-                            value={type}
-                        >
-                            <Radio.Button style={Styles.calendarViewToggle} value="day">Day</Radio.Button>
-                            <Radio.Button style={Styles.calendarViewToggle} value="week">Week</Radio.Button>
-                            <Radio.Button style={Styles.calendarViewToggle} value="month">Month</Radio.Button>
-                            <Radio.Button style={Styles.calendarViewToggle} value="year">Year</Radio.Button>
+                            value={type}>
+                            <Radio.Button style={Styles.calendarViewToggle}
+                                value="day">Day
+                            </Radio.Button>
+                            <Radio.Button style={Styles.calendarViewToggle}
+                                value="week">Week
+                            </Radio.Button>
+                            <Radio.Button style=
+                                {Styles.calendarViewToggle}
+                                value="month">Month
+                            </Radio.Button>
+                            <Radio.Button style=
+                                {Styles.calendarViewToggle}
+                                value="year">Year
+                            </Radio.Button>
                         </Radio.Group>
+                            
                     </Col>
                     <Col span={4} offset={4}>
                         <Button
@@ -160,7 +203,7 @@ export const CalendarView = () => {
                             shape="round"
                             icon={<PlusCircleOutlined />}
                             size={'large'}
-                            onClick={() => setShowModal(true)}>
+                            onClick={() => setShowAddModal(true)}>
                             Add event
                         </Button>
                     </Col>
@@ -169,37 +212,26 @@ export const CalendarView = () => {
         );
     }
 
-    const dateCellRender = (value) => {
-        return (
-            <div className={Styles.dayViewContainer}>
-                <Table
-                    rowKey={record => record.id}
-                    dataSource={getDayHoursEvents(value)}
-                    columns={dayColumns}
-                    pagination={false}
-                    showHeader={false}
-                />
-                <hr
-                    className={Styles.currentTime}
-                    style={{ top: `%{currentTimePercentage}%` }}
-                />
-            </div>
-        );
+    const isSameDay = (eventDate, value) => {
+        let date = new Date(eventDate);
+        date.setHours(0, 0, 0, 0);
+        let compareDate = new Date(Date.UTC(value.year(), value.month(), value.date()+1));
+        compareDate.setHours(0, 0, 0, 0);
+        let sameDay = (date.valueOf() == compareDate.valueOf()) ? true : false;
+        return sameDay;
     }
 
-    const getDayHoursEvents = (value) => {
-        //const dayList = getDayEvents(value);
-        const dayList = [];
-        const endDate = value.clone().endOf('date').unix();
-        const events = [];
-        for (let hour = value.clone().startOf('date'); hour.unix() < endDate; hour.add(1, 'h')) {
-            events.push({
-                id: hour.unix(),
-                hour: hour.format('hh a'),
-                events: dayList ? dayList.filter(event => hour.unix() <= event.startTime && event.endTime < hour.clone().add(1, 'h').unix()) : <div />,
-            });
-        }
-        return events;
+    const dateCellRender = (value) => {
+        return (
+            <ul className="events">
+                {events.map((event) => (
+                    isSameDay(event.eventDate, value) ? 
+                        (<li className="event" key={event.eventId} onClick={() => selectEvent(event)}>
+                            <Badge status={event.type} color={event.color} text={event.eventName} />
+                    </li>) : null
+                ))}
+            </ul>
+        );
     }
 
     const successCalendarView = (successMessage) => {
@@ -220,29 +252,21 @@ export const CalendarView = () => {
         });
     }
 
-    const dayColumns = [
-        {
-            title: '',
-            dataIndex: 'hour',
-            key: 'hour',
-            className: Styles.hourColumn,
-        },
-        {
-            title: '',
-            dataIndex: 'events',
-            key: 'events',
-            render: text => dateCellRender(text),
-        }
-    ];
+    const cellRender = (current, info) => {
+        return dateCellRender(current);
+    };
 
     return (
         <div style={Styles.body}>
-            <Calendar
-                onSelect={onSelectDate}
-                style={{ fontFamily: 'Mulish' }}
-                headerRender={headerRender}
-                onPanelChange={onPanelChange} />
-            <AddEventModal show={showModal} close={() => setShowModal(false)} confirm={addCalendarEvent} reject={failureCalendarView} date={value} />
+            <div>
+                <Calendar
+                    style={{ fontFamily: 'Mulish' }}
+                    headerRender={headerRender}
+                    dateCellRender={cellRender}
+                    onPanelChange={onPanelChange} />
+                </div>
+            <AddEventModal show={showAddModal} close={() => setShowAddModal(false)} confirm={addCalendarEvent}/>
+            <EditEventModal show={showEditModal} close={() => setShowEditModal(false)} event={selectedEvent} confirm={editCalendarEvent} />
         </div>
     );
 };
