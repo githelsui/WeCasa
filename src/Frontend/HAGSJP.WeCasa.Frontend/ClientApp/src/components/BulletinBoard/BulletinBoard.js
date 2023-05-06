@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from 'antd';
-import { PlusCircleOutlined, FileOutlined } from '@ant-design/icons'
+import { Button, Image, Card } from 'antd';
+import { PlusCircleOutlined, FileImageOutlined } from '@ant-design/icons'
 import Draggable from 'react-draggable'; // import the Draggable component
 import './BulletinBoard.css'; // import the CSS stylesheet
 import axios from 'axios';
@@ -8,12 +8,14 @@ import { useAuth } from '../Auth/AuthContext';
 import config from '../../appsettings.json';
 import * as Styles from '../../styles/ConstStyles.js';
 import { UploadOutlined } from '@ant-design/icons';
-
+import NavMenu from '../NavMenu';
+import { Nav } from 'reactstrap';
+const { Meta } = Card;
 
 
 function BulletinBoard() {
   // global variables
-  // const { auth, currentUser, currentGroup } = useAuth()
+  const { auth, currentUser, currentGroup } = useAuth()
   // define state variables for the stickies, pictures, and selected color
   const [stickies, setStickies] = useState([]);
   const [pictures, setPictures] = useState([]);
@@ -21,12 +23,13 @@ function BulletinBoard() {
   const fileInputRef = React.createRef();
 
   const maxFileSize = 10 * 1024 * 1024; // 10 MB
-  const maxFilesPerPage = config.maxFilesPerPage;
   const validFileTypes = config.validFileTypes;
   const validFileExt = config.validFileExt;
-
+  // Group ID
   const GID = 1235529
+  // Username
   const user = "joy@gmail.com"
+
 
   // define an array of colors to use for the color picker
   const colors = ['#ffe8b3', '#b3ffe8', '#ffb3e8', '#e8b3ff'];
@@ -56,10 +59,12 @@ function BulletinBoard() {
     return blobType;
   }
 
-  // Get Stickies
+  // Call get stickies and photos
   useEffect(() => {
+    console.log("FIRST MOUNTadfas")
     getSticky()
     getPhotos()
+    console.log("FIRST MOUNT")
   }, []);
 
   const getSticky = () => {
@@ -117,10 +122,6 @@ function BulletinBoard() {
        });
   }
 
-  useEffect(() => {
-    console.log("Updated stickies:", stickies);
-  }, [stickies]);
-
   // function to add a new sticky note to the board
   const addSticky = () => {
     const newSticky = {
@@ -128,8 +129,8 @@ function BulletinBoard() {
       groupId: GID,
       lastModifiedUser: user,
       color: selectedColor,
-      x: Math.floor(Math.random() * (600 - 100) + 100), // generate a random x position for the sticky note
-      y: Math.floor(Math.random() * (600 - 100) + 100) // generate a random y position for the sticky note
+      x: Math.floor(Math.random() * (window.innerWidth)), // generate a random x position for the sticky note
+      y: Math.floor(Math.random() * (window.innerHeight)) // generate a random y position for the sticky note
     }
 
     axios.post('bulletin-board/Add', newSticky).then(res => {
@@ -137,7 +138,7 @@ function BulletinBoard() {
       console.log(response);
     }).catch((error => { console.error(error) }));
     setStickies([...stickies, newSticky]); // add the new sticky note to the array of stickies
-  };
+  }
 
   const handleFileInputChange = (event) => {
     const file = event.target.files[0];
@@ -161,7 +162,11 @@ function BulletinBoard() {
 
     setPictures(file);
     addPicture(file);
-}
+  }
+
+  const getUserFile = () => {
+    fileInputRef.current.click();
+  }
 
   const addPicture = (file) => {
     const formData = new FormData();
@@ -179,7 +184,7 @@ function BulletinBoard() {
             var isSuccessful = res.data['isSuccessful'];
             if (isSuccessful) {
                 // successFileView(res.data['message']);
-                getPhotos();
+                getPhotos()
             }
             // else {
                 // failureFileView(res.data['message']);
@@ -188,7 +193,7 @@ function BulletinBoard() {
         .catch((error) => {
             console.error(error);
         });
-}
+  }
   
   // function to handle deleting a sticky note from the board
   const handleDeleteSticky = (id) => { 
@@ -205,11 +210,30 @@ function BulletinBoard() {
     }).catch(() => { alert('Delete Failed') }); 
   };
 
-  // function to handle deleting a picture from the board
-  const handleDeletePicture = (id) => {
-    const updatedPictures = pictures.filter(picture => picture.id !== id);
-    setPictures(updatedPictures);
-  };
+  const deleteFile = (file) => {
+    console.log('delete')
+    let fileForm = {
+        FileName: file.fileName,
+        GroupId: GID.toString(),
+        Owner: user
+    }
+    axios.post('files/DeleteFile', fileForm)
+        .then(res => {
+            console.log(res.data);
+            let isSuccessful = res.data['isSuccessful'];
+            if (isSuccessful) {
+                // toast('File deleted successfully.')
+                getPhotos()
+            }
+            else {
+                // toast('An error occurred.')
+            }
+        })
+        .catch((error) => {
+            console.error(error)
+            // toast("Try again.", "Error deleting file.");
+        });
+  }
 
   // function to handle changing the text of a sticky note
   const handleStickyTextChange = (id, value) => {
@@ -244,55 +268,81 @@ function BulletinBoard() {
     .catch((error => { console.error(error) }));
   };
 
-  const getUserFile = () => {
-      fileInputRef.current.click();
-  }
-
-
-  return (
-    <div className="bulletin-board" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-      <div className="color-picker">
-        {colors.map(color => (
-          <div key={color} className="color-circle" style={{ backgroundColor: color }} onClick={() => setSelectedColor(color)} />
-        ))}
-      </div>
-      <Button
-          id="add-sticky"
-          style={Styles.addButtonStyle}
-          shape="round"
-          icon={<PlusCircleOutlined />}
-          size={'large'}
-          onClick={() => addSticky()}>
-          Add Sticky
-      </Button>
-      <Button
-          id="add-photo"
-          style={Styles.addButtonStyle}
-          shape="round"
-          icon={<UploadOutlined/>}
-          size={'large'}
-          onClick={() => getUserFile()}>
-          Add Photo
-      </Button>
-      {stickies.map(sticky => (
+  const textView = () => {
+    return (
+      stickies.map(sticky => (
         <Draggable key={sticky.id} defaultPosition={{x: sticky.x, y: sticky.y}}>
           <div className="sticky-note" style={{ backgroundColor: sticky.color }}>
           <textarea className="sticky-text" value={sticky.message} onChange={(e) => handleStickyTextChange(sticky.noteId, e.target.value)} onBlur={(e) => handleStickyTextBlur(sticky.noteId, e.target.value)}/>
-            <button className="delete-button" onClick={() => handleDeleteSticky(sticky.noteId)}>Delete</button>
+            <button className="delete-button" onClick={() => handleDeleteSticky(sticky.noteId)}>x</button>
           </div>
         </Draggable>
-      ))}
-      {pictures.map(picture => (
-        <Draggable key={picture.id} defaultPosition={{x: picture.x, y: picture.y}}>
-          <div className="picture">
-          <input type="file" ref={fileInputRef} onChange={handleFileInputChange} style={{ display: 'none'}}></input>
+    )))
+  }
 
-          {/* <input type="file" ref={fileInputRef} onChange={(event) => handleFileInputChange(event)} style={{ display: 'none'}}></input> */}
-            {/* <img className="picture-img" src={picture.photoFileName} alt="uploaded" /> */}
-            <button className="delete-button" onClick={() => handleDeletePicture(picture.id)}>Delete</button>
+  const filesView = () => {
+    return (      
+      pictures.map((picture) => (
+      <Draggable className="files" key={picture.data} defaultPosition={{x: Math.floor(Math.random() * (window.innerWidth)), y: Math.floor(Math.random() * (window.innerHeight))}}>
+          <div className="picture">
+          <div >
+            {(picture.contentType === ".pdf" || picture.contentType === ".txt" || picture.contentType === ".doc" || picture.contentType === ".docx") ?
+            (<embed className='picture-img' src={picture.url} type={picture.blobType}></embed>) :
+              <Image className='picture-img'
+                src={picture.url}
+                alt={picture.fileName}
+                onError={() => console.error(`Error loading image ${picture.url}`)}
+              />}
+            <Meta title={picture.fileName.substring(0, picture.fileName.lastIndexOf('.'))}
+              type="inner"
+              style={{ textAlign: "center", display: "flex" }} />
+            <input type="file" ref={fileInputRef} onChange={handleFileInputChange} style={{ display: 'none'}}></input>
+            <button className="delete-button" onClick={() =>  deleteFile(picture)}>x</button>
           </div>
-        </Draggable>
-      ))}
+        </div>
+      </Draggable>
+    )))
+  }
+
+  useEffect(() => {
+    console.log("Updated stickies:", stickies);
+    filesView()
+    textView()
+  }, [pictures, stickies]);   
+
+  return (
+    <div>
+    <div>{(auth == null) ? <NavMenu/> : null}</div>
+    <div className="bulletin-board" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ bottom: '10%', position: 'absolute', borderRadius: '100%', border: '1px solid #ccc', borderRadius: '10px', backgroundColor: '#f5f5f5', padding: '10px', width: '300px', height: '100px',  }} >
+        <div className="color-picker">
+          {colors.map(color => (
+            <div key={color} className="color-circle" style={{ backgroundColor: color }} onClick={() => setSelectedColor(color)} />
+          ))}
+        </div>
+        <div className="button-plate" style={{ display: 'flex', justifyContent: 'center' }}>
+          <Button
+                id="add-photo"
+                style={Styles.addButtonFileStyle}
+                shape="round"
+                icon={<FileImageOutlined />}
+                size={'large'}
+                onClick={() => getUserFile()}>
+            </Button>
+            <Button
+                id="add-sticky"
+                style={Styles.addButtonFileStyle}
+                shape="round"
+                icon={<PlusCircleOutlined />}
+                size={'large'}
+                onClick={() => addSticky()}>
+                Add Sticky
+            </Button>
+        </div>
+        {filesView()} 
+        {textView()}
+        </div>
+    </div>
     </div>
   );
 }

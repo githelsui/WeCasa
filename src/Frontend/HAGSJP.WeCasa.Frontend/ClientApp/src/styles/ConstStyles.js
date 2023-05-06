@@ -106,6 +106,22 @@ export const addButtonStyle = {
     marginLeft: 'auto',
 }
 
+export const addButtonFileStyle = {
+    fontFamily: 'Mulish',
+    fontWeight: 'bold',
+    display: 'inline-flex',
+    alignItems: 'center',
+    borderWidth: 'thin',
+    borderColor: '#111827',
+    backgroundColor: 'white',
+    textDecoration: 'none',
+    // marginLeft: 'auto',
+    // position: 'fixed',
+    bottom: '7%',
+    // left: '50%',
+    // transform: 'translateX(-50%)'
+}
+
 export const buttonHover = {
     components: {
         Button: {
