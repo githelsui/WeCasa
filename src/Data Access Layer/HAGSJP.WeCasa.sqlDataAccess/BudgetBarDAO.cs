@@ -271,12 +271,12 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                         {
                             return reader.GetDecimal(reader.GetOrdinal("budget")); 
                         }
-                        return -1; 
+                        return 0; 
                     }
                 }
                 catch(Exception ex)
                 {
-                    throw ex;
+                    return 0;
                 }
             }
         }
