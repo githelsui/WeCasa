@@ -51,31 +51,33 @@ namespace HAGSJP.WeCasa.Services.Implementations
         }
         public async Task<DAOResult> EditEvent(Event evnt)
         {
-            var addEventResult = await _dao.UpdateEvent(evnt);
-            if (addEventResult.IsSuccessful)
+            var editEventResult = await _dao.UpdateEvent(evnt);
+            if (editEventResult.IsSuccessful)
             {
-                await successLogger.Log("Event updated successfully", LogLevels.Info, "Data Store", evnt.GroupId.ToString());
+                editEventResult.Message = "Event updated successfully";
+                await successLogger.Log(editEventResult.Message, LogLevels.Info, "Data Store", evnt.GroupId.ToString());
             }
             else
             {
                 await errorLogger.Log("Error updating an event", LogLevels.Error, "Data Store", evnt.GroupId.ToString());
             }
 
-            return addEventResult;
+            return editEventResult;
         }
         public async Task<DAOResult> DeleteEvent(Event evnt)
         {
-            var addEventResult = await _dao.DeleteEvent(evnt);
-            if (addEventResult.IsSuccessful)
+            var deleteEventResult = await _dao.DeleteEvent(evnt);
+            if (deleteEventResult.IsSuccessful)
             {
-                await successLogger.Log("Event deleted successfully", LogLevels.Info, "Data Store", evnt.GroupId.ToString());
+                deleteEventResult.Message = "Event deleted successfully";
+                await successLogger.Log(deleteEventResult.Message, LogLevels.Info, "Data Store", evnt.GroupId.ToString());
             }
             else
             {
                 await errorLogger.Log("Error deleting an event", LogLevels.Error, "Data Store", evnt.GroupId.ToString());
             }
 
-            return addEventResult;
+            return deleteEventResult;
         }
     }
 }

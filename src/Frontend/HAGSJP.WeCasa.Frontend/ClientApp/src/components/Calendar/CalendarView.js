@@ -5,8 +5,8 @@ import { PlusCircleOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs';
 import axios from 'axios';
 //import { google } from 'google-auth-library';
-import 'dayjs/locale/zh-cn';
 import dayLocaleData from 'dayjs/plugin/localeData';
+import 'dayjs/locale/en';
 import '../../styles/System.css';
 import '../../styles/Calendar.css';
 import * as Styles from '../../styles/ConstStyles.js';
@@ -26,11 +26,9 @@ export const CalendarView = () => {
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
-    const [collapsed, setCollapsed] = useState(true);
     dayjs.extend(dayLocaleData);
 
-    //useEffect(() => { refreshCalendar();}, []);
-    useEffect(() => { getEvents(); }, []);
+    useEffect(() => { refreshCalendar();}, []);
 
     const getEvents = () => {
         let groupForm = {
@@ -47,16 +45,14 @@ export const CalendarView = () => {
                     failureCalendarView(res.data['message']);
                 }
             })
-            .catch((error) => {
-                console.error(error)
-            });
     }
 
     const refreshCalendar = () => {
-        //getEvents();
+        getEvents();
     }
 
     const addCalendarEvent = (eventConfig) => {
+        setShowAddModal(false)
         let newEvent = {
             EventName: eventConfig.eventName,
             Description: (eventConfig.description == null) ? "" : eventConfig.description,
@@ -73,19 +69,16 @@ export const CalendarView = () => {
             .then(res => {
                 var isSuccessful = res.data['isSuccessful']
                 if (isSuccessful) {
-                    refreshCalendar();
                     successCalendarView(res.data['message']);
                 }
                 else {
                     failureCalendarView(res.data['message']);
                 }
             })
-            .catch((error) => {
-                console.error(error)
-        });
     }
 
     const editCalendarEvent = (eventConfig) => {
+        setShowEditModal(false);
         let newEvent = {
             EventId: selectedEvent.eventId,
             EventName: eventConfig.eventName,
@@ -103,20 +96,12 @@ export const CalendarView = () => {
             .then(res => {
                 var isSuccessful = res.data['isSuccessful']
                 if (isSuccessful) {
-                    refreshCalendar();
                     successCalendarView(res.data['message']);
                 }
                 else {
                     failureCalendarView(res.data['message']);
                 }
             })
-            .catch((error) => {
-                console.error(error)
-            });
-    }
-
-    const displayAddEventSettings = () => {
-        setShowAddModal(true);
     }
 
     const onPanelChange = (value, mode) => {
@@ -218,7 +203,7 @@ export const CalendarView = () => {
                             shape="round"
                             icon={<PlusCircleOutlined />}
                             size={'large'}
-                            onClick={() => displayAddEventSettings()}>
+                            onClick={() => setShowAddModal(true)}>
                             Add event
                         </Button>
                     </Col>
