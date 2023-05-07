@@ -13,8 +13,10 @@ const TabPane = Tabs.TabPane;
 export const AccountRecovery = () => {
     const [username, setUsername] = useState('');
     const [inputFailures, setInputFailures] = useState(false);
-    const [recoveryProcess, setRecoveryProcess] = useState(1);
+    const [recoveryProcess, setRecoveryProcess] = useState(null);
     const navigate = useNavigate();
+
+    useEffect(() => { setRecoveryProcess(1); }, []);
 
 
     const validateEmail = (value, callback) => {
@@ -56,12 +58,15 @@ export const AccountRecovery = () => {
 
     const submitEmailForm = (values) => {
         setUsername(values.email1);
-        axios.post('account-recovery/GetOTPCode', username)
+        let account = {
+            Email: username
+        }
+        axios.post('account-recovery/GetOTPCode', account)
             .then(res => {
                 var isSuccessful = res.data['isSuccessful'];
                 if (isSuccessful) {
-                    successAccountRecoveryView(res.data['message']);
                     setRecoveryProcess(2);
+                    successAccountRecoveryView(res.data['message']);
                 } else {
                     failureAccountRecoveryView(res.data['message']);
                 }
@@ -70,14 +75,16 @@ export const AccountRecovery = () => {
     }
 
     const submitOTPForm = (values) => {
-        let otp = values.otp;
-        console.log(otp);
-        axios.post('account-recovery/VerifyOTPCode', otp)
+        let account = {
+            Email: username,
+            OTP: values.otp
+        }
+        axios.post('account-recovery/VerifyOTPCode', account)
             .then(res => {
                 var isSuccessful = res.data['isSuccessful'];
                 if (isSuccessful) {
-                    successAccountRecoveryView(res.data['message']);
                     setRecoveryProcess(3);
+                    successAccountRecoveryView(res.data['message']);
                 } else {
                     failureAccountRecoveryView(res.data['message']);
                 }
@@ -86,11 +93,14 @@ export const AccountRecovery = () => {
     }
 
     const submitPwUpdateForm = (values) => {
-        let updatedPassword = values.password1
+        let account = {
+            Email: username,
+            Password: values.password1
+        }
 
         // TODO: check that user entered in password correctly
 
-        axios.post('account-recovery/UpdatePassword', updatedPassword)
+        axios.post('account-recovery/UpdatePassword', account)
             .then(res => {
                 var isSuccessful = res.data['isSuccessful'];
                 if (isSuccessful) {
@@ -106,8 +116,7 @@ export const AccountRecovery = () => {
 
     const successAccountRecoveryView = (successMessage) => {
         notification.open({
-            message: "Update successful.",
-            description: successMessage,
+            message: successMessage,
             duration: 10,
             placement: "topLeft",
         });
@@ -151,7 +160,7 @@ export const AccountRecovery = () => {
                 return (
                     <div id="verifyOTP">
                         <h6>Provide the verification code from your inbox to reset your password</h6>
-                        <OTPInput submit={submitOTPForm} cancel={setRecoveryProcess(1)} />
+                        <OTPInput submit={submitOTPForm} cancel={() => setRecoveryProcess(1)}/>
                     </div>
                 );
             case 3: 

@@ -183,6 +183,53 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 return result;
             }
         }
+
+        public async Task<AuthResult> VerifyOTP(UserAccount userAccount, OTP otp)
+        {
+            _connectionString = GetConnectionString();
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                var result = new AuthResult();
+
+                // Select SQL statement
+                var selectSql = @"SELECT * 
+                                  FROM `Users` 
+                                  WHERE `username` = @username 
+                                  AND   `otp_code` = @otp;";
+
+                var command = connection.CreateCommand();
+                command.CommandText = selectSql;
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
+                command.Parameters.AddWithValue("@otp", otp.Code);
+
+                // Execution of SQL
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        // Ensuring that the OTP has not expired
+                        var otp_time = reader.GetDateTime(reader.GetOrdinal("otp_time"));
+                        if (otp.CreateTime < otp_time.AddMinutes(2))
+                        {
+                            result.IsSuccessful = true;
+                            result.HasValidOTP = true;
+                        }
+                        else
+                        {
+                            result.ExpiredOTP = true;
+                        }
+                    }
+                    // One-time code is incorrect
+                    else
+                    {
+                        result.HasValidOTP = false;
+                    }
+                }
+                return result;
+            }
+        }
+
         // Updates authentication status for user
         public Result UpdateUserAuthentication(UserAccount userAccount, bool is_auth)
         {

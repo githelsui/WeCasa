@@ -60,13 +60,14 @@ class OTPInput extends Component {
     render() {
         return (
             <form onSubmit={this.props.submit}>
-                <div className="otpContainer">
+                <div className="otpContainer" style={{marginBottom:"10px"}}>
                     <input
                         name="otp1"
                         type="text"
                         autoComplete="off"
                         className="otpInput"
                         value={this.state.otp1}
+                        style={Styles.otpInput}
                         onKeyPress={this.keyPressed}
                         onChange={e => this.handleChange("otp1", e)}
                         tabIndex="1" maxLength="1" onKeyUp={e => this.inputfocus(e)}
@@ -78,6 +79,7 @@ class OTPInput extends Component {
                         autoComplete="off"
                         className="otpInput"
                         value={this.state.otp2}
+                        style={Styles.otpInput}
                         onChange={e => this.handleChange("otp2", e)}
                         tabIndex="2" maxLength="1" onKeyUp={e => this.inputfocus(e)}
 
@@ -88,6 +90,7 @@ class OTPInput extends Component {
                         autoComplete="off"
                         className="otpInput"
                         value={this.state.otp3}
+                        style={Styles.otpInput}
                         onChange={e => this.handleChange("otp3", e)}
                         tabIndex="3" maxLength="1" onKeyUp={e => this.inputfocus(e)}
 
@@ -98,6 +101,7 @@ class OTPInput extends Component {
                         autoComplete="off"
                         className="otpInput"
                         value={this.state.otp4}
+                        style={Styles.otpInput}
                         onChange={e => this.handleChange("otp4", e)}
                         tabIndex="4" maxLength="1" onKeyUp={e => this.inputfocus(e)}
                     />
@@ -107,6 +111,7 @@ class OTPInput extends Component {
                         autoComplete="off"
                         className="otpInput"
                         value={this.state.otp5}
+                        style={Styles.otpInput}
                         onChange={e => this.handleChange("otp5", e)}
                         tabIndex="5" maxLength="1" onKeyUp={e => this.inputfocus(e)}
                     />
@@ -116,6 +121,7 @@ class OTPInput extends Component {
                         autoComplete="off"
                         className="otpInput"
                         value={this.state.otp6}
+                        style={Styles.otpInput}
                         onChange={e => this.handleChange("otp6", e)}
                         tabIndex="6" maxLength="1" onKeyUp={e => this.inputfocus(e)}
                     />
@@ -125,6 +131,7 @@ class OTPInput extends Component {
                         autoComplete="off"
                         className="otpInput"
                         value={this.state.otp7}
+                        style={Styles.otpInput}
                         onChange={e => this.handleChange("otp7", e)}
                         tabIndex="7" maxLength="1" onKeyUp={e => this.inputfocus(e)}
                     />
@@ -134,6 +141,7 @@ class OTPInput extends Component {
                         autoComplete="off"
                         className="otpInput"
                         value={this.state.otp8}
+                        style={Styles.otpInput}
                         onChange={e => this.handleChange("otp8", e)}
                         tabIndex="8" maxLength="1" onKeyUp={e => this.inputfocus(e)}
                     />
@@ -143,6 +151,7 @@ class OTPInput extends Component {
                         autoComplete="off"
                         className="otpInput"
                         value={this.state.otp9}
+                        style={Styles.otpInput}
                         onChange={e => this.handleChange("otp9", e)}
                         tabIndex="9" maxLength="1" onKeyUp={e => this.inputfocus(e)}
                     />
@@ -152,6 +161,7 @@ class OTPInput extends Component {
                         autoComplete="off"
                         className="otpInput"
                         value={this.state.otp10}
+                        style={Styles.otpInput}
                         onChange={e => this.handleChange("otp10", e)}
                         tabIndex="10" maxLength="1" onKeyUp={e => this.inputfocus(e)}
                     />

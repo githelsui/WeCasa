@@ -159,6 +159,28 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             return otp;
         }
 
+        public async Task<AuthResult> GetOTRecoveryCode(UserAccount userAccount)
+        {
+            var validateUserInfo = await _dao.GetUserProfile(userAccount);
+            if (validateUserInfo.IsSuccessful)
+            {
+                var otp = GenerateOTPassword(userAccount);
+            }
+            return validateUserInfo;
+        }
+
+        public async Task<AuthResult> VerifyOTRecoveryCode(UserAccount userAccount, OTP otp)
+        {
+            var otpVerifyResult = await _dao.VerifyOTP(userAccount, otp);
+            if (otpVerifyResult.IsSuccessful)
+            {
+                // resetting OTP to null after use
+                var otpResetResult = _dao.ResetOTP(userAccount);
+
+            }
+            return otpVerifyResult;
+        }
+
         public string ConfirmPassword(string password)
         {
             Console.WriteLine("Re-enter Password:");
