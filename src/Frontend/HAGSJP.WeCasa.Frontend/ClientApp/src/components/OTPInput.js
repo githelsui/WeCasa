@@ -1,5 +1,5 @@
 ﻿import React, { Component, ReactDOM } from 'react';
-import { Button } from 'antd';
+import { Button, Form } from 'antd';
 import * as Styles from '../styles/ConstStyles.js';
 // Reference: https://medium.com/@ahmedaffan311/otp-input-in-react-js-3b36ed67e360
 
@@ -19,38 +19,34 @@ class OTPInput extends Component {
             otp8: "",
             otp9: "",
             otp10: "",
-            disable: true
+            disable: true,
+            validChars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-@"
         };
         this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-
     }
 
     handleChange(value1, event) {
-
         this.setState({ [value1]: event.target.value });
     }
 
-    handleSubmit(event) {
-
-        const data = new FormData(event.target);
-        console.log(this.state);
-        event.preventDefault();
+    handleSubmit() {
+        this.state.value = this.state.otp1 + this.state.otp2 + this.state.otp3 + this.state.otp4 + this.state.otp5 + this.state.otp6 + this.state.otp7 + this.state.otp8 + this.state.otp9 + this.state.otp10;
+        this.props.submit(this.state.value);
     }
 
     inputfocus = (elmnt) => {
-        if (elmnt.key === "Delete" || elmnt.key === "Backspace") {
+        if (elmnt.key === "Delete" || elmnt.key === "Backspace" || elmnt.key === "ArrowLeft") {
             const next = elmnt.target.tabIndex - 2;
             if (next > -1) {
 
                 elmnt.target.form.elements[next].focus()
             }
         }
-        else {
-            console.log("next");
+        else if (elmnt.key === "ArrowRight" || this.state.validChars.includes(elmnt.key)) {
+                console.log("next");
 
             const next = elmnt.target.tabIndex;
-            if (next < 5) {
+            if (next < 10) {
                 elmnt.target.form.elements[next].focus()
             }
         }
@@ -59,7 +55,7 @@ class OTPInput extends Component {
 
     render() {
         return (
-            <form onSubmit={this.props.submit}>
+            <Form id="otpForm" onFinish={() => this.handleSubmit() }>
                 <div className="otpContainer" style={{marginBottom:"10px"}}>
                     <input
                         name="otp1"
@@ -156,7 +152,7 @@ class OTPInput extends Component {
                         tabIndex="9" maxLength="1" onKeyUp={e => this.inputfocus(e)}
                     />
                     <input
-                        name="ot105"
+                        name="otp10"
                         type="text"
                         autoComplete="off"
                         className="otpInput"
@@ -168,7 +164,7 @@ class OTPInput extends Component {
                 </div>
                 <Button key="create" htmlType="submit" type="primary" style={Styles.primaryButtonModal}>Submit</Button>
                 <Button key="cancel" onClick={this.props.cancel} type="default" style={Styles.defaultButtonModal}>Resend code</Button>
-            </form>
+            </Form>
         );
     }
 }

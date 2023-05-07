@@ -66,8 +66,8 @@ export const AccountRecovery = () => {
                 var isSuccessful = res.data['isSuccessful'];
                 if (isSuccessful) {
                     setRecoveryProcess(2);
-                    successAccountRecoveryView(res.data['message']);
                 } else {
+                    // username does not exist
                     failureAccountRecoveryView(res.data['message']);
                 }
             })
@@ -77,8 +77,9 @@ export const AccountRecovery = () => {
     const submitOTPForm = (values) => {
         let account = {
             Email: username,
-            OTP: values.otp
+            OTP: values
         }
+        console.log("Verifying OTP...",account);
         axios.post('account-recovery/VerifyOTPCode', account)
             .then(res => {
                 var isSuccessful = res.data['isSuccessful'];
@@ -93,14 +94,19 @@ export const AccountRecovery = () => {
     }
 
     const submitPwUpdateForm = (values) => {
-        let account = {
-            Email: username,
-            Password: values.password1
+        let failureMessage = '';
+        if (values.password1 != values.password2) {
+            setInputFailures(true);
+            failureMessage += 'Passwords must match.'
+            failureAccountRecoveryView(failureMessage);
         }
 
-        // TODO: check that user entered in password correctly
+        let account = {
+            Email: username,
+            NewField: values.password1,
+        }
 
-        axios.post('account-recovery/UpdatePassword', account)
+        axios.post('account-recovery/UpdatePasswordSecured', account)
             .then(res => {
                 var isSuccessful = res.data['isSuccessful'];
                 if (isSuccessful) {
@@ -166,7 +172,6 @@ export const AccountRecovery = () => {
             case 3: 
                 return (
                     <div id="updating-pw">
-                        <h1>Reset Password</h1>
                         <Form id="pwUpdateForm" onFinish={(values) => submitPwUpdateForm(values)}>
                             <h6 className="padding-top mulish-font">Type in your new password</h6>
                             <Form.Item name="password1" style={{ marginBottom: 15 }} hasFeedback rules={[{ required: true, message: '' }, () => ({

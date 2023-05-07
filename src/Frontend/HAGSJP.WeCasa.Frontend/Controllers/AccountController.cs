@@ -74,10 +74,20 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         public async Task<AuthResult> VerifyOTPCode([FromBody] AccountForm form)
         {
             UserAccount ua = new UserAccount(form.Email);
-            OTP otp = new OTP(form.Email, form.OTP);
+            OTP otp = new OTP(form.Email, form.OTP.ToString());
             UserManager um = new UserManager();
             var result = await um.VerifyOTRecoveryCode(ua, otp);
             return result;
+        }
+
+        [HttpPost]
+        [Route("UpdatePasswordSecured")]
+        public Result UpdatePasswordSecured([FromBody] AccountForm form)
+        {
+            UserAccount ua = new UserAccount(form.Email);
+            string newPassword = form.NewField;
+            UserManager um = new UserManager();
+            return um.UpdatePassword(ua, newPassword);
         }
     }
 }

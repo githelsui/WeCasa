@@ -293,6 +293,7 @@ export const deleteButtonLeft = {
 }
 
 export const otpInput = {
+    fontFamily: 'Mulish',
     width: '30px',
     height: '30px',
     marginRight: '10px',
