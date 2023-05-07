@@ -159,6 +159,77 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             return otp;
         }
 
+        public async Task<Result> GenerateOTRecoveryCode(UserAccount userAccount)
+        {
+            var savingOTCodeResult = new Result();
+            Random r = new Random();
+            string code = "";
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-@";
+            foreach (var i in Enumerable.Range(0, 10))
+            {
+                code += chars[r.Next(0, 65)];
+            }
+            var otp = new OTP(userAccount.Username, code);
+
+            // Saving activation code
+            AccountMariaDAO dao = new AccountMariaDAO();
+            savingOTCodeResult = await dao.GetOTCodeAsync(userAccount, otp);
+
+            if (savingOTCodeResult.IsSuccessful)
+            {
+                // Logging the OTP save
+                await successLogger.Log("One-time recovery code generated successfully", LogLevels.Info, "Data Store", userAccount.Username);
+            }
+            else
+            {
+                // Logging the error
+                await errorLogger.Log("Error saving a one-time code", LogLevels.Error, "Data Store", userAccount.Username);
+            }
+            return savingOTCodeResult;
+        }
+
+        public async Task<AuthResult> GetOTRecoveryCode(UserAccount userAccount)
+        {
+            var validateUserInfo = await _dao.GetUserProfile(userAccount);
+            if (validateUserInfo.IsSuccessful)
+            {
+                var otpResult = await GenerateOTRecoveryCode(userAccount);
+                if (!otpResult.IsSuccessful)
+                {
+                    validateUserInfo.Message = "Error generating one-time code.";
+                    validateUserInfo.IsSuccessful = false;
+                }
+            }
+            return validateUserInfo;
+        }
+
+        public async Task<AuthResult> VerifyOTRecoveryCode(UserAccount userAccount, OTP otp)
+        {
+            var otpVerifyResult = await _dao.VerifyOTP(userAccount, otp);
+        
+            if (otpVerifyResult.IsSuccessful && otpVerifyResult.HasValidOTP)
+            {
+                otpVerifyResult.Message = "Account verified";
+                // resetting OTP to null after use
+                var otpResetResult = _dao.ResetOTP(userAccount);
+                if (!otpResetResult.IsSuccessful)
+                {
+                    await successLogger.Log("Error resetting OTP", LogLevels.Error, "Data Store", userAccount.Username);
+                }
+            }  else
+            {
+                if (otpVerifyResult.ExpiredOTP)
+                {
+                    otpVerifyResult.Message = "One-time code is expired.";
+                }
+                else // not expired, but invalid OTP
+                {
+                    otpVerifyResult.Message = "One-time code is invalid.";
+                }
+            }
+            return otpVerifyResult;
+        }
+
         public string ConfirmPassword(string password)
         {
             Console.WriteLine("Re-enter Password:");

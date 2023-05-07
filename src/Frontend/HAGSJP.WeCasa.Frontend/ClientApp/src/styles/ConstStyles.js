@@ -291,3 +291,14 @@ export const deleteButtonLeft = {
     backgroundColor: '#bd0d25',
     color: '#FFFFFF',
 }
+
+export const otpInput = {
+    fontFamily: 'Mulish',
+    width: '30px',
+    height: '30px',
+    marginRight: '10px',
+    marginTop: '10px',
+    textAlign: 'center',
+    backgroundColor: '#ECECEC',
+    border: 'none'
+}

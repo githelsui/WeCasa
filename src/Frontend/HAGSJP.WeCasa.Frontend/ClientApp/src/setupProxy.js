@@ -15,6 +15,7 @@ const context = [
     "/files",
     "/group-settings",
     "/account-settings",
+    "/account-recovery",
     "/edit-profile",
     "/bulletin-board",,
     "/chorelist",

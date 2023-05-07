@@ -6,6 +6,7 @@ import { CalendarView } from "./components/Calendar/CalendarView";
 import { GroupSettings } from "./components/Group/GroupSettings";
 import { ProfileSettings } from "./components/Profile/ProfileSettings";
 import { AccountSettings } from "./components/Account/AccountSettings";
+import { AccountRecovery } from "./components/Account/AccountRecovery";
 import { Files } from "./components/File/Files";
 import { FileView } from "./components/File/FileView";
 import { IconSelectorModal } from "./components/IconSelectorModal";
@@ -50,6 +51,10 @@ const AppRoutes = [
     {
         path: '/account-settings',
         element: <AccountSettings />
+    },
+    {
+        path: '/account-recovery',
+        element: <AccountRecovery />
     },
     {
      path: '/edit-profile',

@@ -183,6 +183,53 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 return result;
             }
         }
+
+        public async Task<AuthResult> VerifyOTP(UserAccount userAccount, OTP otp)
+        {
+            _connectionString = GetConnectionString();
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+                var result = new AuthResult();
+
+                // Select SQL statement
+                var selectSql = @"SELECT * 
+                                  FROM `Users` 
+                                  WHERE `username` = @username 
+                                  AND   `otp_code` = @otp;";
+
+                var command = connection.CreateCommand();
+                command.CommandText = selectSql;
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
+                command.Parameters.AddWithValue("@otp", otp.Code);
+
+                // Execution of SQL
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        // Ensuring that the OTP has not expired
+                        var otp_time = reader.GetDateTime(reader.GetOrdinal("otp_time"));
+                        if (otp.CreateTime < otp_time.AddMinutes(2))
+                        {
+                            result.IsSuccessful = true;
+                            result.HasValidOTP = true;
+                        }
+                        else
+                        {
+                            result.ExpiredOTP = true;
+                        }
+                    }
+                    // One-time code is incorrect
+                    else
+                    {
+                        result.HasValidOTP = false;
+                    }
+                }
+                return result;
+            }
+        }
+
         // Updates authentication status for user
         public Result UpdateUserAuthentication(UserAccount userAccount, bool is_auth)
         {
@@ -311,6 +358,33 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
+                var result = new Result();
+
+                // Update SQL statement
+                var updateSql = @"UPDATE `Users` 
+                                    SET `otp_code`  = @otp_code, 
+                                        `otp_time`  = @otp_time 
+                                    WHERE `username`= @username;";
+
+                var command = connection.CreateCommand();
+                command.CommandText = updateSql;
+                command.Parameters.AddWithValue("@otp_code", otp.Code);
+                command.Parameters.AddWithValue("@otp_time", otp.CreateTime);
+                command.Parameters.AddWithValue("@username".ToLower(), userAccount.Username.ToLower());
+
+                // Execution of SQL
+                var rows = (command.ExecuteNonQuery());
+                result = ValidateSqlStatement(rows);
+                return result;
+            }
+        }
+
+        public async Task<Result> GetOTCodeAsync(UserAccount userAccount, OTP otp)
+        {
+            _connectionString = GetConnectionString();
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
                 var result = new Result();
 
                 // Update SQL statement
@@ -507,7 +581,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                             //result.ErrorStatus = System.Net.HttpStatusCode.Found;
                           
                         }
-                        result.Message = "User information was found";
+                        result.Message = "Account verified";
                         result.IsSuccessful = true;
                         result.ReturnedObject = (UserProfile)userProfile;
                     }
