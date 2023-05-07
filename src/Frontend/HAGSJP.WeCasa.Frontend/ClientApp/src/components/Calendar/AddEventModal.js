@@ -42,7 +42,7 @@ const AddEventModal = (props) => {
         form.validateFields()
             .then((values) => {
                 props.confirm(values);
-                setLoading(true)
+                //setLoading(true)
             })
             .catch((errorInfo) => { console.log(errorInfo) });
     }

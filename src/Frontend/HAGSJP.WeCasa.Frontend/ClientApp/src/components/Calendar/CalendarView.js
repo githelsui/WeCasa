@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { Component, useState, useEffect, memo, useMemo } from 'react';
 import { useAuth } from '../Auth/AuthContext';
 import { Calendar, Col, Row, Select, Button, Table, Radio, Badge, notification } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons'
@@ -26,9 +26,12 @@ export const CalendarView = () => {
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    //const [initialFetch, setInitialFetch] = useState(false);
+    //const [fetching, setFetching] = useState(true);
+    const [refresh, setRefresh] = useState(true);
     dayjs.extend(dayLocaleData);
 
-    useEffect(() => { refreshCalendar();}, []);
+    useEffect(() => { refreshCalendar(); }, [events]);
 
     const getEvents = () => {
         let groupForm = {
@@ -36,10 +39,13 @@ export const CalendarView = () => {
         }
         axios.post('calendar/GetGroupEvents', groupForm)
             .then(res => {
+                setRefresh(false)
                 var isSuccessful = res.data['isSuccessful']
                 if (isSuccessful) {
                     let events = res.data['returnedObject']
                     setEvents(events);
+                    console.log(events)
+                    console.log("refresh after getgroupevents = " + refresh)
                 }
                 else {
                     failureCalendarView(res.data['message']);
@@ -48,7 +54,10 @@ export const CalendarView = () => {
     }
 
     const refreshCalendar = () => {
-        getEvents();
+        if (refresh) {
+            getEvents();
+            console.log('refresh = ' + refresh)
+        }
     }
 
     const addCalendarEvent = (eventConfig) => {
@@ -194,7 +203,7 @@ export const CalendarView = () => {
                                 value="year">Year
                             </Radio.Button>
                         </Radio.Group>
-                            
+
                     </Col>
                     <Col span={4} offset={4}>
                         <Button
@@ -215,7 +224,7 @@ export const CalendarView = () => {
     const isSameDay = (eventDate, value) => {
         let date = new Date(eventDate);
         date.setHours(0, 0, 0, 0);
-        let compareDate = new Date(Date.UTC(value.year(), value.month(), value.date()+1));
+        let compareDate = new Date(Date.UTC(value.year(), value.month(), value.date() + 1));
         compareDate.setHours(0, 0, 0, 0);
         let sameDay = (date.valueOf() == compareDate.valueOf()) ? true : false;
         return sameDay;
@@ -225,10 +234,10 @@ export const CalendarView = () => {
         return (
             <ul className="events">
                 {events.map((event) => (
-                    isSameDay(event.eventDate, value) ? 
+                    isSameDay(event.eventDate, value) ?
                         (<li className="event" key={event.eventId} onClick={() => selectEvent(event)}>
                             <Badge status={event.type} color={event.color} text={event.eventName} />
-                    </li>) : null
+                        </li>) : null
                 ))}
             </ul>
         );
@@ -256,16 +265,28 @@ export const CalendarView = () => {
         return dateCellRender(current);
     };
 
-    return (
-        <div style={Styles.body}>
+    const renderCalendar = useMemo(() => {
+        // Render the child component using the data prop
+        return (
             <div>
                 <Calendar
                     style={{ fontFamily: 'Mulish' }}
                     headerRender={headerRender}
                     dateCellRender={cellRender}
                     onPanelChange={onPanelChange} />
-                </div>
-            <AddEventModal show={showAddModal} close={() => setShowAddModal(false)} confirm={addCalendarEvent}/>
+            </div>
+        );
+    }, [refresh]);
+
+    return (
+        <div style={Styles.body}>
+            <div>
+                {(!refresh) ?
+                    (<div>{renderCalendar}</div>) :
+                    (<div></div>)
+                }
+            </div>
+            <AddEventModal show={showAddModal} close={() => setShowAddModal(false)} confirm={addCalendarEvent} />
             <EditEventModal show={showEditModal} close={() => setShowEditModal(false)} event={selectedEvent} confirm={editCalendarEvent} />
         </div>
     );
