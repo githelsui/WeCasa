@@ -7,27 +7,26 @@ using HAGSJP.WeCasa.sqlDataAccess.Abstractions;
 using HAGSJP.WeCasa.Models.Security;
 using System.Text.Json;
 using System.Net;
+using Microsoft.Extensions.Configuration;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
     public class AuthorizationDAO : IAuthorizationDAO
     {
+        private MariaDB _mariaDB;
         private string _connectionString;
 
         public AuthorizationDAO() {}
 
-        public MySqlConnectionStringBuilder BuildConnectionString()
+        public string GetConnectionString()
         {
-            var builder = new MySqlConnectionStringBuilder
-            {
-                Server = "localhost",
-                Port = 3306,
-                UserID = "HAGSJP.WeCasa.SqlUser",
-                Password = "cecs491",
-                Database = "HAGSJP.WeCasa"
-            };
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("config.json")
+                .AddEnvironmentVariables()
+                .Build();
 
-            return builder;
+            _mariaDB = config.GetRequiredSection("MariaDB").Get<MariaDB>();
+            return _mariaDB.Local;
         }
 
         public Result ValidateSqlStatement(int rows)
@@ -51,7 +50,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             var result = new AuthResult();
 
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -95,7 +94,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             var result = new AuthResult();
 
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -142,7 +141,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             var result = new AuthResult();
 
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -171,7 +170,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             var result = new AuthResult();
 
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();

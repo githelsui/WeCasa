@@ -1,25 +1,23 @@
 using System.Text.Json;
 using HAGSJP.WeCasa.Models;
+using Microsoft.Extensions.Configuration;
 using MySqlConnector;
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
    public class BudgetBarDAO : AccountMariaDAO
    {
         private string _connectionString;
+        private MariaDB _mariaDB;
         private DAOResult result;
-
-
-        public MySqlConnectionStringBuilder BuildConnectionString()
+        public string GetConnectionString()
         {
-                var builder = new MySqlConnectionStringBuilder
-                {
-                    Server = "localhost",
-                    Port = 3306,
-                    UserID = "HAGSJP.WeCasa.SqlUser",
-                    Password = "cecs491",
-                    Database = "HAGSJP.WeCasa"
-                };
-            return builder;
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("config.json")
+                .AddEnvironmentVariables()
+                .Build();
+
+            _mariaDB = config.GetRequiredSection("MariaDB").Get<MariaDB>();
+            return _mariaDB.Local;
         }
 
         public DAOResult PopulateResult(DAOResult result, MySqlException sqlex)
@@ -36,8 +34,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             var result = new DAOResult();
             string billsJSON = JsonSerializer.Serialize(bill.Usernames);
 
-            _connectionString = BuildConnectionString().ConnectionString;
-            using(var connection = new MySqlConnection(_connectionString))
+            _connectionString = GetConnectionString();
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
@@ -91,8 +89,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {    
             var result = new DAOResult();
             string billsJSON = JsonSerializer.Serialize(bill.Usernames);
-            _connectionString = BuildConnectionString().ConnectionString;
-            using(var connection = new MySqlConnection(_connectionString))
+            _connectionString = GetConnectionString();
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
@@ -138,8 +136,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public DAOResult DeleteBill(int billId, DateTime date)
         {
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
-            using(var connection = new MySqlConnection(_connectionString))
+            _connectionString = GetConnectionString();
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
@@ -170,8 +168,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public DAOResult RestoreDeletedBill(int billId)
         {
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
-            using(var connection = new MySqlConnection(_connectionString))
+            _connectionString = GetConnectionString();
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
@@ -200,8 +198,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public List<Bill> GetBills(int groupId)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
-            using(var connection = new MySqlConnection(_connectionString))
+            _connectionString = GetConnectionString();
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
@@ -253,8 +251,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public decimal GetBudget(int groupId)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
-            using(var connection = new MySqlConnection(_connectionString))
+            _connectionString = GetConnectionString();
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
@@ -283,8 +281,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public int GetGroupId(string username)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
-            using(var connection = new MySqlConnection(_connectionString))
+            _connectionString = GetConnectionString();
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
@@ -314,8 +312,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public DAOResult EditBudget(int groupID, decimal amount)
         {
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
-            using(var connection = new MySqlConnection(_connectionString))
+            _connectionString = GetConnectionString();
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
