@@ -14,6 +14,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
     public class UserManager : IUserManager
     {
         private readonly AccountMariaDAO _dao;
+        private readonly AuthorizationService _authService;
         private Logger successLogger;
         private Logger errorLogger;
 
@@ -22,6 +23,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             _dao = new AccountMariaDAO();
             successLogger = new Logger(_dao);
             errorLogger = new Logger(_dao);
+            _authService = new AuthorizationService(new AuthorizationDAO());
         }
         public UserManager(AccountMariaDAO dao)
         {
@@ -380,5 +382,18 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             }
             return enablingUser;
         }
+
+        public AuthResult ValidateAdminRole(UserAccount ua)
+        {
+            var result = new AuthResult();
+
+            var serviceResult = _authService.ValidateAdminRole(ua);
+            if(!serviceResult.IsSuccessful)
+            {
+                errorLogger.Log(serviceResult.Message, LogLevels.Error, "Service", ua.Username);
+            }
+            return serviceResult;
+        }
+
     }
 }
