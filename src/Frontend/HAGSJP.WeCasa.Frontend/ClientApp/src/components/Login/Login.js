@@ -112,6 +112,10 @@ export const Login = () => {
         }
     }
 
+    const recoverAccount = () => {
+        navigate('/account-recovery');
+    }
+
     const failureLoginView = (failureMessage) => {
         // Accounts for user failure cases and system errors
         setLoginResults(false)
@@ -166,7 +170,7 @@ export const Login = () => {
 
                                     <ConfigProvider theme={Styles.buttonHover}>
                                         <div id="ForgotPassBtn" style={{ marginTop: 15 }}>
-                                            <Button style={resetPassBtnStyle}>Forgot Password? Reset Here</Button>
+                                        <Button onClick={() => recoverAccount()} style={resetPassBtnStyle}>Forgot Password? Reset Here</Button>
                                         </div>
                                     </ConfigProvider>
                                 </div>) :
@@ -182,6 +186,7 @@ export const Login = () => {
 
                                         <Button style={Styles.primaryButtonStyle} type="primary" htmlType="submit">Login</Button>
                                     </Form>
+
                             </div>)
 
                                 }
