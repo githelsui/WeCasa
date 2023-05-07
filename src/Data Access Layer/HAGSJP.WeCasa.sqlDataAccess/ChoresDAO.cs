@@ -532,8 +532,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     connection.Open();
 
                     var command = connection.CreateCommand();
-                    command.CommandText = @"SELECT * from CHORES AS c
-                                            INNER JOIN userchore AS uc
+                    command.CommandText = @"SELECT * from Chores AS c
+                                            INNER JOIN UserChore AS uc
                                                 ON (c.chore_id = uc.chore_id)
                                             WHERE uc.is_completed = 0
                                               AND c.group_id = @group_id
@@ -600,8 +600,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     connection.Open();
 
                     var command = connection.CreateCommand();
-                    command.CommandText = @"SELECT * from CHORES AS c
-                                            INNER JOIN userchore AS uc
+                    command.CommandText = @"SELECT * from Chores AS c
+                                            INNER JOIN UserChore AS uc
                                                 ON (c.chore_id = uc.chore_id)
                                             WHERE uc.is_completed = 1
                                               AND c.group_id = @group_id
@@ -772,8 +772,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     connection.Open();
 
                     var command = connection.CreateCommand();
-                    command.CommandText = @"SELECT * from CHORES AS c
-                                            INNER JOIN userchore AS uc
+                    command.CommandText = @"SELECT * from Chores AS c
+                                            INNER JOIN UserChore AS uc
                                                 ON (c.chore_id = uc.chore_id)
                                             WHERE uc.is_completed = 0
                                               AND uc.username = @username
@@ -840,13 +840,13 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     var command = connection.CreateCommand();
                     var selectSql = @"SELECT COUNT(CASE WHEN uc.is_completed = 1 THEN 1 ELSE NULL END) AS completedChores,
                                          COUNT(CASE WHEN uc.is_completed = 0 THEN 1 ELSE NULL END) AS incompleteChores
-                                      FROM userchore AS uc
-                                         INNER JOIN chores AS c 
+                                      FROM UserChore AS uc
+                                         INNER JOIN Chores AS c 
                                             ON (uc.chore_id = c.chore_id)
                                       WHERE username = @username 
                                             AND group_id = @group_id
                                             AND MONTH(c.created) = MONTH(NOW());";
-                    
+
                     command.CommandText = selectSql;
                     command.Parameters.AddWithValue("@username", username);
                     command.Parameters.AddWithValue("@group_id", group_id);
