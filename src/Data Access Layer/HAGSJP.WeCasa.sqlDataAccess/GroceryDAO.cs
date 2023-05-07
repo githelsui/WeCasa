@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using HAGSJP.WeCasa.Models;
+using Microsoft.Extensions.Configuration;
 using MySqlConnector;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
@@ -9,19 +10,18 @@ namespace HAGSJP.WeCasa.sqlDataAccess
     public class GroceryDAO : AccountMariaDAO
     {
         private string _connectionString;
+        private MariaDB _mariaDB;
         private DAOResult result;
 
-        public MySqlConnectionStringBuilder BuildConnectionString()
+        public string GetConnectionString()
         {
-            var builder = new MySqlConnectionStringBuilder
-            {
-                Server = "localhost",
-                Port = 3306,
-                UserID = "HAGSJP.WeCasa.SqlUser",
-                Password = "cecs491",
-                Database = "HAGSJP.WeCasa"
-            };
-            return builder;
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("config.json")
+                .AddEnvironmentVariables()
+                .Build();
+
+            _mariaDB = config.GetRequiredSection("MariaDB").Get<MariaDB>();
+            return _mariaDB.Local;
         }
 
         public DAOResult ValidateSqlStatement(int rows)
@@ -44,7 +44,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public DAOResult AddGroceryItem(GroceryItem item)
         {
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -98,14 +98,14 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             var result = new DAOResult();
             List<GroceryItem> items = new List<GroceryItem>();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
                     connection.Open();
 
-                    var selectSql = @"SELECT * from GROCERIES WHERE group_id = @group_id;";
+                    var selectSql = @"SELECT * from Groceries WHERE group_id = @group_id;";
 
                     var command = connection.CreateCommand();
                     command.CommandText = selectSql;

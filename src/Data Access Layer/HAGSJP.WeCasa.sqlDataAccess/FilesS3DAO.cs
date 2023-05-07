@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 
 
 namespace HAGSJP.WeCasa.sqlDataAccess
@@ -19,18 +20,22 @@ namespace HAGSJP.WeCasa.sqlDataAccess
     public class FilesS3DAO : ILoggerDAO
     {
         private AmazonS3Client _client;
+        private AWS _aws;
         private string _bucketName = "wecasa-group-files-";
 
         // Configuring AWS S3 client for hagsjp.wecasa.s3 user
         public AmazonS3Client GetClient()
         {
-            var accessKey = ConfigurationManager.AppSettings["AWSAccessKey"];
-            Console.WriteLine($"The value of AWSAccessKey is {accessKey}");
-            var secretKey = ConfigurationManager.AppSettings["AWSSecretKey"];
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("config.json")
+                .AddEnvironmentVariables()
+                .Build();
+
+            _aws = config.GetRequiredSection("AWS").Get<AWS>();
 
             var client = new AmazonS3Client(
-                "AKIA2K6ZUAG73KBPMSLD",
-                "",
+                _aws.AWSAccessKey,
+                _aws.AWSSecretKey,
                 Amazon.RegionEndpoint.USEast2
             );
             return client;

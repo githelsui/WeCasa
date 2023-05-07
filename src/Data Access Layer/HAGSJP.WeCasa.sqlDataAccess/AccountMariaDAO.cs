@@ -6,6 +6,7 @@ using System.Text.Json;
 using Azure;
 using System.Data;
 using System.Reflection.PortableExecutable;
+using Microsoft.Extensions.Configuration;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
@@ -17,21 +18,18 @@ namespace HAGSJP.WeCasa.sqlDataAccess
     public class AccountMariaDAO : ILoggerDAO
     {
         private string _connectionString;
+        private MariaDB _mariaDB;
 
         public AccountMariaDAO() { }
-
-        public MySqlConnectionStringBuilder BuildConnectionString()
+        public string GetConnectionString()
         {
-             var builder = new MySqlConnectionStringBuilder
-             {
-                 Server = "localhost",
-                 Port = 3306,
-                 UserID = "HAGSJP.WeCasa.SqlUser",
-                 Password = "cecs491",
-                 Database = "HAGSJP.WeCasa"
-             };
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("config.json")
+                .AddEnvironmentVariables()
+                .Build();
 
-            return builder;
+            _mariaDB = config.GetRequiredSection("MariaDB").Get<MariaDB>();
+            return _mariaDB.Local;
         }
 
         public Result ValidateSqlStatement(int rows)
@@ -53,7 +51,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public Result PersistUser(UserAccount userAccount, string password, string salt)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -94,7 +92,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         // Checks if authentication pre-conditions are met
         public AuthResult ValidateUserInfo(UserAccount userAccount)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -133,7 +131,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public AuthResult AuthenticateUser(UserAccount userAccount, OTP otp)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -188,7 +186,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         // Updates authentication status for user
         public Result UpdateUserAuthentication(UserAccount userAccount, bool is_auth)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -217,7 +215,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public List<DateTime> GetUserOperations(UserAccount userAccount, UserOperation userOperation)
         {
             List<DateTime> auth_attempts = new List<DateTime>();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -248,7 +246,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         // Resets OTP after successful use
         public Result ResetOTP(UserAccount userAccount)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -275,7 +273,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         // Clears all failure attempts
         public Result ResetAuthenticationAttempts(UserAccount userAccount, Operations operation)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -309,7 +307,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         }
         public Result SaveCode(UserAccount userAccount, OTP otp)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -336,7 +334,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public Result SetUserAbility(UserAccount userAccount, int isEnabled)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -362,7 +360,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public async Task<Result> LogData(Log log)
         {
 
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
 
             using (var connection = new MySqlConnection(_connectionString))
             {
@@ -398,7 +396,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public List<Log> GetLogData(UserAccount userAccount, Operations userOperation)
         {
             List<Log> logs = new List<Log>();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -435,8 +433,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
     
         public Result DeleteUser(UserAccount userAccount)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
-            using(var connection = new MySqlConnection(_connectionString)) 
+            _connectionString = GetConnectionString();
+            using (var connection = new MySqlConnection(_connectionString)) 
             {
                 connection.Open();
                 var result = new Result();
@@ -459,7 +457,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public Result UpdateUser(UserAccount userAccount, string updateSQL)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -481,7 +479,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             AuthResult result = new AuthResult();
             var userProfile = new UserProfile();
             userProfile.Username = userAccount.Username;
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -529,8 +527,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public Dictionary<string, string> GetFirstNames(int groupId)
         {
-           _connectionString = BuildConnectionString().ConnectionString;
-            using(var connection = new MySqlConnection(_connectionString))
+            _connectionString = GetConnectionString();
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
@@ -567,7 +565,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public AuthResult PopulateUserStatus(UserAccount userAccount)
         {
             AuthResult populateResult= new AuthResult();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();

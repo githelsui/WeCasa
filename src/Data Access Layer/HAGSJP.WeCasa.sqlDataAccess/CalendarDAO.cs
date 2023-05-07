@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using HAGSJP.WeCasa.Models;
+using Microsoft.Extensions.Configuration;
 using MySqlConnector;
 using Org.BouncyCastle.Crypto;
 
@@ -11,22 +12,18 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 	public class CalendarDAO : AccountMariaDAO
 	{
         private string _connectionString;
+        private MariaDB _mariaDB;
         private DAOResult _result;
 
-        public MySqlConnectionStringBuilder BuildConnectionString()
+        public string GetConnectionString()
         {
-            /*var connectionString = ConfigurationManager.ConnectionStrings["MariaDBConnection"].ConnectionString;
-            Console.WriteLine($"Connection string: {connectionString}");*/
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("config.json")
+                .AddEnvironmentVariables()
+                .Build();
 
-            var builder = new MySqlConnectionStringBuilder
-            {
-                Server = "localhost",
-                Port = 3306,
-                UserID = "HAGSJP.WeCasa.SqlUser",
-                Password = "cecs491",
-                Database = "HAGSJP.WeCasa"
-            };
-            return builder;
+            _mariaDB = config.GetRequiredSection("MariaDB").Get<MariaDB>();
+            return _mariaDB.Local;
         }
 
         public DAOResult ValidateSqlStatement(int rows)
@@ -49,7 +46,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public async Task<DAOResult> AddEvent(Event e)
 		{
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -104,7 +101,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public async Task<DAOResult> UpdateEvent(Event e)
         {
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -147,7 +144,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public async Task<DAOResult> DeleteEvent(Event e)
         {
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -177,7 +174,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             var result = new CalendarResult();
             List<Event> events = new List<Event>();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try

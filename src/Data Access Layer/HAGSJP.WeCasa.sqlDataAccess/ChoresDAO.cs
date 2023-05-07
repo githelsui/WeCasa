@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using HAGSJP.WeCasa.Models;
+using Microsoft.Extensions.Configuration;
 using MySqlConnector;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
@@ -11,21 +12,20 @@ namespace HAGSJP.WeCasa.sqlDataAccess
     public class ChoresDAO : AccountMariaDAO
     {
         private string _connectionString;
+        private MariaDB _mariaDB;
         private DAOResult result;
 
         public ChoresDAO() { }
 
-        public MySqlConnectionStringBuilder BuildConnectionString()
+        public string GetConnectionString()
         {
-            var builder = new MySqlConnectionStringBuilder
-            {
-                Server = "localhost",
-                Port = 3306,
-                UserID = "HAGSJP.WeCasa.SqlUser",
-                Password = "cecs491",
-                Database = "HAGSJP.WeCasa"
-            };
-            return builder;
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("config.json")
+                .AddEnvironmentVariables()
+                .Build();
+
+            _mariaDB = config.GetRequiredSection("MariaDB").Get<MariaDB>();
+            return _mariaDB.Local;
         }
 
         public DAOResult ValidateSqlStatement(int rows)
@@ -65,7 +65,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public DAOResult CreateChore(Chore chore)
         {
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -133,7 +133,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             // Does not handle updates to chore assignments
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -194,7 +194,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public DAOResult CompleteChore(Chore chore)
         {
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -233,7 +233,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             // Reset chore.AssignedTo for Chores table & Usergroups table
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -402,7 +402,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             // Reset chore.AssignedTo for Chores table & Usergroups table
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -457,7 +457,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public DAOResult DeleteChore(Chore chore)
         {
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -524,7 +524,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             DateTime mondayDate = currentDate.AddDays(-(int)currentDayOfWeek + 1);
             DateTime sundayDate = mondayDate.AddDays(6);
 
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -592,7 +592,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             var result = new DAOResult();
             List<Chore> chores = new List<Chore>();
 
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -655,7 +655,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             var result = new DAOResult();
             List<Chore> chores = new List<Chore>();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -710,7 +710,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             var result = new DAOResult();
             List<int> choreIds = new List<int>();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -764,7 +764,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             Console.Write("End of Week:");
             Console.WriteLine(endOfWeek.ToString());
 
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -830,7 +830,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             var result = new ChoreResult();
             var progressReport = new ProgressReport(group_id, username);
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try

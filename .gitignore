@@ -17,5 +17,6 @@ obj/
 node_modules/
 package-lock.json
 
-# Config file 
+# Config files
 App.config
+config.json
