@@ -25,7 +25,25 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         [Route("GetLoginsPerDay")]
         public KPIResult GetLoginsPerDay([FromBody] KPIForm kpiForm)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result = new KPIResult();
+                result.IsSuccessful = true;
+                if (result.IsSuccessful)
+                {
+                    result.ErrorStatus = System.Net.HttpStatusCode.OK;
+                }
+                else
+                {
+                    result.ErrorStatus = System.Net.HttpStatusCode.BadRequest;
+                }
+                return result;
+
+            }
+            catch (Exception exc)
+            {
+                return new KPIResult(false, System.Net.HttpStatusCode.Conflict, exc.Message);
+            }
         }
     }
 }

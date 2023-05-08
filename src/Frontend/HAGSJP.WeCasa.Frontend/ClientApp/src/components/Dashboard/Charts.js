@@ -22,9 +22,10 @@ export const Charts = (props) => {
     const { admin, auth, currentUser } = useAuth();
     //const [ data, setData] = useState([]) 
 
-    const GetLineData = () => {
+    const fetchAnalyticsData = () => {
         let kpiForm = {
-            TimeFrame: props.timeFrame
+            TimeFrame: props.timeFrame,
+            CurrentUser: currentUser["username"]
         }
 
         axios.post(('analytics/' + props.endpoint), kpiForm)
@@ -88,9 +89,14 @@ export const Charts = (props) => {
 
     useEffect(() => {
         console.log("endpoint: " + props.endpoint)
-        renderLineChart()
+        fetchAnalyticsData();
+        renderLineChart();
         console.log(props.kpiLabel + ' in ' + props.timeFrame)
     }, [props.endpoint]);
+
+    //useEffect(() => {
+    //    //renderLineChart();
+    //}, [data]);
 
     return (
         <div style={{ paddingTop: '20px' }}>
