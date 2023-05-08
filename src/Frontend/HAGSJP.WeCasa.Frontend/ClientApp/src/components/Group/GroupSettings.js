@@ -7,7 +7,7 @@ import '../../index.css';
 import GroupSettingsTab from './GroupSettingsTab'
 import GroupMembersTab from './GroupMembersTab'
 import defaultImage from '../../assets/defaultimgs/wecasatemp.jpg';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../Auth/AuthContext';
 const TabPane = Tabs.TabPane;
 
 export const GroupSettings = (props) => {
@@ -54,8 +54,8 @@ export const GroupSettings = (props) => {
             </div>
 
             <Tabs defaultActiveKey="2" onChange={tabItemClick} destroyInactiveTabPane>
-                <TabPane tab="Group Members" key="1"><GroupMembersTab group={currentGroup} /></TabPane>
-                <TabPane tab="Settings" key="2"><GroupSettingsTab group={currentGroup} /></TabPane>
+                <TabPane tab="Group Members" id="group-members" key="1"><GroupMembersTab group={currentGroup} /></TabPane>
+                <TabPane tab="Settings" id="group-settings" key="2"><GroupSettingsTab group={currentGroup} /></TabPane>
             </Tabs>  </div>
         );
 };

@@ -4,7 +4,6 @@ import * as Styles from '../styles/ConstStyles.js';
 import '../styles/System.css';
 import '../index.css';
 import * as ValidationFuncs from '../scripts/InputValidation.js';
-import { useAuth } from './AuthContext.js';
 import axios from 'axios';
 import image1 from '../assets/profileimgs/1.jpg';
 import image2 from '../assets/profileimgs/2.jpg';
@@ -30,6 +29,7 @@ export const IconSelectorModal = (props) => {
             case 'Profile':
                 return (
                     profileImages.map((image, i) =>
+                        <div key={i}>
                         <Col span={5} style={{ marginLeft: 10 }}>
                             <Card
                                 onClick={() => setSelectedIcon(i)} 
@@ -42,18 +42,21 @@ export const IconSelectorModal = (props) => {
                                 }}
                                     src={profileImages[i]} preview={false} />}
                                 style={(selectedIcon == i) ? { border: '5px solid #555', borderRadius: 5, width: 100, height: 100 } : { borderRadius: 5, width: 100, height: 100 }}></Card>
-                        </Col>)
+                            </Col>
+                        </div>)
                 );
             case 'Group':
                 return (
                     groupColors.map((color, i) =>
+                        <div key={i}>
                         <Col span={5} style={{ marginLeft: 10 }}>
                             <Card
                                 onClick={() => setSelectedIcon(i)} 
                                 bordered={true}
                                 hoverable
                                 style={(selectedIcon == i) ? { border: '5px solid #555', backgroundColor: color, borderRadius: 5, width: 100, height: 100 } : { backgroundColor: color, borderRadius: 5, width: 100, height: 100 }}></Card>
-                        </Col>)
+                            </Col>
+                        </div>)
                 );
             default: return (<div></div>);
         }

@@ -44,11 +44,11 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("GetUserProfile")]
-        public Result GetUserProfile([FromBody] ProfileForm form)
+        public async Task<Result> GetUserProfile([FromBody] ProfileForm form)
         {
             UserManager um = new UserManager();
             UserAccount user = new UserAccount(form.Email);
-            var result = um.GetUserProfile(user);
+            var result = await um.GetUserProfile(user);
             return result;
         }
     }

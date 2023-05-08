@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using HAGSJP.WeCasa.Logging.Implementations;
 using HAGSJP.WeCasa.Models;
+using HAGSJP.WeCasa.Services.Implementations;
 using HAGSJP.WeCasa.sqlDataAccess;
 using MySqlConnector;
 
@@ -10,11 +11,15 @@ namespace HAGSJP.WeCasa.Managers.Implementations
     {
         private readonly BudgetBarDAO _dao;
         private Logger _logger;
+        private RemindersDAO remindersDAO;
 
-        public  BudgetBarManager() 
+
+        public BudgetBarManager() 
         {
             _logger = new Logger(new AccountMariaDAO());
             _dao = new BudgetBarDAO();
+            remindersDAO = new RemindersDAO();
+
         }
 
         public BudgetBarView GetInitialBudgetBarVew(int groupId)
@@ -89,7 +94,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             try
             {
                 // validate members
-                if (bill.Usernames.Count == 0) 
+                if (bill.Usernames.Count == 0)
                 {
                     bill.Usernames.Add(bill.Owner);
                 }
@@ -102,11 +107,31 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                     result = _dao.InsertBill(bill);
                     if (result.IsSuccessful)
                     {
+                        Console.WriteLine("insert bill was successful");
+                        var group = new GroupModel { GroupId = bill.GroupId };
+                        var emails = remindersDAO.GetGroupEmail(group);
+                        var usernames = (List<string>)emails.ReturnedObject;
+                        var from = "wecasacsulb@gmail.com";
+                        var subject = "New bill shared with you";
+                        var message = "New bill has been share with you in WeCasa";
+                        var rem = "immediately";
+                        var evnt = "New bill added to budget";
+                        List<string> recipient = new List<string>();
+                        for (int i = 0; i < usernames.Count; i++)
+                        {
+                            
+                                Console.WriteLine(usernames.Count);
+                                var to = usernames[i];
+                                Console.WriteLine("Sending to: "+ to);
+                                NotificationService.ScheduleReminderEmail(from, to, subject, message, rem, evnt);
+                                Console.WriteLine("Sent: " + to);
+
+                        }
                         _logger.Log("Add bill was successful " + bill.Amount, LogLevels.Info, "Data Store", bill.Owner);
                     }
                     else
                     {
-                        _logger.Log( "Add bill Error: " + result.ErrorStatus  + "\n" +"Message: " + result.Message + "\n" + "State: " + result.SqlState, LogLevels.Error, "Data Store", bill.Owner);
+                        _logger.Log("Add bill Error: " + result.ErrorStatus + "\n" + "Message: " + result.Message + "\n" + "State: " + result.SqlState, LogLevels.Error, "Data Store", bill.Owner);
                     }
                 }
                 else
@@ -116,14 +141,14 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 }
                 return result;
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
-                 _logger.Log( "Error Message: " + exc.Message, LogLevels.Error, "Data Store", bill.Owner, new UserOperation(Operations.BudgetBar,0));
+                _logger.Log("Error Message: " + exc.Message, LogLevels.Error, "Data Store", bill.Owner, new UserOperation(Operations.BudgetBar, 0));
                 throw exc;
             }
         }
 
-         public Result UpdateBill(Bill bill)
+        public Result UpdateBill(Bill bill)
         {
             try
             {
