@@ -36,6 +36,8 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var emailMessage = MailHelper.CreateSingleEmail(emailFrom, emailTo, subject, message, message);
             bool isSent = false;
 
+            
+
             // Calculate the send date based on the selected reminder option
             DateTime sendDate;
             switch (reminderOption.ToLower())
@@ -43,20 +45,12 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 case "immediately":
                     sendDate = DateTime.UtcNow;
                     break;
-                case "30 minutes":
-                    sendDate = DateTime.UtcNow.AddMinutes(-30);
-                    break;
-                case "A day":
-                    sendDate = DateTime.UtcNow.AddDays(-1);
-                    break;
-                case "A week":
-                    sendDate = DateTime.UtcNow.AddDays(-7);
-                    break;
                 case "Every Sunday":
                     sendDate = GetNextSunday();
                     break;
                 default:
                     throw new ArgumentException("Invalid reminder option");
+                    Console.WriteLine("invalid remindertime");
             }
 
             // Schedule the email to send at the calculated send date

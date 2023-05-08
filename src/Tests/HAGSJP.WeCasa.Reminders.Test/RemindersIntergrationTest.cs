@@ -108,7 +108,7 @@ namespace HAGSJP.WeCasa.Reminders.Test
                 Color = "#0256D4",
                 CreatedBy = "hvkn19@gmail.com",
                 Reminder = "immediately",
-                EventDate = DateTime.UtcNow
+                EventDate = new DateTime(2023, 5, 7, 15, 39, 12, DateTimeKind.Utc)
             };
 
             _testNote = new Note()
@@ -127,7 +127,6 @@ namespace HAGSJP.WeCasa.Reminders.Test
                 PhotoFileName = null
 
             };
-
 
 
             _testChore = new Chore()

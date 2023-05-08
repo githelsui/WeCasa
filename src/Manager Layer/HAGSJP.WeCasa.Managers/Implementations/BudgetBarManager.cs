@@ -163,6 +163,9 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 {
                     result = _dao.UpdateBill(bill);
                     if (result.IsSuccessful)
+
+
+
                     {
                         _logger.Log("Edit bill was successful", LogLevels.Info, "Data Store", bill.Owner);
                     }

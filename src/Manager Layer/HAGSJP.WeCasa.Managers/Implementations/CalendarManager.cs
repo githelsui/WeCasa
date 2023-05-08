@@ -39,12 +39,16 @@ namespace HAGSJP.WeCasa.Managers.Implementations
 
         public async Task<Result> AddEvent(Event evnt)
         {
-
+            Console.WriteLine("Entered AddEvent in manager");
             var result = _service.AddEvent(evnt);
-            
+            Console.WriteLine("Add event method went through");
+
+
 
             if (result.IsSuccessful && evnt.Reminder != null)
             {
+                Console.WriteLine("preparing email");
+
                 // Send notification for the new event
                 Console.WriteLine("result is successfull and reminder is not null");
                 var group = new GroupModel { GroupId = evnt.GroupId };
@@ -62,6 +66,27 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 var usernames = (List<string>)rsult.ReturnedObject;
                 var eventDate = evnt.EventDate;
                 string reminderOption = evnt.Reminder;
+                DateTime sendDate;
+                switch (reminderOption.ToLower())
+                {
+                    case "immediately":
+                        sendDate = evnt.EventDate;
+                        break;
+                    case "30 minutes":
+                        sendDate = evnt.EventDate.AddMinutes(-30);
+                        break;
+                    case "A day":
+                        sendDate = evnt.EventDate.AddDays(-1);
+                        break;
+                    case "A week":
+                        sendDate = evnt.EventDate.AddDays(-7);
+                        break;
+                    default:
+                        throw new ArgumentException("Invalid reminder option");
+                }
+
+
+
                 string eventType = "event from calendar is coming up";
                 string subject = "Reminder for " + eventType;
                 string message = $"This is a reminder for " + eventType;

@@ -37,13 +37,19 @@ namespace HAGSJP.WeCasa.Services.Implementations
         }
         public DAOResult AddEvent(Event evnt)
         {
+            Console.WriteLine("Add event in service");
+
             var addEventResult = _dao.AddEvent(evnt);
             if (addEventResult.IsSuccessful)
             {
+                Console.WriteLine("Add event success");
+
                 successLogger.Log("Event created successfully", LogLevels.Info, "Data Store", evnt.GroupId.ToString());
             }
             else
             {
+                Console.WriteLine("Add event failed");
+
                 errorLogger.Log("Error creating an event", LogLevels.Error, "Data Store", evnt.GroupId.ToString());
             }
 
