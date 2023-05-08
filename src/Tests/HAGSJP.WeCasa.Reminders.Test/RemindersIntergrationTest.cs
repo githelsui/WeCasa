@@ -8,6 +8,7 @@ using SendGrid.Helpers.Mail.Model;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using SendGrid.Helpers.Mail;
 using System.Net.Mail;
+using System.Text.Json;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Managers;
 using HAGSJP.WeCasa.Managers.Implementations;
@@ -108,7 +109,7 @@ namespace HAGSJP.WeCasa.Reminders.Test
                 Color = "#0256D4",
                 CreatedBy = "hvkn19@gmail.com",
                 Reminder = "immediately",
-                EventDate = DateTime.UtcNow
+                EventDate = new DateTime(2023, 5, 7, 15, 39, 12, DateTimeKind.Utc)
             };
 
             _testNote = new Note()
@@ -127,7 +128,6 @@ namespace HAGSJP.WeCasa.Reminders.Test
                 PhotoFileName = null
 
             };
-
 
 
             _testChore = new Chore()
