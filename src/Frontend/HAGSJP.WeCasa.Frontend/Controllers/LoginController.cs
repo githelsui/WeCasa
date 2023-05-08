@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using HAGSJP.WeCasa.Services.Implementations;
+using HAGSJP.WeCasa.Managers.Implementations;
 using HAGSJP.WeCasa.Client;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Models.Security;
@@ -40,5 +41,30 @@ public class LoginController : ControllerBase
         UserAccount ua = new UserAccount(form.Username);
         Login login = new Login();
         return login.SubmitOTP(ua, form.Password);
+    }
+
+    [HttpPost]
+    [Route("VerifyAdmin")]
+    public Result VerifyAdmin([FromBody] LoginForm account)
+    {
+        try
+        {
+            var userManager = new UserManager();
+            var result = userManager.ValidateAdminRole(new UserAccount(account.Username));
+            if (result.IsSuccessful)
+            {
+                result.ErrorStatus = System.Net.HttpStatusCode.OK;
+            }
+            else
+            {
+                result.ErrorStatus = System.Net.HttpStatusCode.BadRequest;
+            }
+            return result;
+
+        }
+        catch (Exception exc)
+        {
+            return new ChoreResult(false, System.Net.HttpStatusCode.Conflict, exc.Message);
+        }
     }
 }

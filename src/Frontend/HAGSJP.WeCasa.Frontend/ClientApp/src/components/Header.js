@@ -37,6 +37,7 @@ export const Header = () => {
                     setAuth(false);
                     setCurrentUser(null);
                     successLogoutView(res.data['message']);
+                    navigate('/');
                 } else {
                     failureLogoutView(res.data['message']);
                 }

@@ -44,7 +44,7 @@
 
         public DateTime Date_Time { get; set; } 
         public string Username { get; set; }
-        public Operations Operation { get; set; }
-        public int Success { get; set; }
+        public Operations? Operation { get; set; }
+        public int? Success { get; set; }
     }
 }

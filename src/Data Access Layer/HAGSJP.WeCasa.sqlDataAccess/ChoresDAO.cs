@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using HAGSJP.WeCasa.Models;
+using Microsoft.Extensions.Configuration;
 using MySqlConnector;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
@@ -11,21 +12,20 @@ namespace HAGSJP.WeCasa.sqlDataAccess
     public class ChoresDAO : AccountMariaDAO
     {
         private string _connectionString;
+        private MariaDB _mariaDB;
         private DAOResult result;
 
         public ChoresDAO() { }
 
-        public MySqlConnectionStringBuilder BuildConnectionString()
+        public string GetConnectionString()
         {
-            var builder = new MySqlConnectionStringBuilder
-            {
-                Server = "localhost",
-                Port = 3306,
-                UserID = "HAGSJP.WeCasa.SqlUser",
-                Password = "cecs491",
-                Database = "HAGSJP.WeCasa"
-            };
-            return builder;
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("config.json")
+                .AddEnvironmentVariables()
+                .Build();
+
+            _mariaDB = config.GetRequiredSection("MariaDB").Get<MariaDB>();
+            return _mariaDB.Local;
         }
 
         public DAOResult ValidateSqlStatement(int rows)
@@ -65,7 +65,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public DAOResult CreateChore(Chore chore)
         {
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -133,7 +133,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             // Does not handle updates to chore assignments
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -194,7 +194,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public DAOResult CompleteChore(Chore chore)
         {
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -233,7 +233,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             // Reset chore.AssignedTo for Chores table & Usergroups table
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -402,7 +402,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             // Reset chore.AssignedTo for Chores table & Usergroups table
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -457,7 +457,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public DAOResult DeleteChore(Chore chore)
         {
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -483,7 +483,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     {
                         // Execution of second query
                         var deleteUserChoreSql = @"DELETE FROM UserChore
-                                     WHERE chore_id = @chore_id;";
+                                     WHERE chore_id = @chore_id
+                                     AND is_completed = 0;";
                         command = connection.CreateCommand();
                         command.CommandText = deleteUserChoreSql;
                         command.Parameters.AddWithValue("@chore_id", chore.ChoreId);
@@ -523,7 +524,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             DateTime mondayDate = currentDate.AddDays(-(int)currentDayOfWeek + 1);
             DateTime sundayDate = mondayDate.AddDays(6);
 
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -531,8 +532,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     connection.Open();
 
                     var command = connection.CreateCommand();
-                    command.CommandText = @"SELECT * from CHORES AS c
-                                            INNER JOIN userchore AS uc
+                    command.CommandText = @"SELECT * from Chores AS c
+                                            INNER JOIN UserChore AS uc
                                                 ON (c.chore_id = uc.chore_id)
                                             WHERE uc.is_completed = 0
                                               AND c.group_id = @group_id
@@ -591,7 +592,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             var result = new DAOResult();
             List<Chore> chores = new List<Chore>();
 
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -599,8 +600,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     connection.Open();
 
                     var command = connection.CreateCommand();
-                    command.CommandText = @"SELECT * from CHORES AS c
-                                            INNER JOIN userchore AS uc
+                    command.CommandText = @"SELECT * from Chores AS c
+                                            INNER JOIN UserChore AS uc
                                                 ON (c.chore_id = uc.chore_id)
                                             WHERE uc.is_completed = 1
                                               AND c.group_id = @group_id
@@ -654,7 +655,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             var result = new DAOResult();
             List<Chore> chores = new List<Chore>();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -709,7 +710,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             var result = new DAOResult();
             List<int> choreIds = new List<int>();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -763,7 +764,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             Console.Write("End of Week:");
             Console.WriteLine(endOfWeek.ToString());
 
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -771,8 +772,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     connection.Open();
 
                     var command = connection.CreateCommand();
-                    command.CommandText = @"SELECT * from CHORES AS c
-                                            INNER JOIN userchore AS uc
+                    command.CommandText = @"SELECT * from Chores AS c
+                                            INNER JOIN UserChore AS uc
                                                 ON (c.chore_id = uc.chore_id)
                                             WHERE uc.is_completed = 0
                                               AND uc.username = @username
@@ -829,7 +830,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             var result = new ChoreResult();
             var progressReport = new ProgressReport(group_id, username);
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
@@ -837,15 +838,15 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                     await connection.OpenAsync();
 
                     var command = connection.CreateCommand();
-                    var selectSql = @"SELECT COUNT(CASE WHEN c.is_completed = 1 THEN 1 ELSE NULL END) AS completedChores,
-                                         COUNT(CASE WHEN c.is_completed = 0 THEN 1 ELSE NULL END) AS incompleteChores
-                                      FROM userchore AS uc
-                                         INNER JOIN chores AS c 
+                    var selectSql = @"SELECT COUNT(CASE WHEN uc.is_completed = 1 THEN 1 ELSE NULL END) AS completedChores,
+                                         COUNT(CASE WHEN uc.is_completed = 0 THEN 1 ELSE NULL END) AS incompleteChores
+                                      FROM UserChore AS uc
+                                         INNER JOIN Chores AS c 
                                             ON (uc.chore_id = c.chore_id)
                                       WHERE username = @username 
                                             AND group_id = @group_id
                                             AND MONTH(c.created) = MONTH(NOW());";
-                    
+
                     command.CommandText = selectSql;
                     command.Parameters.AddWithValue("@username", username);
                     command.Parameters.AddWithValue("@group_id", group_id);

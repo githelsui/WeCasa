@@ -135,7 +135,7 @@ const CreateGroupModal = (props) => {
                         </Col>
                     <Col span={16} className="group-name-input">
                             <Form.Item name="groupName">
-                                <Input style={Styles.inputFieldStyle} required placeholder="Group name" />
+                                <Input style={Styles.inputFieldStyle} required placeholder="Group name" maxLength="50" />
                             </Form.Item>
                     </Col>
                     </Row>
@@ -144,7 +144,7 @@ const CreateGroupModal = (props) => {
                 <Row gutter={[24, 24]}>
                     <Col span={18} className="invite-group-members">
                         <Form.Item name="memberUsername">
-                            <Input style={Styles.inputFieldStyle} placeholder="Roommate Email/Username" value={roommate} onChange={(e) => { setRoommate(e.target.value) }} />
+                            <Input style={Styles.inputFieldStyle} placeholder="Roommate Email/Username" value={roommate} onChange={(e) => { setRoommate(e.target.value) }} maxLength="255" />
                         </Form.Item>
                     </Col>
                     <Col span={6} className="invite-group-members-btn">

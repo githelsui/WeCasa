@@ -16,9 +16,11 @@ https://trello.com/invite/b/flAWDMWj/6c8c5e7eb8e06ec0e0f2c69fedd6f343/cecs-491a
             |__README.md
             |__package.json
 ```
-Open the HAGSJP.WeCasa.sln file in Visual Studio and run the following in the terminal:
+To run locally, open the HAGSJP.WeCasa.sln file in Visual Studio and run the following in the terminal:
 1. ```git clone https://github.com/githelsui/WeCasa.git```
-2. ```cd Frontend/HAGSJP.WeCasa.Frontend/ClientApp```
-3. ```npm install``` 
+2. Create a copy of config.template.json file in HAGSJP.WeCasa.sqlDataAccess 
+3. Rename file to config.json and add database configuration
+4. ```cd Frontend/HAGSJP.WeCasa.Frontend/ClientApp```
+5. ```npm install``` 
 
 Run the HAGSJP.WeCasa.Frontend.csproj file

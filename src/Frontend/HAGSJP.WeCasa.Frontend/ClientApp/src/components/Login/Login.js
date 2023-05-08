@@ -14,7 +14,7 @@ export const resetPassBtnStyle = {
 }
 
 export const Login = () => {
-    const { setAuth, setCurrentUser } = useAuth();
+    const { setAuth, setCurrentUser, setAdmin } = useAuth();
     const navigate = useNavigate();
 
     const [loginResults, setLoginResults] = useState(false);
@@ -97,10 +97,12 @@ export const Login = () => {
                 .then(res => {
                     var isSuccessful = res.data['isSuccessful'];
                     if (isSuccessful) {
-                        console.log(res.data)
+                        var userAccount = res.data.returnedObject;
+                        console.log(userAccount)
                         setLoginResults(true);
                         setAuth(true);
-                        setCurrentUser(res.data.returnedObject);
+                        setCurrentUser(userAccount);
+                        checkAdminPrivilege(userAccount.username);
                         successLoginView();
                     } else {
                         failureLoginView(res.data['message']);
@@ -110,6 +112,29 @@ export const Login = () => {
         } else {
             failureLoginView('Empty fields not accepted.')
         }
+    }
+
+    const recoverAccount = () => {
+        navigate('/account-recovery');
+    }
+    
+    const checkAdminPrivilege = (values) => {
+        let userForm = {
+            Username: account
+        };
+
+        axios.post('login/VerifyAdmin', userForm)
+            .then(res => {
+                var isSuccessful = res.data['isSuccessful'];
+                if (isSuccessful) {
+                    console.log("Verified admin role")
+                    var isAdmin = res.data.returnedObject;
+                    setAdmin(isAdmin);
+                } else {
+                    failureLoginView(res.data['message']);
+                }
+            })
+            .catch((error) => { console.error(error) });
     }
 
     const failureLoginView = (failureMessage) => {
@@ -128,19 +153,6 @@ export const Login = () => {
         navigate('/home', { replace:true});
         //this.forceUpdate();
     }
-
-    // DELETE ME
-    // for dev purposes lol
-    /*setAuth(true);
-    const tempUser = {
-        firstName: "allison",
-        lastName: "test",
-        username: "test123@gmail.com",
-        image: 1,
-        notifications: ["email", "sms"]
-    }
-    setCurrentUser(tempUser);
-    successLoginView();*/
 
     return (
         <div id="LoginPage"> 
@@ -166,7 +178,7 @@ export const Login = () => {
 
                                     <ConfigProvider theme={Styles.buttonHover}>
                                         <div id="ForgotPassBtn" style={{ marginTop: 15 }}>
-                                            <Button style={resetPassBtnStyle}>Forgot Password? Reset Here</Button>
+                                        <Button onClick={() => recoverAccount()} style={resetPassBtnStyle}>Forgot Password? Reset Here</Button>
                                         </div>
                                     </ConfigProvider>
                                 </div>) :
@@ -182,6 +194,7 @@ export const Login = () => {
 
                                         <Button style={Styles.primaryButtonStyle} type="primary" htmlType="submit">Login</Button>
                                     </Form>
+
                             </div>)
 
                                 }

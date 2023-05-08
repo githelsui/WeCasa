@@ -16,7 +16,7 @@
     --primary: #10B364;
     --secondary: #0D77CF;
     --size: 200px;
-    animation: progress 2s 0.5s forwards;
+    animation: progress 2s forwards;
     width: var(--size);
     aspect-ratio: 2 / 1;
     border-radius: 50% / 100% 100% 0 0;

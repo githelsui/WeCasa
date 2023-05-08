@@ -1,4 +1,5 @@
-﻿using Amazon.Runtime;
+﻿using System.Configuration;
+using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Azure;
@@ -11,19 +12,34 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
     public class FilesS3DAO : ILoggerDAO
     {
-        // Configuring AWS S3 client for hagsjp.wecasa.s3 user
-        private AmazonS3Client _client = new AmazonS3Client(
-            "",
-            "",
-            Amazon.RegionEndpoint.USEast2
-        );
+        private AmazonS3Client _client;
+        private AWS _aws;
         private string _bucketName = "wecasa-group-files-";
+
+        // Configuring AWS S3 client for hagsjp.wecasa.s3 user
+        public AmazonS3Client GetClient()
+        {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("config.json")
+                .AddEnvironmentVariables()
+                .Build();
+
+            _aws = config.GetRequiredSection("AWS").Get<AWS>();
+
+            var client = new AmazonS3Client(
+                _aws.AWSAccessKey,
+                _aws.AWSSecretKey,
+                Amazon.RegionEndpoint.USEast2
+            );
+            return client;
+        }
 
         public FilesS3DAO() { }
         
@@ -47,6 +63,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             var bucketName = _bucketName + groupId;
              try
             {
+                _client = GetClient();
                 var response = await _client.PutBucketAsync(bucketName);
                 // Enabling bucket versioning
                 var versioningRequest = new PutBucketVersioningRequest
@@ -78,6 +95,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
             do
             {
+                _client = GetClient();
                 response = await _client.ListObjectsV2Async(request);
                 foreach (var s3Obj in response.S3Objects)
                 {
@@ -119,6 +137,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
             do
             {
+                _client = GetClient();
                 response = await _client.ListObjectsV2Async(request);
                 foreach (var s3Obj in response.S3Objects)
                 {
@@ -161,6 +180,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             var s3Objects = new List<S3ObjectModel>();
             var request = new ListVersionsRequest { BucketName = _bucketName + groupId };
             ListVersionsResponse response;
+
+            _client = GetClient();
 
             response = await _client.ListVersionsAsync(request);
 
@@ -206,7 +227,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 Key = string.IsNullOrEmpty(prefix) ? file.FileName : $"{prefix?.TrimEnd('/')}/{file.FileName}",
                 InputStream = file.OpenReadStream()
             };
-            
+
+            _client = GetClient();
             var response = await _client.PutObjectAsync(request);
             result.ErrorStatus = response.HttpStatusCode;
             result.Message = $"{file.FileName} successfully uploaded.";
@@ -225,6 +247,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             };
             try
             {
+                _client = GetClient();
                 var response = await _client.DeleteObjectAsync(request);
                 result.ErrorStatus = response.HttpStatusCode;
                 result.Message = $"{fileName} successfully deleted from {bucketName}.";
