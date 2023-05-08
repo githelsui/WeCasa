@@ -29,6 +29,9 @@
     	<!-- <ProjectReference Include="..\..\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\HAGSJP.WeCasa.Logging.csproj" /> -->
 	</ItemGroup>
 	<ItemGroup>
+		<None Update="config.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="config.template.json">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

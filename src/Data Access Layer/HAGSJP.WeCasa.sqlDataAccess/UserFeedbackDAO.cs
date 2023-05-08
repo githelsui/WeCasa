@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Windows.Markup;
 using HAGSJP.WeCasa.Models;
+using Microsoft.Extensions.Configuration;
 using MySqlConnector;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
@@ -8,19 +9,18 @@ namespace HAGSJP.WeCasa.sqlDataAccess
     public class UserFeedbackDAO : AccountMariaDAO
     {
         private string _connectionString;
-        private DAOResult result;
+        private MariaDB _mariaDB;
+        private DAOResult _result;
 
-        public MySqlConnectionStringBuilder BuildConnectionString()
+        public string GetConnectionString()
         {
-            var builder = new MySqlConnectionStringBuilder
-            {
-                Server = "localhost",
-                Port = 3306,
-                UserID = "HAGSJP.WeCasa.SqlUser",
-                Password = "cecs491",
-                Database = "HAGSJP.WeCasa"
-            };
-            return builder;
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("config.json")
+                .AddEnvironmentVariables()
+                .Build();
+
+            _mariaDB = config.GetRequiredSection("MariaDB").Get<MariaDB>();
+            return _mariaDB.Local;
         }
 
         public DAOResult ValidateSqlStatement(int rows)
@@ -44,7 +44,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             var result = new DAOResult();
 
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 try
