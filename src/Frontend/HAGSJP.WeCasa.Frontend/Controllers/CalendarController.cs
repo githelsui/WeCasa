@@ -8,6 +8,7 @@ using HAGSJP.WeCasa.Managers.Implementations;
 using HAGSJP.WeCasa.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
 
 namespace HAGSJP.WeCasa.Frontend.Controllers
 {
@@ -63,7 +64,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         public async Task<Result> EditGroupEvent([FromBody] EventForm eventForm)
         {
             var result = new Result();
-            DateTime eventDate = DateTime.ParseExact(eventForm.EventDate, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
+            DateTime eventDate = DateTime.ParseExact(eventForm.EventDate, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
             try
             {
                 Event e = new Event(eventForm.EventId, eventForm.EventName, eventForm.Description, eventDate, eventForm.GroupId, eventForm.Repeats, eventForm.Type, eventForm.Reminder, eventForm.Color, eventForm.CreatedBy);
@@ -82,10 +83,11 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         public async Task<Result> DeleteGroupEvent([FromBody] EventForm eventForm)
         {
             var result = new Result();
-            DateTime eventDate = DateTime.ParseExact(eventForm.EventDate, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
+            DateTime eventDate = DateTime.ParseExact(eventForm.EventDate, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
             try
             {
-                Event e = new Event(eventForm.EventId, eventForm.EventName, eventForm.Description, eventDate, eventForm.GroupId, eventForm.Repeats, eventForm.Type, eventForm.Reminder, eventForm.Color, eventForm.CreatedBy);
+                Event e = new Event(eventForm.EventId, eventForm.EventName, eventForm.Description, eventDate, eventForm.GroupId, eventForm.Repeats, eventForm.Type, eventForm.Reminder, eventForm.Color, eventForm.CreatedBy, eventForm.RemovedBy);
+                e.RemovedBy = eventForm.RemovedBy;
                 result = await _manager.DeleteEvent(e);
             }
             catch (Exception ex)

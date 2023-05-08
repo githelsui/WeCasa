@@ -17,4 +17,5 @@ public class EventForm
     public string Reminder { get; set; }
     public string Color { get; set; }
     public string CreatedBy { get; set; }
+    public string? RemovedBy { get; set; }
 }

@@ -36,7 +36,8 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var addEventResult = await _dao.AddEvent(evnt);
             if (addEventResult.IsSuccessful)
             {
-                await successLogger.Log("Event created successfully", LogLevels.Info, "Data Store", evnt.GroupId.ToString());
+                addEventResult.Message = "Event created successfully";
+                await successLogger.Log(addEventResult.Message, LogLevels.Info, "Data Store", evnt.GroupId.ToString());
             }
             else
             {
@@ -66,11 +67,6 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (deleteEventResult.IsSuccessful)
             {
                 deleteEventResult.Message = "Event deleted successfully";
-                await successLogger.Log(deleteEventResult.Message, LogLevels.Info, "Data Store", evnt.GroupId.ToString());
-            }
-            else
-            {
-                await errorLogger.Log("Error deleting an event", LogLevels.Error, "Data Store", evnt.GroupId.ToString());
             }
 
             return deleteEventResult;

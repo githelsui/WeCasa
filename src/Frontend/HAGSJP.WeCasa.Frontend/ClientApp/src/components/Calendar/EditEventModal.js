@@ -11,18 +11,18 @@ const reminderOptions = ['30 minutes', 'A day', 'A week'];
 
 
 const EditEventModal = (props) => {
-    const [eventDate, setEventDate] = useState('');
+    const event = props.event;
+    const eventColors = ['#0256D4', '#F4B105', '#FFEE58', '#FF2929', '#10B364'];
+    const [eventDate, setEventDate] = useState(new Date(event.eventDate));
     const [descChanged, setDescChanged] = useState(false);
     const [dateChanged, setDateChanged] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [repeat, setRepeat] = useState('');
     const [eventType, setEventType] = useState('');
     const [reminder, setReminder] = useState('');
-    const [eventColor, setEventColor] = useState('');
     const [colorChanged, setColorChanged] = useState(false);
+    const [eventColor, setEventColor] = useState(eventColors.indexOf(props.event.color));
     const [form] = Form.useForm();
-    const eventColors = ['#0256D4', '#F4B105', '#FFEE58', '#FF2929', '#10B364'];
-    const event = props.event;
 
     const onDateChange = (date, dateString) => {
         setEventDate(dateString);
@@ -74,15 +74,10 @@ const EditEventModal = (props) => {
                 eventDate: event.eventDate
             });
         }
-        if (colorChanged) {
-            form.setFieldsValue({
-                color: eventColors[eventColor]
-            });
-        } else {
-            form.setFieldsValue({
-                color: event.eventColor
-            });
-        }
+        form.setFieldsValue({
+            color: eventColors[eventColor]
+        });
+
         form.validateFields()
             .then((values) => {
                 props.confirm(values);
@@ -91,8 +86,38 @@ const EditEventModal = (props) => {
     }
 
     const deleteEvent = () => {
-        console.log('deleting event...');
         setShowModal(false);
+        // Populating untouched fields
+        if (form.getFieldValue('eventName') == null) {
+            form.setFieldsValue({
+                eventName: event.eventName
+            });
+        }
+        if (form.getFieldValue('description') == null && !descChanged) {
+            form.setFieldsValue({
+                description: event.description
+            });
+        }
+        if (dateChanged) {
+            form.setFieldsValue({
+                eventDate: eventDate
+            });
+        } else {
+            form.setFieldsValue({
+                eventDate: event.eventDate
+            });
+        }
+        form.setFieldsValue({
+            color: eventColors[eventColor]
+        });
+        console.log(form);
+        
+       
+        form.validateFields()
+            .then((values) => {
+                props.remove(values);
+            })
+            .catch((errorInfo) => { console.log(errorInfo) });
     }
 
     const displayEventColors = () => {
@@ -146,13 +171,13 @@ const EditEventModal = (props) => {
                         <div className="datetime-row padding-bottom">
                             <Row gutter={24} style={{ display: 'flex', flexDirection: 'horizontal' }}>
                                 <Col span={16}>
-                                <Form.Item name="eventDate" value={eventDate}>
-                                    <DatePicker format="YYYY-MM-DD hh:mm:ss"
+                                {<Form.Item name="eventDate" value={eventDate}>
+                                    {<DatePicker format="YYYY-MM-DD hh:mm:ss"
                                         showTime={true}
                                         onChange={onDateChange}
-                                        placeholder={event == null ? "" : new Date(event.eventDate).toLocaleString()}
-                                        />
-                                    </Form.Item>
+                                        placeholder={new Date(event.eventDate).toLocaleString()}
+                                        />}
+                                    </Form.Item>}
                                 </Col>
                             </Row>
                         </div>
@@ -197,7 +222,7 @@ const EditEventModal = (props) => {
                         <div className="tag-row padding-bottom">
                             <Row gutter={24} style={{ display: 'flex', flexDirection: 'horizontal' }}>
                                 {displayEventColors()}
-                                <Form.Item name="color"></Form.Item>
+                            <Form.Item name="color" value={event.eventColor}></Form.Item>
                             </Row>
                         </div>
                         <Row gutter={24} style={{alignItems:'center', justifyContent:'center', gap:'30px'}} > 

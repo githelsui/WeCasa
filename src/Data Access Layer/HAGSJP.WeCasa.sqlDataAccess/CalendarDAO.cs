@@ -151,11 +151,14 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 {
                     await connection.OpenAsync();
                     var deleteEventSql =
-                        @"DELETE FROM Events WHERE event_id = @event_id;";
+                        @"UPDATE `Events` 
+                            SET `is_deleted` = 1,
+                                `color` = '#ececec'
+                            WHERE `event_id` = @event_id;";
 
                     var command = connection.CreateCommand();
                     command.CommandText = deleteEventSql;
-                    command.Parameters.AddWithValue("@event_id", e.EventId);
+                    command.Parameters.AddWithValue("@event_id", Convert.ToInt32(e.EventId));
 
                     var rows = (command.ExecuteNonQuery());
                     result = ValidateSqlStatement(rows);
@@ -201,6 +204,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                             e.Type = reader.GetString(reader.GetOrdinal("type"));
                             e.Reminder = reader.GetString(reader.GetOrdinal("reminder"));
                             e.Color = reader.GetString(reader.GetOrdinal("color"));
+                            e.IsDeleted = reader.GetInt32(reader.GetOrdinal("is_deleted")) == 1 ? true : false;
+                            e.CreatedBy = reader.GetString(reader.GetOrdinal("created_by"));
                             events.Add(e);
                         }
                     }

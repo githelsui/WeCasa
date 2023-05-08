@@ -23,7 +23,7 @@ export const CalendarView = () => {
     const [events, setEvents] = useState([]);
     const [mode, setMode] = useState('month');
     const [selectedDate, setSelectedDate] = useState(value);
-    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [selectedEvent, setSelectedEvent] = useState('');
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     dayjs.extend(dayLocaleData);
@@ -57,7 +57,7 @@ export const CalendarView = () => {
             EventName: eventConfig.eventName,
             Description: (eventConfig.description == null) ? "" : eventConfig.description,
             GroupId: currentGroup.groupId,
-            EventDate: eventConfig.eventDate,
+            EventDate: eventConfig.eventDate.replace('T', ' '),
             Repeats: (eventConfig.repeats == null) ? "never" : eventConfig.repeats,
             Type: (eventConfig.type == null) ? "public" : eventConfig.type,
             Reminder: (eventConfig.reminder == null) ? "none" : eventConfig.reminder,
@@ -70,6 +70,7 @@ export const CalendarView = () => {
                 var isSuccessful = res.data['isSuccessful']
                 if (isSuccessful) {
                     successCalendarView(res.data['message']);
+                    refreshCalendar();
                 }
                 else {
                     failureCalendarView(res.data['message']);
@@ -84,12 +85,12 @@ export const CalendarView = () => {
             EventName: eventConfig.eventName,
             Description: eventConfig.description,
             GroupId: currentGroup.groupId,
-            EventDate: eventConfig.eventDate,
+            EventDate: eventConfig.eventDate.replace('T', ' '),
             Repeats: (eventConfig.repeats == null) ? "never" : eventConfig.repeats,
             Type: (eventConfig.type == null) ? "public" : eventConfig.type,
             Reminder: (eventConfig.reminder == null) ? "none" : eventConfig.reminder,
-            Color: eventConfig.color,
-            CreatedBy: currentUser.username
+            Color: eventConfig.color == "same" ? selectedEvent.color : eventConfig.color,
+            CreatedBy: selectedEvent.createdBy
         }
         console.log("updating event...", newEvent);
         axios.post('calendar/EditGroupEvent', newEvent)
@@ -97,6 +98,36 @@ export const CalendarView = () => {
                 var isSuccessful = res.data['isSuccessful']
                 if (isSuccessful) {
                     successCalendarView(res.data['message']);
+                    refreshCalendar();
+                }
+                else {
+                    failureCalendarView(res.data['message']);
+                }
+            })
+    }
+
+    const deleteCalendarEvent = (eventConfig) => {
+        setShowEditModal(false);
+        let eventToDelete = {
+            EventId: selectedEvent.eventId,
+            EventName: eventConfig.eventName,
+            Description: eventConfig.description,
+            GroupId: currentGroup.groupId,
+            EventDate: eventConfig.eventDate.replace('T', ' '),
+            Repeats: (eventConfig.repeats == null) ? "never" : eventConfig.repeats,
+            Type: (eventConfig.type == null) ? "public" : eventConfig.type,
+            Reminder: (eventConfig.reminder == null) ? "none" : eventConfig.reminder,
+            Color: eventConfig.color == "same" ? selectedEvent.color : eventConfig.color,
+            CreatedBy: selectedEvent.createdBy,
+            RemovedBy: currentUser.username
+        }
+        console.log("deleting event...", eventToDelete);
+        axios.post('calendar/DeleteGroupEvent', eventToDelete)
+            .then(res => {
+                var isSuccessful = res.data['isSuccessful']
+                if (isSuccessful) {
+                    successCalendarView(res.data['message']);
+                    refreshCalendar();
                 }
                 else {
                     failureCalendarView(res.data['message']);
@@ -111,7 +142,8 @@ export const CalendarView = () => {
 
     const onSelectDate = (value) => {
         setValue(value);
-        setSelectedDate(value);
+        let selected = new Date(value);
+        setSelectedDate(selected);
     }
 
     const selectEvent = (event) => {
@@ -225,7 +257,7 @@ export const CalendarView = () => {
         return (
             <ul className="events">
                 {events.map((event) => (
-                    isSameDay(event.eventDate, value) ? 
+                    (isSameDay(event.eventDate, value) && !event.isDeleted) ? 
                         (<li className="event" key={event.eventId} onClick={() => selectEvent(event)}>
                             <Badge status={event.type} color={event.color} text={event.eventName} />
                     </li>) : null
@@ -263,10 +295,12 @@ export const CalendarView = () => {
                     style={{ fontFamily: 'Mulish' }}
                     headerRender={headerRender}
                     dateCellRender={cellRender}
-                    onPanelChange={onPanelChange} />
+                    onPanelChange={onPanelChange}
+                    onSelect={onSelectDate}
+                    />
                 </div>
-            <AddEventModal show={showAddModal} close={() => setShowAddModal(false)} confirm={addCalendarEvent}/>
-            <EditEventModal show={showEditModal} close={() => setShowEditModal(false)} event={selectedEvent} confirm={editCalendarEvent} />
+            {showAddModal && <AddEventModal show={showAddModal} close={() => setShowAddModal(false)} confirm={addCalendarEvent} date={selectedDate} />}
+            {showEditModal && <EditEventModal show={showEditModal} close={() => setShowEditModal(false)} event={selectedEvent} confirm={editCalendarEvent} remove={deleteCalendarEvent} />}
         </div>
     );
 };

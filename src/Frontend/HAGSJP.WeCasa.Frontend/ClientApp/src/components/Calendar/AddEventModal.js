@@ -10,13 +10,15 @@ const reminderOptions = ['30 minutes', 'A day', 'A week'];
 
 const AddEventModal = (props) => {
     const [loading, setLoading] = useState(false);
-    const [eventDate, setEventDate] = useState('');
+    const [eventDate, setEventDate] = useState(props.date);
     const [repeat, setRepeat] = useState('');
     const [eventType, setEventType] = useState('public');
     const [reminder, setReminder] = useState('');
     const [eventColor, setEventColor] = useState(0);
     const [form] = Form.useForm();
     const eventColors = ['#0256D4', '#F4B105', '#FFEE58', '#FF2929', '#10B364'];
+
+    console.log(eventDate);
 
     const onDateChange = (date, dateString) => {
         setEventDate(dateString);
@@ -42,6 +44,7 @@ const AddEventModal = (props) => {
         form.validateFields()
             .then((values) => {
                 props.confirm(values);
+                form.resetFields();
                 setLoading(true)
             })
             .catch((errorInfo) => { console.log(errorInfo) });
@@ -103,6 +106,7 @@ const AddEventModal = (props) => {
                                         <DatePicker format="YYYY-MM-DD hh:mm:ss"
                                             showTime={true}
                                             onChange={onDateChange}
+                                            placeholder={props.date.toLocaleString()}
                                          />
                                     </Form.Item>
                                 </Col>
