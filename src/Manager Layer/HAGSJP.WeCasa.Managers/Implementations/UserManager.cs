@@ -234,7 +234,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             if (userPersistResult.IsSuccessful)
             {
                 // Logging the registration
-                successLogger.Log("Account created successfully", LogLevels.Info, "Data Store", userAccount.Username);
+                successLogger.Log("Account created successfully", LogLevels.Info, "Data Store", userAccount.Username, new UserOperation(Operations.Registration, 1));
             }
             else
             {

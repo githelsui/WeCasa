@@ -78,28 +78,18 @@ export const Charts = (props) => {
             .attr("transform", `translate(${margin.left},     ${margin.top})`);
 
         // Add X axis and Y axis
-        //var nestedData = d3.nest()
-        //    .key(function (d) { return d.date; })
-        //    .rollup(function (v) { return d3.sum(v, function (d) { return parseInt(d.value); }); })
-        //    .entries(data);
-
-        //var nestedData = d3.nest()
-        //    .key(function (d) { return d.date; })
-        //    .rollup(function (v) { return d3.sum(v, function (d) { return parseInt(d.value); }); })
-        //    .entries(data);
-
         var x = d3.scaleTime().range([0, width]);
         var y = d3.scaleLinear().range([height, 0]);
-        x.domain(d3.extent(data, d => new Date(d.date)));
-        y.domain([0, d3.max(data, (d) => { return parseInt(d.value); })]);
+        var xScale = x.domain(d3.extent(data, d => new Date(d.date)));
+        var yScale = y.domain([0, d3.max(data, (d) => { return parseInt(d.value); })]);
 
-        const xAxisGenerator = d3.axisBottom(x)
+        const xAxisGenerator = d3.axisBottom(xScale)
             .tickFormat(d3.timeFormat("%x"));
         svg.append('g')
             .attr('transform', `translate(0, ${height})`)
             .call(xAxisGenerator);
         svg.append("g")
-            .call(d3.axisLeft(y));
+            .call(d3.axisLeft(yScale));
 
         // add the Line
         var valueLine = d3.line()
@@ -112,6 +102,45 @@ export const Charts = (props) => {
             .attr("stroke", "steelblue")
             .attr("stroke-width", 1.5)
             .attr("d", valueLine)
+
+        // Add the tooltip
+        var tooltip = svg.append("g")
+            .attr("class", "tooltip")
+            .style("display", "none");
+
+        tooltip.append("rect")
+            .attr("width", 100)
+            .attr("height", 50)
+            .attr("fill", "white")
+            .attr("stroke", "black")
+            .attr("stroke-width", 1);
+
+        tooltip.append("text")
+            .attr("x", 10)
+            .attr("y", 20);
+
+        // Add the mouseover event
+        svg.on("mousemove", function (event) {
+            tooltip.style("display", "block");
+            var [x, y] = d3.pointer(event, this);
+            
+            // Use the x value to find the corresponding y value on the line
+            var bisect = d3.bisector(function (d) { return d.date; }).left;
+            var i = bisect(data, x, 1);
+            var d0 = data[i - 1];
+            var d1 = data[i];
+            var d = x - d0.date > d1.date - x ? d1 : d0;
+
+            console.log(d)
+            console.log("d.value: " + d.value)
+
+            tooltip.attr("transform", "translate(" + x + "," + y + ")");
+            tooltip.select("text").text("Value: " + d.value);
+            tooltip.style("opacity", "1");
+        })
+            .on("mouseout", function () {
+                tooltip.style("display", "none");
+            });
     };
 
     useEffect(() => {

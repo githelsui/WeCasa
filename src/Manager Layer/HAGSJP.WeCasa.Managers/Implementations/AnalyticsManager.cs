@@ -55,6 +55,78 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             }
         }
 
+        public KPIResult GetRegistrationsPerDay(UserAccount ua, String timeFrame)
+        {
+            try
+            {
+                var result = new KPIResult();
+
+                var adminResult = _userManager.ValidateAdminRole(ua);
+                if (!adminResult.IsSuccessful)
+                {
+                    result.Message = adminResult.Message;
+                    result.IsSuccessful = false;
+                    return result;
+                }
+
+                var isAdmin = (bool)adminResult.ReturnedObject;
+                if (isAdmin)
+                {
+                    var minDate = GetMinDate(timeFrame);
+                    var serviceResult = _service.GetRegistrationsPerDay(ua, minDate);
+                    return serviceResult;
+                }
+                else
+                {
+                    result.Message += "User type does not have access to analytics.";
+                    result.IsSuccessful = false;
+                    return result;
+                }
+                return result;
+            }
+            catch (Exception exc)
+            {
+                _logger.Log("Error Message: " + exc.Message, LogLevels.Error, "Service", ua.Username);
+                throw exc;
+            }
+        }
+
+        public KPIResult GetDailyActiveUsers(UserAccount ua, String timeFrame)
+        {
+            try
+            {
+                var result = new KPIResult();
+
+                var adminResult = _userManager.ValidateAdminRole(ua);
+                if (!adminResult.IsSuccessful)
+                {
+                    result.Message = adminResult.Message;
+                    result.IsSuccessful = false;
+                    return result;
+                }
+
+                var isAdmin = (bool)adminResult.ReturnedObject;
+                if (isAdmin)
+                {
+                    var minDate = GetMinDate(timeFrame);
+                    var serviceResult = _service.GetRegistrationsPerDay(ua, minDate);
+                    return serviceResult;
+                }
+                else
+                {
+                    result.Message += "User type does not have access to analytics.";
+                    result.IsSuccessful = false;
+                    return result;
+                }
+                return result;
+            }
+            catch (Exception exc)
+            {
+                _logger.Log("Error Message: " + exc.Message, LogLevels.Error, "Service", ua.Username);
+                throw exc;
+            }
+        }
+
         private DateTime GetMinDate(String timeFrame)
         {
             var minDate = new DateTime();

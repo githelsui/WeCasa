@@ -51,6 +51,60 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
                 return new KPIResult(false, System.Net.HttpStatusCode.Conflict, exc.Message);
             }
         }
+
+        [HttpPost]
+        [Route("GetRegistrationsPerDay")]
+        public KPIResult GetRegistrationsPerDay([FromBody] KPIForm kpiForm)
+        {
+            try
+            {
+                var result = new KPIResult();
+                var userAccount = new UserAccount(kpiForm.CurrentUser);
+                result = _manager.GetRegistrationsPerDay(userAccount, kpiForm.TimeFrame);
+
+                if (result.IsSuccessful)
+                {
+                    result.ErrorStatus = System.Net.HttpStatusCode.OK;
+                }
+                else
+                {
+                    result.ErrorStatus = System.Net.HttpStatusCode.BadRequest;
+                }
+                return result;
+
+            }
+            catch (Exception exc)
+            {
+                return new KPIResult(false, System.Net.HttpStatusCode.Conflict, exc.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("GetDailyActiveUsers")]
+        public KPIResult GetDailyActiveUsers([FromBody] KPIForm kpiForm)
+        {
+            try
+            {
+                var result = new KPIResult();
+                var userAccount = new UserAccount(kpiForm.CurrentUser);
+                result = _manager.GetDailyActiveUsers(userAccount, kpiForm.TimeFrame);
+
+                if (result.IsSuccessful)
+                {
+                    result.ErrorStatus = System.Net.HttpStatusCode.OK;
+                }
+                else
+                {
+                    result.ErrorStatus = System.Net.HttpStatusCode.BadRequest;
+                }
+                return result;
+
+            }
+            catch (Exception exc)
+            {
+                return new KPIResult(false, System.Net.HttpStatusCode.Conflict, exc.Message);
+            }
+        }
     }
 }
 
