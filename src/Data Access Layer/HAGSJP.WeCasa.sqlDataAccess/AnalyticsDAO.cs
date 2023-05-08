@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using HAGSJP.WeCasa.Models;
+using Microsoft.Extensions.Configuration;
 using MySqlConnector;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
@@ -11,21 +12,20 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 	public class AnalyticsDAO
 	{
         private string _connectionString;
+        private MariaDB _mariaDB;
         private DAOResult result;
 
         public AnalyticsDAO() { }
 
-        public MySqlConnectionStringBuilder BuildConnectionString()
+        public string GetConnectionString()
         {
-            var builder = new MySqlConnectionStringBuilder
-            {
-                Server = "54.218.41.23",
-                Port = 3306,
-                UserID = "HAGSJP.WeCasa.SqlUser",
-                Password = "cecs491",
-                Database = "HAGSJP.WeCasa"
-            };
-            return builder;
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("config.json")
+                .AddEnvironmentVariables()
+                .Build();
+
+            _mariaDB = config.GetRequiredSection("MariaDB").Get<MariaDB>();
+            return _mariaDB.Local;
         }
 
         public DAOResult ValidateSqlStatement(int rows)
@@ -49,7 +49,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             var result = new DAOResult();
             var loginsPerDate = new List<Dictionary<String, String>>();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -96,7 +96,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         {
             var result = new DAOResult();
             var loginsPerDate = new List<Dictionary<String, String>>();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
