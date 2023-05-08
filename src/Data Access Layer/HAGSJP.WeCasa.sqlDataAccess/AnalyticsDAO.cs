@@ -48,25 +48,17 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public DAOResult GetLoginsPerDay(DateTime minDate)
         {
             var result = new DAOResult();
-            var loginsPerDate = new List<Dictionary<DateTime, int>>();
+            var loginsPerDate = new List<Dictionary<String, String>>();
             _connectionString = BuildConnectionString().ConnectionString;
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
 
-                // Select SQL statement
-                //var selectSql = @"SELECT * FROM `Logs`
-                //                    AND `Message` = @message 
-                //                    AND `Operation` = @operation 
-                //                    AND `Timestamp` <= NOW()
-                //                    AND `Timestamp` >= @min_date
-                //                    ORDER BY `Timestamp` ASC;";
-
-                var selectSql = @"SELECT CAST(Timestamp AS DATE), COUNT(*) as NUM_ROWS
+                var selectSql = @"SELECT CAST(Timestamp AS DATE) as DATE_ONLY , COUNT(*) as NUM_ROWS
                                     FROM Logs
-                                    WHERE `Message` = @message
-                                    AND `Timestamp` <= NOW()
-                                    AND `Timestamp` >= @min_date
+                                    WHERE Message = @message
+                                    AND Timestamp >= @min_date
+                                    AND Timestamp <= NOW()
                                     GROUP BY CAST(Timestamp AS DATE);";
 
                 var command = connection.CreateCommand();
@@ -79,11 +71,16 @@ namespace HAGSJP.WeCasa.sqlDataAccess
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    DateTime date = reader.GetDateTime(reader.GetOrdinal("DATE")).Date;
+                    DateTime date = reader.GetDateTime(reader.GetOrdinal("DATE_ONLY")).Date;
+                    var dateStr = date.ToShortDateString();
                     int logins = reader.GetInt32(reader.GetOrdinal("NUM_ROWS"));
-                    var loginData = new Dictionary<DateTime, int>();
-                    loginData.Add(date, logins);
-                    loginsPerDate.Add(loginData);
+                    var loginsStr = logins.ToString();
+                    var dateLogin = new Dictionary<String, String>
+                    {
+                        { "date", dateStr},
+                        { "value", loginsStr }
+                    };
+                    loginsPerDate.Add(dateLogin);
                 }
                 result.ReturnedObject = loginsPerDate;
                 result.IsSuccessful = true;

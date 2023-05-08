@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HAGSJP.WeCasa.Logging.Implementations;
 using HAGSJP.WeCasa.Managers.Implementations;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.sqlDataAccess;
@@ -15,10 +16,13 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
     [Route("analytics")]
     public class AnalyticsController : ControllerBase
     {
+        private readonly Logger _logger;
+        private readonly AnalyticsManager _manager;
+
         public AnalyticsController()
         {
-            //_manager = new ChoreManager();
-            //_groupManager = new GroupManager();
+            _manager = new AnalyticsManager();
+
         }
 
         [HttpPost]
@@ -28,7 +32,9 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
             try
             {
                 var result = new KPIResult();
-                result.IsSuccessful = true;
+                var userAccount = new UserAccount(kpiForm.CurrentUser);
+                result = _manager.GetLoginsPerDay(userAccount, kpiForm.TimeFrame);
+
                 if (result.IsSuccessful)
                 {
                     result.ErrorStatus = System.Net.HttpStatusCode.OK;

@@ -11,34 +11,51 @@ const TabPane = Tabs.TabPane;
 
 // temp data for line charts
 const data = [
-    { date: '2022-01-01', value: 10 },
-    { date: '2022-01-02', value: 20 },
-    { date: '2022-01-03', value: 30 },
-    { date: '2022-01-04', value: 15 },
-    { date: '2022-01-05', value: 95 },
+    {
+        date: '2022-01-01',
+        value: 10
+    },
+    {
+        date: '2022-01-02',
+        value: 20
+    },
+    {
+        date: '2022-01-03',
+        value: 30
+    },
+    {
+        date: '2022-01-04',
+        value: 15
+    },
+    {
+        date: '2022-01-05',
+        value: 95
+    },
 ];
 
 export const Charts = (props) => {
     const { admin, auth, currentUser } = useAuth();
-    //const [ data, setData] = useState([]) 
+    const [ data, setData] = useState([]) 
 
     const fetchAnalyticsData = () => {
-        let kpiForm = {
-            TimeFrame: props.timeFrame,
-            CurrentUser: currentUser["username"]
+        if (props.endpoint != '') {
+            let kpiForm = {
+                TimeFrame: props.timeFrame,
+                CurrentUser: currentUser["username"]
+            }
+
+            axios.post(('analytics/' + props.endpoint), kpiForm)
+                .then(res => {
+                    var isSuccessful = res.data['isSuccessful'];
+                    if (isSuccessful) {
+                        console.log("api went through")
+                        setData(res.data.returnedObject)
+                    } else {
+
+                    }
+                })
+                .catch((error => { console.error(error) }));
         }
-
-        axios.post(('analytics/' + props.endpoint), kpiForm)
-            .then(res => {
-                var isSuccessful = res.data['isSuccessful'];
-                if (isSuccessful) {
-                    console.log("api went through")
-                    //setData(res.data.returnedObject)
-                } else {
-
-                }
-            })
-            .catch((error => { console.error(error) }));
     }
 
     //KPI: Most Used Features
@@ -61,10 +78,20 @@ export const Charts = (props) => {
             .attr("transform", `translate(${margin.left},     ${margin.top})`);
 
         // Add X axis and Y axis
+        //var nestedData = d3.nest()
+        //    .key(function (d) { return d.date; })
+        //    .rollup(function (v) { return d3.sum(v, function (d) { return parseInt(d.value); }); })
+        //    .entries(data);
+
+        //var nestedData = d3.nest()
+        //    .key(function (d) { return d.date; })
+        //    .rollup(function (v) { return d3.sum(v, function (d) { return parseInt(d.value); }); })
+        //    .entries(data);
+
         var x = d3.scaleTime().range([0, width]);
         var y = d3.scaleLinear().range([height, 0]);
         x.domain(d3.extent(data, d => new Date(d.date)));
-        y.domain([0, d3.max(data, (d) => { return d.value; })]);
+        y.domain([0, d3.max(data, (d) => { return parseInt(d.value); })]);
 
         const xAxisGenerator = d3.axisBottom(x)
             .tickFormat(d3.timeFormat("%x"));
@@ -77,7 +104,7 @@ export const Charts = (props) => {
         // add the Line
         var valueLine = d3.line()
             .x((d) => { return x(new Date(d.date)); })
-            .y((d) => { return y(d.value); });
+            .y((d) => { return y(parseInt(d.value)); });
         svg.append("path")
             .data([data])
             .attr("class", "line")
@@ -94,9 +121,9 @@ export const Charts = (props) => {
         console.log(props.kpiLabel + ' in ' + props.timeFrame)
     }, [props.endpoint]);
 
-    //useEffect(() => {
-    //    //renderLineChart();
-    //}, [data]);
+    useEffect(() => {
+        renderLineChart();
+    }, [data]);
 
     return (
         <div style={{ paddingTop: '20px' }}>
