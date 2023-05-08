@@ -18,7 +18,8 @@ const context = [
     "/edit-profile",
     "/bulletin-board",,
     "/chorelist",
-    "/grocerylist"
+    "/grocerylist",
+    "/nudge"
 ];
 
 const onError = (err, req, resp, target) => {

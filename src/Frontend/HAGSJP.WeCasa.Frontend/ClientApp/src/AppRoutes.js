@@ -13,6 +13,7 @@ import BulletinBoard from "./components/BulletinBoard/BulletinBoard";
 import { ChoreList } from "./components/ChoreList/ChoreList";
 import { GroceryList } from "./components/GroceryList/GroceryList";
 import { NotFound } from "./components/NotFound";
+import Nudge from "./components/Nudge/Nudge";
 
 const AppRoutes = [
   {
@@ -78,11 +79,15 @@ const AppRoutes = [
   {
     path: '/bulletin',
     element: <BulletinBoard />
-    },
-    {
+  },
+  {
         path: '*',
         element: <NotFound />
-    }
+  },
+  {
+        path: '/nudge',
+        element: <Nudge />
+  }
 ];
 
 export default AppRoutes;

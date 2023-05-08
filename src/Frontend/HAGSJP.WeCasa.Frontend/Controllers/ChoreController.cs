@@ -27,7 +27,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
             {
                 Chore chore = new Chore(choreForm.Name, choreForm.Days, choreForm.Notes, choreForm.GroupId, choreForm.AssignedTo, choreForm.Repeats);
                 var result = await _manager.AddChore(chore, new UserAccount(choreForm.CurrentUser));
-                if(result.IsSuccessful)
+                if (result.IsSuccessful)
                 {
                     result.ErrorStatus = System.Net.HttpStatusCode.OK;
                 }
@@ -38,7 +38,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
                 return result;
 
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 return new ChoreResult(false, System.Net.HttpStatusCode.Conflict, exc.Message);
             }

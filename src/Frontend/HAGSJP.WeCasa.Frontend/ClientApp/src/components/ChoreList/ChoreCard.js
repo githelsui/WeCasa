@@ -7,7 +7,7 @@ import axios from 'axios';
 import defaultImage from '../../assets/defaultimgs/wecasatemp.jpg';
 import * as ValidationFuncs from '../../scripts/InputValidation.js';
 import { SendOutlined, EllipsisOutlined, SettingOutlined, CheckSquareOutlined } from '@ant-design/icons';
-import Nudge from '../Nudge/Nudge';
+import Nudge from '../Nudge/Nudge'; //button
 import image1 from '../../assets/profileimgs/1.jpg';
 import image2 from '../../assets/profileimgs/2.jpg';
 import image3 from '../../assets/profileimgs/3.jpg';
@@ -137,6 +137,26 @@ export const ChoreCard = (props) => {
         });
     }
 
+    const getAssignedUsernamesString = (assignments) => {
+        var arr = []
+        for (let i = 0; i < assignments.length; i++) {
+            var userProfile = assignments[i]
+            var username = userProfile['username']
+            arr.push(username)
+        }
+        return arr.join(', ');
+    }
+
+    const usernameString = getAssignedUsernamesString(props.chore['assignedTo']);
+
+    const isCurrentUserAssigned = () => {
+        const currentUserUsername = props.user['username'];
+        const assignedUsernames = getAssignedUsernames(props.chore['assignedTo']);
+        return assignedUsernames.includes(currentUserUsername);
+    };
+
+
+
     return (
         <div className="padding-bottom">
         <Card
@@ -146,10 +166,27 @@ export const ChoreCard = (props) => {
                 borderColor: 'black'
             }}
             actions={[
-                <Nudge key="nudge" assignedUser="Assignee" />,
+                //<>
+                //    {!isCurrentUserAssigned() && (
+                //        <Nudge
+                //            choreId={props.chore['choreId']}
+                //            groupId={props.chore['groupId']}
+                //            senderEmail={props.user['username']}
+                //            recipientEmail={usernameString}
+                //        />
+                //    )}
+                <>
+                        <Nudge
+                            choreId={props.chore['choreId']}
+                            groupId={props.chore['groupId']}
+                            senderEmail={props.user['username']}
+                            recipientEmail={usernameString}
+                        />
                 <Button shape="circle" icon={<SettingOutlined />} onClick={() => setShowEditModal(true)}/>,
                 <Button shape="circle" icon={<CheckSquareOutlined />} onClick={() => completeChore(props.chore)}  />
-                ]}>
+                </>
+                ]}
+                >
                 {assignmentProfileIcons(props.chore['assignedTo'])}
                 <h6 className="mulish-font" style={{
                     marginTop: 10,
