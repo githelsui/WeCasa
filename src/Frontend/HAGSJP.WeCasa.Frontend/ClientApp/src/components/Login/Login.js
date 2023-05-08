@@ -154,19 +154,6 @@ export const Login = () => {
         //this.forceUpdate();
     }
 
-    // DELETE ME
-    setAuth(true);
-    setAdmin(true)
-    const tempUser = {
-        firstName: "admin",
-        lastName: "test",
-        username: "wecasacorp@gmail.com",
-        image: 1,
-        notifications: ["email", "sms"]
-    }
-    setCurrentUser(tempUser);
-    successLoginView();
-
     return (
         <div id="LoginPage"> 
             <Row gutter={[48, 48]} align="middle">

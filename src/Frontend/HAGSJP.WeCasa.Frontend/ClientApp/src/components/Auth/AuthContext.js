@@ -18,7 +18,7 @@ export const useAuth = () => useContext(AuthContext);
 
 const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState(null);
-    const [admin, setAdmin] = useState(true);
+    const [admin, setAdmin] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
     const [currentGroup, setCurrentGroup] = useState(null);
 
