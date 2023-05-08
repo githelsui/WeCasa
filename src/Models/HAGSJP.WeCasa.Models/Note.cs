@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace HAGSJP.WeCasa.Models
 {
-    [Serializable]
+   [Serializable]
    public class Note
    {
        public string Message { get; set; }
