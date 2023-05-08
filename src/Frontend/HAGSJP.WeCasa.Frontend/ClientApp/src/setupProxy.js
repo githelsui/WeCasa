@@ -19,7 +19,8 @@ const context = [
     "/edit-profile",
     "/bulletin-board",,
     "/chorelist",
-    "/grocerylist"
+    "/grocerylist",
+    "/analytics"
 ];
 
 const onError = (err, req, resp, target) => {

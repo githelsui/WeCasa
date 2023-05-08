@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using HAGSJP.WeCasa.Client;
 using HAGSJP.WeCasa.Managers.Implementations;
-using HAGSJP.WeCasa.Client;
 using HAGSJP.WeCasa.Models;
-using MySqlConnector;
-using HAGSJP.WeCasa.Models.Security;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HAGSJP.WeCasa.Frontend.Controllers;
 

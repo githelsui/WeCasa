@@ -8,7 +8,7 @@ import axios from 'axios';
 import * as Styles from '../styles/ConstStyles.js';
 
 export const Home = () => {
-    const { auth, currentUser, currentGroup, setCurrentGroup } = useAuth();
+    const { auth, admin, currentUser, currentGroup, setCurrentGroup } = useAuth();
     const navigate = useNavigate();
 
     const updateGroup = (newGroup) => {
@@ -16,12 +16,11 @@ export const Home = () => {
     }
 
     return (
-        <div>
-            {(auth && !currentGroup==null) ?
+            <div> {(auth && !currentGroup == null) ?
                 (<div>
                     <NavMenu />
                 </div>) : (<Groups user={currentUser} selected={updateGroup} />)}
-        </div>
+            </div>
     );
 }; 
 
