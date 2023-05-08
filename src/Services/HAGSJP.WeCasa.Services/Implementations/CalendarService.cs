@@ -67,6 +67,11 @@ namespace HAGSJP.WeCasa.Services.Implementations
             if (deleteEventResult.IsSuccessful)
             {
                 deleteEventResult.Message = "Event deleted successfully";
+                await successLogger.Log(deleteEventResult.Message, LogLevels.Info, "Data Store", evnt.RemovedBy.ToString());
+            }
+            else
+            {
+                await errorLogger.Log("Error deleting an event", LogLevels.Error, "Data Store", evnt.RemovedBy.ToString());
             }
 
             return deleteEventResult;
