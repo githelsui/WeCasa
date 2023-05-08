@@ -9,6 +9,7 @@ using HAGSJP.WeCasa.Managers.Abstractions;
 using HAGSJP.WeCasa.sqlDataAccess;
 using HAGSJP.WeCasa.Logging.Implementations;
 using HAGSJP.WeCasa.Services.Implementations;
+using Amazon.S3.Model;
 
 namespace HAGSJP.WeCasa.Managers.Implementations
 {
@@ -17,14 +18,12 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             private readonly UserFeedbackDAO _dao;
             private Logger successLogger;
             private Logger errorLogger;
-            private SendGridService sgs;
 
             public FeedbackManager()
             {
                 _dao = new UserFeedbackDAO();
                 successLogger = new Logger(_dao);
                 errorLogger = new Logger(_dao);
-                sgs = new SendGridService();
         }
             public FeedbackManager(UserFeedbackDAO dao)
             {
@@ -33,8 +32,8 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 errorLogger = new Logger(dao);
             }
 
-            public Result storeFeedbackTicket(Feedback feedback)
-            {
+        public Result storeFeedbackTicket(Feedback feedback)
+        {
             try
             {
                 DAOResult result = new DAOResult();
@@ -42,7 +41,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 if (result.IsSuccessful)
                 {
                     successLogger.Log("Storing feedback was successful", LogLevels.Info, "Data Store", feedback.Email);
-                    sgs.SendFeedback();
+                    NotificationService.SendFeedbackNotification(feedback).Wait();
                 }
                 else
                 {
@@ -51,11 +50,12 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 }
                 return result;
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 errorLogger.Log("Error Message: " + ex.Message, LogLevels.Error, "Data Store", feedback.Email);
                 throw ex;
-            }
+            } 
         }
     }
 }
+

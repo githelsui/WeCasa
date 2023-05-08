@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using HAGSJP.WeCasa.Models;
 using Azure;
 using System.Net;
+using System.Net.Mail;
+using System.Reflection.Metadata.Ecma335;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
@@ -80,8 +82,6 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 _logger.Log("Error sending email: " + ex.Message, LogLevels.Error, "Data Store", to);
                 return isSent;
             }
-
-
         }
 
         static DateTime GetNextSunday()
@@ -91,8 +91,37 @@ namespace HAGSJP.WeCasa.Services.Implementations
             return today.AddDays(daysUntilSunday);
         }
 
-
+        public static async Task<bool> SendFeedbackNotification(Feedback feedback)
+        {
+            var isSent = false;
+            var apiKey = "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";
+            var client = new SendGridClient(apiKey);
+            var from = new EmailAddress("wecasacsulb@gmail.com", string.Format("{0} {1}", feedback.FirstName, feedback.LastName));
+            var subject = "New WeCasa Feedback Submission";
+            var to = new EmailAddress("wecasacsulb@gmail.com", "WeCasa CSULB");
+            var plainTextContent = string.Format("Feedback Message: {0}", feedback.FeedbackMessage);
+            var htmlContent = string.Format("Feedback Message: {0}", feedback.FeedbackMessage);
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+            var _logger = new Logger(new AccountMariaDAO());
+            try
+            {
+                var response = await client.SendEmailAsync(msg);
+                Console.WriteLine("Response: " + response.StatusCode);
+                // Log success
+                _logger.Log("Email sent successfully", LogLevels.Info, "Data Store", feedback.Email);
+                isSent = true;
+                return isSent;
+            }
+            catch (Exception ex)
+            {
+                // Log error
+                _logger.Log("Error sending email: " + ex.Message, LogLevels.Error, "Data Store", feedback.Email);
+                Console.WriteLine(isSent);
+                return isSent;
+            }
+        }
     }
+
 }
 
 

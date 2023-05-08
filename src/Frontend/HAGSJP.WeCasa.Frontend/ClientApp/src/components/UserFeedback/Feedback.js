@@ -104,7 +104,7 @@ export const Feedback = () => {
                 </Modal>
             </div>
             <p></p>
-            <p>For further assistance, email us directly at wecasa@gmail.com</p>
+            <p>For further assistance, email us directly at wecasacsulb@gmail.com</p>
         </div>
     );
 };

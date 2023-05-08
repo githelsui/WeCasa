@@ -1,11 +1,7 @@
 ﻿import React, { Component, useState, useEffect } from 'react';
 import { NavLink, Navbar, NavItem } from 'reactstrap';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from './AuthContext';
+import { Link } from 'react-router-dom';
 import '../styles/NavMenu.css';
-import axios from 'axios'
-import { notification, Avatar } from 'antd';
-import { UserOutlined } from '@ant-design/icons'
 import * as Styles from '../styles/ConstStyles.js';
 
 export const Footer = () => {

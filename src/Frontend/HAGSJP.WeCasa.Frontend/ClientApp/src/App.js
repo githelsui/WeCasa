@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Container } from 'reactstrap';
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
 import AppRoutes from './AppRoutes';
 import { Header } from './components/Header';
 import { NavMenu } from './components/NavMenu';
-import { useAuth } from './components/AuthContext';
+import { useAuth } from './components/Auth/AuthContext';
 import { Footer } from './components/Footer';
 import './custom.css';
 
@@ -14,18 +14,18 @@ function App() {
 
     return (
         <BrowserRouter basename={baseUrl}>
-        <Header />
+            <Header />
             {(auth && currentGroup != null) ? <NavMenu /> : <div />}
-        <Container tag="main">
-        <Routes>
-          {AppRoutes.map((route, index) => {
-            const { element, ...rest } = route;
-            return <Route key={index} {...rest} element={element} />;
-          })}
-        </Routes>
+            <Container tag="main">
+                <Routes>
+                    {AppRoutes.map((route, index) => {
+                        const { element, ...rest } = route;
+                        return <Route key={index} {...rest} element={element} />;
+                    })}
+                </Routes>
             </Container>
-        <Footer />
-      </BrowserRouter>
+            <Footer />
+        </BrowserRouter>
     );
 }
 
