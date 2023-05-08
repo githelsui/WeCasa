@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using HAGSJP.WeCasa.Models;
+using Microsoft.Extensions.Configuration;
 using MySqlConnector;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
@@ -10,28 +11,23 @@ namespace HAGSJP.WeCasa.sqlDataAccess
     public class RemindersDAO : AccountMariaDAO
     {
         private string _connectionString;
-        private DAOResult result;
+        private MariaDB _mariaDB;
+        private DAOResult _result;
 
-        public RemindersDAO()
+        public string GetConnectionString()
         {
-            _connectionString = BuildConnectionString().ConnectionString;
-        }
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("config.json")
+                .AddEnvironmentVariables()
+                .Build();
 
-        public MySqlConnectionStringBuilder BuildConnectionString()
-        {
-            var builder = new MySqlConnectionStringBuilder
-            {
-                Server = "localhost",
-                Port = 3306,
-                UserID = "HAGSJP.WeCasa.SqlUser",
-                Password = "cecs491",
-                Database = "HAGSJP.WeCasa"
-            };
-            return builder;
+            _mariaDB = config.GetRequiredSection("MariaDB").Get<MariaDB>();
+            return _mariaDB.Local;
         }
 
         public GroupResult GetGroupEmail(GroupModel groupModel)
         {
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();

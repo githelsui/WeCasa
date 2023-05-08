@@ -8,27 +8,37 @@ using System.Timers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using HAGSJP.WeCasa.Models;
 using Azure;
 using System.Net;
+using Microsoft.Extensions.Configuration;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
     public class NotificationService
     {
-        private readonly RemindersDAO _dao;
+        private static readonly RemindersDAO _dao = new RemindersDAO();
+        private static readonly SendGridClient _sendGridClient = GetSendGridClient();
 
-        public NotificationService()
+        private static SendGridClient GetSendGridClient()
         {
-            _dao = new RemindersDAO();
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("config.json")
+                .AddEnvironmentVariables()
+                .Build();
+
+            var sendGridApiKey = config.GetValue<string>("SendGridAPIKey");
+
+            return new SendGridClient(sendGridApiKey);
         }
+
 
         //Method to send email
         public static async Task<bool> ScheduleReminderEmail(string from, string to, string subject, string message, string reminderOption, string eventType)
         {
-            var apiKey = "";
-            var client = new SendGridClient(apiKey);
+           
 
             // Create email message
             var emailFrom = new EmailAddress(from);
@@ -60,7 +70,7 @@ namespace HAGSJP.WeCasa.Services.Implementations
             //Logging
             try
             {
-                var response = await client.SendEmailAsync(emailMessage);
+        var response = await _sendGridClient.SendEmailAsync(emailMessage);
                 Console.WriteLine("Response code: " + response.StatusCode);
                 // Log success
                 _logger.Log("Email sent successfully", LogLevels.Info, "Data Store", to);

@@ -23,5 +23,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Identity.PasswordHasher" Version="1.0.0" />
     <PackageReference Include="SendGrid" Version="9.28.1" />
+    <PackageReference Include="System.Text.Json" Version="7.0.2" />
   </ItemGroup>
 </Project>
