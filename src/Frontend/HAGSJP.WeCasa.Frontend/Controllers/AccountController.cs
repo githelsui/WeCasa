@@ -8,12 +8,14 @@ using HAGSJP.WeCasa.Services.Implementations;
 using HAGSJP.WeCasa.Client;
 using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Models.Security;
+using Microsoft.IdentityModel.Tokens;
 
 namespace HAGSJP.WeCasa.Frontend.Controllers
 {
 
     [ApiController]
     [Route("account-settings")]
+    [Route("account-recovery")]
     public class AccountController : ControllerBase
     {
 
@@ -55,6 +57,37 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
             UserAccount ua = new UserAccount(form.Username);
             UserManager um = new UserManager();
             return um.DeleteUser(ua);
+        }
+
+        [HttpPost]
+        [Route("GetOTPCode")]
+        public async Task<AuthResult> GetOTPCode([FromBody] AccountForm form)
+        {
+            UserAccount ua = new UserAccount(form.Email);
+            UserManager um = new UserManager();
+            var result = await um.GetOTRecoveryCode(ua);          
+            return result;
+        }
+
+        [HttpPost]
+        [Route("VerifyOTPCode")]
+        public async Task<AuthResult> VerifyOTPCode([FromBody] AccountForm form)
+        {
+            UserAccount ua = new UserAccount(form.Email);
+            OTP otp = new OTP(form.Email, form.OTP.ToString());
+            UserManager um = new UserManager();
+            var result = await um.VerifyOTRecoveryCode(ua, otp);
+            return result;
+        }
+
+        [HttpPost]
+        [Route("UpdatePasswordSecured")]
+        public Result UpdatePasswordSecured([FromBody] AccountForm form)
+        {
+            UserAccount ua = new UserAccount(form.Email);
+            string newPassword = form.NewField;
+            UserManager um = new UserManager();
+            return um.UpdatePassword(ua, newPassword);
         }
     }
 }

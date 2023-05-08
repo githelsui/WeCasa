@@ -27,14 +27,6 @@ export const GroupSettings = (props) => {
         }
     };
 
-    //Development Only:
-    var tempGroup = {
-        GroupId: 1,
-        GroupName: "Group1",
-        Icon: "#0256D4",
-        Features: ["Budget Bar"]
-    }
-
     return (
         <div className="group-settings-page padding">
             <div className="group-settings-header padding-vertical">

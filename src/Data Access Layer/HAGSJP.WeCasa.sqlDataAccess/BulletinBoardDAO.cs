@@ -1,4 +1,5 @@
 using HAGSJP.WeCasa.Models;
+using Microsoft.Extensions.Configuration;
 using MySqlConnector;
 // using HAGSJP.WeCasa.Logging.Implementations;
 
@@ -7,24 +8,19 @@ namespace HAGSJP.WeCasa.sqlDataAccess
    public class BulletinBoardDAO : AccountMariaDAO
    {
         private string _connectionString;
+        private MariaDB _mariaDB;
         private DAOResult result;
         // private Logger _logger;
 
-
-        public MySqlConnectionStringBuilder BuildConnectionString()
+        public string GetConnectionString()
         {
-            Console.WriteLine("MySqlConnectionStringBuilder");
-                var builder = new MySqlConnectionStringBuilder
-                {
-                    Server = "localhost",
-                    Port = 3306,
-                    UserID = "HAGSJP.WeCasa.SqlUser",
-                    Password = "cecs491",
-                    Database = "HAGSJP.WeCasa"
-                };
-            
-            Console.WriteLine("MySqlConnectionStringBuilder after" + builder);
-            return builder;
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("config.json")
+                .AddEnvironmentVariables()
+                .Build();
+
+            _mariaDB = config.GetRequiredSection("MariaDB").Get<MariaDB>();
+            return _mariaDB.Local;
         }
 
         public DAOResult PopulateResult(DAOResult result, MySqlException sqlex)
@@ -41,7 +37,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
             Console.Write("ADD NOTE DAO INIT" + note.LastModifiedUser);
             var result = new DAOResult();
 
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             Console.Write("ADD NOTE CONNECTION STRING" + _connectionString);
             using(var connection = new MySqlConnection(_connectionString))
             {
@@ -86,8 +82,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public DAOResult UpdateNote(Note note)
         {    
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
-            using(var connection = new MySqlConnection(_connectionString))
+            _connectionString = GetConnectionString();
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
@@ -133,8 +129,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public DAOResult DeleteNote(int noteId)
         {
             var result = new DAOResult();
-            _connectionString = BuildConnectionString().ConnectionString;
-            using(var connection = new MySqlConnection(_connectionString))
+            _connectionString = GetConnectionString();
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 try
                 {
@@ -165,8 +161,8 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public DAOResult GetNotes(int groupId)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
-            using(var connection = new MySqlConnection(_connectionString))
+            _connectionString = GetConnectionString();
+            using (var connection = new MySqlConnection(_connectionString))
             {
                 var result = new DAOResult();
                 try

@@ -18,6 +18,8 @@ namespace HAGSJP.WeCasa.Managers.Implementations
         public string ConfirmPassword(string password);
         public UserStatus PopulateUserStatus(UserAccount userAccount);
         public Task<AuthResult> GetUserProfile(UserAccount userAccount);
+        public Task<AuthResult> GetOTRecoveryCode(UserAccount userAccount);
+        public Task<AuthResult> VerifyOTRecoveryCode(UserAccount userAccount, OTP otp);
         public Result RegisterUser(string firstName, string lastName, string email, string password);
         public Result RegisterUser(string email, string password);
         public Result DeleteUser(UserAccount userAccount);
