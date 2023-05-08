@@ -14,7 +14,7 @@ export const resetPassBtnStyle = {
 }
 
 export const Login = () => {
-    const { setAuth, setCurrentUser } = useAuth();
+    const { setAuth, setCurrentUser, setAdmin } = useAuth();
     const navigate = useNavigate();
 
     const [loginResults, setLoginResults] = useState(false);
@@ -97,10 +97,12 @@ export const Login = () => {
                 .then(res => {
                     var isSuccessful = res.data['isSuccessful'];
                     if (isSuccessful) {
-                        console.log(res.data)
+                        var userAccount = res.data.returnedObject;
+                        console.log(userAccount)
                         setLoginResults(true);
                         setAuth(true);
-                        setCurrentUser(res.data.returnedObject);
+                        setCurrentUser(userAccount);
+                        checkAdminPrivilege(userAccount.username);
                         successLoginView();
                     } else {
                         failureLoginView(res.data['message']);
@@ -114,6 +116,25 @@ export const Login = () => {
 
     const recoverAccount = () => {
         navigate('/account-recovery');
+    }
+    
+    const checkAdminPrivilege = (values) => {
+        let userForm = {
+            Username: account
+        };
+
+        axios.post('login/VerifyAdmin', userForm)
+            .then(res => {
+                var isSuccessful = res.data['isSuccessful'];
+                if (isSuccessful) {
+                    console.log("Verified admin role")
+                    var isAdmin = res.data.returnedObject;
+                    setAdmin(isAdmin);
+                } else {
+                    failureLoginView(res.data['message']);
+                }
+            })
+            .catch((error) => { console.error(error) });
     }
 
     const failureLoginView = (failureMessage) => {
@@ -134,17 +155,17 @@ export const Login = () => {
     }
 
     // DELETE ME
-    // for dev purposes lol
-    /*setAuth(true);
+    setAuth(true);
+    setAdmin(true)
     const tempUser = {
-        firstName: "allison",
+        firstName: "admin",
         lastName: "test",
-        username: "test123@gmail.com",
+        username: "wecasacorp@gmail.com",
         image: 1,
         notifications: ["email", "sms"]
     }
     setCurrentUser(tempUser);
-    successLoginView();*/
+    successLoginView();
 
     return (
         <div id="LoginPage"> 
