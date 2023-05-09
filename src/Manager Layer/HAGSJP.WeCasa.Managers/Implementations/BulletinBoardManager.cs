@@ -45,7 +45,8 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 {
                     var to = username;
                     Console.WriteLine("Sending to: " + to);
-                    var response = NotificationService.ScheduleReminderEmail(from, to, subject, message, rem, evnt);
+                    NotificationService service = new NotificationService();
+                    var response = service.ScheduleReminderEmail(from, to, subject, message, rem, evnt);
                     Console.WriteLine("Sent to: " + to);
 
                 }

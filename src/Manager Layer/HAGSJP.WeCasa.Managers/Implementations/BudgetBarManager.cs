@@ -123,7 +123,8 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                                 Console.WriteLine(usernames.Count);
                                 var to = usernames[i];
                                 Console.WriteLine("Sending to: "+ to);
-                                NotificationService.ScheduleReminderEmail(from, to, subject, message, rem, evnt);
+                                NotificationService service= new NotificationService();
+                                service.ScheduleReminderEmail(from, to, subject, message, rem, evnt);
                                 Console.WriteLine("Sent: " + to);
 
                         }

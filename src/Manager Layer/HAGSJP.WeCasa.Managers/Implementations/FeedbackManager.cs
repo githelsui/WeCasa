@@ -41,7 +41,8 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 if (result.IsSuccessful)
                 {
                     successLogger.Log("Storing feedback was successful", LogLevels.Info, "Data Store", feedback.Email);
-                    NotificationService.SendFeedbackNotification(feedback).Wait();
+                    NotificationService service = new NotificationService();
+                    service.SendFeedbackNotification(feedback).Wait();
                 }
                 else
                 {

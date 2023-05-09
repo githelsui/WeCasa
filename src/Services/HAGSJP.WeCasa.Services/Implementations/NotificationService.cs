@@ -14,29 +14,29 @@ using HAGSJP.WeCasa.Models;
 using Azure;
 using System.Net;
 using Microsoft.Extensions.Configuration;
+using System.Net.Mail;
 
 namespace HAGSJP.WeCasa.Services.Implementations
 {
     public class NotificationService
     {
-        private static readonly RemindersDAO _dao = new RemindersDAO();
-        private static readonly SendGridClient _sendGridClient = GetSendGridClient();
+        private RemindersDAO _dao;
+        private SendGridAPI _sendGridClient;
 
-        private static SendGridClient GetSendGridClient()
+        public string GetSendGridAPI()
         {
             var config = new ConfigurationBuilder()
                 .AddJsonFile("config.json")
                 .AddEnvironmentVariables()
                 .Build();
 
-            var sendGridApiKey = config.GetValue<string>("SendGridAPIKey");
-
-            return new SendGridClient(sendGridApiKey);
+            _sendGridClient = config.GetRequiredSection("SendGrid").Get<SendGridAPI>();
+            return _sendGridClient.SendGridAPIKey;
         }
 
 
         //Method to send email
-        public static async Task<bool> ScheduleReminderEmail(string from, string to, string subject, string message, string reminderOption, string eventType)
+        public async Task<bool> ScheduleReminderEmail(string from, string to, string subject, string message, string reminderOption, string eventType)
         {
            
 
@@ -70,7 +70,8 @@ namespace HAGSJP.WeCasa.Services.Implementations
             //Logging
             try
             {
-        var response = await _sendGridClient.SendEmailAsync(emailMessage);
+                var client = new SendGridClient(GetSendGridAPI());
+                var response = await client.SendEmailAsync(emailMessage);
                 Console.WriteLine("Response code: " + response.StatusCode);
                 // Log success
                 _logger.Log("Email sent successfully", LogLevels.Info, "Data Store", to);
@@ -84,8 +85,6 @@ namespace HAGSJP.WeCasa.Services.Implementations
                 _logger.Log("Error sending email: " + ex.Message, LogLevels.Error, "Data Store", to);
                 return isSent;
             }
-
-
         }
 
         static DateTime GetNextSunday()
@@ -94,22 +93,25 @@ namespace HAGSJP.WeCasa.Services.Implementations
             var daysUntilSunday = ((int)DayOfWeek.Sunday - (int)today.DayOfWeek + 7) % 7;
             return today.AddDays(daysUntilSunday);
         }
-        public static async Task<bool> SendFeedbackNotification(Feedback feedback)
+        public async Task<bool> SendFeedbackNotification(Feedback feedback)
         {
             var isSent = false;
-            var from = new EmailAddress("wecasacsulb@gmail.com", string.Format("{0} {1}", feedback.FirstName, feedback.LastName));
+
+            var from = new EmailAddress("wecasacsulbcecs@gmail.com", string.Format("{0} {1}", feedback.FirstName, feedback.LastName));
             var subject = "New WeCasa Feedback Submission";
-            var to = new EmailAddress("wecasacsulb@gmail.com", "WeCasa CSULB");
+            var to = new EmailAddress("wecasacsulbcecs@gmail.com", "WeCasa CSULB");
             var plainTextContent = string.Format("Feedback Message: {0}", feedback.FeedbackMessage);
             var htmlContent = string.Format("Feedback Message: {0}", feedback.FeedbackMessage);
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
             var _logger = new Logger(new AccountMariaDAO());
             try
             {
-                var response = await _sendGridClient.SendEmailAsync(msg);
-                Console.WriteLine("Response: " + response.StatusCode);
+                var client = new SendGridClient(GetSendGridAPI());
+                var response = await client.SendEmailAsync(msg);
+                Console.WriteLine("Response code: " + response.StatusCode);
                 // Log success
                 _logger.Log("Email sent successfully", LogLevels.Info, "Data Store", feedback.Email);
+
                 isSent = true;
                 return isSent;
             }
@@ -117,7 +119,6 @@ namespace HAGSJP.WeCasa.Services.Implementations
             {
                 // Log error
                 _logger.Log("Error sending email: " + ex.Message, LogLevels.Error, "Data Store", feedback.Email);
-                Console.WriteLine(isSent);
                 return isSent;
             }
         }
