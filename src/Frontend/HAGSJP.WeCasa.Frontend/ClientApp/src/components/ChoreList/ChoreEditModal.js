@@ -1,4 +1,4 @@
-﻿import React, { Component, useState, useEffect } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { Modal, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Switch, notification, Spin, Card, Checkbox, Radio } from 'antd';
 import * as Styles from '../../styles/ConstStyles.js';
 import '../../styles/System.css';
@@ -70,7 +70,8 @@ const ChoreEditModal = (props) => {
                         Repeats: choreRepeats,
                         Days: daysReq,
                         AssignedTo: (selectedAssignments.length == 0 ? [props.user['username']] : selectedAssignments),
-                        ChoreId: props.chore['choreId']
+                        ChoreId: props.chore['choreId'],
+                        ChoreDate: props.chore['choreDate']
                     }
                     console.log(choreForm)
                     props.confirm(choreForm)

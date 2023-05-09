@@ -178,23 +178,37 @@ namespace HAGSJP.WeCasa.Managers.Implementations
                 var groupMembersList = new List<UserProfile>();
                 foreach (string username in enumerable)
                 {
-                    Console.Write("Username = " + username + "\n");
                     var userAccount = new UserAccount(username);
 
                     // getting user info
                     var userResult = await userManager.GetUserProfile(userAccount);
+                    if (userResult.ReturnedObject == null)
+                    {
+                        result.IsSuccessful = false;
+                        result.Message += " Error fetching user profile.";
+                        return result;
+                    }
                     var userProfile = (UserProfile)userResult.ReturnedObject;
+                    Console.Write(userResult.ReturnedObject.ToString());
                     userProfile.Username = username;
                     groupMembersList.Add(userProfile);
 
+
                     // getting chore progress
-                    var choreResult = await choreService.GetUserProgress(username, group.GroupId);
+                    var choreResult = await choreService.GetUserProgress(username, group.GroupId);             
+                    if(!choreResult.IsSuccessful)
+                    {
+                        result.IsSuccessful = false;
+                        result.Message += " Error fetching user progress.";
+                        return result;
+                    }
                     progressReports.Add(choreResult.ChoreProgress);
                     result.ProgressReports = progressReports;
 
                     // Concatenating messages from all 3 services
                     result.Message = groupResult.Message + ", " + userResult.Message + ", " + choreResult.Message;
                 }
+                result.IsSuccessful = true;
                 var groupMemberArr = groupMembersList.ToArray();
                 result.ReturnedObject = groupMemberArr;
             }

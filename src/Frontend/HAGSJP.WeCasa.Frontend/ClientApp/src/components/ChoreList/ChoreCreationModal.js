@@ -57,7 +57,7 @@ const ChoreCreationModal = (props) => {
                 }
 
                 // Send data to parent ChoreList component
-                if (hasValidData && name != undefined && (daysReq != undefined || daysReq.length > 0)) {
+                if (hasValidData && name != undefined && (daysReq.length > 0)) {
                     // organize modalConfiguration with chore properties
                     var modalConfig = {
                         ChoreName: name,
@@ -71,7 +71,7 @@ const ChoreCreationModal = (props) => {
                     closeForm();
                 }
             })
-            .catch((errorInfo) => { });
+            .catch((errorInfo) => { toast("Missing user inputs for chore.") });
     }
 
     const closeForm = () => {
@@ -146,8 +146,26 @@ const ChoreCreationModal = (props) => {
         });
     }
 
+    const testFetchIncompleteChoresPerUser = () => {
+        console.log("TEST INCOMPLETE CHORES PER USER!!!")
+        let groupMemberForm = {
+            GroupId: props.group['groupId']
+        }
+
+        axios.post('chorelist/GetUserIncompleteChores', groupMemberForm)
+            .then(res => {
+                var isSuccessful = res.data['isSuccessful'];
+                if (isSuccessful) {
+                    var arr = res.data['returnedObject']
+                    console.log(arr)
+                }
+            })
+            .catch((error => { console.error(error) }));
+    }
+
     useEffect(() => {
         fetchCurrentRoommates()
+        testFetchIncompleteChoresPerUser()
     }, []);
 
     return (<Modal

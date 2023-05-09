@@ -26,6 +26,7 @@
     <None Remove="ClientApp\src\assets\defaultimgs\" />
     <None Remove="ClientApp\src\scripts\" />
     <None Remove="ClientApp\src\components\Nudge\" />
+    <None Remove="ClientApp\src\components\Dashboard\" />
   </ItemGroup>
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
@@ -60,6 +61,7 @@
     <Folder Include="ClientApp\src\assets\defaultimgs\" />
     <Folder Include="ClientApp\src\scripts\" />
     <Folder Include="ClientApp\src\components\Nudge\" />
+    <Folder Include="ClientApp\src\components\Dashboard\" />
   </ItemGroup>
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->

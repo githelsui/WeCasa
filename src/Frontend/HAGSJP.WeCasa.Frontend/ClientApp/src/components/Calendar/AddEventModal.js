@@ -11,20 +11,17 @@ const reminderOptions = ['30 minutes', 'A day', 'A week'];
 const AddEventModal = (props) => {
     const [loading, setLoading] = useState(false);
     const [eventDate, setEventDate] = useState(props.date);
-    const [eventDateTime, setEventDateTime] = useState('');
     const [repeat, setRepeat] = useState('');
-    const [eventType, setEventType] = useState('');
+    const [eventType, setEventType] = useState('public');
     const [reminder, setReminder] = useState('');
-    const [eventColor, setEventColor] = useState('');
+    const [eventColor, setEventColor] = useState(0);
     const [form] = Form.useForm();
     const eventColors = ['#0256D4', '#F4B105', '#FFEE58', '#FF2929', '#10B364'];
 
+    console.log(eventDate);
+
     const onDateChange = (date, dateString) => {
         setEventDate(dateString);
-    }
-
-    const onTimeChange = (time, timeString) => {
-        setEventDateTime(time);
     }
 
     const onRepeatChange = (e) => {
@@ -40,13 +37,17 @@ const AddEventModal = (props) => {
     }
 
     const attemptSubmission = () => {
+        form.setFieldsValue({
+            eventDate: eventDate,
+            color: eventColors[eventColor]
+        });
         form.validateFields()
             .then((values) => {
-                props.confirm(values)
+                props.confirm(values);
+                form.resetFields();
                 setLoading(true)
-
             })
-            .catch((errorInfo) => { });
+            .catch((errorInfo) => { console.log(errorInfo) });
     }
 
     const displayEventColors = () => {
@@ -77,13 +78,13 @@ const AddEventModal = (props) => {
 
             <div className="padding">
                 <Spin spinning={loading}>
-                    <h2 className="mulish-font"><b>Add Event</b></h2>
+                        <h2 className="mulish-font"><b>Add Event</b></h2>
                     <h6 className="mulish-font">Name</h6>
                     <Form id="eventCreationForm" onFinish={attemptSubmission} form={form}>
                         <Row gutter={[24, 24]} align="middle">
                             <Col span={16} className="event-name-input">
                                 <Form.Item name="eventName">
-                                    <Input style={Styles.eventInputFieldStyle} required placeholder="Event Name" />
+                                    <Input style={Styles.eventInputFieldStyle} required placeholder="Event Name" maxLength="50" />
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -92,7 +93,7 @@ const AddEventModal = (props) => {
                         <Row gutter={[24, 24]}>
                             <Col span={18} className="description-field">
                                 <Form.Item name="description">
-                                    <Input style={Styles.eventDescTextField} placeholder="Description" />
+                                    <Input style={Styles.eventDescTextField} placeholder="Description" maxLength="255" />
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -100,14 +101,15 @@ const AddEventModal = (props) => {
                         <h6 className="mulish-font">Date and Time</h6>
                         <div className="datetime-row padding-bottom">
                             <Row gutter={24} style={{ display: 'flex', flexDirection: 'horizontal' }}>
-                                    <Col span={8}>
-                                        <DatePicker onChange={onDateChange} />
-                                    </Col>
-                                <Col span={8}>
-                                    <Form.Item name="eventDate" value={eventDateTime}>
-                                        <TimePicker onChange={onTimeChange} />
+                                <Col span={16}>
+                                    <Form.Item name="eventDate">
+                                        <DatePicker format="YYYY-MM-DD hh:mm:ss"
+                                            showTime={true}
+                                            onChange={onDateChange}
+                                            placeholder={props.date.toLocaleString()}
+                                         />
                                     </Form.Item>
-                                    </Col>
+                                </Col>
                             </Row>
                         </div>
 
@@ -127,7 +129,10 @@ const AddEventModal = (props) => {
                             <Row gutter={24} style={{display:'flex', flexDirection:'horizontal'}}>
                                 <Col span={18}>
                                     <Form.Item name="type" value={eventType}>
-                                        <Radio.Group options={eventTypeOptions} value={eventType} onChange={onTypeChange} />
+                                        <Radio.Group onChange={onTypeChange} defaultValue={'public'}>
+                                            <Radio value={'private'}>Private</Radio>
+                                            <Radio value={'public'}>Public</Radio>
+                                        </Radio.Group>
                                     </Form.Item>
                                 </Col>
                             </Row>
@@ -148,13 +153,13 @@ const AddEventModal = (props) => {
                         <div className="tag-row padding-bottom">
                             <Row gutter={24} style={{ display: 'flex', flexDirection: 'horizontal' }}>
                                 {displayEventColors()}
-                                <Form.Item name="color" value={eventColor}></Form.Item>
+                                <Form.Item name="color"></Form.Item>
                             </Row>
                         </div>
                         <Row gutter={24} style={{alignItems:'center', justifyContent:'center', gap:'30px'}} > 
                             <Button key="cancel" onClick={props.close} type="default" style={Styles.defaultButtonModal}>Exit</Button>
                             <Button key="create" htmlType="submit" type="primary" style={Styles.primaryButtonModal}>Save</Button>
-                        </Row> 
+                        </Row>
                     </Form>
                 </Spin>
             </div>

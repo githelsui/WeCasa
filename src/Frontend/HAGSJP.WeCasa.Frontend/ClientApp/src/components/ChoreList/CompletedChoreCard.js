@@ -1,12 +1,12 @@
 ﻿import React, { Component, useState, useEffect } from 'react';
-import { Card, Avatar, Button, notification } from 'antd';
+import { Card, Avatar, Button, notification, Row, Col } from 'antd';
 import * as Styles from '../../styles/ConstStyles.js';
 import '../../styles/System.css';
 import '../../index.css';
 import axios from 'axios';
 import defaultImage from '../../assets/defaultimgs/wecasatemp.jpg';
 import * as ValidationFuncs from '../../scripts/InputValidation.js';
-import { SendOutlined, EllipsisOutlined, SettingOutlined, CheckSquareOutlined } from '@ant-design/icons';
+import { SendOutlined, EllipsisOutlined, UndoOutlined, SettingOutlined, CheckSquareOutlined } from '@ant-design/icons';
 import Nudge from '../Nudge/Nudge';
 import image1 from '../../assets/profileimgs/1.jpg';
 import image2 from '../../assets/profileimgs/2.jpg';
@@ -31,7 +31,7 @@ export const CompletedChoreCard = (props) => {
     }
 
     const assignmentProfileIcons = (assignments) => {
-        return (<div style={{ width: '20%'}}>
+        return (<div style={{ width: '18%'}}>
             {assignments.map((user, i) =>
                 <Avatar style={{ borderColor: 'black', marginLeft: -15, marginTop: -15}} className='padding' src={images[user['image']]} />
             )}
@@ -53,36 +53,6 @@ export const CompletedChoreCard = (props) => {
         return label
     }
 
-    const completeChore = (chore) => {
-        console.log(chore)
-        let choreForm = {
-            CurrentUser: props.user['username'],
-            GroupId: chore['groupId'],
-            Name: chore['name'],
-            Notes: chore['notes'],
-            Repeats: chore['repeats'],
-            Days: chore['days'],
-            AssignedTo: getAssignedUsernames(chore['assignedTo']),
-            ChoreId: chore['choreId']
-        }
-
-        if (!chore['isCompleted']) {
-            axios.post('chorelist/CompleteChore', choreForm)
-                .then(res => {
-                    var isSuccessful = res.data['isSuccessful'];
-                    if (isSuccessful) {
-                        toast('Chore successfully completed. Chore now in History Tab. ')
-                        props.fetchData()
-                    } else {
-                        toast(res.data['message'])
-                    }
-                })
-                .catch((error => {
-                    toast('Error performing operation.')
-                }));
-        }
-    };
-
     const toast = (title, desc = '') => {
         notification.open({
             message: title,
@@ -100,24 +70,28 @@ export const CompletedChoreCard = (props) => {
                     width: '100%',
                     borderColor: 'black'
                 }}>
-                {assignmentProfileIcons(props.chore['assignedTo'])}
-                <h6 className="mulish-font" style={{
-                    marginTop: 10,
-                    fontSize: 15,
-                    marginLeft: -10,
-                    overflowWrap: 'break-word'
-                }}><b>{props.chore['name']}</b></h6>
-                <p className="mulish-font" style={{
-                    fontSize: 11,
-                    marginLeft: -10,
-                    overflowWrap: 'break-word'
-                }}>{(assignmentLabel(props.chore['assignedTo']))}</p>
-                <p className="mulish-font" style={{
-                    color: 'gray',
-                    fontSize: 11,
-                    marginLeft: -10,
-                    overflowWrap: 'break-word'
-                }}><i>{props.chore['notes']}</i></p>
+                <Row gutter={[24, 24]} align="middle">
+                    <Col span={18} align="start">
+                        {assignmentProfileIcons(props.chore['assignedTo'])}
+                        <h6 className="mulish-font" style={{
+                            marginTop: 10,
+                            fontSize: 15,
+                            marginLeft: -10,
+                            overflowWrap: 'break-word'
+                        }}><b>{props.chore['name']}</b></h6>
+                        <p className="mulish-font" style={{
+                            fontSize: 11,
+                            marginLeft: -10,
+                            overflowWrap: 'break-word'
+                        }}>{(assignmentLabel(props.chore['assignedTo']))}</p>
+                        <p className="mulish-font" style={{
+                            color: 'gray',
+                            fontSize: 11,
+                            marginLeft: -10,
+                            overflowWrap: 'break-word'
+                        }}><i>{props.chore['notes']}</i></p>
+                    </Col>
+                </Row>
             </Card>
         </div>);
 };

@@ -10,5 +10,6 @@ public class AccountForm
     public string? Password { get; set; }
 
     public string? NewField { get; set; }
+    public string? OTP { get; set; }
     public List<string>? Notifications { get; set; }
 }

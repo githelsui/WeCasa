@@ -1,7 +1,14 @@
-﻿namespace HAGSJP.WeCasa.Models
+﻿using System.Text.Json.Serialization;
+
+namespace HAGSJP.WeCasa.Models
 {
     public class Log
     {
+
+        [JsonConstructor]
+        public Log()
+        {
+        }
 
         // Constructor without DateTime (defaulted to current_timestamp in Logs database) or UserOperation
         // For logging internal system information (not user interactions)
@@ -44,7 +51,7 @@
 
         public DateTime Date_Time { get; set; } 
         public string Username { get; set; }
-        public Operations Operation { get; set; }
-        public int Success { get; set; }
+        public Operations? Operation { get; set; }
+        public int? Success { get; set; }
     }
 }

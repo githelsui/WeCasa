@@ -106,6 +106,22 @@ export const addButtonStyle = {
     marginLeft: 'auto',
 }
 
+export const addButtonFileStyle = {
+    fontFamily: 'Mulish',
+    fontWeight: 'bold',
+    display: 'inline-flex',
+    alignItems: 'center',
+    borderWidth: 'thin',
+    borderColor: '#111827',
+    backgroundColor: 'white',
+    textDecoration: 'none',
+    // marginLeft: 'auto',
+    // position: 'fixed',
+    bottom: '7%',
+    // left: '50%',
+    // transform: 'translateX(-50%)'
+}
+
 export const buttonHover = {
     components: {
         Button: {
@@ -182,6 +198,7 @@ export const calendarViewToggle = {
     fontFamily: 'Mulish',
     width: '100px',
     border: '1px solid #717171',
+    color: '#717171',
     borderRadius: '10px',
     boxSizing: 'border-box',
     justifyContent: 'center',
@@ -280,4 +297,24 @@ export const deleteButtonModal = {
     color: '#FFFFFF',
     marginRight: '12%',
     marginTop: -10
+}
+
+export const deleteButtonLeft = {
+    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+    fontFamily: 'Mulish',
+    width: '35%',
+    fontWeight: 'bold',
+    backgroundColor: '#bd0d25',
+    color: '#FFFFFF',
+}
+
+export const otpInput = {
+    fontFamily: 'Mulish',
+    width: '30px',
+    height: '30px',
+    marginRight: '10px',
+    marginTop: '10px',
+    textAlign: 'center',
+    backgroundColor: '#ECECEC',
+    border: 'none'
 }

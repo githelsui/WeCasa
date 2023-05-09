@@ -14,6 +14,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
     public class UserManager : IUserManager
     {
         private readonly AccountMariaDAO _dao;
+        private readonly AuthorizationService _authService;
         private Logger successLogger;
         private Logger errorLogger;
 
@@ -22,6 +23,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             _dao = new AccountMariaDAO();
             successLogger = new Logger(_dao);
             errorLogger = new Logger(_dao);
+            _authService = new AuthorizationService(new AuthorizationDAO());
         }
         public UserManager(AccountMariaDAO dao)
         {
@@ -159,6 +161,77 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             return otp;
         }
 
+        public async Task<Result> GenerateOTRecoveryCode(UserAccount userAccount)
+        {
+            var savingOTCodeResult = new Result();
+            Random r = new Random();
+            string code = "";
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.-@";
+            foreach (var i in Enumerable.Range(0, 10))
+            {
+                code += chars[r.Next(0, 65)];
+            }
+            var otp = new OTP(userAccount.Username, code);
+
+            // Saving activation code
+            AccountMariaDAO dao = new AccountMariaDAO();
+            savingOTCodeResult = await dao.GetOTCodeAsync(userAccount, otp);
+
+            if (savingOTCodeResult.IsSuccessful)
+            {
+                // Logging the OTP save
+                await successLogger.Log("One-time recovery code generated successfully", LogLevels.Info, "Data Store", userAccount.Username);
+            }
+            else
+            {
+                // Logging the error
+                await errorLogger.Log("Error saving a one-time code", LogLevels.Error, "Data Store", userAccount.Username);
+            }
+            return savingOTCodeResult;
+        }
+
+        public async Task<AuthResult> GetOTRecoveryCode(UserAccount userAccount)
+        {
+            var validateUserInfo = await _dao.GetUserProfile(userAccount);
+            if (validateUserInfo.IsSuccessful)
+            {
+                var otpResult = await GenerateOTRecoveryCode(userAccount);
+                if (!otpResult.IsSuccessful)
+                {
+                    validateUserInfo.Message = "Error generating one-time code.";
+                    validateUserInfo.IsSuccessful = false;
+                }
+            }
+            return validateUserInfo;
+        }
+
+        public async Task<AuthResult> VerifyOTRecoveryCode(UserAccount userAccount, OTP otp)
+        {
+            var otpVerifyResult = await _dao.VerifyOTP(userAccount, otp);
+        
+            if (otpVerifyResult.IsSuccessful && otpVerifyResult.HasValidOTP)
+            {
+                otpVerifyResult.Message = "Account verified";
+                // resetting OTP to null after use
+                var otpResetResult = _dao.ResetOTP(userAccount);
+                if (!otpResetResult.IsSuccessful)
+                {
+                    await successLogger.Log("Error resetting OTP", LogLevels.Error, "Data Store", userAccount.Username);
+                }
+            }  else
+            {
+                if (otpVerifyResult.ExpiredOTP)
+                {
+                    otpVerifyResult.Message = "One-time code is expired.";
+                }
+                else // not expired, but invalid OTP
+                {
+                    otpVerifyResult.Message = "One-time code is invalid.";
+                }
+            }
+            return otpVerifyResult;
+        }
+
         public string ConfirmPassword(string password)
         {
             Console.WriteLine("Re-enter Password:");
@@ -191,12 +264,25 @@ namespace HAGSJP.WeCasa.Managers.Implementations
 
         public async Task<AuthResult> GetUserProfile(UserAccount userAccount)
         {
-            var userResult = await _dao.GetUserProfile(userAccount);
-            if (userResult.IsSuccessful)
+            var result = new AuthResult();
+            try
             {
-                userResult.Message = "User profile retrieved successfully";
+                var daoResult = await _dao.GetUserProfile(userAccount);
+                if (!daoResult.IsSuccessful)
+                {
+                    await errorLogger.Log("User profile fetched failed from Users", LogLevels.Info, "Data Store", userAccount.Username);
+                }
+                result.IsSuccessful = daoResult.IsSuccessful;
+                result.Message = daoResult.Message;
+                result.ReturnedObject = (UserProfile)daoResult.ReturnedObject;
             }
-            return userResult;
+            catch(Exception exc)
+            {
+                await errorLogger.Log("Error Message: " + exc.Message, LogLevels.Error, "Data Store", userAccount.Username.ToString());
+                result.IsSuccessful = false;
+                result.Message = exc.Message;
+            }
+            return result;
         }
 
             public Result RegisterUser(string firstName, string lastName, string email, string password)
@@ -219,7 +305,7 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             if (userPersistResult.IsSuccessful)
             {
                 // Logging the registration
-                successLogger.Log("Account created successfully", LogLevels.Info, "Data Store", userAccount.Username);
+                successLogger.Log("Account created successfully", LogLevels.Info, "Data Store", userAccount.Username, new UserOperation(Operations.Registration, 1));
             }
             else
             {
@@ -367,5 +453,18 @@ namespace HAGSJP.WeCasa.Managers.Implementations
             }
             return enablingUser;
         }
+
+        public AuthResult ValidateAdminRole(UserAccount ua)
+        {
+            var result = new AuthResult();
+
+            var serviceResult = _authService.ValidateAdminRole(ua);
+            if(!serviceResult.IsSuccessful)
+            {
+                errorLogger.Log(serviceResult.Message, LogLevels.Error, "Service", ua.Username);
+            }
+            return serviceResult;
+        }
+
     }
 }

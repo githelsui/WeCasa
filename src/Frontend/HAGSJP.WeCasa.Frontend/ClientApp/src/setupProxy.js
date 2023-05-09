@@ -15,10 +15,13 @@ const context = [
     "/files",
     "/group-settings",
     "/account-settings",
+    "/account-recovery",
     "/edit-profile",
-    "/bulletin-board",,
+    "/bulletin-board",
     "/chorelist",
-    "/grocerylist"
+    "/grocerylist",
+    "/analytics",
+    "/nudge"
 ];
 
 const onError = (err, req, resp, target) => {

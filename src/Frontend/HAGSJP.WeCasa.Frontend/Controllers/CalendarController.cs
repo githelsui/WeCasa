@@ -7,6 +7,8 @@ using HAGSJP.WeCasa.Models;
 using HAGSJP.WeCasa.Managers.Implementations;
 using HAGSJP.WeCasa.Services.Implementations;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
 
 namespace HAGSJP.WeCasa.Frontend.Controllers
 {
@@ -22,14 +24,13 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
 
         [HttpPost]
         [Route("GetGroupEvents")]
-        public async Task<Result> GetGroupEvents([FromQuery] int groupId)
+        public async Task<CalendarResult> GetGroupEvents([FromBody] GroupForm groupForm)
         {
-            var result = new Result();
-            DateTime date = new DateTime();
+            var result = new CalendarResult();
             try
             {
-                GroupModel group = new GroupModel(groupId);
-                result = _manager.GetEvents(group, date);
+                GroupModel group = new GroupModel(groupForm.GroupId);
+                result = await _manager.GetEvents(group);
             }
             catch (Exception ex)
             {
@@ -44,10 +45,50 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
         public async Task<Result> AddGroupEvent([FromBody] EventForm eventForm)
         {
             var result = new Result();
+            DateTime eventDate = DateTime.ParseExact(eventForm.EventDate, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
             try
             {
-                Event e = new Event(eventForm.EventName, eventForm.Description, eventForm.EventDate, eventForm.GroupId, eventForm.Repeats, eventForm.Type, eventForm.Reminder, eventForm.Color, eventForm.CreatedBy);
-                result = _manager.AddEvent(e);
+                Event e = new Event(eventForm.EventName, eventForm.Description, eventDate, eventForm.GroupId, eventForm.Repeats, eventForm.Type, eventForm.Reminder, eventForm.Color, eventForm.CreatedBy);
+                result = await _manager.AddEvent(e);
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccessful = false;
+                result.Message = ex.Message;
+            }
+            return result;
+        }
+
+        [HttpPost]
+        [Route("EditGroupEvent")]
+        public async Task<Result> EditGroupEvent([FromBody] EventForm eventForm)
+        {
+            var result = new Result();
+            DateTime eventDate = DateTime.ParseExact(eventForm.EventDate, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            try
+            {
+                Event e = new Event(eventForm.EventId, eventForm.EventName, eventForm.Description, eventDate, eventForm.GroupId, eventForm.Repeats, eventForm.Type, eventForm.Reminder, eventForm.Color, eventForm.CreatedBy);
+                result = await _manager.EditEvent(e);
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccessful = false;
+                result.Message = ex.Message;
+            }
+            return result;
+        }
+
+        [HttpPost]
+        [Route("DeleteGroupEvent")]
+        public async Task<Result> DeleteGroupEvent([FromBody] EventForm eventForm)
+        {
+            var result = new Result();
+            DateTime eventDate = DateTime.ParseExact(eventForm.EventDate, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            try
+            {
+                Event e = new Event(eventForm.EventId, eventForm.EventName, eventForm.Description, eventDate, eventForm.GroupId, eventForm.Repeats, eventForm.Type, eventForm.Reminder, eventForm.Color, eventForm.CreatedBy, eventForm.RemovedBy);
+                e.RemovedBy = eventForm.RemovedBy;
+                result = await _manager.DeleteEvent(e);
             }
             catch (Exception ex)
             {

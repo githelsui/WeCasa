@@ -6,7 +6,7 @@ public class ChoreForm
     [JsonConstructor]
     public ChoreForm() { }
     public string? CurrentUser { get; set; }
-    public string Name { get; set; }
+    public string? Name { get; set; }
     public DateTime? ResetTime { get; set; }
     public string? Notes { get; set; }
     public int GroupId { get; set; }
@@ -15,5 +15,7 @@ public class ChoreForm
     public string? Repeats { get; set; }
     public List<string>? Days { get; set; }
     public List<string>? AssignedTo { get; set; }
+    public string? CurrentDate { get; set; }
+    public DateTime? ChoreDate { get; set; } //property for UserChore column chore_date
 }
 

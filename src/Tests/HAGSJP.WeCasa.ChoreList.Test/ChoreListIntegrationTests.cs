@@ -16,6 +16,7 @@ namespace HAGSJP.WeCasa.ChoreList.Test
     public class ChoreListIntegrationTests
     {
         private ChoreManager _choreManager;
+        private UserManager _userManager;
 
         [TestInitialize]
         public void Initialize()
@@ -52,7 +53,7 @@ namespace HAGSJP.WeCasa.ChoreList.Test
             Assert.IsNotNull(actual);
             Assert.IsTrue(actual >= 0);
             Assert.IsTrue(actual <= expected);
-            Assert.IsTrue(testResult.IsSuccessful);
+            Assert.IsTrue(testResult.Result.IsSuccessful);
         }
 
         [TestMethod]
@@ -61,6 +62,8 @@ namespace HAGSJP.WeCasa.ChoreList.Test
             // Arrange
             var stopwatch = new Stopwatch();
             var expected = 5;
+
+            //Edits chore name
             Chore testChore = new Chore()
             {
                 ChoreId = 100,
@@ -84,7 +87,7 @@ namespace HAGSJP.WeCasa.ChoreList.Test
             Assert.IsNotNull(actual);
             Assert.IsTrue(actual >= 0);
             Assert.IsTrue(actual <= expected);
-            Assert.IsTrue(testResult.IsSuccessful);
+            Assert.IsTrue(testResult.Result.IsSuccessful);
         }
 
         [TestMethod]
@@ -144,7 +147,8 @@ namespace HAGSJP.WeCasa.ChoreList.Test
 
             // Act
             stopwatch.Start();
-            var testResult = _choreManager.GetGroupToDoChores(new GroupModel(1));
+            var currentDate = DateTime.Now;
+            var testResult = _choreManager.GetGroupToDoChores(new GroupModel(1), currentDate);
             stopwatch.Stop();
 
             // turn ms to seconds

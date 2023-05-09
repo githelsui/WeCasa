@@ -8,6 +8,7 @@ using System.Data;
 using System.Reflection.PortableExecutable;
 using System.Data.SqlTypes;
 using static System.Net.WebRequestMethods;
+using Microsoft.Extensions.Configuration;
 
 namespace HAGSJP.WeCasa.sqlDataAccess
 {
@@ -18,22 +19,20 @@ namespace HAGSJP.WeCasa.sqlDataAccess
     /// </summary>
     public class GroupMariaDAO : ILoggerDAO
     {
+        private MariaDB _mariaDB;
         private string _connectionString;
 
         public GroupMariaDAO() { }
 
-        public MySqlConnectionStringBuilder BuildConnectionString()
+        public string GetConnectionString()
         {
-             var builder = new MySqlConnectionStringBuilder
-             {
-                 Server = "localhost",
-                 Port = 3306,
-                 UserID = "HAGSJP.WeCasa.SqlUser",
-                 Password = "cecs491",
-                 Database = "HAGSJP.WeCasa"
-             };
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("config.json")
+                .AddEnvironmentVariables()
+                .Build();
 
-            return builder;
+            _mariaDB = config.GetRequiredSection("MariaDB").Get<MariaDB>();
+            return _mariaDB.Local;
         }
 
         public Result ValidateSqlStatement(int rows)
@@ -55,7 +54,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public GroupResult GetGroupList(UserAccount userAccount)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -93,7 +92,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public GroupResult CreateGroup(GroupModel group)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -158,7 +157,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public GroupResult EditGroup(int groupId, GroupModel newGroup)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -201,7 +200,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public Result AddGroupMember(GroupModel group, string newGroupMember)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -231,7 +230,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public Result RemoveGroupMember(GroupModel group, string groupMember)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -257,7 +256,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         //User already exists in group
         public GroupResult FindGroupMember(GroupModel group, string groupMember)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -292,7 +291,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public async Task<GroupResult> GetGroupMembers(GroupModel group)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
@@ -329,7 +328,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
 
         public Result DeleteGroup(GroupModel group)
         {
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
@@ -362,7 +361,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public async Task<Result> LogData(Log log)
         {
 
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
 
             using (var connection = new MySqlConnection(_connectionString))
             {
@@ -398,7 +397,7 @@ namespace HAGSJP.WeCasa.sqlDataAccess
         public List<Log> GetLogData(UserAccount userAccount, Operations userOperation)
         {
             List<Log> logs = new List<Log>();
-            _connectionString = BuildConnectionString().ConnectionString;
+            _connectionString = GetConnectionString();
             using (var connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();

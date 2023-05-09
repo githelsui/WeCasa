@@ -46,6 +46,7 @@ export const ChoreHistoryTab = (props) => {
                 var isSuccessful = res.data['isSuccessful'];
                 if (isSuccessful) {
                     var items = res.data['returnedObject']
+                    console.log(items)
                     setCheckChores(items)
                     setChores(items)
                     if (checkChores != null) {
@@ -63,7 +64,6 @@ export const ChoreHistoryTab = (props) => {
                 props.setUpdate(false)
                 setSuccessFetch(true)
                 setError(true)
-                toast('Refresh page. Error fetching data.')
                 console.error(error)
             }));
     }
@@ -101,19 +101,24 @@ export const ChoreHistoryTab = (props) => {
     }, [count]);
 
     return (<div style={{ paddingTop: 20 }}>
-        {Object.entries(chores).map(([date, choreVals]) => (
-            <div>
-                <Row align="top" justify="start" gutter={[2, 2]}>
-                    <Col span={4} className="date-title mulish-font"><h5>{date}</h5></Col>
-                    <Col span={20} className="chore-history-list">
-                        <div>{choreVals.map((item) =>
-                            <CompletedChoreCard chore={item} user={props.currentUser} fetchData={fetchData} />
-                    )}
-                        </div>
-                    </Col>
-                </Row>
-              </div>
-        ))}
+        {(Object.keys(chores).length == 0) ?
+            (<div><h6>Group has no completed chores.</h6></div>) :
+            (<div>{
+                Object.entries(chores).map(([date, choreVals]) => (
+                    <div>
+                        <Row align="top" justify="start" gutter={[2, 2]}>
+                            <Col span={4} className="date-title mulish-font"><h5>{date}</h5></Col>
+                            <Col span={20} className="chore-history-list">
+                                <div>{choreVals.map((item) =>
+                                    <CompletedChoreCard chore={item} user={props.currentUser} fetchData={fetchData} />
+                                )}
+                                </div>
+                            </Col>
+                        </Row>
+                    </div>
+                ))
+            }</div>)
+        }
     </div>);
 };
 

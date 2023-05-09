@@ -21,33 +21,60 @@ namespace HAGSJP.WeCasa.Services.Implementations
             errorLogger = new Logger(_dao);
         }
 
-        public DAOResult GetEvents(GroupModel group, DateTime date)
+        public async Task<CalendarResult> GetEvents(GroupModel group)
         {
-            var getEventsResult = _dao.GetEvents(group.GroupId, date);
-            if (getEventsResult.IsSuccessful)
+            var getEventsResult = await _dao.GetEvents(group.GroupId);
+            if (!getEventsResult.IsSuccessful)
             {
-                successLogger.Log("Successfully retrieved calendar events", LogLevels.Info, "Data Store", group.GroupId.ToString());
-            }
-            else
-            {
-                errorLogger.Log("Error getting calendar events", LogLevels.Error, "Data Store", group.GroupId.ToString());
+                await errorLogger.Log("Error getting calendar events", LogLevels.Error, "Data Store", group.GroupId.ToString());
             }
 
             return getEventsResult;
         }
-        public DAOResult AddEvent(Event evnt)
+        public async Task<DAOResult> AddEvent(Event evnt)
         {
-            var addEventResult = _dao.AddEvent(evnt);
+            var addEventResult = await _dao.AddEvent(evnt);
             if (addEventResult.IsSuccessful)
             {
-                successLogger.Log("Event created successfully", LogLevels.Info, "Data Store", evnt.GroupId.ToString());
+                addEventResult.Message = "Event created successfully";
+                await successLogger.Log(addEventResult.Message, LogLevels.Info, "Data Store", evnt.GroupId.ToString());
             }
             else
             {
-                errorLogger.Log("Error creating an event", LogLevels.Error, "Data Store", evnt.GroupId.ToString());
+                await errorLogger.Log("Error creating an event", LogLevels.Error, "Data Store", evnt.GroupId.ToString());
             }
 
             return addEventResult;
+        }
+        public async Task<DAOResult> EditEvent(Event evnt)
+        {
+            var editEventResult = await _dao.UpdateEvent(evnt);
+            if (editEventResult.IsSuccessful)
+            {
+                editEventResult.Message = "Event updated successfully";
+                await successLogger.Log(editEventResult.Message, LogLevels.Info, "Data Store", evnt.GroupId.ToString());
+            }
+            else
+            {
+                await errorLogger.Log("Error updating an event", LogLevels.Error, "Data Store", evnt.GroupId.ToString());
+            }
+
+            return editEventResult;
+        }
+        public async Task<DAOResult> DeleteEvent(Event evnt)
+        {
+            var deleteEventResult = await _dao.DeleteEvent(evnt);
+            if (deleteEventResult.IsSuccessful)
+            {
+                deleteEventResult.Message = "Event deleted successfully";
+                await successLogger.Log(deleteEventResult.Message, LogLevels.Info, "Data Store", evnt.RemovedBy.ToString());
+            }
+            else
+            {
+                await errorLogger.Log("Error deleting an event", LogLevels.Error, "Data Store", evnt.RemovedBy.ToString());
+            }
+
+            return deleteEventResult;
         }
     }
 }

@@ -4,6 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <BaseOutputPath>bin\Debug</BaseOutputPath>
   </PropertyGroup>
 
 	<ItemGroup>
@@ -14,12 +15,25 @@
 		<PackageReference Include="AWSSDK.S3" Version="3.7.103.25" />
 		<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
 		<PackageReference Include="MySqlConnector" Version="2.2.2" />
 		<PackageReference Include="MySql.Data" Version="8.0.32" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Models\HAGSJP.WeCasa.Models\HAGSJP.WeCasa.Models.csproj" />
     	<!-- <ProjectReference Include="..\..\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\HAGSJP.WeCasa.Logging.csproj" /> -->
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="config.template.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="config.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 </Project>
