@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Image, Card } from 'antd';
+import { Button, Image, Card, notification } from 'antd';
 import { PlusCircleOutlined, FileImageOutlined } from '@ant-design/icons'
 import Draggable from 'react-draggable'; // import the Draggable component
 import './BulletinBoard.css'; // import the CSS stylesheet
@@ -20,6 +20,7 @@ function BulletinBoard() {
   const [stickies, setStickies] = useState([]);
   const [pictures, setPictures] = useState([]);
   const [selectedColor, setSelectedColor] = useState('#ffe8b3');
+  const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = React.createRef();
 
   const maxFileSize = 10 * 1024 * 1024; // 10 MB
@@ -30,9 +31,35 @@ function BulletinBoard() {
   // Username
   const user = "joy@gmail.com"
 
-
   // define an array of colors to use for the color picker
   const colors = ['#ffe8b3', '#b3ffe8', '#ffb3e8', '#e8b3ff'];
+
+  const successFileView = (successMessage) => {
+    notification.open({
+        message: "",
+        description: successMessage,
+        duration: 10,
+        placement: "topLeft"
+    });
+}
+
+const failureFileView = (failureMessage) => {
+    notification.open({
+        message: "Sorry, an error occurred.",
+        description: failureMessage,
+        duration: 10,
+        placement: "topLeft"
+    });
+}
+
+const toast = (title, desc = '') => {
+  notification.open({
+      message: title,
+      description: desc,
+      duration: 5,
+      placement: 'bottom',
+  });
+}
 
   const getBlobType = (fileType) => {
     var blobType = '';
@@ -61,10 +88,8 @@ function BulletinBoard() {
 
   // Call get stickies and photos
   useEffect(() => {
-    console.log("FIRST MOUNTadfas")
     getSticky()
     getPhotos()
-    console.log("FIRST MOUNT")
   }, []);
 
   const getSticky = () => {
@@ -141,27 +166,29 @@ function BulletinBoard() {
   }
 
   const handleFileInputChange = (event) => {
+    console.log("HANDLEFILE")
     const file = event.target.files[0];
     if (!validFileTypes.includes(file.type)) {
         // setValidInput(false);
-        // toast('Invalid file type');
+        toast('Invalid file type');
         return;
     }
     if (!validFileExt.includes(file.name.split(".").pop())) {
         console.log(file.name.split(".").pop());
         // setValidInput(false);
-        // toast('Invalid file type');
+        toast('Invalid file type');
         return;
     }
     if (file.size > maxFileSize) {
         // setValidInput(false);
-        // toast('File is too large');
+        toast('File is too large');
         return;
     }
     // setValidInput(true);
-
-    setPictures(file);
+  
+    setSelectedFile(file);
     addPicture(file);
+    console.log("CALL ADD")
   }
 
   const getUserFile = () => {
@@ -169,6 +196,7 @@ function BulletinBoard() {
   }
 
   const addPicture = (file) => {
+    console.log("SELECTED FILE", file)
     const formData = new FormData();
     formData.append('file', file);
     formData.append('name', file.name);
@@ -179,16 +207,18 @@ function BulletinBoard() {
       console.log(`${key}: ${value}`);
     }
     
-    axios.post('files/UploadFile', formData, { headers: { 'Content-Type': 'multipart/form-data' }})
+    // axios.post('files/UploadFile', formData, { headers: { 'Content-Type': 'multipart/form-data' }})
+    axios.post('bulletin-board/UploadFile', formData, { headers: { 'Content-Type': 'multipart/form-data' }})
         .then(res => {
             var isSuccessful = res.data['isSuccessful'];
             if (isSuccessful) {
-                // successFileView(res.data['message']);
+                successFileView(res.data['message']);
                 getPhotos()
+                console.log("UPLOAD SUCCESS")
             }
-            // else {
-                // failureFileView(res.data['message']);
-            // }
+            else {
+                failureFileView(res.data['message']);
+            }
         })
         .catch((error) => {
             console.error(error);
@@ -211,27 +241,27 @@ function BulletinBoard() {
   };
 
   const deleteFile = (file) => {
-    console.log('delete')
     let fileForm = {
         FileName: file.fileName,
         GroupId: GID.toString(),
         Owner: user
     }
-    axios.post('files/DeleteFile', fileForm)
+    // axios.post('files/DeleteFile', fileForm)
+    axios.post('bulletin-board/DeleteFile', fileForm)
         .then(res => {
             console.log(res.data);
             let isSuccessful = res.data['isSuccessful'];
             if (isSuccessful) {
-                // toast('File deleted successfully.')
+                toast('File deleted successfully.')
                 getPhotos()
             }
             else {
-                // toast('An error occurred.')
+                toast('An error occurred.')
             }
         })
         .catch((error) => {
             console.error(error)
-            // toast("Try again.", "Error deleting file.");
+            toast("Try again.", "Error deleting file.");
         });
   }
 
@@ -283,7 +313,7 @@ function BulletinBoard() {
   const filesView = () => {
     return (      
       pictures.map((picture) => (
-      <Draggable className="files" key={picture.data} defaultPosition={{x: Math.floor(Math.random() * (window.innerWidth)), y: Math.floor(Math.random() * (window.innerHeight))}}>
+      <Draggable className="files" key={picture.name} defaultPosition={{x: Math.floor(Math.random() * (window.innerWidth)), y: Math.floor(Math.random() * (window.innerHeight))}}>
           <div className="picture">
           <div >
             {(picture.contentType === ".pdf" || picture.contentType === ".txt" || picture.contentType === ".doc" || picture.contentType === ".docx") ?
@@ -321,14 +351,15 @@ function BulletinBoard() {
           ))}
         </div>
         <div className="button-plate" style={{ display: 'flex', justifyContent: 'center' }}>
-          <Button
+        <input type="file" style={Styles.addButtonFileStyle} ref={fileInputRef} onChange={(event) => handleFileInputChange(event)} />
+          {/* <Button
                 id="add-photo"
                 style={Styles.addButtonFileStyle}
                 shape="round"
                 icon={<FileImageOutlined />}
                 size={'large'}
                 onClick={() => getUserFile()}>
-            </Button>
+            </Button> */}
             <Button
                 id="add-sticky"
                 style={Styles.addButtonFileStyle}
