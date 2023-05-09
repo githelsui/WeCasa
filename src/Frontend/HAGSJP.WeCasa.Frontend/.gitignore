@@ -7,6 +7,10 @@
 *.userosscache
 *.sln.docstates
 
+# api key for sendgrid
+appsettings.local.json
+
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
