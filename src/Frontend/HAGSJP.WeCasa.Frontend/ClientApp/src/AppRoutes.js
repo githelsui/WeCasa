@@ -15,6 +15,7 @@ import { ChoreList } from "./components/ChoreList/ChoreList";
 import { GroceryList } from "./components/GroceryList/GroceryList";
 import { AnalyticsDashboard } from "./components/Dashboard/AnalyticsDashboard";
 import { NotFound } from "./components/NotFound";
+import  Nudge  from "./components/Nudge/Nudge";
 
 const AppRoutes = [
   {
@@ -92,7 +93,11 @@ const AppRoutes = [
   {
         path: '*',
         element: <NotFound />
-  }
+   },
+   {
+        path: '/nudge',
+        element: <Nudge/>
+   }
 ];
 
 export default AppRoutes;
