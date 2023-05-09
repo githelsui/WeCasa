@@ -65,4 +65,3 @@ export const MultiColorProgressBar = (props) => {
 }
 
 export default MultiColorProgressBar;
-

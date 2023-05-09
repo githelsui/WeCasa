@@ -1,12 +1,30 @@
+.center-bottom-btn {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .bulletin-board {
-    position: relative;
-    width: 95vw; /* updated */
-    height: 100vh; /* updated */
-    background-color: #fff;
-    border: 1px solid #ccc;
-    margin: 50px auto;
-    padding: 20px;
-  }
+  position: fixed;
+  width: 72%;
+  height: 80vh;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  margin: 0;
+  padding: 20px;
+  position: absolute;
+  overflow: auto;
+}
+
+.button-plate {
+  display: 'flex';
+  justifyContent: 'center';
+  alignItems: 'center';
+  border: '1px solid #111827';
+  borderRadius: '4px';
+  padding: '10px';
+}
   
   .color-picker {
     display: flex;
@@ -54,7 +72,7 @@
   .picture-img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 10px;
   }
   

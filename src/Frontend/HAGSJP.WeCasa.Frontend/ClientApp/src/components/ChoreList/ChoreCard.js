@@ -32,6 +32,29 @@ export const ChoreCard = (props) => {
         return arr;
     }
 
+
+
+    const getAssignedUsernamesString = (assignments) => {
+        var arr = []
+        for (let i = 0; i < assignments.length; i++) {
+            var userProfile = assignments[i]
+            var username = userProfile['username']
+            arr.push(username)
+        }
+        return arr.join(', ');
+    }
+
+    const usernameString = getAssignedUsernamesString(props.chore['assignedTo']);
+
+    const isCurrentUserAssigned = () => {
+        const currentUserUsername = props.user['username'];
+        const assignedUsernames = getAssignedUsernames(props.chore['assignedTo']);
+        return assignedUsernames.includes(currentUserUsername);
+    };
+
+    var choreIsCompleted = props.chore['isCompleted'];
+    //console.log(isCompleted);
+
     const assignmentProfileIcons = (assignments) => {
         return (<div>
               {assignments.map((user, i) =>
@@ -147,10 +170,20 @@ export const ChoreCard = (props) => {
                 width: 120,
                 borderColor: 'black'
             }}
-            actions={[
-                <Nudge key="nudge" assignedUser="Assignee" />,
+                actions={[
+                  <>
+                        {!isCurrentUserAssigned() && !choreIsCompleted && (
+                            <Nudge
+                                choreId={props.chore['choreId']}
+                                groupId={props.chore['groupId']}
+                                senderEmail={props.user['username']}
+                                recipientEmail={usernameString}
+                            />
+                        )}
+
                 <Button shape="circle" icon={<SettingOutlined />} onClick={() => setShowEditModal(true)}/>,
                 <Button shape="circle" icon={<CheckSquareOutlined />} onClick={() => completeChore(props.chore)}  />
+                    </>
                 ]}>
                 {assignmentProfileIcons(props.chore['assignedTo'])}
                 <h6 className="mulish-font" style={{

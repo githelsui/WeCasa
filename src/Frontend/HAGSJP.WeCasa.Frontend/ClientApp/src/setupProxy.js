@@ -17,11 +17,12 @@ const context = [
     "/account-settings",
     "/account-recovery",
     "/edit-profile",
-    "/bulletin-board",,
+    "/bulletin-board",
     "/chorelist",
     "/grocerylist",
     "/feedback",
-    "/analytics"
+    "/analytics",
+    "/nudge"
 ];
 
 const onError = (err, req, resp, target) => {

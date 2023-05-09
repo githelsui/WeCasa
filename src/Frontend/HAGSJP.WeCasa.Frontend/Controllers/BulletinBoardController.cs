@@ -82,4 +82,28 @@ public class BulletinBoardController : ControllerBase
         }
         return tcs.Task;
     }
+
+    [HttpPost]
+    [Route("UploadFile")]
+    public S3Result UploadFile([FromForm] FileForm fileForm)
+    {
+
+        var file = fileForm.File;
+        var groupId = fileForm.GroupId;
+        var owner = fileForm.Owner;
+        var result = _bulletinBoardManager.UploadFile(file, groupId, owner);
+        return result;
+    }
+
+
+    [HttpPost]
+    [Route("DeleteFile")]
+    public S3Result DeleteFile([FromBody] FileForm fileForm)
+    {
+        FileManager fm = new FileManager();
+        var fileName = fileForm.Owner + '/' + fileForm.FileName;
+        var groupId = fileForm.GroupId;
+        var owner = fileForm.Owner;
+        return _bulletinBoardManager.DeleteFile(fileName, groupId, owner);
+    }
 }
