@@ -9,6 +9,8 @@ builder.Services.AddControllersWithViews();
 // Add configurations
 builder.Configuration.AddJsonFile("appsettings.json", true, true);
 
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

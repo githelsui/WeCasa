@@ -1,4 +1,4 @@
-﻿import React, { Component, useState, useEffect } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { Modal, ConfigProvider, Button, Row, Col, Image, Space, Input, Form, Switch, notification, Spin, Card, Checkbox, Radio } from 'antd';
 import * as Styles from '../../styles/ConstStyles.js';
 import '../../styles/System.css';
