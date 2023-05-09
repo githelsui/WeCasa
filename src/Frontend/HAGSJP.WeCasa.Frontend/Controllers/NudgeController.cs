@@ -36,7 +36,7 @@ namespace HAGSJP.WeCasa.Frontend.Controllers
             try
             {
                 Console.WriteLine("SendNudgeEmail method called.");
-                //var apiKey = "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";//_configuration["SendGrid:ApiKey"];
+                //var apiKey = _configuration["SendGrid:ApiKey"];
                 var apiKey = _configuration["SendGrid:ApiKey"];
 
                 Console.WriteLine(apiKey);
