@@ -55,6 +55,7 @@ export const BillForm = (props) => {
           var response = res.data;
           console.log(response);
           props.setGroupTotal(props.groupTotal + amount)
+          props.setRefresh(true)
       })
       .catch((error => { console.error(error) }));
       request.date = formattedDate

@@ -28,6 +28,7 @@ export const BudgetBar = () => {
   const [users, setUsers] = useState([])
   const [activeBills, setActiveBills] = useState([])
   const [deletedBills, setDeletedBills] = useState([])
+  const [refresh, setRefresh] = useState(false)
 
   const errorPage = () => {
     return (
@@ -106,7 +107,7 @@ export const BudgetBar = () => {
  useEffect(() => {
   getBudgetBar();
   console.log("USERS", users)
- }, [])
+ }, [refresh])
   
   const handleRestoreButton = (bill) => {
     const billId = bill.billID
@@ -298,7 +299,7 @@ export const BudgetBar = () => {
           <Progress percent={(groupTotal/budget)*100} strokeColor = {color[0]} showInfo={false} strokeWidth="30px"/>
           <MultiColorProgressBar readings={users} />
           <Button style={Styles.addFormButton} onClick={()=>setShowAddForm(!showAddForm)}>Add Bill</Button>
-          {showAddForm && (<BillForm handleCurrentTable={handleCurrentTable} activeBills={activeBills} setActiveBills={setActiveBills} budget={budget} setGroupTotal={setGroupTotal} groupTotal={groupTotal} user={user} group={group} members={users}/>)}
+          {showAddForm && (<BillForm handleCurrentTable={handleCurrentTable} setRefresh={setRefresh} activeBills={activeBills} setActiveBills={setActiveBills} budget={budget} setGroupTotal={setGroupTotal} groupTotal={groupTotal} user={user} group={group} members={users}/>)}
           <Tabs defaultActiveKey="1" items={tabs} /> 
         </div>
       : errorPage()
