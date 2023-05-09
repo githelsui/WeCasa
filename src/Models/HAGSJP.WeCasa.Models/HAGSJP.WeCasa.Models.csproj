@@ -9,4 +9,8 @@
   <ItemGroup>
     <None Remove="Newtonsoft.Json" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SendGrid" Version="9.28.1" />
+  </ItemGroup>
 </Project>

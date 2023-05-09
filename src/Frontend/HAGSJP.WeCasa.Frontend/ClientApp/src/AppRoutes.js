@@ -10,6 +10,7 @@ import { AccountRecovery } from "./components/Account/AccountRecovery";
 import { Files } from "./components/File/Files";
 import { FileView } from "./components/File/FileView";
 import { IconSelectorModal } from "./components/IconSelectorModal";
+import { Feedback } from "./components/UserFeedback/Feedback.js";
 import BulletinBoard from "./components/BulletinBoard/BulletinBoard";
 import { ChoreList } from "./components/ChoreList/ChoreList";
 import { GroceryList } from "./components/GroceryList/GroceryList";
@@ -80,7 +81,11 @@ const AppRoutes = [
   {
       path: '/grocerylist',
       element: <GroceryList />
-  },
+    },
+    {
+        path: '/feedback',
+        element: <Feedback />
+    },
   {
   path: '/bulletin',
   element: <BulletinBoard />

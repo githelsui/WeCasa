@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "HAGSJP.WeCasa.Logging.Test": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:61108;http://localhost:61122"
+    }
+  }
+}

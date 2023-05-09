@@ -78,9 +78,6 @@ export const Header = () => {
                 <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!collapsed} navbar>
                     {(!auth) ?
                         (<ul className="navbar-nav flex-grow">
-                            <NavItem>
-                                <NavLink tag={Link} className="text-dark" to="/feedback">Feedback</NavLink>
-                            </NavItem>
                         </ul>
                         ) : (<UncontrolledDropdown>
                             <DropdownToggle id="profile-icon">

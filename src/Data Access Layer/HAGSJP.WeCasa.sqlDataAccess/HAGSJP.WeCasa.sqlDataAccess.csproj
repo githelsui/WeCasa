@@ -22,12 +22,16 @@
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
 		<PackageReference Include="MySqlConnector" Version="2.2.2" />
 		<PackageReference Include="MySql.Data" Version="8.0.32" />
+		<PackageReference Include="SendGrid" Version="9.28.1" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Models\HAGSJP.WeCasa.Models\HAGSJP.WeCasa.Models.csproj" />
     	<!-- <ProjectReference Include="..\..\Cross-Cutting Concerns\HAGSJP.WeCasa.Logging\HAGSJP.WeCasa.Logging.csproj" /> -->
 	</ItemGroup>
 	<ItemGroup>
+		<None Update="config.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="config.template.json">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

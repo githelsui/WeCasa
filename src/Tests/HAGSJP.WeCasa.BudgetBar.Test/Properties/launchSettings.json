@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "HAGSJP.WeCasa.BudgetBar.Test": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:61111;http://localhost:61130"
+    }
+  }
+}

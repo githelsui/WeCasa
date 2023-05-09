@@ -67,4 +67,3 @@ namespace HAGSJP.WeCasa.Models
         public string? RemovedBy { get; set; }
     }
 }
-

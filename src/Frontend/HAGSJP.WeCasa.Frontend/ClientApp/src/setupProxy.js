@@ -20,6 +20,7 @@ const context = [
     "/bulletin-board",,
     "/chorelist",
     "/grocerylist",
+    "/feedback",
     "/analytics"
 ];
 

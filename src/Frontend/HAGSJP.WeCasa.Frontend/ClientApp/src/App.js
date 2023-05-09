@@ -5,6 +5,7 @@ import AppRoutes from './AppRoutes';
 import { Header } from './components/Header';
 import { NavMenu } from './components/NavMenu';
 import { AdminNavMenu } from './components/AdminNavMenu.js';
+import { Footer } from './components/Footer';
 import { useAuth } from './components/Auth/AuthContext';
 import './custom.css';
 
@@ -25,6 +26,7 @@ function App() {
           })}
         </Routes>
         </Container>
+        <Footer />
       </BrowserRouter>
     );
 }
