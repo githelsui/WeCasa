@@ -67,8 +67,8 @@ namespace HAGSJP.WeCasa.ChoreList.Test
 
             //Assert
             Assert.IsNotNull(actual);
-            /*Assert.IsTrue(invalidNameCharacters.IsSuccessful == expected);
-            Assert.IsTrue(invalidNameLength.IsSuccessful == expected);*/
+            Assert.IsTrue(invalidNameCharacters.Result.IsSuccessful == expected);
+            Assert.IsTrue(invalidNameLength.Result.IsSuccessful == expected);
         }
 
         [TestMethod]
@@ -94,7 +94,7 @@ namespace HAGSJP.WeCasa.ChoreList.Test
 
             //Assert
             Assert.IsNotNull(actual);
-            //Assert.IsTrue(result.IsSuccessful == expected);
+            Assert.IsTrue(result.Result.IsSuccessful == expected);
         }
     }
 }

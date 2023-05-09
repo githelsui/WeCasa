@@ -88,6 +88,7 @@ export const GroupMembersTab = (props) => {
     useEffect(() => {
         fetchMemberList()
         setDaysUntilRefresh(getDaysUntilRefresh());
+        console.log(currentGroup)
     }, [])
 
     return (
@@ -133,7 +134,7 @@ export const GroupMembersTab = (props) => {
                                 }} type="default" style={Styles.removeGroupMemberButton}>X  Remove Member</Button>
                             </List.Item>
                             <div>
-                                {currentGroup.features.includes("Circular Progress Bar") ? (
+                                {currentGroup.features.includes("Circular Progress Bar") || currentGroup.features.includes("all") ? (
                                     <CircularProgressBar id={`${item}-progressBar`} report={progressReports.filter(r => r.username === item.username)}></CircularProgressBar>
                                 ) : <div></div>}
                             </div>
