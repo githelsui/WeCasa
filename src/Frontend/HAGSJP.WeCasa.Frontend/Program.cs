@@ -9,7 +9,7 @@ builder.Services.AddControllersWithViews();
 // Add configurations
 builder.Configuration.AddJsonFile("appsettings.json", true, true);
 
-builder.Configuration.AddJsonFile("config.json", optional: false, reloadOnChange: true);
+// builder.Configuration.AddJsonFile("config.json", optional: false, reloadOnChange: true);
 
 
 var app = builder.Build();
@@ -33,3 +33,7 @@ app.MapControllerRoute(
 app.MapFallbackToFile("index.html");
 
 app.Run();
+
+// wecasa.page -> wecasa.page:7131 -> localhost:5153
+
+// localhost:7130 -> localhost:44411 
